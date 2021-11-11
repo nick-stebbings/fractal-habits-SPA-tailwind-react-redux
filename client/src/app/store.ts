@@ -5,7 +5,7 @@ import uiReducer from "features/ui/reducer";
 import todoReducer from "features/todo/reducer";
 import habitReducer from "features/habit/reducer";
 import habitDateReducer from "features/habitDate/reducer";
-import spaceReducer from "features/space/reducer";
+import spaceSlice from "features/space/slice";
 
 export const store = configureStore({
   reducer: {
@@ -13,7 +13,7 @@ export const store = configureStore({
     todo: todoReducer,
     habit: habitReducer,
     habitDate: habitDateReducer,
-    space: spaceReducer,
+    space: spaceSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

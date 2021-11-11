@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import reactRefresh from "@vitejs/plugin-react-refresh";
 
 import alias from "@rollup/plugin-alias";
 import react from "@vitejs/plugin-react";
@@ -8,6 +9,7 @@ import { resolve } from "path";
 export default defineConfig({
   plugins: [
     react(),
+    reactRefresh(),
     alias({
       entries: [
         {
@@ -29,9 +31,14 @@ export default defineConfig({
       ],
     }),
   ],
+  root: "./",
+  build: {
+    outDir: "dist",
+  },
+  publicDir: "public",
   server: {
     watch: {
-      // usePolling: true,
+      usePolling: true,
     },
   },
 });
