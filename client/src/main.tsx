@@ -5,20 +5,6 @@ import { Provider } from "react-redux";
 import { App } from "./App";
 import "./styles/styles.css";
 
-import { convertUint8ToHash } from "./app/utils";
-import { cellIdToString } from "services/reduxMiddleware";
-import appWebSocketsConnect from "services/hcWebSockets";
-
-import { setCellId, setAgentPublicKey } from "features/cell/actions";
-
-appWebSocketsConnect().then((client: any) => {
-  const cellIdString = cellIdToString(client.cellData.cell_id);
-  const agentPublicKey = convertUint8ToHash(client.cellData.cell_id[1]);
-
-  store.dispatch(setCellId(cellIdString));
-  store.dispatch(setAgentPublicKey(agentPublicKey));
-});
-
 render(
   <React.StrictMode>
     <Provider store={store}>

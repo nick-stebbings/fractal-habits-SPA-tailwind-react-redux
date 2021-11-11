@@ -1,13 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getType } from "typesafe-actions";
-import { Todo, TodoList, TodoLists, TodoListInfo, Dictionary } from "./types";
-import zomeApis from "services/zomeApis";
+import { Todo, TodoList, TodoLists } from "./types";
+import { Dictionary } from "app/types";
 import merge from "deepmerge";
 
-export const initialState: Dictionary<TodoList | Dictionary<TodoListInfo>> = {
+export const initialState: Dictionary<TodoList> = {
   currentList: { id: "0", todos: [] },
-  sourceChainLists: {},
-  knownPublicLists: {},
 };
 
 export interface NewListPayload {
@@ -79,38 +76,9 @@ export const todoSlice: any = createSlice({
       state = next;
     },
   },
-  extraReducers: (builder) => {
-    // builder.addMatcher(
-    //   zomeApis.todofeed["create_todolist"].success(),
-    //   (state, action) => {
-    //     const {
-    //       payload,
-    //       meta: { cellIdString },
-    //     } = action;
-    //     const { headerHash, entryHash, entry } = payload;
-    //     return { ...state, sourceChainLists: { [entry.id]: { ...payload } } };
-    //   }
-    // );
-    // builder.addMatcher(
-    //   zomeApis.todofeed["create_todolist"].failure(),
-    //   (state, action) => {
-    //     const {
-    //       payload,
-    //       meta: { cellIdString },
-    //     } = action;
-    //     return state;
-    //   }
-    // );
-    // builder.addMatcher(isLoadingAction, (state) => ({
-    //   responseStatus: loadingState,
-    // }));
-    // builder.addMatcher(isErrorAction, (state) => ({
-    //   responseStatus: errorState,
-    // }));
-    // builder.addDefaultCase((state) => ({
-    //   responseStatus: idleState,
-    // }));
-  },
+  // extraReducers: (builder) => {
+
+  // },
 });
 
 export default todoSlice.reducer;

@@ -1,4 +1,4 @@
-export enum RedDotActionTypes {
+export enum HabitFractActionTypes {
   "habit/createHabit",
   "habit/fetchHabit",
   "habit/updateHabit",

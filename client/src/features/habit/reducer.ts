@@ -1,12 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   Habit,
-  HabitInfo,
   NewHabitPayload,
   DeleteHabitPayload,
   UpdateHabitPayload,
 } from "./types";
-import { RedDotActionTypes } from "services/restApis";
+import { HabitFractActionTypes } from "services/restApis";
 import { Dictionary } from "app/types";
 
 import merge from "deepmerge";
@@ -19,7 +18,6 @@ export const initialState: Dictionary<Habit> = {
       toDate: luxon.DateTime.local().endOf("day"),
       length: luxon.Duration.fromObject({ days: 1 }),
     },
-    list_hash: "",
     meta: {
       name: "",
       id: 0,
@@ -50,7 +48,7 @@ export const habitSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(RedDotActionTypes["1"], (state, action) => {
+    builder.addCase(HabitFractActionTypes["1"], (state, action) => {
       debugger;
       return { ...state };
     });

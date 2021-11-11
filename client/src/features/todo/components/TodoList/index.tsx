@@ -12,9 +12,9 @@ import {
   deleteTodo,
   updateTodo,
   createList,
-  createTodoListZome,
-  updateTodoListZome,
-  fetchTodoListsZome,
+  createTodoListREST,
+  updateTodoListREST,
+  fetchTodoListsREST,
   updateList,
 } from "../../actions";
 interface indexProps {
@@ -125,9 +125,9 @@ const index: React.FC<indexProps> = ({
     try {
       hasBeenSaved
         ? dispatch(updateList({ list })) &&
-          dispatch(updateTodoListZome(cellIdString, list))
+          dispatch(updateTodoListREST(cellIdString, list))
         : dispatch(createList({ list })) &&
-          dispatch(createTodoListZome(cellIdString, list));
+          dispatch(createTodoListREST(cellIdString, list));
       setHasBeenSaved(true);
     } catch (err) {
       console.log("err :>> ", err);

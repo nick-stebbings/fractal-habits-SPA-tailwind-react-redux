@@ -4,9 +4,8 @@ import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { Profiles } from "features/user/components/Profiles";
 import TodoList from "features/todo/components/TodoList";
 
-import { fetchTodoListsZome } from "features/todo/actions";
+import { fetchHabitREST } from "features/habit/actions";
 
-import { getStringId } from "features/cell/selectors";
 import { getCurrent } from "features/todo/selectors";
 
 interface indexProps {}
@@ -20,15 +19,13 @@ export const App: React.FC<indexProps> = ({}) => {
   let [listObj, setListObj] = useState(JSON.stringify(lists));
 
   useEffect(() => {
-    loadTodos().then(() => {
+    loadData().then(() => {
       setLists(currentList);
       setListObj(JSON.stringify(currentList));
     });
   }, [listObj]);
 
-  const loadTodos = async () => {
-    (await cellIdString) && dispatch(fetchTodoListsZome(cellIdString));
-  };
+  const loadData = async () => {};
 
   return (
     <div className="App">
