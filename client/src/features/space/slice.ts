@@ -27,7 +27,7 @@ export interface Space {
 //   spacePatch: Partial<Space>;
 // }
 // import merge from "deepmerge";
-import luxon from "luxon";
+import * as luxon from "luxon";
 
 const daySpace = (numberOfDays: any = 1): Space => ({
   timeframe: {

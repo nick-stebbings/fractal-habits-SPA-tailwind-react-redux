@@ -10,9 +10,10 @@ const MODEL = "habits";
 
 const fetchHabitREST = (habitId: number): any =>
   createAsyncThunk(HabitFractActionTypes["1"], async (thunkAPI) => {
-    const res = await fetch(`${BASE_URL}/${MODEL}/${habitId}`).then((data) =>
-      data.json()
-    );
+    const res = await fetch(`${BASE_URL}/${MODEL}/${habitId}`).then((data) => {
+      console.log(data);
+      return data.json();
+    });
     return res;
   });
 

@@ -8,14 +8,14 @@ import {
 import { Dictionary } from "app/types";
 
 import merge from "deepmerge";
-import luxon from "luxon";
+import * as luxon from "luxon";
 
 export const initialState: Dictionary<HabitDate> = {
   myHabitDates: {
     timeframe: {
-      fromDate: luxon.DateTime.local().startOf("day"),
-      toDate: luxon.DateTime.local().endOf("day"),
-      length: luxon.Duration.fromObject({ days: 1 }),
+      fromDate: luxon.DateTime.local().startOf("day").ts,
+      toDate: luxon.DateTime.local().endOf("day").ts,
+      length: luxon.Duration.fromObject({ days: 1 }).toString(),
     },
   },
 };
