@@ -10,14 +10,17 @@ import { Dictionary } from "app/types";
 import merge from "deepmerge";
 import * as luxon from "luxon";
 
-export const initialState: Dictionary<HabitDate> = {
-  myHabitDates: {
-    timeframe: {
-      fromDate: luxon.DateTime.local().startOf("day").ts,
-      toDate: luxon.DateTime.local().endOf("day").ts,
-      length: luxon.Duration.fromObject({ days: 1 }).toString(),
+export const initialState: Dictionary<HabitDate[]> = {
+  myHabitDates: [
+    {
+      habitId: 0,
+      timeframe: {
+        fromDate: luxon.DateTime.local().startOf("day").ts,
+        toDate: luxon.DateTime.local().endOf("day").ts,
+        length: luxon.Duration.fromObject({ days: 1 }).toString(),
+      },
     },
-  },
+  ],
 };
 
 export const habitDateSlice = createSlice({
@@ -28,7 +31,7 @@ export const habitDateSlice = createSlice({
       const { habitDates, id } = action.payload.habitDate;
       return {
         ...state,
-        [String(id)]: { habitDate: habitDate || [] },
+        myHabitDates: { habitDate: habitDate || [] },
       };
     },
     deleteHabitDate(state, action: PayloadAction<DeleteHabitDatePayload>) {
@@ -38,7 +41,7 @@ export const habitDateSlice = createSlice({
       const { habitDate, id } = action.payload.habitDate;
       return {
         ...state,
-        [String(id)]: { habitDates },
+        myHabitDates: { habitDate },
       };
     },
   },

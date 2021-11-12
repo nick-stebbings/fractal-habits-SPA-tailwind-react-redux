@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "./app/hooks";
+import { useAppDispatch, useAppSelector } from "app/hooks";
 import DateTime from "luxon/src/datetime.js";
 
 import { getThisWeekSpaces } from "app/features/space/slice";
-import DateCard from "./DateCard.jsx";
+import DateCard from "./DateCard";
 
 const CalendarWidget = (props) => {
   const dispatch = useAppDispatch();
@@ -76,8 +76,8 @@ const CalendarWidget = (props) => {
           spaces.map((date, idx) => (
             <DateCard
               key={idx}
-              date={"a date"}
-              today={false}
+              date={DateTime.local().startOf("day")}
+              isToday={false}
               completedStatus={habitDates && habitDates[idx]?.completed_status}
             />
           ))}

@@ -1,27 +1,41 @@
-import BASE_URL, { HabitFractActionTypes } from "services/restApis";
-
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import BASE_URL, { clientRoutes } from "services/restApis";
+import { isCrud, createCrudActionCreators } from "app/utils";
 
 import { Habit } from "./types";
-import { habitSlice } from "./reducer";
-const { createHabit, deleteHabit, updateHabit } = habitSlice.actions;
+// import { habitSlice } from "./reducer";
+// const { createHabit, deleteHabit, updateHabit } = habitSlice.actions;
 
-const MODEL = "habits";
+const BASE_PATH = "/habits";
 
-const fetchHabitREST = (habitId: number): any =>
-  createAsyncThunk(HabitFractActionTypes["1"], async (thunkAPI) => {
-    const res = await fetch(`${BASE_URL}/${MODEL}/${habitId}`).then((data) => {
-      console.log(data);
-      return data.json();
-    });
-    return res;
-  });
+const CREATE_HABIT = "create_habit";
+const FETCH_HABITS = "fetch_habits";
+const UPDATE_HABIT = "update_habit";
+const DESTROY_HABIT = "destroy_habit";
+const FETCH_HABIT = "fetch_habit";
+
+export const actionStrings = [
+  CREATE_HABIT,
+  FETCH_HABITS,
+  UPDATE_HABIT,
+  DESTROY_HABIT,
+  FETCH_HABIT,
+];
+const thunkCallBacks = Object.values(clientRoutes(BASE_PATH));
+const actionCreators = createCrudActionCreators(actionStrings, thunkCallBacks);
+
+const [
+  createHabitREST,
+  fetchHabitREST,
+  updateHabitREST,
+  destroyHabitREST,
+] = actionCreators;
 
 export {
-  createHabit,
-  deleteHabit,
-  updateHabit,
-  // createHabitREST,
+  // createHabit,
+  // deleteHabit,
+  // updateHabit,
+  createHabitREST,
   fetchHabitREST,
-  // updateHabitREST
+  updateHabitREST,
+  destroyHabitREST,
 };

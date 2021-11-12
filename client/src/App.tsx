@@ -19,14 +19,15 @@ export const App: React.FC<indexProps> = ({}) => {
     loadData().then(() => {
       setLists(currentList);
     });
+    debugger;
   }, []);
 
-  const loadData = async () => dispatch(fetchHabitREST(1));
+  const loadData = () => dispatch(fetchHabitREST(1)());
 
   return (
     <div className="App">
       <div className="current-list container">
-        {lists && <TodoList list={lists} />}
+        {lists && <TodoList list={lists}></TodoList>}
       </div>
     </div>
   );

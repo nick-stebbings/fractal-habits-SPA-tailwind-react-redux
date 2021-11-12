@@ -1,3 +1,5 @@
+import * as luxon from "luxon";
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   Habit,
@@ -5,11 +7,10 @@ import {
   DeleteHabitPayload,
   UpdateHabitPayload,
 } from "./types";
-import { HabitFractActionTypes } from "services/restApis";
 import { Dictionary } from "app/types";
 
-import merge from "deepmerge";
-import * as luxon from "luxon";
+import { crudReducer } from "app/utils";
+import { actionStrings } from "./actions";
 
 export const initialState: Dictionary<Habit> = {
   currentHabit: {
@@ -48,7 +49,7 @@ export const habitSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(HabitFractActionTypes["1"], (state, action) => {
+    builder.addCase(actionStrings[0], (state, action) => {
       debugger;
       return { ...state };
     });

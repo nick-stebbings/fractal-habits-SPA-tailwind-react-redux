@@ -1,6 +1,7 @@
 import { TimeFrame } from "app/types";
 
 export interface HabitDate {
+  habitId: number;
   timeframe: TimeFrame;
 }
 
