@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { DateTime, Duration } from "luxon";
 
 export function isCrud(action, create, fetch, update, destroy) {
   return [create, fetch, update, destroy]
@@ -7,47 +8,64 @@ export function isCrud(action, create, fetch, update, destroy) {
     .includes(action.type);
 }
 
+const modelNameFromActionString = (actionString) =>
+  actionString.split(/[_|\/]/)[1];
+
+const mapCallbacks = {
+  habits: (element) => {
+    const {
+      id,
+      name,
+      description,
+      domain_id,
+      habit_node_id,
+      initiation_date,
+    } = element;
+    return {
+      timeframe: {
+        fromDate: DateTime.fromSQL(initiation_date).ts,
+        toDate: DateTime.local().endOf("day").ts,
+        length: Duration.fromMillis(
+          DateTime.local().endOf("day").ts -
+            DateTime.fromSQL(initiation_date).ts
+        ).toString(),
+      },
+      meta: {
+        id,
+        name,
+        description,
+        domain_id,
+        habit_node_id,
+      },
+    };
+  },
+};
+
 export function crudReducer(state, action, create, fetch, update, destroy) {
   const {
-    payload,
+    payload: { data },
     type,
-    meta: { cellIdString },
   } = action;
-
+  const model = modelNameFromActionString(type);
+  const parsed = JSON.parse(data);
+  debugger;
   switch (type) {
     // CREATE AND UPDATE SHARE A RESPONSE TYPE
     case create.fulfilled().type:
     case update.fulfilled().type:
       return {
         ...state,
-        [cellIdString]: {
-          ...state[cellIdString],
-          [payload.address]: {
-            ...payload.entry,
-            address: payload.address,
-          },
-        },
+        //
       };
 
     // FETCH
+
     case fetch.fulfilled().type:
-      // payload is [ { entry: { key: val }, address: 'QmAsdFg' }, ... ]
-      const mapped = payload.map((r) => {
-        return {
-          ...r.entry,
-          address: r.address,
-        };
-      });
-      // mapped is [ { key: val, address: 'QmAsdFg' }, ...]
-      const newVals = _.keyBy(mapped, "address");
-      // combines pre-existing values of the object with new values from
-      // Holochain fetch
+      // parsed is { "habits": [ { "id": 1, "name": "another test"... }, ... ]
+      const mapped = Object.values(parsed)[0].map(mapCallbacks[model]);
       return {
         ...state,
-        [cellIdString]: {
-          ...state[cellIdString],
-          ...newVals,
-        },
+        myRecords: mapped,
       };
     default:
       return state;

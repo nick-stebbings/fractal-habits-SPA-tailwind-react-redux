@@ -1,7 +1,6 @@
-import BASE_URL, { clientRoutes } from "services/restApis";
-import { isCrud, createCrudActionCreators } from "app/utils";
+import { clientRoutes } from "services/restApis";
+import { createCrudActionCreators } from "app/utils";
 
-import { Habit } from "./types";
 // import { habitSlice } from "./reducer";
 // const { createHabit, deleteHabit, updateHabit } = habitSlice.actions;
 
@@ -21,7 +20,11 @@ export const actionStrings = [
   FETCH_HABIT,
 ];
 const thunkCallBacks = Object.values(clientRoutes(BASE_PATH));
-const actionCreators = createCrudActionCreators(actionStrings, thunkCallBacks);
+
+export const actionCreators = createCrudActionCreators(
+  actionStrings,
+  thunkCallBacks
+);
 
 const [
   createHabitREST,
@@ -29,7 +32,7 @@ const [
   updateHabitREST,
   destroyHabitREST,
 ] = actionCreators;
-
+console.log(actionCreators)
 export {
   // createHabit,
   // deleteHabit,

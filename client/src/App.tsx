@@ -22,7 +22,7 @@ export const App: React.FC<indexProps> = ({}) => {
     debugger;
   }, []);
 
-  const loadData = () => dispatch(fetchHabitREST(1)());
+  const loadData = () => dispatch(fetchHabitREST());
 
   return (
     <div className="App">

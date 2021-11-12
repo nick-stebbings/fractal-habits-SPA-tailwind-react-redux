@@ -11,7 +11,7 @@ import merge from "deepmerge";
 import * as luxon from "luxon";
 
 export const initialState: Dictionary<HabitDate[]> = {
-  myHabitDates: [
+  myRecords: [
     {
       habitId: 0,
       timeframe: {
@@ -31,7 +31,7 @@ export const habitDateSlice = createSlice({
       const { habitDates, id } = action.payload.habitDate;
       return {
         ...state,
-        myHabitDates: { habitDate: habitDate || [] },
+        myRecords: { habitDate: habitDate || [] },
       };
     },
     deleteHabitDate(state, action: PayloadAction<DeleteHabitDatePayload>) {

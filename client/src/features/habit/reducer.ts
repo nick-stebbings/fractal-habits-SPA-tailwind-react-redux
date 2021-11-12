@@ -9,10 +9,10 @@ import {
 } from "./types";
 import { Dictionary } from "app/types";
 
-import { crudReducer } from "app/utils";
-import { actionStrings } from "./actions";
+import { crudReducer, isCrud } from "app/utils";
+import { actionCreators } from "./actions";
 
-export const initialState: Dictionary<Habit> = {
+export const initialState: Dictionary<Habit | Habit[]> = {
   currentHabit: {
     timeframe: {
       fromDate: luxon.DateTime.local().startOf("day").ts,
@@ -49,19 +49,10 @@ export const habitSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(actionStrings[0], (state, action) => {
-      debugger;
-      return { ...state };
-    });
-    //  builder.addMatcher(isLoadingAction, (state) => ({
-    //    responseStatus: loadingState,
-    //  }));
-    //  builder.addMatcher(isErrorAction, (state) => ({
-    //    responseStatus: errorState,
-    //  }));
-    //  builder.addDefaultCase((state) => ({
-    //    responseStatus: idleState,
-    //  }));
+    builder.addMatcher(
+      (action) => isCrud(action, ...actionCreators),
+      (state, action) => crudReducer(state, action, ...actionCreators)
+    );
   },
 });
 
