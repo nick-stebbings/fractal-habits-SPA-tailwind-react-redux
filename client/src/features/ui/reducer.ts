@@ -15,15 +15,15 @@ export const idleState: RequestState = {
 };
 
 export const isDataAction = (action: AnyAction) => {
-  return action.type.endsWith("_SUCCESS");
+  return action.type.endsWith("/fulfilled");
 };
 
 export const isErrorAction = (action: AnyAction) => {
-  return action.type.endsWith("_FAILURE");
+  return action.type.endsWith("/rejected");
 };
 
 export const isLoadingAction = (action: AnyAction) => {
-  return action.type.endsWith("_REQUESTED");
+  return action.type.endsWith("/pending");
 };
 
 const dataIndicator = createSlice({
