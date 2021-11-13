@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import DateTime from "luxon/src/datetime.js";
 
+//<PEDAC>
+
+//</PEDAC >
+
 import { getThisWeekSpaces } from "app/features/space/slice";
 import DateCard from "./DateCard";
 

@@ -7,7 +7,8 @@ import {
 } from "./types";
 import { Dictionary } from "app/types";
 
-import merge from "deepmerge";
+import { crudReducer, isCrud } from "app/utils";
+import { actionCreators } from "./actions";
 import * as luxon from "luxon";
 
 export const initialState: Dictionary<HabitDate[]> = {
@@ -44,6 +45,12 @@ export const habitDateSlice = createSlice({
         myHabitDates: { habitDate },
       };
     },
+  },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      (action) => isCrud(action, ...actionCreators),
+      (state, action) => crudReducer(state, action, ...actionCreators)
+    );
   },
 });
 

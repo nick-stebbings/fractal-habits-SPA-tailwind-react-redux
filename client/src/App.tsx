@@ -3,26 +3,28 @@ import { useAppDispatch, useAppSelector } from "./app/hooks";
 
 import TodoList from "features/todo/components/TodoList";
 
-import { fetchHabitREST } from "features/habit/actions";
+import { fetchHabitsREST } from "features/habit/actions";
 
-import { getCurrent } from "features/todo/selectors";
+import { getCurrent as currentTDL } from "features/todo/selectors";
+import { getCurrentHabit } from "features/habit/selectors";
 
 interface indexProps {}
 
 export const App: React.FC<indexProps> = ({}) => {
   const dispatch = useAppDispatch();
-  const currentList = useAppSelector(getCurrent);
+  const currentList = useAppSelector(currentTDL);
+  const currentHabit = useAppSelector(getCurrentHabit);
 
   const [lists, setLists] = useState(currentList);
+  const [habit, setHabit] = useState(currentHabit);
 
-  useEffect(() => {
-    loadData().then(() => {
-      setLists(currentList);
-    });
-    debugger;
-  }, []);
+  const loadHabits = () => dispatch(fetchHabitsREST());
+  const loadData = async function () {
+    await loadHabits();
+    setHabit(currentHabit);
+  };
 
-  const loadData = () => dispatch(fetchHabitREST());
+  useEffect(() => loadData(), []);
 
   return (
     <div className="App">

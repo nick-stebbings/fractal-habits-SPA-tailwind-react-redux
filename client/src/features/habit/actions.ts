@@ -1,5 +1,6 @@
 import { clientRoutes } from "services/restApis";
 import { createCrudActionCreators } from "app/utils";
+import { fetchHabitDatesREST } from "features/habitDate/actions";
 
 // import { habitSlice } from "./reducer";
 // const { createHabit, deleteHabit, updateHabit } = habitSlice.actions;
@@ -19,8 +20,21 @@ export const actionStrings = [
   DESTROY_HABIT,
   FETCH_HABIT,
 ];
-const thunkCallBacks = Object.values(clientRoutes(BASE_PATH));
+let clientRouteDict = clientRoutes(BASE_PATH);
+const fetchRoute = clientRouteDict.show_all.bind({});
 
+clientRouteDict.show_all = async (_, thunkAPI: any) =>
+  fetchRoute().then((response: object) => {
+    console.log("fetchRoute, thunkAPI :>> ", fetchRoute, thunkAPI);
+    const parsed = JSON.parse(response.data);
+    const firstHabitId = parsed.habits[0].id;
+    thunkAPI.dispatch(
+      fetchHabitDatesREST({ id: firstHabitId, periodLength: 7 })
+    ); // Populate HabitDates for the last week
+    return thunkAPI.fulfillWithValue(response); // Return reolved promise to dispatch _fulfilled action
+  });
+
+const thunkCallBacks = Object.values(clientRouteDict);
 export const actionCreators = createCrudActionCreators(
   actionStrings,
   thunkCallBacks
@@ -28,17 +42,17 @@ export const actionCreators = createCrudActionCreators(
 
 const [
   createHabitREST,
-  fetchHabitREST,
+  fetchHabitsREST,
   updateHabitREST,
   destroyHabitREST,
 ] = actionCreators;
-console.log(actionCreators)
+
 export {
   // createHabit,
   // deleteHabit,
   // updateHabit,
   createHabitREST,
-  fetchHabitREST,
+  fetchHabitsREST,
   updateHabitREST,
   destroyHabitREST,
 };

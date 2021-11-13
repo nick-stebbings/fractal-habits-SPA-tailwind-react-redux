@@ -2,6 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Dictionary, TimeFrame } from "app/types";
 import { RootState } from "app/store";
 
+import { weekOfDaySpaces } from "app/utils";
+
 export const getThisWeekSpaces = (state: RootState) => {
   return state?.space.thisWeek;
 };
@@ -26,26 +28,6 @@ export interface Space {
 //   spaceId: string;
 //   spacePatch: Partial<Space>;
 // }
-// import merge from "deepmerge";
-import * as luxon from "luxon";
-
-const daySpace = (startRelative = 0, numberOfDays = 1) => ({
-  // startRelative is days relative to present (negative)
-  timeframe: {
-    fromDate:
-      luxon.DateTime.local().startOf("day") -
-      luxon.Duration.fromObject({ days: -startRelative }),
-    toDate:
-      luxon.DateTime.local().startOf("day") +
-      luxon.Duration.fromObject({ days: startRelative + numberOfDays }),
-    length: luxon.Duration.fromObject({ days: numberOfDays }).toString(),
-  },
-});
-
-const weekOfDaySpaces = (startRelative = 0) =>
-  Array.from("1234567")
-    .map((_, idx) => daySpace(startRelative - idx, 1))
-    .reverse();
 
 export const initialState: Dictionary<Space[]> = {
   thisWeek: weekOfDaySpaces(),

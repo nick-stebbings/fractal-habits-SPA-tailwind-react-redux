@@ -1,6 +1,24 @@
-import _ from "lodash";
+// import _ from "lodash";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DateTime, Duration } from "luxon";
+
+const daySpace = (startRelative = 0, numberOfDays = 1, startDate = null) => {
+  startDate ||= DateTime.local().startOf("day");
+  return {
+    // startRelative is days relative to startDate (negative)
+    timeframe: {
+      fromDate: startDate - Duration.fromObject({ days: -startRelative }),
+      toDate:
+        startDate + Duration.fromObject({ days: startRelative + numberOfDays }),
+      length: Duration.fromObject({ days: numberOfDays }).toString(),
+    },
+  };
+};
+
+export const weekOfDaySpaces = (startRelative = 0) =>
+  Array.from("1234567")
+    .map((_, idx) => daySpace(startRelative - idx, 1))
+    .reverse();
 
 export function isCrud(action, create, fetch, update, destroy) {
   return [create, fetch, update, destroy]
@@ -9,7 +27,7 @@ export function isCrud(action, create, fetch, update, destroy) {
 }
 
 const modelNameFromActionString = (actionString) =>
-  actionString.split(/[_|\/]/)[1];
+  actionString.split(/(?:^.*?_)|(?:[\/])/)[1]; // take the model name e.g. habit_dates from fetch_habit_dates/fulfilled
 
 const mapCallbacks = {
   habits: (element) => {
@@ -21,15 +39,9 @@ const mapCallbacks = {
       habit_node_id,
       initiation_date,
     } = element;
+    const space = daySpace(0, 1, DateTime.fromSQL(initiation_date));
     return {
-      timeframe: {
-        fromDate: DateTime.fromSQL(initiation_date).ts,
-        toDate: DateTime.local().endOf("day").ts,
-        length: Duration.fromMillis(
-          DateTime.local().endOf("day").ts -
-            DateTime.fromSQL(initiation_date).ts
-        ).toString(),
-      },
+      ...space,
       meta: {
         id,
         name,
@@ -39,16 +51,24 @@ const mapCallbacks = {
       },
     };
   },
+  habit_dates: (element) => {
+    const { date, completed_status, habit_id } = element;
+    if (!completed_status) return;
+
+    const space = daySpace(0, 1, DateTime.fromSQL(date));
+    return {
+      ...space,
+      habit_id,
+    };
+  },
 };
 
 export function crudReducer(state, action, create, fetch, update, destroy) {
-  const {
-    payload: { data },
-    type,
-  } = action;
+  const { payload, type } = action;
   const model = modelNameFromActionString(type);
-  const parsed = JSON.parse(data);
-  debugger;
+  const parsed = payload?.data && JSON.parse(payload?.data);
+  let mapped;
+
   switch (type) {
     // CREATE AND UPDATE SHARE A RESPONSE TYPE
     case create.fulfilled().type:
@@ -61,8 +81,20 @@ export function crudReducer(state, action, create, fetch, update, destroy) {
     // FETCH
 
     case fetch.fulfilled().type:
-      // parsed is { "habits": [ { "id": 1, "name": "another test"... }, ... ]
-      const mapped = Object.values(parsed)[0].map(mapCallbacks[model]);
+      // parsed is e.g. { "habits": [ { "id": 1, "name": "another test"... }, ... ]
+
+      mapped = Object.values(parsed)[0]
+        .map(mapCallbacks[model])
+        .filter((record) => record !== null);
+      return {
+        current: mapped[0] || state.current,
+        myRecords: mapped,
+      };
+
+    // DESTROY
+
+    case destroy.fulfilled().type:
+      mapped = Object.values(parsed)[0].map(mapCallbacks[model]);
       return {
         ...state,
         myRecords: mapped,

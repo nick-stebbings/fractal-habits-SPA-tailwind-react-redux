@@ -13,7 +13,7 @@ import { crudReducer, isCrud } from "app/utils";
 import { actionCreators } from "./actions";
 
 export const initialState: Dictionary<Habit | Habit[]> = {
-  currentHabit: {
+  current: {
     timeframe: {
       fromDate: luxon.DateTime.local().startOf("day").ts,
       toDate: luxon.DateTime.local().endOf("day").ts,
