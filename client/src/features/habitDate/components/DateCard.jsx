@@ -1,13 +1,7 @@
 import { positiveCol, negativeCol, noNodeCol } from "app/constants";
 
 export const DateCard = ({ date, completedStatus, isToday }) => {
-  const [weekday, month, monthday] = date
-  .toLocaleString({
-    month: "short",
-        weekday: "short",
-        day: "numeric",
-      })
-      .split(/\W+/);
+  const [weekday, month, monthday] = date.split(/\W+/);
       const statusColour = (function () {
         switch (completedStatus) {
           case true:

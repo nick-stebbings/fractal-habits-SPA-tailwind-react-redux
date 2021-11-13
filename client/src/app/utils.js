@@ -2,7 +2,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DateTime, Duration } from "luxon";
 
-const daySpace = (startRelative = 0, numberOfDays = 1, startDate = null) => {
+export const daySpace = (
+  startRelative = 0,
+  numberOfDays = 1,
+  startDate = null
+) => {
   startDate ||= DateTime.local().startOf("day");
   return {
     // startRelative is days relative to startDate (negative)

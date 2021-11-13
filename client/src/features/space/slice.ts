@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Dictionary, TimeFrame } from "app/types";
 import { RootState } from "app/store";
 
-import { weekOfDaySpaces } from "app/utils";
+import { weekOfDaySpaces, daySpace } from "app/utils";
 
 export const getThisWeekSpaces = (state: RootState) => {
   return state?.space.thisWeek;
@@ -32,6 +32,7 @@ export interface Space {
 export const initialState: Dictionary<Space[]> = {
   thisWeek: weekOfDaySpaces(),
   lastWeek: weekOfDaySpaces(-7),
+  current: daySpace(),
 };
 
 export const spaceSlice = createSlice({
