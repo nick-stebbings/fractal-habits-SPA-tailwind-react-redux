@@ -1,33 +1,24 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createSelector } from "@reduxjs/toolkit";
 import { Dictionary, TimeFrame } from "app/types";
 import { RootState } from "app/store";
 
 import { weekOfDaySpaces, daySpace } from "app/utils";
 
-export const getThisWeekSpaces = (state: RootState) => {
+export const getThisWeekSpaces = createSelector((state: RootState) => {
   return state?.space.thisWeek;
-};
-export const getLastWeekSpaces = (state: RootState) => {
+});
+
+export const getLastWeekSpaces = createSelector((state: RootState) => {
   return state?.space.lastWeek;
-};
+});
+
+export const getCurrentSpace = createSelector((state: RootState) => {
+  return state?.space.current;
+});
 
 export interface Space {
   timeframe: TimeFrame;
 }
-
-// export interface NewSpacePayload {
-//   spaceId: string;
-//   space: Space;
-// }
-
-// export interface DeleteSpacePayload {
-//   spaceId: string;
-// }
-
-// export interface UpdateSpacePayload {
-//   spaceId: string;
-//   spacePatch: Partial<Space>;
-// }
 
 export const initialState: Dictionary<Space[]> = {
   thisWeek: weekOfDaySpaces(),

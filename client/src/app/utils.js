@@ -86,10 +86,10 @@ export function crudReducer(state, action, create, fetch, update, destroy) {
 
     case fetch.fulfilled().type:
       // parsed is e.g. { "habits": [ { "id": 1, "name": "another test"... }, ... ]
-
+      debugger;
       mapped = Object.values(parsed)[0]
         .map(mapCallbacks[model])
-        .filter((record) => record !== null);
+        .filter((record) => record !== undefined);
       return {
         current: mapped[0] || state.current,
         myRecords: mapped,
@@ -115,3 +115,10 @@ export function createCrudActionCreators(actionTypes, callBacks) {
   const destroy = createAsyncThunk(actionTypes[3], callBacks[3]);
   return [create, fetchAll, update, destroy];
 }
+
+export const stringifyDate = (unixTs) =>
+  DateTime.fromMillis(unixTs).toLocaleString({
+    month: "short",
+    weekday: "short",
+    day: "numeric",
+  });

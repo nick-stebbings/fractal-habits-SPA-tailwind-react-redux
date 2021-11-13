@@ -1,28 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { getCurrentSpace, getThisWeekSpaces } from "features/space/slice";
-import DateTime from "luxon/src/datetime.js";
 
-const stringifyDate = (unixTs) =>
-  DateTime.fromMillis(unixTs).toLocaleString({
-    month: "short",
-    weekday: "short",
-    day: "numeric",
-  });
+import DateTime from "luxon/src/datetime.js";
+import { stringifyDate } from "app/utils";
+import { getCurrentSpace, getThisWeekSpaces } from "features/space/slice";
+import { selectIsCompletedDate } from "features/habitDate/selectors";
 
 //<PEDAC>
-// Set a 'current' space as the selected day in the store.
-// 'Map the last week of spaces:
-//   - FOREACH space, map it to a calendar date, feed through a luxon DateTime object
 //   -Use a selector to return the habitDates for the CURRENT habit.
-//   - IF there is a current habit habitDate with the same timeframe (a 'red dot')
-//   - THEN mark feed through completed as true.me timeframe (a 'red dot')
-//   - IF the current space is the mappesd space
-//   - THEN feed date today as true
 //</PEDAC >
 
-import { getThisWeekSpaces } from "app/features/space/slice";
-import DateCard from "./DateCard";
+import { DateCard } from "./DateCard";
 
 const CalendarWidget = (props) => {
   const dispatch = useAppDispatch();
@@ -31,10 +19,9 @@ const CalendarWidget = (props) => {
 
   const [spaces, setSpaces] = useState(currentWeek);
 
-  const isMarkedCompleted = (unixTs) => { return true};
   return (
     <div className="top-28 rounded-3xl lg:flex right-6 flex-nowrap absolute justify-end hidden w-full h-full pt-1">
-      <div class="-left-12 bg-gray-100 border-1 border-balance-basic-dgray flex flex-col items-center habit-description-label gap-y-2 hidden overflow-auto relative rounded-3xl text-balance-basic-black top-0 w-full xl:flex z-0">
+      <div className="-left-12 border-1 border-balance-basic-dgray habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 flex flex-col items-center hidden w-full overflow-auto bg-gray-100">
         <h2 className="flex underline">Description</h2>
         <span className="flex">{"description"}</span>
         <h2 className="flex underline">Initiated On</h2>
@@ -91,15 +78,17 @@ const CalendarWidget = (props) => {
       </div>
       <div
         className="date-card-wrapper rounded-3xl flex-end -mt-14 border-1 flex justify-end w-full gap-2 bg-transparent"
-        style="max-width:75%"
+        style={{ maxWidth: "75%" }}
       >
         {spaces &&
           spaces.map(({ timeframe: { fromDate } }, idx) => (
             <DateCard
               key={idx}
               date={stringifyDate(fromDate)}
-              isToday={stringifyDate(currentSpace) === stringifyDate(fromDate)}
-              completedStatus={isMarkedCompleted(fromDate)}
+              completedStatus={useAppSelector(selectIsCompletedDate(fromDate))}
+              isToday={
+                stringifyDate(currentSpace.fromDate) === stringifyDate(fromDate)
+              }
             />
           ))}
       </div>

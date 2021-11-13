@@ -25,13 +25,12 @@ const fetchRoute = clientRouteDict.show_all.bind({});
 
 clientRouteDict.show_all = async (_, thunkAPI: any) =>
   fetchRoute().then((response: object) => {
-    console.log("fetchRoute, thunkAPI :>> ", fetchRoute, thunkAPI);
     const parsed = JSON.parse(response.data);
     const firstHabitId = parsed.habits[0].id;
     thunkAPI.dispatch(
       fetchHabitDatesREST({ id: firstHabitId, periodLength: 7 })
     ); // Populate HabitDates for the last week
-    return thunkAPI.fulfillWithValue(response); // Return reolved promise to dispatch _fulfilled action
+    return thunkAPI.fulfillWithValue(response);
   });
 
 const thunkCallBacks = Object.values(clientRouteDict);

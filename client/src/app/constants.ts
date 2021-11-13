@@ -1,4 +1,4 @@
-const positiveCol = "#93cc96";
-const negativeCol = "#f2aa53";
-const noNodeCol = "#888";
-const neutralCol = "#888";
+export const positiveCol = "#93cc96";
+export const negativeCol = "#f2aa53";
+export const noNodeCol = "#888";
+export const neutralCol = "#888";
