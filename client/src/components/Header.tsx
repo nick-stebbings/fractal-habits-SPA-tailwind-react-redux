@@ -1,10 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import MENU_ROUTES from "../routes/routeInfo";
+
 import { CalendarWidget } from "features/habitDate/components/CalendarWidget";
-// import ResponsiveNavGroup from "../Nav/ResponsiveNavGroup.jsx";
+
+import ResponsiveNavGroup from "components/Nav/ResponsiveNavGroup";
 // import DomainSelector from "./UI/Inputs/DomainSelector.jsx";
-// import DropdownNav from "../Nav/DropdownNav.jsx";
+import DropdownNav from "components/Nav/DropdownNav";
 // import DateSelector from "../Nav/UI/Inputs/DateSelector.jsx";
 
 import "../assets/styles/components/MaskHeader.scss";
@@ -127,20 +130,18 @@ export const Header = () => {
                   </div>
                 </div>
                 <ul className="lg:hidden flex flex-col-reverse w-full mb-8">
-                  {/* {MenuRoutes.map((route) => (
-                      <ResponsiveNavGroup
-                        id={`nav-${route.label.toLowerCase()}`}
-                        class={
-                          MenuRoutes.selected === route.label
-                            ? "active"
-                            : ""
-                        }
-                        label={route.label}
-                        url={`${route.path}`}
-                      >
-                        {route.subpaths}
-                      </ResponsiveNavGroup>
-                    ))} */}
+                  {MENU_ROUTES.map((route: any, idx) => (
+                    <ResponsiveNavGroup
+                      key={idx}
+                      id={`nav-${route.label.toLowerCase()}`}
+                      classString={
+                        MENU_ROUTES.selected === route.label ? "active" : ""
+                      }
+                      label={route.label}
+                      url={`${route.path}`}
+                      subpaths={route.subpaths}
+                    ></ResponsiveNavGroup>
+                  ))}
                 </ul>
               </nav>
             </div>
@@ -162,7 +163,7 @@ export const Header = () => {
             HABIT
           </span>
           <div className="block max-h-12 md:block overflow-auto sm:hidden">
-            {/* {HabitStore.current()?.name} */}
+            {"HABIT NAME"}
           </div>
         </div>
       </div>
