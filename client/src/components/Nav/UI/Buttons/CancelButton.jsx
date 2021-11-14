@@ -1,33 +1,36 @@
-import { openModal } from '../../../../../../assets/scripts/animations';
-import { newRecord } from '../../../../../../assets/scripts/controller';
+// import { openModal } from "../../../../../../assets/scripts/animations";
+// import { newRecord } from "../../../../../../assets/scripts/controller";
+import React from "react";
+import { Link } from "react-router-dom";
 
-const CancelButton = {
-  oncreate: ({ attrs, dom }) => {
-    dom.addEventListener('click', () => {
-      openModal(false);
-      newRecord(true);
-      attrs.modalType && attrs.modalType(false);
-      [...document.querySelectorAll('.not-added')].forEach((label) => label.classList.remove('not-added'));
-      m.route.set(m.route.get(), null);
+export const CancelButton = ({ id, name, disabled, classString, label }) => {
+  const handleClick = function (e) {
+    dom.addEventListener("click", () => {
+      // openModal(false);
+      // newRecord(true);
+      // attrs.modalType && attrs.modalType(false);
+      [...document.querySelectorAll(".not-added")].forEach((label) =>
+        label.classList.remove("not-added")
+      );
+      // m.route.set(m.route.get(), null);
     });
   },
-  view: ({ attrs }) => (
+  return (
     <div className="button-container cancel-button">
       <button
-        id={attrs.id}
+        id={id}
         type="reset"
-        name={attrs.name}
-        disabled={attrs.disabled}
+        name={name}
+        disabled={disabled}
+        onClick={handleClick}
         className={
-          attrs.class
-            ? `${attrs.class} mr-2 flex-no-shrinkrounded-3xl text-balance-buttontext-neutral font-heavy flex items-center h-8 px-2 my-1 font-sans tracking-wide uppercase`
-            : 'flex-no-shrink mx-3 text-balance-buttontext-neutral font-heavy flex items-center h-8 px-2 my-1 font-sans tracking-wide uppercase'
+          classString
+            ? `${classString} mr-2 flex-no-shrinkrounded-3xl text-balance-buttontext-neutral font-heavy flex items-center h-8 px-2 my-1 font-sans tracking-wide uppercase`
+            : "flex-no-shrink mx-3 text-balance-buttontext-neutral font-heavy flex items-center h-8 px-2 my-1 font-sans tracking-wide uppercase"
         }
       >
-        {attrs.label}
+        {label}
       </button>
     </div>
-  ),
+  )
 };
-
-export default CancelButton;

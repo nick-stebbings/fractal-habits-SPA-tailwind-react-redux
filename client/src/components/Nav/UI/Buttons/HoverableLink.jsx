@@ -9,7 +9,7 @@ export const HoverableLink = ({ id, classString, label, children }) => {
       <div className="mega-menu">
         <div
           className={
-            m.route.param("demo")
+            isDemo
               ? "mega-menu-wrapper bg-gray-600"
               : "mega-menu-wrapper bg-balance-pshades-dark"
           }

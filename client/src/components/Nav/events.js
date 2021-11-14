@@ -27,7 +27,96 @@ const checkAndUpdateCalendar = () => {
   }
 };
 
+let dateIndex;
+let maxDate;
+let minDate;
+let currentHabitDate;
+// const todaysDate = DateTime.now().startOf("day");
+
+// DateStore.indexDatesOfHabit(HabitStore.current());
+// dateIndex = DateStore.listForHabit().indexOf(DateStore.current());
+// [minDate, maxDate] = updatedMinAndMaxForCurrentHabit();
+
+// currentHabitDate =
+//   DateStore.current() && DateTime.fromSQL(DateStore.current().h_date);
+// [minDate, maxDate] = updatedMinAndMaxForCurrentHabit();
+
+// if (newDate()) {
+//   DateStore.submit({ h_date: maxDate.plus({ days: 1 }).toISODate() })
+//     .then(DateStore.index)
+//     .then(() => {
+//       DateStore.indexDatesOfHabit(HabitStore.current());
+//       maxDate = DateTime.fromMillis(
+//         DateTime.fromSQL(DateStore.current().h_date).ts
+//       );
+//       newDate(false);
+//     });
+// }
+
 document.addEventListener("DOMContentLoaded", () => {
+  // Date list
+  const dateInputs = document.querySelectorAll(".date-today");
+
+  document.addEventListener("input", (e) => {
+    if (e.target.value.search(/\d\d-\d\d-\d\d/) === -1) return;
+    // dateIndex = DateStore.listForHabit()
+    //   .map(sanitiseForDataList)
+    //   .indexOf(e.target.value);
+    // let newDate = DateStore.listForHabit()[dateIndex];
+    // DateStore.current(newDate);
+    // changedDate(true);
+  });
+
+  const prevDateSelector = document.getElementById("prev-date-selector");
+  const nextDateSelector = document.getElementById("next-date-selector");
+  [...dateInputs].forEach((input) => {
+    input?.addEventListener("change", (e) => {
+      // e.stopPropagation();
+      // dateIndex = DateStore.listForHabit()
+      //   .map(sanitiseForDataList)
+      //   .indexOf(e.target.value);
+      // let newDate = DateStore.listForHabit()[dateIndex];
+      // DateStore.current(newDate);
+      // changedDate(true);
+    });
+  });
+  prevDateSelector?.addEventListener("click", () => {
+    // if (!HabitStore.current()) return;
+    // if (currentHabitDate?.toLocaleString() !== minDate?.toLocaleString()) {
+    //   dateIndex--;
+    //   let newDate = DateStore.listForHabit()[dateIndex] || DateStore.current();
+    //   DateStore.current(newDate);
+    // }
+    // changedDate(true);
+  });
+  nextDateSelector?.addEventListener("click", () => {
+    // if (!HabitStore.current()) return;
+    // if (currentHabitDate.toLocaleString() !== maxDate.toLocaleString()) {
+    //   dateIndex++;
+    //   let newDate = DateStore.listForHabit()[dateIndex] || DateStore.current();
+    //   DateStore.current(newDate);
+    // }
+    // changedDate(true);
+  });
+
+  // Habit list
+  document.querySelector("#habit-list").addEventListener("click", (e) => {
+    if (e.target.tagName === "BUTTON") {
+      e.stopPropagation();
+
+      if (!e.target.classList.contains("selected")) {
+        const lastSelected = document.querySelector(".selected");
+        lastSelected && lastSelected.classList.toggle("selected");
+        e.target.classList.add("selected");
+      }
+      // HabitStore.current(
+      //   HabitStore.filterById(+e.target.getAttribute("data-id"))[0]
+      // );
+      // changedHabit(true);
+    }
+  });
+
+  // Menu links
   [...document.querySelectorAll(".nav li.hoverable")].forEach((navItem) => {
     navItem.addEventListener("click", (e) => {
       const { id } = e.target;

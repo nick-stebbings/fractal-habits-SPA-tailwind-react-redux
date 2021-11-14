@@ -1,5 +1,5 @@
 import React from "react";
-import ResponsiveNavLink from "./UI/Buttons/ResponsiveNavLink.jsx";
+import ResponsiveNavLink from "./UI/Buttons/ResponsiveNavLink";
 
 const ResponsiveNavGroup = ({ id, classString, label, subpaths }) => {
   // oncreate: ({ dom }) => {
@@ -32,4 +32,4 @@ const ResponsiveNavGroup = ({ id, classString, label, subpaths }) => {
   );
 };
 
-export default ResponsiveNavGroup;
+ResponsiveNavGroup;

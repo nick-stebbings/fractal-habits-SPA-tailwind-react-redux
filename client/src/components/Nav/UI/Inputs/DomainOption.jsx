@@ -1,11 +1,9 @@
-import DomainStore from '../../../../../../store/domain-store';
+import React from "react";
 
-const DomainOption = {
-  view: ({ attrs }) => (
-    <option className="text-xl font-bold" value={attrs.value}>
-      {attrs.value}
+export const DomainOption = ({ value }) => {
+  return (
+    <option className="text-xl font-bold" value={value}>
+      {value}
     </option>
-  ),
+  );
 };
-
-export default DomainOption;

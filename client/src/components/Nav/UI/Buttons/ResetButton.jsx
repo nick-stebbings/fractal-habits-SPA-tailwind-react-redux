@@ -1,14 +1,14 @@
-const ResetButton = {
-  view: ({ attrs }) => (
+import React from "react";
+
+export const ResetButton = ({ id, label }) => {
+  return (
     <div className="button-container reset-button">
       <button
-        id={attrs.id}
+        id={id}
         className="flex-no-shrink text-balance-buttontext-neutral rounded-xl font-heavy flex items-center h-12 px-2 font-sans tracking-wide uppercase"
       >
-        {attrs.label}
+        {label}
       </button>
     </div>
-  ),
+  );
 };
-
-export default ResetButton;
