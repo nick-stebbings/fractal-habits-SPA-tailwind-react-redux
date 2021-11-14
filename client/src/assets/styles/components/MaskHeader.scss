@@ -1,0 +1,361 @@
+// @layer utilities {
+// @variants active, focus {
+//   .darken {
+//     background-blend-mode: darken;
+//   }
+//   .outline-shadow {
+//     @apply rounded-full;
+//   }
+//   .outline-dashed {
+//     @apply outline-light;
+//   }
+//   .outline-light {
+//     @apply border-4 border-balance-sshades-sat;
+//   }
+//   .outline-none {
+//     overflow: hidden;
+//     outline: none;
+//   }
+//   .outline-shadow {
+//     @apply rounded-full;
+//     box-shadow: 0 0 10px 0.75rem rgb(33, 25, 18);
+//   }
+// }
+// }
+
+.logo-link {
+  @apply fixed text-white z-50 w-12 hidden lg:block;
+  left: -2px;
+  top: -2px;
+}
+
+.logo-link,
+nav span {
+  cursor: pointer;
+}
+
+#vis button:hover,
+.logo-link:hover {
+  @apply text-balance-sshades-brighten;
+}
+
+.slash-svg {
+  @apply text-balance-pshades-dark;
+}
+
+/* Masking */
+
+div.mask-wrapper {
+  mask: initial;
+  height: 5rem;
+  z-index: 10;
+  width: 100%;
+  transition: height 0.3s ease;
+
+  > header {
+    @apply sm:h-12 lg:h-16 z-10 flex-none h-16;
+  }
+
+  #current-habit-label span {
+    pointer-events: all;
+    @apply -mt-2;
+  }
+}
+
+div.mask-wrapper::after,
+div.mask-wrapper::before {
+  border: 0 !important;
+}
+
+body[class^="scroll"] #subnav {
+  mask: no-repeat 15px -20px url("../../images/fib-mask-1900-420.svg");
+}
+
+body[class^="scroll"] .sm-selector-container,
+body[class^="scroll"] #hamburger-wrapper nav {
+  display: none;
+}
+
+body[class^="scroll"] .mask-wrapper {
+  mask: block;
+}
+
+@media (min-width: 640px) {
+  .sm-selector-container .date-today {
+    transform: translateY(-0.22rem);
+  }
+}
+
+#subnav {
+  @apply -mt-11 lg:block fixed hidden w-full;
+}
+
+#subnav nav.nav {
+  @apply w-full h-12;
+}
+
+#subnav .nav-title,
+#subnav .nav-links,
+#subnav .nav-links > li > a {
+  @apply flex lg:-mt-1.5;
+}
+
+#subnav .nav-links {
+  @apply flex flex-row-reverse justify-end w-1/3 pl-8;
+}
+
+.nav-container > div:last-child {
+  @apply h-12 px-2 top-9 left-4 bg-gray-700 border-balance-buttonbg-disabled absolute flex items-center mt-2 rounded-sm;
+  pointer-events: none;
+}
+
+.nav-label-primary > div,
+.nav-label-primary > div > span {
+  @apply flex items-center;
+}
+
+li.hoverable {
+  height: 8vh;
+  max-height: 75px;
+  @apply flex items-center;
+
+  a {
+    cursor: pointer;
+    @apply pt-1;
+  }
+
+  > div.mega-menu {
+    @apply absolute inset-x-0 z-10 pt-14 top-0 w-full;
+    height: 350px;
+
+    .mega-menu-wrapper {
+      background: no-repeat -0.5rem -2.25rem url("../../images/watermark.png");
+      margin-top: 1.2rem;
+      padding-right: 0.6em;
+      @apply flex h-full;
+
+      .hero-message {
+        @apply w-1/4 pl-4 pr-2 mb-1 bg-gradient-to-r from-transparent to-balance-tershades-gray;
+
+        h2 {
+          @apply px-4 py-2 w-2/3 lg:mt-6 float-right bg-gray-900 rounded-2xl rounded-br-none bg-opacity-60;
+        }
+
+        p {
+          @apply float-right sm:w-1/2 bg-gray-900 rounded-2xl rounded-t-none p-4 pt-0 bg-opacity-60;
+        }
+      }
+
+      .inset {
+        @apply bg-balance-tershades-gray flex rounded-xl rounded-l-none w-3/4 gap-2 p-0 pr-2 pt-2 mb-2;
+
+        .menu-card.disabled {
+          flex-grow: 1;
+          flex-shrink: 2;
+          @apply px-4;
+          p,
+          button {
+            display: none;
+          }
+          .overlay {
+            @apply relative h-full bg-gray-600 rounded-2xl;
+            width: 180px;
+            margin: 1rem auto;
+          }
+        }
+
+        .menu-card.enabled .overlay {
+          opacity: 0;
+          display: none;
+        }
+
+        .menu-card {
+          flex-grow: 2;
+          flex-shrink: 1;
+          width: 33%;
+          @apply flex mb-4 pt-4 shadow-md;
+          h3 {
+            line-height: 1.8rem;
+            @apply pr-2;
+          }
+
+          .menu-card-button {
+            @apply absolute bottom-0 border-2 mt-12 p-3 m-2 rounded-full shadow-md text-gray-50 bg-gray-700 uppercase;
+          }
+
+          .menu-card-button:focus,
+          .menu-card-button:active {
+            @apply outline-none border-balance-pshades-dark;
+          }
+
+          .menu-card-button:hover {
+            @apply text-gray-50 bg-gradient-to-b from-gray-500 to-transparent;
+          }
+
+          .menu-card-button.active:hover {
+            @apply text-gray-50 from-transparent;
+          }
+
+          p {
+            @apply px-4 mt-1;
+          }
+        }
+
+        .menu-card.active {
+          @apply bg-gray-100 border-balance-sshades-brighten border-2;
+
+          button {
+            @apply bg-balance-sshades-brighten text-gray-50;
+          }
+
+          button:hover {
+            @apply border-0;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Hoverable Menu Activation */
+
+.mega-menu {
+  display: none;
+}
+
+/* Fixed Nav Links in top-left */
+/* --------------------------- */
+#subnav .nav-links > li.hoverable,
+#subnav .nav-container > div {
+  @apply bg-balance-tershades-gray z-20 pl-2 font-light border-2 rounded-full;
+  margin-left: -1.3rem;
+  transition: margin-left 0.2s ease-out;
+}
+
+#subnav .nav-links > li.hoverable {
+  @apply bg-balance-tershades-gray pr-0;
+}
+
+#subnav .nav-links > li.hoverable:hover .habit-description-label {
+  display: none;
+}
+
+#subnav .nav-links > li.hoverable:hover {
+  @apply bg-gradient-to-r from-balance-tershades-gray to-transparent;
+}
+
+#subnav .nav-links > li.hoverable:last-of-type {
+  @apply pl-14;
+}
+
+/* 'Slash' SVG between logo and nav-link */
+
+#subnav .nav-links > li.hoverable:last-of-type::before {
+  content: url("../../images/icons/slash.svg");
+  position: absolute;
+  z-index: 40;
+  left: 62px;
+  top: -10px;
+  width: 4px;
+  height: 4px;
+  transform: rotate(39deg) scale(0.6);
+  transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+body[class^="scroll"] #subnav .nav-links > li.hoverable:last-of-type::before {
+  top: 63px;
+  left: 25px;
+  transform: rotate(-142deg) scale(0.9);
+}
+
+/* ---  Scroll behaviour --- */
+
+body[class^="scroll"] #subnav .nav-links > li.hoverable.active {
+  @apply text-gray-100 bg-gray-700 border-0;
+  padding-left: 8rem;
+  margin-left: -1.3rem;
+  min-width: 12rem;
+  order: 1; /* Send it to the front of the flex row to display */
+}
+
+body[class^="scroll"] li#demo-indicator {
+  @apply hidden;
+}
+
+body[class^="scroll"] #subnav .nav-links > li.hoverable.active a {
+  @apply pr-2 mb-1 mt-2 pl-0;
+}
+
+body[class^="scroll"] #subnav .nav-links > li.hoverable.inactive {
+  order: 2;
+  transition: width 2s ease-in;
+  // margin-left 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  width: 0%;
+  overflow: hidden;
+  margin-left: -6rem;
+}
+
+/* ---  Hover States --- */
+
+#subnav .nav-links > li.hoverable:hover,
+body[class^="scroll"] #subnav .nav-links > li.hoverable.active:hover {
+  @apply text-balance-sshades-sat;
+}
+
+#subnav .nav-links li.hoverable,
+span.logo svg path,
+.nav-label-primary {
+  @apply focus:outline-none; //focus:outline-shadow active:outline-dashed
+}
+
+#app .nav-container .active {
+  @apply border-balance-sshades-brighten border-2;
+}
+
+@media (min-width: 1024px) {
+  div.mask-wrapper {
+    @apply relative z-40 overflow-hidden;
+    mask: no-repeat 10px -20px url("../../images/fib-mask-1900-420.svg");
+  }
+  .mask-wrapper .logo {
+    display: none;
+  }
+  body[class^="scroll"] div.mask-wrapper:hover {
+    height: 5rem;
+  }
+
+  div.mask-wrapper:hover {
+    #current-habit-label {
+      @apply fixed top-10 max-w-7xl overflow-auto;
+    }
+    height: 5rem;
+  }
+
+  .nav-label-primary div span i {
+    line-height: 3rem;
+  }
+}
+
+@media (min-width: 1340px) {
+  nav > div > .nav-label-primary:last-of-type {
+    left: 20rem;
+    width: 17.6rem;
+  }
+  .hero-message p {
+    width: 12rem;
+    display: block;
+    max-width: 80%;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  div.mask-wrapper {
+    mask: none;
+  }
+  #subnav .nav-links {
+    li::last-of-type {
+      padding-left: 1rem;
+    }
+    padding-left: 0;
+  }
+}

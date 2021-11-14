@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import reactRefresh from "@vitejs/plugin-react-refresh";
 
+import scss from "rollup-plugin-scss";
 import alias from "@rollup/plugin-alias";
 import { resolve } from "path";
 
@@ -8,6 +9,7 @@ import { resolve } from "path";
 export default defineConfig({
   plugins: [
     reactRefresh(),
+    scss(),
     alias({
       entries: [
         {

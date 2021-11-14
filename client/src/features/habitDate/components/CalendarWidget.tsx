@@ -25,7 +25,7 @@ export const CalendarWidget = () => {
   const [spaces, setSpaces] = useState(currentWeek);
 
   return (
-    <div className="top-28 rounded-3xl lg:flex right-6 flex-nowrap absolute justify-end hidden w-full h-full pt-1">
+    <div className="top-28 rounded-3xl lg:flex right-6 flex-nowrap absolute justify-end w-full h-full pt-1">
       <div className="-left-12 border-1 border-balance-basic-dgray habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 flex flex-col items-center hidden w-full overflow-auto bg-gray-100">
         <h2 className="flex underline">Description</h2>
         <span className="flex">{"description"}</span>

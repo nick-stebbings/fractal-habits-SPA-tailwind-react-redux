@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 import TodoList from "../features/todo/components/TodoList";
-import { CalendarWidget } from "../features/habitDate/components/CalendarWidget";
+import { Header } from "./Header";
 
 import { fetchHabitsREST } from "../features/habit/actions";
 
@@ -27,11 +27,9 @@ export const App: React.FC<indexProps> = ({}) => {
   useEffect(() => loadData(), []);
 
   return (
-    <div className="App">
-      <div className="current-list container">
-        <CalendarWidget></CalendarWidget>
-        {lists && <TodoList list={lists}></TodoList>}
-      </div>
+    <div className="current-list container">
+      <Header />
+      {lists && <TodoList list={lists}></TodoList>}
     </div>
   );
 };

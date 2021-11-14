@@ -1,0 +1,31 @@
+#append-habit {
+  @apply flex flex-wrap justify-between ml-2;
+}
+
+#append-habit .button-container {
+  @apply relative right-0;
+}
+
+#append-habit .button-container {
+  @apply rounded-2xl mx-0.5;
+}
+
+#append-habit > .sub-section-container {
+  @apply px-2 mt-6 mb-6 sm:-ml-2 lg:-ml-3 flex-none w-full lg:w-1/2 border-2 bg-white rounded-2xl;
+}
+
+#append-habit > .sub-section-container:last-of-type {
+  @apply flex-none sm:mr-2 lg:fixed w-full mb-32;
+  right: 1.5rem;
+  transition: opacity ease-out 0.6s;
+}
+
+#append-habit input[type="date"] {
+  @apply p-2;
+}
+
+@media only screen and (min-width: 1024px) {
+  #append-habit > .sub-section-container:last-of-type {
+    width: 48%;
+  }
+}

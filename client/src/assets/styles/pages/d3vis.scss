@@ -1,0 +1,77 @@
+g.nodes {
+  cursor: pointer;
+  pointer-events: all;
+}
+.controlsSvg {
+	width: 500px;
+	right:0;
+}
+
+.legendSvg, .controlsSvg {
+	pointer-events: none;
+}
+
+.legendSvg {
+	left: 0.25rem;
+	transition: bottom 0.3s ease-in;
+	bottom:-9.75rem;
+	z-index: 100;
+	@apply h-72 w-72;
+	text {
+    font-size:0.5rem;
+	}
+}
+
+.the-node.active circle {
+  stroke: #5568d2;
+}
+
+svg path.link {
+  stroke: gray;
+  fill: none;
+  stroke-width: 2.5;
+}
+
+g.tooltip rect {
+	fill: #F8F8F8 ;
+  stroke: #1A140E !important;
+	stroke-width: 1px;
+}
+
+g.tooltip text, .controlsSvg text {
+	fill: #1A140E !important;
+	stroke: #1A140E !important;
+	stroke-width: 1px;
+}
+
+body[class^="scroll"] .legendSvg, body[class^="scroll"] .controlsSvg {
+	opacity: 0;
+	visibility: none;
+	transition: opacity 0.2s ease-out;
+} 
+
+.controlsSvg text {
+	text-anchor: end;
+}
+
+.habit-label-dash-button text {
+	fill: #f8f8f8 !important;
+	stroke-width: 1px;
+}
+
+.habit-label-dash-button {
+	fill: #1A140E  !important;
+  stroke: #f8f8f8 !important;
+	stroke-width: 1px;
+}
+
+g.tooltip rect:first-of-type {
+	fill: #47301f !important;
+}
+
+@media only screen and (min-width: 760px) {
+	.controlsSvg {
+		width: 350px;
+		right:0;
+	}
+}

@@ -1,0 +1,252 @@
+@layer utilities {
+  @variants active, focus {
+    .outline-light {
+      @apply border-4 border-balance-sshades-sat;
+    }
+    .outline-none {
+      overflow: hidden; outline: none;
+    }
+    .outline-shadow {
+      @apply rounded-full;
+      box-shadow: 0 0 10px 0.75rem rgb(33, 25, 18);
+    }
+  }
+}
+
+thead tr {
+  @apply hidden w-full flex items-center;
+}
+
+thead, tbody {
+  @apply w-full;
+}
+
+tr {
+  @apply flex flex-col md:flex-row w-full items-center border-balance-tershades-gray md:border-0 border-2;
+  background-color: white;
+  transition: background-color ease 0.6s;
+}
+
+th > div {
+  @apply text-center md:text-left;
+}
+
+tr.selected {
+  @apply border-balance-tershades-dark border-2;
+}
+
+form {
+  @apply w-full flex flex-col items-center px-4 pt-6 pb-20;
+}
+
+form#create-new-habit-child,
+form#create-new-habit-child > .input-container > div {
+  @apply p-0 m-0;
+  transition: opacity ease 0.6s;
+}
+
+form#create-new-habit-child > .input-container {
+  @apply px-6 m-0 mb-4;
+}
+
+.form-header {
+  @apply text-xl md:text-2xl;
+}
+
+.input-container {
+  @apply h-full px-8 xl:w-5/6 w-full mt-4 text-xl;
+}
+
+#modal .input-container {
+  @apply absolute bottom-auto;
+}
+
+#modal .input-container {
+  @apply overflow-y-auto absolute bottom-auto;
+}
+
+label {
+  @apply leading-loose text-sm my-2;
+}
+
+label.reqd::before {
+  content: "*";
+  @apply text-lg text-balance-digblue-dark;
+}
+
+label.reqd.not-added::before {
+  @apply text-balance-buttonbg-close;
+}
+
+label.reqd.not-added::after {
+  content: '    - Please fill this in correctly!';
+  @apply text-balance-buttonbg-close font-bold;
+}
+
+/* Buttons */
+
+#append-habit .button-group {
+  @apply pr-6;
+}
+
+.button-group {
+  @apply rounded-2xl w-full h-24 sm:h-16 text-sm fixed bottom-0 gap-3 flex flex-row justify-end items-center inset-x-0;
+}
+
+.button-container {
+  @apply rounded-3xl flex justify-center items-center mx-2 my-1 border-2 shadow-md;
+}
+
+.button-container > span,
+.button-group > button {
+  @apply flex h-12 rounded-2xl focus:outline-light focus:outline-shadow;
+}
+
+.button-group > .button-container:first-of-type {
+  @apply -mr-4 rounded-r-none focus:outline-light;
+}
+
+.button-group > .button-container:last-of-type {
+  @apply ml-0 rounded-l-none focus:outline-light;
+}
+
+.button-container.cancel-button {
+  @apply bg-balance-buttonbg-close hover:bg-balance-buttonbg-closelighter;
+}
+
+.button-container.submit-button {
+  @apply bg-balance-buttonbg-success hover:bg-balance-buttonbg-successlighter;
+}
+
+.button-container.general-button {
+  @apply hover:border-balance-sshades-sat border-balance-tershades-dark;
+  border-radius: 1.1rem;
+}
+
+.button-container-reset-button {
+  @apply bg-balance-buttonbg-submit hover:border-balance-pshades-gray hover:bg-balance-sshades-light border-balance-sshades-dark;
+}
+
+main#append-habit .button-container.selected {
+  @apply hover:bg-balance-digblue-brighten text-balance-buttontext-digblue bg-balance-buttonbg-digblue;
+}
+
+#habit-list button.selected {
+  @apply bg-balance-buttonbg-digbluelighter hover:bg-balance-buttonbg-digblue text-white font-bold border-balance-sshades-gray border-2;
+}
+
+#vis button {
+  z-index: 101;
+  transition: right 0.2s ease-in;
+  @apply w-48 text-lg text-right -right-36 active:outline-light focus:outline-none focus:outline-shadow fixed border-2 p-3 pl-4 pr-8 m-1 rounded-full shadow-md text-gray-100 bg-gray-700 uppercase;
+}
+
+#vis button span {
+  @apply ml-4;
+}
+
+#vis button:hover {
+  right: -2rem;
+}
+
+#vis button::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f78c";
+  left: 1rem;
+  position: absolute;
+}
+
+#reset-tree {
+  @apply bottom-14 lg:bottom-auto lg:top-36;
+}
+
+#vis button#reset-tree::before {
+  content: "\f065";
+}
+
+#vis button.active::before {
+  content: "\f31e";
+}
+
+#collapse-tree {
+  @apply bottom-1 lg:bottom-auto lg:top-48;
+}
+
+/* Inputs */
+
+.mask-wrapper input[type="date"] {
+  @apply border-0 pl-0 mt-0;
+}
+
+.nav-label-primary div span {
+  user-select: none;
+}
+
+input[type="text"], input[type="email"],
+.sm-selector-container select.domain-selector,
+input[type="date"] {
+  @apply focus:ring-balance-sshades-brighten focus:border-balance-sshades-brighten border-2 text-sm lg:text-xl text-gray-600 border-gray-300 rounded-md;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
+
+.mask-wrapper input[type="date"]::-webkit-inner-spin-button,
+.mask-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+@media (min-width: 768px) {
+  footer ul li:first-of-type h2 {
+    @apply text-right;
+  }
+
+  footer ul li:last-of-type h2 {
+    @apply px-0 ml-3;
+  }
+
+  footer ul, footer ul li {
+    @apply w-full;
+  }
+  
+  footer ul li:first-of-type li {
+    @apply justify-end px-0;
+  }
+
+  thead tr, tbody tr {
+    display: inline-table;
+  }
+
+  tr > *:first-of-type {width: 30%; padding-right: 2rem;}
+  tr > *:nth-of-type(2) {width: 20%}
+  tr > *:nth-of-type(3) {width: 15%;}
+  tr > *:nth-of-type(4) {width: 18%;}
+  tr > *:nth-of-type(5) {width: 17%}
+}
+
+@media (min-width: 1024px) {
+  .mask-wrapper input[type="date"] {
+    line-height: 1rem;
+    transform: translateY(9px);
+    padding: 0;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  select.domain-selector::-ms-expand {
+    display: none;
+  }
+
+  select.domain-selector::after {
+    content: "<>";
+    position: absolute;
+    pointer-events: none;
+  }
+  select.domain-selector {
+    display: block;
+    float: right;
+  }
+}

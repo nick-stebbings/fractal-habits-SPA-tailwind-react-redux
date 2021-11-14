@@ -1,0 +1,235 @@
+html {
+  @apply antialiased;
+}
+
+/* Section-specific */
+
+#call-to-action h2,
+section.info-cards h3,
+section > h2:first-of-type {
+  font-family: Silka, "Palanquin Dark", sans-serif;
+  font-weight: 600;
+  @apply tracking-widest text-center text-xl text-gray-800 uppercase;
+}
+
+#call-to-action h3 {
+  @apply mt-8;
+}
+
+section.cards h1 {
+  @apply font-sans border-balance-tershades-dark block pl-4 ml-2 mt-4 font-bold uppercase border-l-8;
+}
+
+section > h2:first-of-type {
+  @apply mt-4 underline text-center;
+}
+
+.feature-card-content-wide h3,
+.feature-card-content h3 {
+  font-family: Nunito, Lato, sans;
+}
+
+.user-nav-label,
+.menu-card-button {
+  font-family: B612, Lato, Nunito, sans;
+  font-weight: 300;
+}
+
+#app footer h2,
+#app footer ul a, #app footer h1 {
+  @apply text-gray-50;
+  font-family: Silka, "Palanquin Dark", sans-serif;
+  font-weight: 400;
+}
+/* Domain selector and Date selector buttons/labels */
+
+.habit-description-label h2,
+.nav-label-primary > span,
+.user-nav-label span label,
+.responsive-nav-group >h2,
+.responsive-nav-group > a {
+  font-family: Nunito, Silka, sans-serif;
+  font-weight: 700;
+  @apply leading-tight uppercase text-balance-pshades-light text-xl tracking-wide;
+}
+
+.responsive-nav-group >h2 {
+  @apply border-b-2;
+}
+
+.feature-card a,
+section > h2:first-of-type,
+.nav-label-primary > span:hover,
+.responsive-nav-group > a:hover {
+  text-decoration: underline;
+  text-decoration-color: #ef9323;
+  -webkit-text-decoration-color: #ef9323;
+}
+
+.nav-label-primary div span i {
+  /* Date Picker arrows */
+  @apply text-base lg:text-2xl mt-2;
+}
+
+.user-nav-label span {
+  font-weight: 700;
+}
+.user-nav-label {
+  @apply text-balance-pshades-dark font-bold text-2xl lg:text-base tracking-wider;
+}
+
+form label {
+  @apply leading-loose text-sm;
+}
+
+/* Page-specific */
+
+.habit-list-details-name {
+  @apply text-balance-pshades-dark font-semibold;
+}
+
+/* Navigation Bars */
+
+li#demo-indicator {
+  @apply pt-2 px-2 xl:text-sm text-gray-100 font-sans text-right leading-4;
+}
+
+#current-habit-label-sm > div {
+  line-height: 1;
+  min-height: 50px;
+  @apply w-full h-full block;
+}
+
+#current-habit-label-sm > span:first-of-type {
+  @apply text-gray-50 tracking-widest;
+}
+
+#current-habit-label-sm > span:first-of-type,
+#subnav .nav-links > li.hoverable a, #current-habit-sm span {
+  @apply uppercase pt-2 lg:px-4 xl:text-2xl lg:text-xl lg:leading-9 leading-10;
+  font-family: B612, Lato, Nunito, sans;
+  font-weight: 700;
+}
+
+.nav-container span:first-child {
+  @apply uppercase lg:px-4 lg:pl-6 xl:text-xl lg:px-4 lg:leading-9 leading-10 block;
+  font-family: B612, Lato, Nunito, sans;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+body[class^="scroll"] #subnav .nav-links > li.hoverable a {
+  @apply text-2xl;
+}
+
+nav .hero-message > h2 {
+  @apply leading-8 tracking-wide text-xl text-gray-50;
+}
+
+nav .hero-message p {
+  @apply leading-5 text-gray-100 text-right;
+  font-weight: 100;
+  letter-spacing: 0.5px;
+  line-height: 1.15rem;
+}
+
+nav .menu-card.enabled h3 {
+  @apply text-xl text-center text-balance-pshades-dark;
+  cursor: default;
+}
+
+nav .menu-card.disabled .overlay h3 {
+  @apply text-xl text-center text-gray-100 font-bold;
+}
+
+nav .menu-card p {
+  @apply text-xs text-black font-light tracking-wide text-center;
+  font-family: Nunito, sans-serif;
+  font-size: 1rem;
+}
+
+.resp-nav-link {
+  @apply font-semibold text-2xl;
+}
+
+.resp-nav-link:active::before,
+.resp-nav-link:hover::before {
+  @apply text-balance-pshades-light;
+  content: url("../images/icons/slash.svg");
+  position: relative;
+  z-index: -1;
+  left: 0.5rem;
+  top: -0.5rem;
+  width: 4px;
+  height: 4px;
+  transform: rotate(39deg) scale(0.35);
+}
+
+.slogan h1 {
+  color: #B7C892;
+  font: 800 3rem 'Poppins', sans-serif; 
+  text-shadow:
+    -1px -1px 0 #000,  
+    1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
+  -webkit-text-stroke: 1px #261C15;
+  letter-spacing: .05em;
+  line-height: 1.25em;
+  margin-top: 1rem;
+}
+
+h1.main-logo {
+  @apply text-black;
+  font: 600 2.5rem 'Oleo Script Swash Caps', cursive;
+  letter-spacing: .05em;
+  line-height: 1.25em;
+}
+
+h1.main-logo span {
+  color: #fb9417;
+  background: -webkit-linear-gradient(90deg, rgba(255,255,2550,.15) 0%, rgba(251,148,23,1) 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-left: .5rem;
+}
+
+h2.tagline {
+  font: 100 .85rem 'Silka', sans-serif; 
+  letter-spacing: .01em;
+  margin-top: -.75rem;
+}
+
+.feature-card:nth-child(1) h2::after {
+  content: 'Build a sense of satisfaction';
+}
+
+.feature-card:nth-child(2) h2::after {
+  content: "And soon you'll be on a roll";
+}
+
+.feature-card:nth-child(3) h2::after {
+  content: '(whilst staying grounded)';
+}
+
+.feature-card:nth-child(4) h2::after {
+  content: 'Mimic natural winners!';
+}
+
+.feature-card:nth-child(5) h2::after {
+  content: 'Experiment with demo data';
+}
+
+.feature-card:nth-child(n) h2::after {
+  font-size: 1.5rem;
+  display: none;
+}
+
+
+@media only screen and (min-width: 1920px) {
+  #app  > .wrapper .slogan h1 {
+      font-size: 5rem;
+    }
+    
+  nav .menu-card p { max-width: 90%; font-size: 1rem; line-height:1.4; }
+}
