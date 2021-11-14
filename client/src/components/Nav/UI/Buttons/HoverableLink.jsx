@@ -1,8 +1,9 @@
 import React from "react";
 
-import MenuList from "../../MenuList";
+import { MenuList } from "../../MenuList";
 
-export const HoverableLink = ({ id, classString, label, children }) => {
+export const HoverableLink = ({ id, classString, label, listItems }) => {
+  const isDemo = false;
   return (
     <li className={`hoverable ${classString}`}>
       <span id={id}>{label}</span>
@@ -20,7 +21,7 @@ export const HoverableLink = ({ id, classString, label, children }) => {
             <p>Track and visualise using these views:</p>
           </div>
           <div className="inset">
-            <MenuList>{children}</MenuList>
+            <MenuList listItems={listItems} />
           </div>
         </div>
       </div>

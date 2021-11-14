@@ -1,19 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../routes/routeInfo";
 
-import MENU_ROUTES from "../routes/routeInfo";
+// @ts-ignore
+import { useAppSelector } from "app/hooks";
+// @ts-ignore
+import { getCurrentHabit } from "features/habit/selectors";
 
+// @ts-ignore
 import { CalendarWidget } from "features/habitDate/components/CalendarWidget";
-
-import ResponsiveNavGroup from "components/Nav/ResponsiveNavGroup";
-// import DomainSelector from "./UI/Inputs/DomainSelector.jsx";
-import DropdownNav from "components/Nav/DropdownNav";
-// import DateSelector from "../Nav/UI/Inputs/DateSelector.jsx";
+import { ResponsiveNavGroup } from "./Nav/ResponsiveNavGroup";
+import { DomainSelector } from "./Nav/UI/Inputs/DomainSelector";
+import { DropdownNav } from "./Nav/DropdownNav";
+import { DateSelector } from "./Nav/UI/Inputs/DateSelector";
 
 import "../assets/styles/components/MaskHeader.scss";
 
 export const Header = () => {
-  let isDemo = true;
+  const currentHabit = useAppSelector(getCurrentHabit);
+  let isDemo = false;
   return (
     <>
       <div
@@ -29,25 +34,22 @@ export const Header = () => {
             id="responsive-nav"
             className="sm:h-12 lg:px-0 lg:justify-end flex items-center justify-between h-16"
           >
-            <Link
-              to="/"
-              // selector="span"
-              // tabindex={1}
-              // className="logo md:h-8 block h-10"
-            >
-              <svg
-                id="logo"
-                className="hover:text-gray-100 md:ml-1 w-10 h-10 text-gray-100 fill-current stroke-current"
-                width="54"
-                height="54"
-                viewBox="0 0 54 54"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  tabIndex={0}
-                  d="M15.34,45.5C8.26,45.5,2.5,39.74,2.5,32.66s5.76-12.84,12.84-12.84h1.31v8.37l-1.31,0c-2.47,0-4.47,2.01-4.47,4.47  c0,2.47,2.01,4.48,4.47,4.48c2.47,0,4.47-2.01,4.47-4.48l0-1.92v-15.4c0-7.08,5.76-12.84,12.84-12.84c7.08,0,12.84,5.76,12.84,12.84  s-5.76,12.84-12.84,12.84h-1.31v-8.37l1.31,0c2.47,0,4.47-2.01,4.47-4.47c0-2.47-2.01-4.47-4.47-4.47c-2.47,0-4.47,2.01-4.47,4.47  l0,1.92v15.4C28.18,39.74,22.42,45.5,15.34,45.5z"
-                />
-              </svg>
+            <Link to="/">
+              <span className="logo md:h-8 block h-10" tabIndex={1}>
+                <svg
+                  id="logo"
+                  className="hover:text-gray-100 md:ml-1 w-10 h-10 text-gray-100 fill-current stroke-current"
+                  width="54"
+                  height="54"
+                  viewBox="0 0 54 54"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    tabIndex={0}
+                    d="M15.34,45.5C8.26,45.5,2.5,39.74,2.5,32.66s5.76-12.84,12.84-12.84h1.31v8.37l-1.31,0c-2.47,0-4.47,2.01-4.47,4.47  c0,2.47,2.01,4.48,4.47,4.48c2.47,0,4.47-2.01,4.47-4.48l0-1.92v-15.4c0-7.08,5.76-12.84,12.84-12.84c7.08,0,12.84,5.76,12.84,12.84  s-5.76,12.84-12.84,12.84h-1.31v-8.37l1.31,0c2.47,0,4.47-2.01,4.47-4.47c0-2.47-2.01-4.47-4.47-4.47c-2.47,0-4.47,2.01-4.47,4.47  l0,1.92v15.4C28.18,39.74,22.42,45.5,15.34,45.5z"
+                  />
+                </svg>
+              </span>
             </Link>
             <div
               id="hamburger-wrapper"
@@ -84,7 +86,7 @@ export const Header = () => {
                     </span>
                     <div className="lg:pr-0 lg:rounded-3xl lg:rounded-t-none w-56 h-full pl-1 pr-4 mr-2 bg-white rounded-full">
                       <span className="text-balance-sshades-brighten block w-full pt-2 mb-1">
-                        {/* <DomainSelector></DomainSelector> */}
+                        <DomainSelector />
                       </span>
                     </div>
                   </div>
@@ -99,7 +101,7 @@ export const Header = () => {
                             className="fa fa-chevron-circle-left pt-2 pr-2"
                             aria-hidden="true"
                           />`}
-                        {/* <DateSelector></DateSelector> */}
+                        <DateSelector />
                         <i
                           id="next-date-selector"
                           className="fa fa-chevron-circle-right pt-2"
@@ -114,7 +116,7 @@ export const Header = () => {
                     <img
                       className="lg:border-1 lg:border-balance-tershades-gray lg:rounded-3xl lg:rounded-t-none border-1 border-balance-tershades-light flex flex-none object-cover w-10 h-10 rounded-full"
                       src="https://images.unsplash.com/photo-1597020642626-3c9b687eba70?ixid=MXwxMjA3fDB8MXxzZWFyY2h8MXx8bWFuJ3MlMjBmYWNlfHwwfHx8&ixlib=rb-1.2.1&dpr=1&auto=format&fit=crop&w=120&h=200&q=60"
-                      alt=""
+                      alt="profile picture"
                     />
                     <span className="user-nav-label lg:text-gray-100 sm:px-0 lg:ml-0 lg:mr-4 lg:mb-1 lg:px-0 flex block px-2 mx-4 font-light">
                       <span>Bob</span>
@@ -129,24 +131,25 @@ export const Header = () => {
                     </button>
                   </div>
                 </div>
-                <ul className="lg:hidden flex flex-col-reverse w-full mb-8">
-                  {MENU_ROUTES.map((route: any, idx) => (
+                <ul className="nav-groups lg:hidden flex flex-col-reverse w-full mb-8">
+                  {MENU_ROUTES.map(({ label, subpaths }: any, idx: number) => (
                     <ResponsiveNavGroup
                       key={idx}
-                      id={`nav-${route.label.toLowerCase()}`}
+                      id={`nav-${label.toLowerCase()}`}
                       classString={
-                        MENU_ROUTES.selected === route.label ? "active" : ""
+                        MENU_ROUTE_FIRST_SELECTED === label ? "active" : ""
                       }
-                      label={route.label}
-                      url={`${route.path}`}
-                      subpaths={route.subpaths}
-                    ></ResponsiveNavGroup>
+                      label={label}
+                      subpaths={subpaths}
+                    />
                   ))}
                 </ul>
               </nav>
             </div>
           </div>
-          <nav id="subnav">{/* <DropdownNav routes={MenuRoutes} /> */}</nav>
+          <nav id="subnav">
+            <DropdownNav routes={MENU_ROUTES} />
+          </nav>
         </header>
         <div
           className={
@@ -163,7 +166,7 @@ export const Header = () => {
             HABIT
           </span>
           <div className="block max-h-12 md:block overflow-auto sm:hidden">
-            {"HABIT NAME"}
+            {currentHabit.meta.name}
           </div>
         </div>
       </div>

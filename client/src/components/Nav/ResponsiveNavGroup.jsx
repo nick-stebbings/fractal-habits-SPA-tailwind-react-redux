@@ -1,15 +1,7 @@
 import React from "react";
-import ResponsiveNavLink from "./UI/Buttons/ResponsiveNavLink";
+import { ResponsiveNavLink } from "./UI/Buttons/ResponsiveNavLink";
 
-const ResponsiveNavGroup = ({ id, classString, label, subpaths }) => {
-  // oncreate: ({ dom }) => {
-  //   dom.addEventListener('click', (e) => {
-  //     if (e.target.tagName === 'A') {
-  //       // Collapse responsive menu when you click active link
-  //       document.getElementById('hamburger').checked = false;
-  //     }
-  //   });
-  // },
+export const ResponsiveNavGroup = ({ id, classString, label, subpaths }) => {
   return (
     <li
       className="responsive-nav-group flex flex-wrap w-3/4 py-4 mx-auto mt-2"
@@ -22,7 +14,7 @@ const ResponsiveNavGroup = ({ id, classString, label, subpaths }) => {
         {Object.keys(subpaths).map((path, idx) => (
           <ResponsiveNavLink
             key={idx}
-            url={path}
+            urlString={path}
             enabled={!!subpaths[path].status}
             details={subpaths[path]}
           />

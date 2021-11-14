@@ -7,8 +7,11 @@ import {
   DeleteHabitPayload,
   UpdateHabitPayload,
 } from "./types";
+
+// @ts-ignore
 import { Dictionary } from "app/types";
 
+// @ts-ignore
 import { crudReducer, isCrud } from "app/utils";
 import { actionCreators } from "./actions";
 

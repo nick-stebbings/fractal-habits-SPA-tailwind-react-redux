@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export const MenuListCard = ({ title, subtitle, url, icon }) => {
+export const MenuListCard = ({ title, subtitle, urlString, icon }) => {
   // oncreate: ({ attrs, dom }) => {
   //   dom.classList.add(attrs.enabled ? "enabled" : "disabled");
   // },
@@ -18,8 +18,8 @@ export const MenuListCard = ({ title, subtitle, url, icon }) => {
           <img src={icon}></img>
         </div>
       </div>
-      <div className="flex flex-col items-center" style="flex-basis: 75%">
-        <Link to={isDemo ? `${url}?demo=true` : url}>
+      <div className="flex flex-col items-center" style={{ flexBasis: "75%" }}>
+        <Link to={isDemo ? `${urlString}?demo=true` : urlString}>
           <button className="menu-card-button">"Let's Go"</button>{" "}
         </Link>
         <p className="text-tershades-gray mt-4">{subtitle}</p>

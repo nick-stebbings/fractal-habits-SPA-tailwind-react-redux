@@ -1,9 +1,10 @@
 import React from "react";
 
-import GeneralButton from "./Buttons/GeneralButton";
+import { GeneralButton } from "./Buttons/GeneralButton";
 // import { changedHabit } from "../../../../../assets/scripts/controller";
 
 export const ListCard = ({ value }) => {
+  let isDemo = false;
   return (
     <div className="flex items-center justify-between mb-4">
       <div className="habit-list-details">

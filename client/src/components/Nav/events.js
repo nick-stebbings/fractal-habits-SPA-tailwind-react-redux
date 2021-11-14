@@ -54,9 +54,18 @@ let currentHabitDate;
 // }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // ResponsiveNav groups
+  const navGroupsList = document
+    .querySelector("ul.nav-groups")
+    .addEventListener("click", (e) => {
+      if (e.target.tagName === "A") {
+        // Collapse responsive menu when you click active link
+        document.getElementById("hamburger").checked = false;
+      }
+    });
+
   // Date list
   const dateInputs = document.querySelectorAll(".date-today");
-
   document.addEventListener("input", (e) => {
     if (e.target.value.search(/\d\d-\d\d-\d\d/) === -1) return;
     // dateIndex = DateStore.listForHabit()

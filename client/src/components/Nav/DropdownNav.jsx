@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 // import { pendingCalendarRefresh } from '../../../../assets/scripts/controller';
-import HoverableLink from "./UI/Buttons/HoverableLink";
+import { HoverableLink } from "./UI/Buttons/HoverableLink";
 import "events";
 
 export const DropdownNav = function ({ routes }) {
@@ -18,9 +18,8 @@ export const DropdownNav = function ({ routes }) {
               class={routes.selected === route.label ? "active" : ""}
               id={`nav-${route.label.toLowerCase()}`}
               subpaths={route.subpaths}
-            >
-              {routes[index].subpaths}
-            </HoverableLink>
+              listItems={routes[index].subpaths}
+            />
           ))}
         </ul>
         <div className="md:block hidden" id="current-habit-label">
