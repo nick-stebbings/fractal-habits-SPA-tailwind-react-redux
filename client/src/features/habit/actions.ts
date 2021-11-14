@@ -1,5 +1,8 @@
+// @ts-ignore
 import { clientRoutes } from "services/restApis";
+// @ts-ignore
 import { createCrudActionCreators } from "app/utils";
+// @ts-ignore
 import { fetchHabitDatesREST } from "features/habitDate/actions";
 
 // import { habitSlice } from "./reducer";
@@ -23,9 +26,9 @@ export const actionStrings = [
 let clientRouteDict = clientRoutes(BASE_PATH);
 const fetchRoute = clientRouteDict.show_all.bind({});
 
-clientRouteDict.show_all = async (_, thunkAPI: any) =>
-  fetchRoute().then((response: object) => {
-    const parsed = JSON.parse(response.data);
+clientRouteDict.show_all = async (_: any, thunkAPI: any) =>
+  fetchRoute().then((response: any) => {
+    const parsed = JSON.parse(response!.data);
     const firstHabitId = parsed.habits[0].id;
     thunkAPI.dispatch(
       fetchHabitDatesREST({ id: firstHabitId, periodLength: 7 })

@@ -2,13 +2,13 @@ import React from "react";
 import { render } from "react-dom";
 import { store } from "./app/store";
 import { Provider } from "react-redux";
-import { App } from "./App";
+import { Routes } from "./routes/Routes";
 import "./styles/styles.css";
 
 render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <Routes />
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

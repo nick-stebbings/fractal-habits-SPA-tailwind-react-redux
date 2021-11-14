@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "./app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 
-import TodoList from "features/todo/components/TodoList";
-import CalendarWidget from "features/habitDate/components/CalendarWidget";
+import TodoList from "../features/todo/components/TodoList";
+import { CalendarWidget } from "../features/habitDate/components/CalendarWidget";
 
-import { fetchHabitsREST } from "features/habit/actions";
+import { fetchHabitsREST } from "../features/habit/actions";
 
-import { getCurrentList } from "features/todo/selectors";
-import { getCurrentHabit } from "features/habit/selectors";
+import { getCurrentList } from "../features/todo/selectors";
+import { getCurrentHabit } from "../features/habit/selectors";
 
 interface indexProps {}
 
