@@ -12,16 +12,14 @@ import { actionCreators } from "./actions";
 import * as luxon from "luxon";
 
 export const initialState: Dictionary<HabitDate[]> = {
-  myRecords: [
-    {
-      habitId: 0,
-      timeframe: {
-        fromDate: luxon.DateTime.local().startOf("day").ts,
-        toDate: luxon.DateTime.local().endOf("day").ts,
-        length: luxon.Duration.fromObject({ days: 1 }).toString(),
-      },
+  current: {
+    habitId: 0,
+    timeframe: {
+      fromDate: luxon.DateTime.local().startOf("day").ts,
+      toDate: luxon.DateTime.local().endOf("day").ts,
+      length: luxon.Duration.fromObject({ days: 1 }).toString(),
     },
-  ],
+  },
 };
 
 export const habitDateSlice = createSlice({

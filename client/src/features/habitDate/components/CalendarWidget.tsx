@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 // @ts-ignore
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { Link } from "react-router-dom";
@@ -10,19 +10,13 @@ import { selectCurrentSpace, selectThisWeekSpaces } from "features/space/slice";
 // @ts-ignore
 import { selectIsCompletedDate } from "features/habitDate/selectors";
 
-//<PEDAC>
-//   -Use a selector to return the habitDates for the CURRENT habit.
-//</PEDAC >
-
 import { DateCard } from "./DateCard";
 
 export const CalendarWidget = () => {
   const dispatch = useAppDispatch();
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
-  console.log("currentSpace :>> ", currentSpace);
-  const [spaces, setWeeks] = useState(currentWeek);
-  console.log("currentWeek :>> ", spaces);
+  const [thisWeekSpaces, setWeeks] = useState(currentWeek);
 
   return (
     <div className="top-28 rounded-3xl lg:flex right-6 flex-nowrap absolute justify-end w-full h-full pt-1">
@@ -74,8 +68,8 @@ export const CalendarWidget = () => {
         className="date-card-wrapper rounded-3xl flex-end -mt-14 border-1 flex justify-end w-full gap-2 bg-transparent"
         style={{ maxWidth: "75%" }}
       >
-        {spaces &&
-          spaces.map(({ timeframe: { fromDate } }, idx) => (
+        {thisWeekSpaces &&
+          thisWeekSpaces.map(({ timeframe: { fromDate } }, idx: number) => (
             <DateCard
               key={idx}
               date={fromDate && stringifyDate(fromDate)}

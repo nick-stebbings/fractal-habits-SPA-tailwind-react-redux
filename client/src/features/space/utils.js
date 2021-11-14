@@ -1,6 +1,6 @@
 import { DateTime, Duration } from "luxon";
 
-export const daySpace = (
+export const createInterval = (
   startRelative = 0,
   numberOfDays = 1,
   startDate = null
@@ -19,5 +19,5 @@ export const daySpace = (
 
 export const weekOfDaySpaces = (startRelative = 0) =>
   Array.from("1234567")
-    .map((_, idx) => daySpace(startRelative - idx, 1))
+    .map((_, idx) => createInterval(startRelative - idx, 1))
     .reverse();

@@ -7,7 +7,7 @@ import { Dictionary, TimeFrame } from "app/types";
 import { RootState } from "app/store";
 
 // @ts-ignore
-import { weekOfDaySpaces, daySpace } from "./utils";
+import { weekOfDaySpaces, createInterval } from "./utils";
 
 export const selectThisWeekSpaces = (state: RootState) => {
   return state?.space.thisWeek;
@@ -28,7 +28,7 @@ export interface Space {
 export const initialState: Dictionary<Space[]> = {
   thisWeek: weekOfDaySpaces(),
   lastWeek: weekOfDaySpaces(-7),
-  current: daySpace(),
+  current: createInterval(),
 };
 
 export const spaceSlice = createSlice({

@@ -1,7 +1,7 @@
 // import _ from "lodash";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DateTime } from "luxon";
-import { daySpace } from "../features/space/utils";
+import { createInterval } from "../features/space/utils";
 
 export function isCrud(action, create, fetch, update, destroy) {
   return [create, fetch, update, destroy]
@@ -22,9 +22,13 @@ const mapCallbacks = {
       habit_node_id,
       initiation_date,
     } = element;
-    const space = daySpace(0, 1, DateTime.fromSQL(initiation_date));
+    const intervalSpace = createInterval(
+      0,
+      1,
+      DateTime.fromSQL(initiation_date)
+    );
     return {
-      ...space,
+      ...intervalSpace,
       meta: {
         id,
         name,
@@ -38,10 +42,15 @@ const mapCallbacks = {
     const { date, completed_status, habit_id } = element;
     if (!completed_status) return;
 
-    const space = daySpace(0, 1, DateTime.fromSQL(date));
+    const daySpace = createInterval(0, 1, DateTime.fromSQL(date));
     return {
-      ...space,
+      ...daySpace,
       habit_id,
+    };
+  },
+  domains: (element) => {
+    return {
+      meta: element,
     };
   },
 };

@@ -5,6 +5,7 @@ import TodoList from "../features/todo/components/TodoList";
 import { Header } from "./Header";
 
 import { fetchHabitsREST } from "../features/habit/actions";
+import { fetchDomainsREST } from "../features/domain/actions";
 
 import { selectCurrentList } from "../features/todo/selectors";
 import { selectCurrentHabit } from "../features/habit/selectors";
@@ -20,8 +21,9 @@ export const App: React.FC<indexProps> = ({}) => {
   const [habit, setHabit] = useState(currentHabit);
 
   const loadHabits = () => dispatch(fetchHabitsREST());
+  const loadDomains = () => dispatch(fetchDomainsREST());
   const loadData = async function () {
-    await loadHabits();
+    await loadDomains();
     setHabit(currentHabit);
   };
   useEffect(() => loadData(), []);
@@ -29,9 +31,9 @@ export const App: React.FC<indexProps> = ({}) => {
   return (
     <>
       <Header />
-      <div className="current-list container">
+      {/* <div className="current-list container">
         {lists && <TodoList list={lists}></TodoList>}
-      </div>
+      </div> */}
     </>
   );
 };
