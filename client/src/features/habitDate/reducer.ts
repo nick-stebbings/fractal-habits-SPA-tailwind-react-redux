@@ -7,7 +7,7 @@ import {
 } from "./types";
 import { Dictionary } from "app/types";
 
-import { crudReducer, isCrud } from "app/utils";
+import { crudReducer, isCrud } from "app/store_utils";
 import { actionCreators } from "./actions";
 import * as luxon from "luxon";
 

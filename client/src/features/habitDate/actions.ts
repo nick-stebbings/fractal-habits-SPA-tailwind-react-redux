@@ -1,5 +1,5 @@
 import { clientRoutes } from "services/restApis";
-import { createCrudActionCreators } from "app/utils";
+import { createCrudActionCreators } from "app/store_utils";
 
 import { habitDateSlice } from "./reducer";
 // const {
@@ -8,7 +8,7 @@ import { habitDateSlice } from "./reducer";
 //   updateHabitDate,
 // } = habitDateSlice.actions;
 
-const BASE_PATH = "/habits";
+const BASE_PATH = "/habit_dates";
 
 const CREATE_HABIT_DATE = "create_habit_date";
 const FETCH_HABIT_DATES = "fetch_habit_dates";

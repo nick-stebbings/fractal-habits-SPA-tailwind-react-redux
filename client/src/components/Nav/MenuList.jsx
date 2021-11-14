@@ -11,7 +11,7 @@ export const MenuList = ({ listItems }) => {
       <MenuListCard
         key={index}
         id={`menu-list-card-${index}`}
-        // enabled={!!status}
+        isEnabled={!!status}
         title={title}
         subtitle={description}
         urlString={`${route}`}

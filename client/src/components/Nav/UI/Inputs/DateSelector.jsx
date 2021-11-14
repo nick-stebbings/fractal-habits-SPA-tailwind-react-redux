@@ -1,6 +1,6 @@
 import React from "react";
 
-import { sanitiseForDataList } from "app/utils";
+import { sanitiseForDataList } from "features/habitDate/utils";
 //   updatedMinAndMaxForCurrentHabit,
 //   changedDate,
 //   newDate,

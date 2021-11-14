@@ -6,12 +6,13 @@ import { Routes } from "./routes/Routes";
 
 // Import our CSS
 import "./assets/styles/app-base.pcss";
-import "./assets/styles/app-components.pcss";
+// import "./assets/styles/app-components.pcss";
 // import "./assets/styles/vendor/flashJS/import";
 
 // Vendor JS
 import "./assets/scripts/vendor/flash.min.js";
-// import "./styles/styles.css";
+import "./styles/styles.css";
+import "./styles/bundled-styles.css";
 
 render(
   <React.StrictMode>
@@ -19,5 +20,5 @@ render(
       <Routes />
     </Provider>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById("app")
 );

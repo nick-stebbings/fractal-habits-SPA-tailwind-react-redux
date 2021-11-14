@@ -109,21 +109,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Habit list
-  document.querySelector("#habit-list").addEventListener("click", (e) => {
-    if (e.target.tagName === "BUTTON") {
-      e.stopPropagation();
+  // document.querySelector("#habit-list").addEventListener("click", (e) => {
+  //   if (e.target.tagName === "BUTTON") {
+  //     e.stopPropagation();
 
-      if (!e.target.classList.contains("selected")) {
-        const lastSelected = document.querySelector(".selected");
-        lastSelected && lastSelected.classList.toggle("selected");
-        e.target.classList.add("selected");
-      }
-      // HabitStore.current(
-      //   HabitStore.filterById(+e.target.getAttribute("data-id"))[0]
-      // );
-      // changedHabit(true);
-    }
-  });
+  //     if (!e.target.classList.contains("selected")) {
+  //       const lastSelected = document.querySelector(".selected");
+  //       lastSelected && lastSelected.classList.toggle("selected");
+  //       e.target.classList.add("selected");
+  //     }
+  //     // HabitStore.current(
+  //     //   HabitStore.filterById(+e.target.getAttribute("data-id"))[0]
+  //     // );
+  //     // changedHabit(true);
+  //   }
+  // });
 
   // Menu links
   [...document.querySelectorAll(".nav li.hoverable")].forEach((navItem) => {

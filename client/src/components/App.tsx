@@ -6,15 +6,15 @@ import { Header } from "./Header";
 
 import { fetchHabitsREST } from "../features/habit/actions";
 
-import { getCurrentList } from "../features/todo/selectors";
-import { getCurrentHabit } from "../features/habit/selectors";
+import { selectCurrentList } from "../features/todo/selectors";
+import { selectCurrentHabit } from "../features/habit/selectors";
 
 interface indexProps {}
 
 export const App: React.FC<indexProps> = ({}) => {
   const dispatch = useAppDispatch();
-  const currentList = useAppSelector(getCurrentList);
-  const currentHabit = useAppSelector(getCurrentHabit);
+  const currentList = useAppSelector(selectCurrentList);
+  const currentHabit = useAppSelector(selectCurrentHabit);
 
   const [lists, setLists] = useState(currentList);
   const [habit, setHabit] = useState(currentHabit);
@@ -27,9 +27,11 @@ export const App: React.FC<indexProps> = ({}) => {
   useEffect(() => loadData(), []);
 
   return (
-    <div className="current-list container">
+    <>
       <Header />
-      {lists && <TodoList list={lists}></TodoList>}
-    </div>
+      <div className="current-list container">
+        {lists && <TodoList list={lists}></TodoList>}
+      </div>
+    </>
   );
 };

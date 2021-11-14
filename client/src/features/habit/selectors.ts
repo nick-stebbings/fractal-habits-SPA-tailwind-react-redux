@@ -1,6 +1,10 @@
 // @ts-ignore
 import { RootState } from "app/store";
 
-export const getCurrentHabit = (state: RootState) => {
+export const selectCurrentHabit = (state: RootState) => {
   return state?.habit?.current;
+};
+
+export const selectStoredHabits = (state: RootState) => {
+  return state?.habit?.myRecords;
 };

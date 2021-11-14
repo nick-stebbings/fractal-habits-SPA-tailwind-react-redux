@@ -1,10 +1,23 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 
 // Import Reducers From Slices
+
+// @ts-ignore
 import uiReducer from "features/ui/reducer";
+
+// @ts-ignore
 import todoReducer from "features/todo/reducer";
+
+// @ts-ignore
 import habitReducer from "features/habit/reducer";
+
+// @ts-ignore
+import domainReducer from "features/domain/reducer";
+
+// @ts-ignore
 import habitDateReducer from "features/habitDate/reducer";
+
+// @ts-ignore
 import spaceSlice from "features/space/slice";
 
 export const store = configureStore({
@@ -12,6 +25,7 @@ export const store = configureStore({
     ui: uiReducer,
     todo: todoReducer,
     habit: habitReducer,
+    domain: domainReducer,
     habitDate: habitDateReducer,
     space: spaceSlice.reducer,
   },

@@ -6,7 +6,7 @@ import { Footer } from "./Footer";
 import { store } from "app/store";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { TodoList, Todo } from "../../types";
-import { getCurrentList } from "../../selectors";
+import { selectCurrentList } from "../../selectors";
 import {
   createTodo,
   deleteTodo,
@@ -34,7 +34,7 @@ const index: React.FC<indexProps> = ({
   const [newTodo, setNewTodo] = useState<string>("");
 
   const dispatch = useAppDispatch();
-  const storedTodos = useAppSelector(getCurrentList)?.todos;
+  const storedTodos = useAppSelector(selectCurrentList)?.todos;
 
   const handleFilter = (e: any) => {
     switch (e.target.textContent) {

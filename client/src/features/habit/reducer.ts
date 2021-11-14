@@ -1,4 +1,4 @@
-import * as luxon from "luxon";
+import { DateTime, Duration } from "luxon";
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
@@ -12,15 +12,15 @@ import {
 import { Dictionary } from "app/types";
 
 // @ts-ignore
-import { crudReducer, isCrud } from "app/utils";
+import { crudReducer, isCrud } from "app/store_utils";
 import { actionCreators } from "./actions";
 
 export const initialState: Dictionary<Habit | Habit[]> = {
   current: {
     timeframe: {
-      fromDate: luxon.DateTime.local().startOf("day").ts,
-      toDate: luxon.DateTime.local().endOf("day").ts,
-      length: luxon.Duration.fromObject({ days: 1 }).toString(),
+      fromDate: DateTime.local().startOf("day")!.ts,
+      toDate: DateTime.local().endOf("day")!.ts,
+      length: Duration.fromObject({ days: 1 }).toString(),
     },
     meta: {
       name: "",
@@ -34,20 +34,22 @@ export const habitSlice = createSlice({
   initialState,
   reducers: {
     createHabit(state, action: PayloadAction<NewHabitPayload>) {
-      const { id, habit } = action.payload;
-      return {
-        ...state,
-        [String(id)]: { habit },
+      state.current.meta = {
+        ...action.payload.habit.meta,
+        id: action.payload.id,
       };
+      state.current.timeframe = action.payload.habit.timeframe;
     },
-    deleteHabit(state, action: PayloadAction<DeleteHabitPayload>) {
-      delete state[action.payload.id];
+    deleteHabit(state, _: PayloadAction<DeleteHabitPayload>) {
+      delete state.current.meta;
     },
-    updateHabit(state, action: PayloadAction<NewHabitPayload>) {
-      const { id, habit } = action.payload;
+    updateHabit(state, action: PayloadAction<UpdateHabitPayload>) {
+      const { id, habitPatch } = action.payload;
+      if (id !== state.current.meta.id && state.current.meta.id !== 0)
+        return state;
       return {
         ...state,
-        [String(id)]: { habit },
+        current: { ...habitPatch, ...state.current },
       };
     },
   },

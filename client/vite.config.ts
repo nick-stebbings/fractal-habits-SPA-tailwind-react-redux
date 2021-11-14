@@ -1,15 +1,20 @@
 import { defineConfig } from "vite";
-import reactRefresh from "@vitejs/plugin-react-refresh";
+import { resolve } from "path";
 
+import reactRefresh from "@vitejs/plugin-react-refresh";
+import reactSvgPlugin from "vite-plugin-react-svg";
 import scss from "rollup-plugin-scss";
 import alias from "@rollup/plugin-alias";
-import { resolve } from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     reactRefresh(),
     scss(),
+    reactSvgPlugin({
+      // Default behavior when importing `.svg` files, possible options are: 'url' and `component`
+      defaultExport: "url",
+    }),
     alias({
       entries: [
         {

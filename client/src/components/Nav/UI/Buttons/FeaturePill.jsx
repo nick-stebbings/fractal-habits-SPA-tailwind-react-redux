@@ -6,10 +6,10 @@
 import React from "react";
 // @ts-ignore
 import { useAppSelector } from "app/hooks";
-import { getCurrentDomain } from "features/domain/selectors";
+import { selectCurrentDomain } from "features/domain/selectors";
 
 export const FeaturePill = ({ title, clipPathUrl }) => {
-  const currentDomain = useAppSelector(getCurrentDomain);
+  const currentDomain = useAppSelector(selectCurrentDomain);
   const handleClick = () => {
     //     if (isDemo) return;
     //     if (

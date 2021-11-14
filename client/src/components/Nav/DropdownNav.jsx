@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 // import { pendingCalendarRefresh } from '../../../../assets/scripts/controller';
 import { HoverableLink } from "./UI/Buttons/HoverableLink";
-import "events";
+import "./events.js";
 
 export const DropdownNav = function ({ routes }) {
   const isDemo = false;

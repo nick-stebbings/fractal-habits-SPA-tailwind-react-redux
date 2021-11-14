@@ -1,20 +1,25 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
+
+// @ts-ignore
 import { Dictionary, TimeFrame } from "app/types";
+
+// @ts-ignore
 import { RootState } from "app/store";
 
-import { weekOfDaySpaces, daySpace } from "app/utils";
+// @ts-ignore
+import { weekOfDaySpaces, daySpace } from "./utils";
 
-export const getThisWeekSpaces = createSelector((state: RootState) => {
+export const selectThisWeekSpaces = (state: RootState) => {
   return state?.space.thisWeek;
-});
+};
 
-export const getLastWeekSpaces = createSelector((state: RootState) => {
+export const selectLastWeekSpaces = (state: RootState) => {
   return state?.space.lastWeek;
-});
+};
 
-export const getCurrentSpace = createSelector((state: RootState) => {
+export const selectCurrentSpace = (state: RootState) => {
   return state?.space.current;
-});
+};
 
 export interface Space {
   timeframe: TimeFrame;

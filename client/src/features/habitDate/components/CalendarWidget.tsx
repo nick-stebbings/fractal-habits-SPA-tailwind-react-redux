@@ -3,11 +3,10 @@ import React, { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { Link } from "react-router-dom";
 
-import DateTime from "luxon/src/datetime.js";
 // @ts-ignore
-import { stringifyDate } from "app/utils";
+import { stringifyDate } from "features/habitDate/utils";
 // @ts-ignore
-import { getCurrentSpace, getThisWeekSpaces } from "features/space/slice";
+import { selectCurrentSpace, selectThisWeekSpaces } from "features/space/slice";
 // @ts-ignore
 import { selectIsCompletedDate } from "features/habitDate/selectors";
 
@@ -19,14 +18,15 @@ import { DateCard } from "./DateCard";
 
 export const CalendarWidget = () => {
   const dispatch = useAppDispatch();
-  const currentWeek = useAppSelector(getThisWeekSpaces);
-  const currentSpace = useAppSelector(getCurrentSpace);
-
-  const [spaces, setSpaces] = useState(currentWeek);
+  const currentWeek = useAppSelector(selectThisWeekSpaces);
+  const currentSpace = useAppSelector(selectCurrentSpace);
+  console.log("currentSpace :>> ", currentSpace);
+  const [spaces, setWeeks] = useState(currentWeek);
+  console.log("currentWeek :>> ", spaces);
 
   return (
     <div className="top-28 rounded-3xl lg:flex right-6 flex-nowrap absolute justify-end w-full h-full pt-1">
-      <div className="-left-12 border-1 border-balance-basic-dgray habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 flex flex-col items-center hidden w-full overflow-auto bg-gray-100">
+      <div className="-left-12 border-1 border-balance-basic-dgray habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 flex flex-col items-center w-full overflow-auto bg-gray-100">
         <h2 className="flex underline">Description</h2>
         <span className="flex">{"description"}</span>
         <h2 className="flex underline">Initiated On</h2>
@@ -78,10 +78,11 @@ export const CalendarWidget = () => {
           spaces.map(({ timeframe: { fromDate } }, idx) => (
             <DateCard
               key={idx}
-              date={stringifyDate(fromDate)}
+              date={fromDate && stringifyDate(fromDate)}
               completedStatus={useAppSelector(selectIsCompletedDate(fromDate))}
               isToday={
-                stringifyDate(currentSpace.fromDate) === stringifyDate(fromDate)
+                stringifyDate(currentSpace.timeframe.fromDate) ===
+                stringifyDate(fromDate)
               }
             />
           ))}

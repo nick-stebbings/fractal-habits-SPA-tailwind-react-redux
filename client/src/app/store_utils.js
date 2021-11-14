@@ -1,28 +1,7 @@
 // import _ from "lodash";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { DateTime, Duration } from "luxon";
-
-export const daySpace = (
-  startRelative = 0,
-  numberOfDays = 1,
-  startDate = null
-) => {
-  startDate ||= DateTime.local().startOf("day");
-  return {
-    // startRelative is days relative to startDate (negative)
-    timeframe: {
-      fromDate: startDate - Duration.fromObject({ days: -startRelative }),
-      toDate:
-        startDate + Duration.fromObject({ days: startRelative + numberOfDays }),
-      length: Duration.fromObject({ days: numberOfDays }).toString(),
-    },
-  };
-};
-
-export const weekOfDaySpaces = (startRelative = 0) =>
-  Array.from("1234567")
-    .map((_, idx) => daySpace(startRelative - idx, 1))
-    .reverse();
+import { DateTime } from "luxon";
+import { daySpace } from "../features/space/utils";
 
 export function isCrud(action, create, fetch, update, destroy) {
   return [create, fetch, update, destroy]
@@ -114,16 +93,3 @@ export function createCrudActionCreators(actionTypes, callBacks) {
   const destroy = createAsyncThunk(actionTypes[3], callBacks[3]);
   return [create, fetchAll, update, destroy];
 }
-
-export const stringifyDate = (unixTs) =>
-  DateTime.fromMillis(unixTs).toLocaleString({
-    month: "short",
-    weekday: "short",
-    day: "numeric",
-  });
-
-export const sanitiseForDataList = function (date) {
-  return typeof date === "object" && typeof date.h_date === "string"
-    ? date.h_date.split(" ")[0]
-    : new Date().toDateInputValue();
-};
