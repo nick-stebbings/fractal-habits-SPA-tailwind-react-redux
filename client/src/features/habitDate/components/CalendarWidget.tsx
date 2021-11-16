@@ -69,17 +69,21 @@ export const CalendarWidget = () => {
         style={{ maxWidth: "75%" }}
       >
         {thisWeekSpaces &&
-          thisWeekSpaces.map(({ timeframe: { fromDate } }, idx: number) => (
-            <DateCard
-              key={idx}
-              date={fromDate && stringifyDate(fromDate)}
-              completedStatus={useAppSelector(selectIsCompletedDate(fromDate))}
-              isToday={
-                stringifyDate(currentSpace.timeframe.fromDate) ===
-                stringifyDate(fromDate)
-              }
-            />
-          ))}
+          thisWeekSpaces.map(({ timeframe: { fromDate } }, idx: number) => {
+            return (
+              <DateCard
+                key={idx}
+                date={fromDate && stringifyDate(fromDate, { calendar: true })}
+                completedStatus={useAppSelector(
+                  selectIsCompletedDate(fromDate)
+                )}
+                isToday={
+                  stringifyDate(currentSpace.timeframe.fromDate) ===
+                  stringifyDate(fromDate)
+                }
+              />
+            );
+          })}
       </div>
     </div>
   );

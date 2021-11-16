@@ -1,0 +1,39 @@
+.mask-wrapper .user-avatar {
+  @apply xl:block border-balance-tershades-gray lg:flex-row-reverse bg-balance-tershades-light lg:bg-gray-700 lg:py-0 lg:rounded-3xl lg:rounded-t-none flex-nowrap items-center justify-between hidden py-2 pl-4 mr-1 border-2 rounded-full;
+}
+
+.mask-wrapper #responsive-nav {
+  @apply sm:h-12 lg:px-0 lg:justify-end flex items-center justify-between h-16;
+}
+
+.mask-wrapper #responsive-nav #logo {
+  @apply hover:text-gray-100 md:ml-1 w-10 h-10 text-gray-100 fill-current stroke-current;
+}
+
+.mask-wrapper #hamburger-wrapper {
+  @apply md:h-8 lg:flex-auto flex h-10;
+}
+
+.mask-wrapper #hamburger-wrapper > div:first-child {
+  @apply active:outline-light focus:outline-light hover:bg-gray-700 md:w-8 md:h-8 flex items-center justify-center w-10 h-10 rounded-md;
+}
+
+.mask-wrapper .wide-nav {
+  @apply top-16 lg:-mt-4 lg:border-balance-tershades-gray bg-balance-tershades-gray lg:border-0 md:top-12 lg:flex lg:justify-end lg:items-center lg:static lg:flex-row lg:bg-transparent sm:flex-row sm:flex-wrap lg:flex-nowrap absolute left-0 z-20 flex-col hidden w-full border-b-4;
+}
+
+.mask-wrapper .wide-nav > div:first-child {
+  @apply md:pl-1 sm:pl-24 sm:my-2 sm:w-2/5 lg:w-auto lg:p-0 lg:border-0 lg:flex lg:flex-1 lg:justify-end lg:flex-row-reverse flex-col content-center justify-between hidden px-4 pt-1 pb-2;
+}
+
+.nav-label-primary {
+  @apply bg-gradient-to-l sm:flex-col lg:flex-row from-balance-tershades-desat to-balance-tershades-gray lg:-mt-3 lg:mr-2 items-center justify-between mt-2 text-sm text-black lg:rounded-t-none;
+}
+
+.nav-label-primary.domain-selector {
+  @apply lg:rounded-3xl rounded-full;
+}
+
+.nav-label-primary.date-today {
+  @apply border-balance-pshades-dark rounded-3xl pr-2;
+}

@@ -1,24 +1,29 @@
 import React from "react";
-import { DomainOption } from "./DomainOption";
+import { useAppSelector } from "app/hooks";
+
+import {
+  selectCurrentDomain,
+  selectStoredDomains,
+} from "features/domain/selectors";
 
 export const DomainSelector = () => {
+  const currentDomain = useAppSelector(selectCurrentDomain);
+  const allDomains = useAppSelector(selectStoredDomains);
+
   return (
     <select
       className={
         "select form-select domain-selector w-full lg:pt-2 pl-2 sm:h-10 h-6 py-0 md:p-2 mr-1 xl-mt-4 rounded-2xl"
       }
-      selectedindex={0} //"`DomainStore.list().indexOf(DomainStore.current()`"
+      selectedindex={allDomains && allDomains.indexOf(currentDomain)}
       tabIndex={2}
     >
-      {/* {DomainStore.list().map((domain, idx) => (
-        <DomainOption
-          key={idx}
-          value={domain.name}
-          selected={"DomainStore.current()?.name === domain.name"}
-        >
-          {domain.name}
-        </DomainOption>
-      ))} */}
+      {allDomains &&
+        allDomains.map(({ meta: { name: optionName } }, idx) => (
+          <option className="text-xl font-bold" key={idx}>
+            {optionName}
+          </option>
+        ))}
     </select>
   );
 };

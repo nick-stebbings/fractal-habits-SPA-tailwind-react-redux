@@ -5,7 +5,6 @@ import { Provider } from "react-redux";
 import { Routes } from "./routes/Routes";
 
 // Import our CSS
-import "./assets/styles/app-base.pcss";
 // import "./assets/styles/app-components.pcss";
 // import "./assets/styles/vendor/flashJS/import";
 
@@ -13,6 +12,9 @@ import "./assets/styles/app-base.pcss";
 import "./assets/scripts/vendor/flash.min.js";
 import "./styles/styles.css";
 import "./styles/bundled-styles.css";
+import "./assets/styles/app-base.pcss";
+import "./assets/styles/app-components.pcss";
+import "./assets/styles/app-utils.pcss";
 
 render(
   <React.StrictMode>

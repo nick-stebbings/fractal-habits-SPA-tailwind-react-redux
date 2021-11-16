@@ -1,3 +1,6 @@
+import { store } from "app/store";
+import { selectCurrentSpace, selectThisWeekSpaces } from "features/space/slice";
+
 const showMegaMenu = (id) => {
   document.querySelector(".mask-wrapper").style.height = "357px";
   const menus = [...document.querySelectorAll(".mega-menu")];
@@ -12,6 +15,7 @@ const showMegaMenu = (id) => {
   menus.every((menu) => menu.style.display === "none") &&
     (document.querySelector(".habit-description-label").style.opacity = "1");
 };
+
 const hideMegaMenu = () => {
   document.querySelector(".mask-wrapper").style.height = "5rem";
   [...document.querySelectorAll(".mega-menu")].forEach((menu) => {
@@ -20,38 +24,6 @@ const hideMegaMenu = () => {
   document.querySelector(".habit-description-label").style.opacity = "0";
   document.querySelector(".mask-wrapper").style.zIndex = "10";
 };
-const checkAndUpdateCalendar = () => {
-  if (false) {
-    //HabitStore.current() && pendingCalendarRefresh()
-    //  pendingCalendarRefresh(false);
-  }
-};
-
-let dateIndex;
-let maxDate;
-let minDate;
-let currentHabitDate;
-// const todaysDate = DateTime.now().startOf("day");
-
-// DateStore.indexDatesOfHabit(HabitStore.current());
-// dateIndex = DateStore.listForHabit().indexOf(DateStore.current());
-// [minDate, maxDate] = updatedMinAndMaxForCurrentHabit();
-
-// currentHabitDate =
-//   DateStore.current() && DateTime.fromSQL(DateStore.current().h_date);
-// [minDate, maxDate] = updatedMinAndMaxForCurrentHabit();
-
-// if (newDate()) {
-//   DateStore.submit({ h_date: maxDate.plus({ days: 1 }).toISODate() })
-//     .then(DateStore.index)
-//     .then(() => {
-//       DateStore.indexDatesOfHabit(HabitStore.current());
-//       maxDate = DateTime.fromMillis(
-//         DateTime.fromSQL(DateStore.current().h_date).ts
-//       );
-//       newDate(false);
-//     });
-// }
 
 document.addEventListener("DOMContentLoaded", () => {
   // ResponsiveNav groups
@@ -68,44 +40,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const dateInputs = document.querySelectorAll(".date-today");
   document.addEventListener("input", (e) => {
     if (e.target.value.search(/\d\d-\d\d-\d\d/) === -1) return;
-    // dateIndex = DateStore.listForHabit()
-    //   .map(sanitiseForDataList)
-    //   .indexOf(e.target.value);
-    // let newDate = DateStore.listForHabit()[dateIndex];
-    // DateStore.current(newDate);
-    // changedDate(true);
+
+    // let currentSpace = selectCurrentSpace(store.getState())
+    // let thisWeekSpaces = selectThisWeekSpaces(store.getState())
+    // let dateIndex = thisWeekSpaces.findIndex(space => space.timeframe.fromDate == currentSpace.timeframe.fromDate)
+    // let newDateIndex = dateIndex - 1;
+    // if (newDateIndex >= 0) { thisWeekSpaces[newDateIndex] }
+    // else {
+    //   lastWeekSpace.slice(-1)[0];
+    // };
   });
 
+  // Date changers
   const prevDateSelector = document.getElementById("prev-date-selector");
   const nextDateSelector = document.getElementById("next-date-selector");
   [...dateInputs].forEach((input) => {
     input?.addEventListener("change", (e) => {
-      // e.stopPropagation();
-      // dateIndex = DateStore.listForHabit()
-      //   .map(sanitiseForDataList)
-      //   .indexOf(e.target.value);
-      // let newDate = DateStore.listForHabit()[dateIndex];
-      // DateStore.current(newDate);
-      // changedDate(true);
+      e.stopPropagation();
+      // set the current date to the date string after the inputs update. (move to component)
     });
   });
-  prevDateSelector?.addEventListener("click", () => {
-    // if (!HabitStore.current()) return;
-    // if (currentHabitDate?.toLocaleString() !== minDate?.toLocaleString()) {
-    //   dateIndex--;
-    //   let newDate = DateStore.listForHabit()[dateIndex] || DateStore.current();
-    //   DateStore.current(newDate);
-    // }
-    // changedDate(true);
-  });
+  prevDateSelector?.addEventListener("click", () => {});
+  // dispatch an action to change the date index. if the index is 0, go to prev week. move the weeks around
   nextDateSelector?.addEventListener("click", () => {
-    // if (!HabitStore.current()) return;
-    // if (currentHabitDate.toLocaleString() !== maxDate.toLocaleString()) {
-    //   dateIndex++;
-    //   let newDate = DateStore.listForHabit()[dateIndex] || DateStore.current();
-    //   DateStore.current(newDate);
-    // }
-    // changedDate(true);
+    // dispatch an action to change the date index. if the index is 6, go to next week
   });
 
   // Habit list
