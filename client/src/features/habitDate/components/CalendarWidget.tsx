@@ -20,7 +20,6 @@ export const CalendarWidget = () => {
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
-  const [thisWeekSpaces, setWeeks] = useState(currentWeek);
 
   return (
     <div className="top-28 rounded-3xl lg:flex right-6 flex-nowrap absolute justify-end w-full h-full pt-1">
@@ -72,8 +71,8 @@ export const CalendarWidget = () => {
         className="date-card-wrapper rounded-3xl flex-end -mt-14 border-1 flex justify-end w-full gap-2 bg-transparent"
         style={{ maxWidth: "75%" }}
       >
-        {thisWeekSpaces &&
-          thisWeekSpaces.map(({ timeframe: { fromDate } }, idx: number) => {
+        {currentWeek &&
+          currentWeek.map(({ timeframe: { fromDate } }, idx: number) => {
             return (
               <DateCard
                 key={idx}
