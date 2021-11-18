@@ -89,7 +89,7 @@ const handleNextDate = (_:any) => {
                   <span className="lg:hidden xl:block pt-2 pb-0 mx-4 mb-1">
                     <label>Domain</label>
                   </span>
-                  <div className="lg:pr-0 lg:rounded-3xl lg:rounded-t-none w-56 h-full pl-1 pr-4 mr-2 bg-white rounded-full">
+                  <div className="lg:pr-0 lg:rounded-3xl lg:rounded-t-none w-56 -mt-2 pl-1 pr-4 mr-2 bg-white rounded-full">
                     <span className="text-balance-sshades-brighten block w-full pt-2 mb-1">
                       <DomainSelector />
                     </span>
@@ -99,8 +99,8 @@ const handleNextDate = (_:any) => {
                   <span className="lg:hidden xl:block md:pt-6 xl:pt-3 pt-0 pb-0 mx-4 mb-1 ml-6">
                     <label htmlFor="date-today">Date</label>
                   </span>
-                  <div className="lg:pr-0 lg:w-auto lg:rounded-3xl lg:rounded-t-none xl:-mt-3 rounded-3xl w-56 h-full bg-white">
-                    <span className="lg:pt-2 text-balance-sshades-brighten flex justify-around w-full mb-1">
+                  <div className="lg:pr-0 lg:w-auto lg:rounded-3xl lg:rounded-t-none xl:-mt-3 rounded-3xl w-56 -mt-2 bg-white">
+                    <span className="lg:pt-2 text-balance-sshades-brighten flex justify-around w-full -mt-3 mb-1">
                       <i
                         id="prev-date-selector"
                         className="fa fa-chevron-circle-left pt-2 pr-2"
@@ -138,7 +138,7 @@ const handleNextDate = (_:any) => {
                   </button>
                 </div>
               </div>
-              <ul className="nav-groups lg:hidden flex flex-col-reverse w-full mb-8">
+              <ul className="nav-groups  justify-end lg:hidden flex flex-col-reverse w-full mb-8">
                 {MENU_ROUTES.map(({ label, subpaths }: any, idx: number) => (
                   <ResponsiveNavGroup
                     key={idx}

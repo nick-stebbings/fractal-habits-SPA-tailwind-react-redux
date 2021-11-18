@@ -2,12 +2,10 @@
 @import url(https://fonts.googleapis.com/css2?family=Palanquin + Dark&display=swap);
 @import url(https://fonts.googleapis.com/css2?family=B612:wght@400;700&display=swap);
 @import url(https://fonts.googleapis.com/css2?family=Great + Vibes&display=swap);
-@import url(
-  https://fonts.googleapis.com/css2?family=Oleo + Script + Swash + Caps&family=Poppins:ital,
+@import url(https://fonts.googleapis.com/css2?family=Oleo + Script + Swash + Caps&family=Poppins:ital,
   wght@1,
   700;1,
-  800&display=swap
-);
+  800&display=swap);
 
 /*! tailwindcss v2.2.19 | MIT License | https://tailwindcss.com
  */
@@ -646,7 +644,7 @@ h2.tagline {
   font-size: 1.5rem;
 }
 @media only screen and (min-width: 1920px) {
-  #app > .wrapper .slogan h1 {
+  #app > main.wrapper .slogan h1 {
     font-size: 5rem;
   }
   nav .menu-card p {
@@ -667,7 +665,7 @@ div.inactive {
   min-height: 95vh;
   z-index: 0;
 }
-.wrapper {
+main.wrapper {
   display: flex;
   justify-content: center;
   margin-top: 1em;
@@ -738,7 +736,7 @@ div.sm-selector-container .domain-selector {
   text-transform: uppercase;
 }
 @media only screen and (min-width: 768px) {
-  .wrapper > .cloud-man-vector {
+  main.wrapper > .cloud-man-vector {
     grid-column: 2 / span 3;
   }
 }
@@ -752,7 +750,7 @@ div.sm-selector-container .domain-selector {
   }
 }
 @media only screen and (min-width: 1920px) {
-  #app > .wrapper {
+  #app > main.wrapper {
     grid-template-columns: repeat(15, 1fr);
     grid-template-rows: repeat(6, 15vh);
     width: calc(100% - 2em);
@@ -772,26 +770,26 @@ div.sm-selector-container .domain-selector {
     right: 0;
     top: 0;
   }
-  #app > .wrapper > .logo,
-  #app > .wrapper > .slogan {
+  #app > main.wrapper > .logo,
+  #app > main.wrapper > .slogan {
     grid-column: 6 / span 5;
   }
-  #app > .wrapper > .logo {
+  #app > main.wrapper > .logo {
     grid-row: 1;
   }
-  #app > .wrapper > .slogan {
+  #app > main.wrapper > .slogan {
     grid-row: 2;
   }
-  #app > .wrapper > .cta-header {
+  #app > main.wrapper > .cta-header {
     font-size: 1.25rem;
     grid-column: 7 / span 3;
     grid-row: 5;
   }
-  #app > .wrapper > .cloud-man-vector {
+  #app > main.wrapper > .cloud-man-vector {
     grid-column: 1 / span 6;
     grid-row: 4 / span 3;
   }
-  #app > .wrapper > .cta-pills {
+  #app > main.wrapper > .cta-pills {
     grid-column: 10 / span 5;
     grid-row: 4;
   }
@@ -3634,7 +3632,7 @@ figure figcaption {
   }
 }
 @media only screen and (min-width: 1024px) {
-  .wrapper > .feature-card > .feature-card-content > button {
+  main.wrapper > .feature-card > .feature-card-content > button {
     bottom: 1rem;
     right: calc(50% - 6rem);
   }
@@ -3722,28 +3720,31 @@ figure figcaption {
     font-size: 1.25rem;
     line-height: 1.75rem;
   }
-  #app .wrapper > .feature-card-section > .feature-card:after,
-  .wrapper > .feature-card-section > .feature-card.wide:after {
+  #app main.wrapper > .feature-card-section > .feature-card:after,
+  main.wrapper > .feature-card-section > .feature-card.wide:after {
     border-bottom-right-radius: unset;
     border-top-right-radius: unset;
     top: 50%;
   }
-  .wrapper > .feature-card-section > .feature-card:nth-of-type(2n):after {
+  main.wrapper > .feature-card-section > .feature-card:nth-of-type(2n):after {
     left: 85%;
   }
-  #app .wrapper > .feature-card-section > .feature-card:nth-of-type(odd):after {
+  #app
+    main.wrapper
+    > .feature-card-section
+    > .feature-card:nth-of-type(odd):after {
     left: -50%;
   }
   .cloud-man-vector img {
     margin-top: 3rem;
   }
-  .wrapper > .feature-card.wide > h2,
-  .wrapper > .feature-card > h2 {
+  main.wrapper > .feature-card.wide > h2,
+  main.wrapper > .feature-card > h2 {
     position: absolute;
     top: 8rem;
     width: 50%;
   }
-  .wrapper .feature-card h2:before {
+  main.wrapper .feature-card h2:before {
     background-color: #6478e9;
     content: "";
     height: 20px;
@@ -3752,22 +3753,22 @@ figure figcaption {
     width: 50%;
     z-index: -1;
   }
-  .wrapper .feature-card h2:after {
+  main.wrapper .feature-card h2:after {
     display: block;
     margin: 4rem 0;
   }
-  .wrapper .feature-card:nth-child(odd) h2 {
+  main.wrapper .feature-card:nth-child(odd) h2 {
     left: -34vw;
   }
-  .wrapper .feature-card:nth-child(odd) h2,
-  .wrapper .feature-card:nth-child(odd) h2:after {
+  main.wrapper .feature-card:nth-child(odd) h2,
+  main.wrapper .feature-card:nth-child(odd) h2:after {
     text-align: left;
   }
-  .wrapper .feature-card:nth-child(2n) h2 {
+  main.wrapper .feature-card:nth-child(2n) h2 {
     left: 36vw;
     text-align: right;
   }
-  .wrapper .feature-card:nth-child(2n) h2:after {
+  main.wrapper .feature-card:nth-child(2n) h2:after {
     text-align: right;
   }
 }

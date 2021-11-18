@@ -1,10 +1,15 @@
 html,
 body {
-  @apply overflow-x-hidden;
+  height: 100%;
 }
 
 div.inactive {
   @apply hidden;
+}
+
+#app {
+  overflow: auto;
+  height: 100%;
 }
 
 #app > main {
@@ -13,7 +18,7 @@ div.inactive {
   max-width: 100%;
 }
 
-.wrapper {
+main.wrapper {
   width: calc(100% - 2vw);
   margin-top: 1em;
   display: flex;
@@ -42,31 +47,28 @@ div.sm-selector-container .domain-selector {
   top: -13px;
   font-weight: 900;
   font-family: "Font Awesome 5 Free";
-  content: '\f005';
+  content: "\f005";
   width: 1.5rem;
   height: 1.5rem;
   font-size: 2.5rem;
-    transform: rotate( 
-9deg
- );
+  transform: rotate(9deg);
   @apply text-balance-basic-digblue;
 }
 
 .main-logo::after {
   @apply font-std;
   position: absolute;
-  content: 'DEMO';
+  content: "DEMO";
   font-size: 0.4rem;
   color: #0a0a0a;
-    transform: rotate( 
-7deg
- );
-    top: -10px;
-    right: -35px;
-    z-index:50;
+  transform: rotate(7deg);
+  top: -10px;
+  right: -35px;
+  z-index: 50;
 }
 
-.cta-pills, .cta-header {
+.cta-pills,
+.cta-header {
   @apply col-span-5 pr-16 -mt-4 md:mt-2 md:pr-0;
 }
 .cta-header {
@@ -74,8 +76,8 @@ div.sm-selector-container .domain-selector {
 }
 
 @media only screen and (min-width: 768px) {
-  .wrapper > .cloud-man-vector {
-    grid-column: 2/span 3;
+  main.wrapper > .cloud-man-vector {
+    grid-column: 2 / span 3;
   }
 }
 
@@ -90,20 +92,21 @@ div.sm-selector-container .domain-selector {
 }
 
 @media only screen and (min-width: 1920px) {
-  #app  > .wrapper {
+  #app > main.wrapper {
     width: calc(100% - 2em);
     grid-template-columns: repeat(15, 1fr);
     grid-template-rows: repeat(6, 15vh);
   }
 
-  #app .feature-card:first-child, #app .feature-card:last-child {
+  #app .feature-card:first-child,
+  #app .feature-card:last-child {
     margin-bottom: 8rem;
   }
 
   #app .watermark::after {
-    background: no-repeat 90px 0 url('../images/big-pyramid.png');
+    background: no-repeat 90px 0 url("../images/big-pyramid.png");
     background-size: cover;
-    content: '';
+    content: "";
     left: 0;
     top: 0;
     bottom: 0;
@@ -112,30 +115,31 @@ div.sm-selector-container .domain-selector {
     opacity: 0.4;
   }
 
-  #app  > .wrapper > .logo, #app > .wrapper > .slogan {
+  #app > main.wrapper > .logo,
+  #app > main.wrapper > .slogan {
     grid-column: 6 / span 5;
   }
 
-  #app  > .wrapper > .logo {
+  #app > main.wrapper > .logo {
     grid-row: 1;
   }
 
-  #app  > .wrapper > .slogan {
+  #app > main.wrapper > .slogan {
     grid-row: 2;
   }
 
-  #app  > .wrapper > .cta-header {
+  #app > main.wrapper > .cta-header {
     grid-row: 5;
     font-size: 1.25rem;
     grid-column: 7 / span 3;
   }
 
-  #app  > .wrapper > .cloud-man-vector {
+  #app > main.wrapper > .cloud-man-vector {
     grid-column: 1 / span 6;
     grid-row: 4 / span 3;
   }
 
-  #app  > .wrapper > .cta-pills {
+  #app > main.wrapper > .cta-pills {
     grid-row: 4;
     grid-column: 10 / span 5;
   }

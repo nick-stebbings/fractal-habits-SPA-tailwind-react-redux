@@ -43,8 +43,9 @@ export const App: React.FC<indexProps> = ({}) => {
   }, []);
 
   return (
-    <LayoutWithModal type={UIStatus}>
+    <>
+      <LayoutWithModal type={UIStatus} />
       <Header />
-    </LayoutWithModal>
+    </>
   );
 };
