@@ -34,8 +34,6 @@ export const App: React.FC<indexProps> = ({}) => {
   const loadDomains = () => dispatch(fetchDomainsREST());
 
   const loadData = async function () {
-
-  // dispatch(toggleConfirm())
     await loadDomains();
     setHabit(currentHabit);
   };
