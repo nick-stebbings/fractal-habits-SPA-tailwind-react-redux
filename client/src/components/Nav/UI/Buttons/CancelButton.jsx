@@ -1,20 +1,24 @@
-// import { openModal } from "../../../../../../assets/scripts/animations";
-// import { newRecord } from "../../../../../../assets/scripts/controller";
 import React from "react";
 import { Link } from "react-router-dom";
 
-export const CancelButton = ({ id, name, disabled, classString, label }) => {
+export const CancelButton = ({
+  id,
+  name,
+  disabled,
+  classString,
+  label,
+  type,
+}) => {
   const handleClick = function (e) {
-    dom.addEventListener("click", () => {
-      // openModal(false);
-      // newRecord(true);
-      // attrs.modalType && attrs.modalType(false);
-      [...document.querySelectorAll(".not-added")].forEach((label) =>
-        label.classList.remove("not-added")
-      );
-      // m.route.set(m.route.get(), null);
-    });
-  },
+    // dom.addEventListener("click", () => {
+    // openModal(false);
+    // newRecord(true);
+    // attrs.modalType && attrs.modalType(false);
+    // [...document.querySelectorAll(".not-added")].forEach((label) =>
+    //   label.classList.remove("not-added")
+    // );
+    // m.route.set(m.route.get(), null);
+  };
   return (
     <div className="button-container cancel-button">
       <button
@@ -32,5 +36,5 @@ export const CancelButton = ({ id, name, disabled, classString, label }) => {
         {label}
       </button>
     </div>
-  )
+  );
 };

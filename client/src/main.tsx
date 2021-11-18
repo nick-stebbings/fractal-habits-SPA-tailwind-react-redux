@@ -15,14 +15,15 @@ import "./styles/bundled-styles.css";
 import "./assets/styles/app-base.pcss";
 import "./assets/styles/app-components.pcss";
 import "./assets/styles/app-utils.pcss";
-let a = {
-  d: 1,f:3 
-}
+
+import { withModal } from './components/HOC/withModal'
+const RoutesWithModal = withModal(Routes)
+
 
 render(
   <React.StrictMode>
     <Provider store={store}>
-      <Routes />
+      <RoutesWithModal />
     </Provider>
   </React.StrictMode>,
   document.getElementById("app")

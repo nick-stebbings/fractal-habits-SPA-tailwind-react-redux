@@ -22,7 +22,7 @@ export interface Space {
   timeframe: TimeFrame;
 }
 
-export const initialState: Dictionary<Space[]> = {
+export const initialState: Dictionary<Space[] | number> = {
   thisWeek: weekOfDaySpaces(),
   lastWeek: weekOfDaySpaces(-7),
   nextWeek: weekOfDaySpaces(7),

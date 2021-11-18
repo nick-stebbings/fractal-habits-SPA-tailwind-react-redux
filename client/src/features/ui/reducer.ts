@@ -1,4 +1,5 @@
 import { createSlice, AnyAction } from "@reduxjs/toolkit";
+import { Dictionary } from "app/types";
 import { RequestState } from "./types";
 
 export const dataState: RequestState = {
@@ -26,21 +27,31 @@ export const isLoadingAction = (action: AnyAction) => {
   return action.type.endsWith("/pending");
 };
 
+const initialState: Dictionary<boolean | string> = {
+  responseStatus: idleState,
+  confirmStatus: false,
+};
+
 const dataIndicator = createSlice({
   name: "data",
-  initialState: { responseStatus: idleState },
-  reducers: {},
+  initialState,
+  reducers: {
+    toggleConfirm(state) {
+      state.confirmStatus = !state.confirmStatus;
+    },
+  },
   extraReducers: (builder) => {
     builder.addMatcher(isDataAction, (state) => {
-      return { responseStatus: dataState };
+      state.responseStatus = dataState;
     });
-    builder.addMatcher(isLoadingAction, (state) => ({
-      responseStatus: loadingState,
-    }));
-    builder.addMatcher(isErrorAction, (state) => ({
-      responseStatus: errorState,
-    }));
+    builder.addMatcher(isLoadingAction, (state) => {
+      state.responseStatus = loadingState;
+    });
+    builder.addMatcher(isErrorAction, (state) => {
+      state.responseStatus = errorState;
+    });
     builder.addDefaultCase((state) => ({
+      confirmStatus: false,
       responseStatus: idleState,
     }));
   },
