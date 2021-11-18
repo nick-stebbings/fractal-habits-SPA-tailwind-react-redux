@@ -32,12 +32,13 @@ const initialState: Dictionary<boolean | string> = {
   confirmStatus: false,
 };
 
-const dataIndicator = createSlice({
-  name: "data",
+const uiStatus = createSlice({
+  name: "ui",
   initialState,
   reducers: {
     toggleConfirm(state) {
       state.confirmStatus = !state.confirmStatus;
+      return state;
     },
   },
   extraReducers: (builder) => {
@@ -57,4 +58,4 @@ const dataIndicator = createSlice({
   },
 });
 
-export default dataIndicator.reducer;
+export default uiStatus;

@@ -37,7 +37,7 @@ export function withModal<T> (Component : ComponentType<T>) {
     const uiStatus = hocProps?.type;
     const type = uiStatus?.responseStatus.status
     const confirmStatus = uiStatus?.confirmStatus
-
+console.log('confirmStatus :>> ', confirmStatus);
     openModal()
     switch (true) {
       case (type == 'LOADING'):

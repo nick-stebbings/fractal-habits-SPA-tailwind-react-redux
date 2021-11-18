@@ -8,13 +8,14 @@ import { useAppSelector } from "app/hooks";
 const TITLES = {
   Confirm: "Message: You are about to...",
   AddHabit: "Create a new habit under the life domain",
+  Error: "There has been an error!",
 };
 
 export const Modal = ({ type }) => {
   const currentDomain = useAppSelector(selectCurrentDomain);
   console.log("type :>> ", type);
 
-  let confirmationDialog = ["Confirm", "Error"].includes(type);
+  let confirmationDialog = ["Confirm", "Error", "AddHabit"].includes(type);
   return (
     <div
       id="modal_overlay"
@@ -64,7 +65,7 @@ export const Modal = ({ type }) => {
                 iconPath="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
               />
             )}
-            {type == "DeleteHabit" && (
+            {type == "Error" && (
               <DialogBox
                 type="habit-delete"
                 title="Delete Habit and all Child Habits"

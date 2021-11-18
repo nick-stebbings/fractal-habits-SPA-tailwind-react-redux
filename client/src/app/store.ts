@@ -3,7 +3,7 @@ import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 // Import Reducers From Slices
 
 // @ts-ignore
-import uiReducer from "features/ui/reducer";
+import uiSlice from "features/ui/reducer";
 
 // @ts-ignore
 import todoReducer from "features/todo/reducer";
@@ -22,7 +22,7 @@ import spaceSlice from "features/space/slice";
 
 export const store = configureStore({
   reducer: {
-    ui: uiReducer,
+    ui: uiSlice.reducer,
     todo: todoReducer,
     habit: habitReducer,
     domain: domainReducer,

@@ -3,21 +3,24 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 import TodoList from "../features/todo/components/TodoList";
 import { Header } from "./Header";
+import { Layout } from "./Layout";
 
 import { fetchHabitsREST } from "../features/habit/actions";
 import { fetchDomainsREST } from "../features/domain/actions";
+import reducer from "../features/ui/reducer";
+const { toggleConfirm } = reducer.actions;
 
 import { selectCurrentList } from "../features/todo/selectors";
 import { selectCurrentHabit } from "../features/habit/selectors";
+import { getUIStatus } from "../features/ui/selectors";
 
 import { withModal } from '../components/HOC/withModal'
-import { getUIStatus } from "../features/ui/selectors";
 
 interface indexProps {}
 
 export const App: React.FC<indexProps> = ({}) => {
 
-  const HeaderWithModal = withModal(Header)
+  const LayoutWithModal = withModal(Layout)
   
   const dispatch = useAppDispatch();
   const UIStatus = useAppSelector(getUIStatus);
@@ -31,18 +34,19 @@ export const App: React.FC<indexProps> = ({}) => {
   const loadDomains = () => dispatch(fetchDomainsREST());
 
   const loadData = async function () {
+
+  // dispatch(toggleConfirm())
     await loadDomains();
     setHabit(currentHabit);
   };
 
-  useEffect(() => loadData(), []);
+  useEffect(() => {
+    loadData()
+  }, []);
 
   return (
-    <>
-      <HeaderWithModal type={UIStatus} />
-      {/* <div className="current-list container">
-        {lists && <TodoList list={lists}></TodoList>}
-      </div> */}
-    </>
+    <LayoutWithModal type={UIStatus}>
+      <Header />
+    </LayoutWithModal>
   );
 };
