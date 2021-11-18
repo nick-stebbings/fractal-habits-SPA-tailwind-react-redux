@@ -31,6 +31,7 @@ export interface Space {
 export const initialState: Dictionary<Space[]> = {
   thisWeek: weekOfDaySpaces(),
   lastWeek: weekOfDaySpaces(-7),
+  nextWeek: weekOfDaySpaces(7),
   current: createInterval(),
   currentIdx: 6,
   currentRelativeIdx: -1,
@@ -47,27 +48,42 @@ export const spaceSlice = createSlice({
       // make a new last week of spaces.
       // make current week next week
       if (newIdx % 7 < 0) {
+        // Move each week of spaces forwards
         state.nextWeek = state.thisWeek;
         state.thisWeek = state.lastWeek;
         state.lastWeek = weekOfDaySpaces(state.currentRelativeIdx - 7);
+
+        // Update indices
         state.currentRelativeIdx -= 1;
         state.currentIdx = 6;
+        // Update position in current week
+        state.current = state.thisWeek[state.currentIdx];
       } else {
-        state.current = state.thisWeek[newIdx % 7];
         state.currentRelativeIdx -= 1;
         state.currentIdx = newIdx;
+        state.current = state.thisWeek[newIdx % 7];
       }
     },
     incrementIdx(state) {
       let newIdx = state.currentIdx + 1;
-      if (newIdx % 7 > 6) {
-        // state.lastWeek = state.thisWeek;
-        // state.thisWeek = state.nextWeek;
-        // state.thisWeek = state.nextWeek;
+      if (newIdx % 7 == 0) {
+        // Move each week of spaces backwards
+        state.lastWeek = state.thisWeek;
+        state.thisWeek = state.nextWeek;
+        state.nextWeek = weekOfDaySpaces(state.currentRelativeIdx + 1);
+
+        let future = true;
+        if (!future) {
+          // Update indices
+          state.currentRelativeIdx += 1;
+          state.currentIdx = 0;
+          // Update position in current week
+          state.current = state.thisWeek[state.currentIdx];
+        }
       } else {
-        state.current = state.thisWeek[newIdx % 7];
         state.currentRelativeIdx += 1;
         state.currentIdx = newIdx;
+        state.current = state.thisWeek[newIdx % 7];
       }
     },
   },
