@@ -10,10 +10,17 @@ import { fetchDomainsREST } from "../features/domain/actions";
 import { selectCurrentList } from "../features/todo/selectors";
 import { selectCurrentHabit } from "../features/habit/selectors";
 
+import { withModal } from '../components/HOC/withModal'
+import { getUIStatus } from "../features/ui/selectors";
+
 interface indexProps {}
 
 export const App: React.FC<indexProps> = ({}) => {
+
+  const HeaderWithModal = withModal(Header)
+  
   const dispatch = useAppDispatch();
+  const UIStatus = useAppSelector(getUIStatus);
   const currentList = useAppSelector(selectCurrentList);
   const currentHabit = useAppSelector(selectCurrentHabit);
 
@@ -32,7 +39,7 @@ export const App: React.FC<indexProps> = ({}) => {
 
   return (
     <>
-      <Header />
+      <HeaderWithModal type={UIStatus} />
       {/* <div className="current-list container">
         {lists && <TodoList list={lists}></TodoList>}
       </div> */}

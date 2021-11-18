@@ -16,14 +16,10 @@ import "./assets/styles/app-base.pcss";
 import "./assets/styles/app-components.pcss";
 import "./assets/styles/app-utils.pcss";
 
-import { withModal } from './components/HOC/withModal'
-const RoutesWithModal = withModal(Routes)
-
-
 render(
   <React.StrictMode>
     <Provider store={store}>
-      <RoutesWithModal />
+      <Routes />
     </Provider>
   </React.StrictMode>,
   document.getElementById("app")

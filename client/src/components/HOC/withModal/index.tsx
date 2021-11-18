@@ -1,10 +1,6 @@
 import React, { ComponentType } from 'react'
 // @ts-ignore
-import { store } from 'app/store';
 import { Modal } from 'components/Modal';
-// @ts-ignore
-import { getRequestStatus } from 'features/ui/selectors';
-
 
 const openModal = function (open = true) {
   const modalOverlay = document.querySelector("#modal_overlay");
@@ -38,32 +34,34 @@ const openModal = function (open = true) {
 
 export function withModal<T> (Component : ComponentType<T>) {
   return (hocProps: T) => {
+    const uiStatus = hocProps?.type;
+    const type = uiStatus?.responseStatus.status
+    const confirmStatus = uiStatus?.confirmStatus
+
+    openModal()
     switch (true) {
-      case true:
-        openModal()
-      case (getRequestStatus(store.getState()) == 'LOADING'):
+      case (type == 'LOADING'):
         return (
           <>
           <Modal type={'Spinner'} />
           <Component {...hocProps}></Component>
           </>
         )
-      case (getConfirmStatus(store.getState()) == 'IDLE'):
-        return (
-          <>
-          <Modal type={'Confirm'} />
-          <Component {...hocProps}></Component>
-          </>
-        )
-      case (getRequestStatus(store.getState()) == 'ERROR'):
+      case (type == 'ERROR'):
         return (
           <>
           <Modal type={'Error'} />
           <Component {...hocProps}></Component>
           </>
         )
-      case (getRequestStatus(store.getState()) == 'IDLE'):
-        openModal(false)
+      case (confirmStatus):
+        return (
+          <>
+          <Modal type={'Confirm'} />
+          <Component {...hocProps}></Component>
+          </>
+        )
+      default:
         return <Component {...hocProps}></Component>
     }
   }
