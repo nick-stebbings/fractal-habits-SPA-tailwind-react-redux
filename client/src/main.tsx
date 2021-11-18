@@ -15,6 +15,9 @@ import "./styles/bundled-styles.css";
 import "./assets/styles/app-base.pcss";
 import "./assets/styles/app-components.pcss";
 import "./assets/styles/app-utils.pcss";
+let a = {
+  d: 1,f:3 
+}
 
 render(
   <React.StrictMode>

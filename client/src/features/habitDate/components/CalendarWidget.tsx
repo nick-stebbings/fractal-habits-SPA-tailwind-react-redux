@@ -8,12 +8,16 @@ import { stringifyDate } from "features/habitDate/utils";
 // @ts-ignore
 import { selectCurrentSpace, selectThisWeekSpaces } from "features/space/slice";
 // @ts-ignore
+import { selectCurrentHabit } from "features/habit/selectors";
+// @ts-ignore
 import { selectIsCompletedDate } from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";
 
 export const CalendarWidget = () => {
   const dispatch = useAppDispatch();
+
+  const currentHabit = useAppSelector(selectCurrentHabit);
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
   const [thisWeekSpaces, setWeeks] = useState(currentWeek);
@@ -22,9 +26,9 @@ export const CalendarWidget = () => {
     <div className="top-28 rounded-3xl lg:flex right-6 flex-nowrap absolute justify-end w-full h-full pt-1">
       <div className="-left-12 border-1 border-balance-basic-dgray habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 flex flex-col items-center w-full overflow-auto bg-gray-100">
         <h2 className="flex underline">Description</h2>
-        <span className="flex">{"description"}</span>
+        <span className="flex">{currentHabit.meta.description}</span>
         <h2 className="flex underline">Initiated On</h2>
-        <span className="flex">{"date"}</span>
+        <span className="flex">{stringifyDate(currentHabit.timeframe.fromDate)}</span>
         <i className="fa-solid fa-circle-info" />
         <Link to={`habits/list?currentHabit=${"HabitStore.current()?.id"}`}>
           <span className={"absolute top-3 right-3"}>

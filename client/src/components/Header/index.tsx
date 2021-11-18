@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../routes/routeInfo";
+import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../../routes/routeInfo";
 
 // @ts-ignore
 import { useAppSelector } from "app/hooks";
@@ -9,12 +9,12 @@ import { selectCurrentHabit } from "features/habit/selectors";
 
 // @ts-ignore
 import { CalendarWidget } from "features/habitDate/components/CalendarWidget";
-import { ResponsiveNavGroup } from "./Nav/ResponsiveNavGroup";
-import { DomainSelector } from "./Nav/UI/Inputs/DomainSelector";
-import { DropdownNav } from "./Nav/DropdownNav";
-import { DateSelector } from "./Nav/UI/Inputs/DateSelector";
+import { ResponsiveNavGroup } from "../Nav/ResponsiveNavGroup";
+import { DomainSelector } from "../Nav/UI/Inputs/DomainSelector";
+import { DropdownNav } from "../Nav/DropdownNav";
+import { DateSelector } from "../Nav/UI/Inputs/DateSelector";
 
-import "../assets/styles/components/MaskHeader.scss";
+import "../../assets/styles/components/MaskHeader.scss";
 
 export const Header = () => {
   const currentHabit = useAppSelector(selectCurrentHabit);
@@ -71,7 +71,7 @@ export const Header = () => {
             </div>
             <input type="checkbox" id="hamburger" className="hidden" />
             <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2">
-              <div>
+              <div className="label-wrapper" >
                 <div className="nav-label-primary domain-selector max-w-12">
                   <span className="lg:hidden xl:block pt-2 pb-0 mx-4 mb-1">
                     <label>Domain</label>

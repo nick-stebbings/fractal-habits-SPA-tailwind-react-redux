@@ -101,11 +101,13 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       navItem?.classList.add("active");
       oppositeLink?.parentNode.classList.remove("active");
-      oppositeLink?.parentNode.classList.add("inactive");
       document.querySelector("#current-habit-label")?.classList.add("inactive");
       document
         .querySelector("#current-habit-label")
         ?.classList.remove("active");
+      const switchingTab = id;
+      console.log("id :>> ", oppositeLink?.parentNode.classList);
+      console.log("id :>> ", navItem?.classList);
 
       document.querySelector(".mask-wrapper").style.height === "5rem"
         ? showMegaMenu(idx)
