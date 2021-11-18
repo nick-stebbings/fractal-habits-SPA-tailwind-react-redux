@@ -22,18 +22,15 @@ import "../../assets/styles/components/MaskHeader.scss";
 export const Header = () => {
   const dispatch = useAppDispatch()
   
-  const spaceIdx = useAppSelector(selectCurrentSpaceIndex);
   const currentHabit = useAppSelector(selectCurrentHabit);
   
-  const handlePrevDate = (e) => {
+  const handlePrevDate = (_:any) => {
     dispatch(decrementIdx())
-  // dispatch an action to change the date index. if the index is 0, go to prev week. move the weeks around
 }
-const handleNextDate = (e) => {
+const handleNextDate = (_:any) => {
     dispatch(incrementIdx())
-    // dispatch an action to change the date index. if the index is 6, go to next week
-    
-  }
+}
+
   let isDemo = false;
   return (
     <div
