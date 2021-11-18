@@ -60,11 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // set the current date to the date string after the inputs update. (move to component)
     });
   });
-  prevDateSelector?.addEventListener("click", () => {});
-  // dispatch an action to change the date index. if the index is 0, go to prev week. move the weeks around
-  nextDateSelector?.addEventListener("click", () => {
-    // dispatch an action to change the date index. if the index is 6, go to next week
-  });
 
   // Habit list
   // document.querySelector("#habit-list").addEventListener("click", (e) => {

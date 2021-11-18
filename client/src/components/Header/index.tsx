@@ -3,9 +3,12 @@ import { Link } from "react-router-dom";
 import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../../routes/routeInfo";
 
 // @ts-ignore
-import { useAppSelector } from "app/hooks";
+import { useAppDispatch, useAppSelector } from "app/hooks";
 // @ts-ignore
 import { selectCurrentHabit } from "features/habit/selectors";
+// @ts-ignore
+import slice, { selectCurrentSpaceIndex } from 'features/space/slice';
+const { decrementIdx, incrementIdx } = slice.actions;
 
 // @ts-ignore
 import { CalendarWidget } from "features/habitDate/components/CalendarWidget";
@@ -17,7 +20,20 @@ import { DateSelector } from "../Nav/UI/Inputs/DateSelector";
 import "../../assets/styles/components/MaskHeader.scss";
 
 export const Header = () => {
+  const dispatch = useAppDispatch()
+  
+  const spaceIdx = useAppSelector(selectCurrentSpaceIndex);
   const currentHabit = useAppSelector(selectCurrentHabit);
+  
+  const handlePrevDate = (e) => {
+    dispatch(decrementIdx())
+  // dispatch an action to change the date index. if the index is 0, go to prev week. move the weeks around
+}
+const handleNextDate = (e) => {
+    dispatch(incrementIdx())
+    // dispatch an action to change the date index. if the index is 6, go to next week
+    
+  }
   let isDemo = false;
   return (
     <div
@@ -92,12 +108,14 @@ export const Header = () => {
                         id="prev-date-selector"
                         className="fa fa-chevron-circle-left pt-2 pr-2"
                         aria-hidden="true"
+                        onClick={handlePrevDate}
                       />
                       <DateSelector />
                       <i
                         id="next-date-selector"
                         className="fa fa-chevron-circle-right pt-2"
                         aria-hidden="true"
+                        onClick={handleNextDate}
                       />
                     </span>
                   </div>
