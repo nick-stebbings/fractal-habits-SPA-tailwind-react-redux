@@ -20,7 +20,7 @@ export const selectCurrentHabitDates = (state: RootState) => {
 
 export const selectIsCompletedDate = (fromDateUnixTs: number) => {
   return createSelector(
-    selectStoredHabitDates,
+    [selectStoredHabitDates],
     (dates) =>
       dates &&
       dates.some(

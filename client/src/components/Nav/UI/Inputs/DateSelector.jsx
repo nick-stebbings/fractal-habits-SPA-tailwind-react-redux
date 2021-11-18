@@ -13,7 +13,6 @@ export const DateSelector = function () {
     currentDateSpace &&
     DateTime.fromMillis(currentDateSpace?.timeframe.fromDate).toISODate();
   const currentHabit = useAppSelector(selectCurrentHabit);
-  console.log("currentDate :>> ", currentDate);
   const { fromDate } = currentHabit?.timeframe;
 
   const handleChange = () => {};

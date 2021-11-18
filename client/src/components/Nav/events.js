@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   calendarWidget.addEventListener("mouseenter", showMegaMenu);
-  calendarWidget.addEventListener("mouseenter", checkAndUpdateCalendar);
+  // calendarWidget.addEventListener("mouseenter", checkAndUpdateCalendar);
   calendarWidget.addEventListener("mouseleave", hideMegaMenu);
   document.querySelector(".nav-container").addEventListener("click", (e) => {
     if (!e.target.classList.contains("nav-container")) return;

@@ -21,6 +21,10 @@ export const CalendarWidget = () => {
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
 
+  const isOutOfHabitBounds = () => {
+    console.log('currentHabit?.timeframe.fromDate :>> ', currentHabit?.timeframe.fromDate);
+    return currentHabit?.timeframe.fromDate > currentSpace.timeframe.fromDate
+  }
   return (
     <div className="top-28 rounded-3xl lg:flex right-6 flex-nowrap absolute justify-end w-full h-full pt-1">
       <div className="-left-12 border-1 border-balance-basic-dgray habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 flex flex-col items-center w-full overflow-auto bg-gray-100">
@@ -73,13 +77,15 @@ export const CalendarWidget = () => {
       >
         {currentWeek &&
           currentWeek.map(({ timeframe: { fromDate } }, idx: number) => {
+            const isOOB = currentHabit?.timeframe.fromDate > fromDate;
+            const isCompleted = useAppSelector(
+                  selectIsCompletedDate(fromDate)
+                )
             return (
               <DateCard
                 key={idx}
-                date={fromDate && stringifyDate(fromDate, { calendar: true })}
-                completedStatus={useAppSelector(
-                  selectIsCompletedDate(fromDate)
-                )}
+                date={fromDate && stringifyDate(fromDate)}
+                completedStatus={isOOB ? 'OOB' : isCompleted}
                 isToday={
                   stringifyDate(currentSpace.timeframe.fromDate) ===
                   stringifyDate(fromDate)

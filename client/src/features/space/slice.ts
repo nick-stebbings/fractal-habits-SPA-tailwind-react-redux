@@ -1,4 +1,4 @@
-import { createSlice, createSelector } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 // @ts-ignore
 import { Dictionary, TimeFrame } from "app/types";
@@ -10,20 +10,13 @@ import { RootState } from "app/store";
 import { weekOfDaySpaces, createInterval } from "./utils";
 import { DateTime } from "luxon";
 
-export const selectThisWeekSpaces = (state: RootState) => {
-  return state?.space.thisWeek;
-};
+export const selectThisWeekSpaces = (state: RootState) => state?.space.thisWeek;
 
-export const selectLastWeekSpaces = (state: RootState) => {
-  return state?.space.lastWeek;
-};
+export const selectLastWeekSpaces = (state: RootState) => state?.space.lastWeek;
 
-export const selectCurrentSpace = (state: RootState) => {
-  return state?.space.current;
-};
-export const selectCurrentSpaceIndex = (state: RootState) => {
-  return state?.space.currentIdx;
-};
+export const selectCurrentSpace = (state: RootState) => state?.space.current;
+export const selectCurrentSpaceIndex = (state: RootState) =>
+  state?.space.currentIdx;
 
 export interface Space {
   timeframe: TimeFrame;
