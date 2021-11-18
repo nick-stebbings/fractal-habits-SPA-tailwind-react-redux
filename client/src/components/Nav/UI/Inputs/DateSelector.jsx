@@ -10,9 +10,11 @@ export const DateSelector = function () {
   const currentDateSpace = useAppSelector(selectCurrentSpace);
   const thisWeekSpaces = useAppSelector(selectThisWeekSpaces);
   const currentDate =
-    currentDateSpace && stringifyDate(currentDateSpace?.timeframe.fromDate);
+    currentDateSpace &&
+    DateTime.fromMillis(currentDateSpace?.timeframe.fromDate).toISODate();
   const currentHabit = useAppSelector(selectCurrentHabit);
-  const { fromDate, toDate } = currentHabit?.timeframe;
+  console.log("currentDate :>> ", currentDate);
+  const { fromDate } = currentHabit?.timeframe;
 
   const handleChange = () => {};
 
@@ -24,7 +26,7 @@ export const DateSelector = function () {
         required={true}
         className="date-today sm:h-10 xl:text-xl xl:px-2 md:py-1 w-full h-6 px-1 mt-1"
         type="date"
-        value={new Date().toDateInputValue()}
+        value={currentDate}
         min={DateTime.fromMillis(fromDate).toISODate()}
         max={new Date().toDateInputValue()}
         list="current-habit-date-list"

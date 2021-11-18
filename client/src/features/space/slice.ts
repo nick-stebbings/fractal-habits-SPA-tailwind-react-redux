@@ -8,6 +8,7 @@ import { RootState } from "app/store";
 
 // @ts-ignore
 import { weekOfDaySpaces, createInterval } from "./utils";
+import { DateTime } from "luxon";
 
 export const selectThisWeekSpaces = (state: RootState) => {
   return state?.space.thisWeek;
@@ -65,21 +66,21 @@ export const spaceSlice = createSlice({
       }
     },
     incrementIdx(state) {
+      const todaysDate = DateTime.now().startOf("day").ts;
+      let future = state.current.timeframe.fromDate == todaysDate;
+      if (future) return state;
+
       let newIdx = state.currentIdx + 1;
       if (newIdx % 7 == 0) {
         // Move each week of spaces backwards
         state.lastWeek = state.thisWeek;
         state.thisWeek = state.nextWeek;
-        state.nextWeek = weekOfDaySpaces(state.currentRelativeIdx + 1);
 
-        let future = true;
-        if (!future) {
-          // Update indices
-          state.currentRelativeIdx += 1;
-          state.currentIdx = 0;
-          // Update position in current week
-          state.current = state.thisWeek[state.currentIdx];
-        }
+        // Update indices
+        state.currentRelativeIdx += 1;
+        state.currentIdx = 0;
+        // Update position in current week
+        state.current = state.thisWeek[state.currentIdx];
       } else {
         state.currentRelativeIdx += 1;
         state.currentIdx = newIdx;
