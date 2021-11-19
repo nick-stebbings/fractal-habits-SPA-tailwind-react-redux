@@ -32,9 +32,10 @@ main.wrapper {
   @apply flex-none px-2 my-1;
 }
 
-#hamburger-wrapper input:checked ~ nav {
-  visibility: visible;
+#hamburger-wrapper input ~ nav {
+  right: 0;
   opacity: 1;
+  transition: opacity 1s ease-in;
 }
 
 div.sm-selector-container .domain-selector {

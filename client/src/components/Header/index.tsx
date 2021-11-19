@@ -83,7 +83,7 @@ const handleNextDate = (_:any) => {
               </label>
             </div>
             <input type="checkbox" id="hamburger" className="hidden" />
-            <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2">
+            <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2  translate-x-0 opacity-0">
               <div className="label-wrapper" >
                 <div className="nav-label-primary domain-selector max-w-12">
                   <span className="lg:hidden xl:block pt-2 pb-0 mx-4 mb-1">
@@ -118,7 +118,7 @@ const handleNextDate = (_:any) => {
                   </div>
                 </div>
               </div>
-              <div className="lg:block sm:w-3/5 lg:border-none lg:w-auto lg:mt-1 text-md md:px-0 lg:flex-row flex-wrap items-center justify-around hidden px-4 py-1 mt-3 mr-3">
+              {/* <div className="lg:block sm:w-3/5 lg:border-none lg:w-auto lg:mt-1 text-md md:px-0 lg:flex-row flex-wrap items-center justify-around hidden px-4 py-1 mt-3 mr-3">
                 <div className="user-avatar lg:border-1">
                   <img
                     className="lg:border-1 lg:border-balance-tershades-gray lg:rounded-3xl lg:rounded-t-none border-1 border-balance-tershades-light flex flex-none object-cover w-10 h-10 rounded-full"
@@ -137,8 +137,8 @@ const handleNextDate = (_:any) => {
                     Logout
                   </button>
                 </div>
-              </div>
-              <ul className="nav-groups  justify-end lg:hidden rounded-t-r-3xl flex flex-col-reverse w-full mb-8">
+              </div> */}
+              <ul className="nav-groups  justify-end lg:hidden rounded-t-r-3xl flex flex-col-reverse w-full mb-8 ">
                 {MENU_ROUTES.map(({ label, subpaths }: any, idx: number) => (
                   <ResponsiveNavGroup
                     key={idx}
@@ -161,8 +161,8 @@ const handleNextDate = (_:any) => {
       <div
         className={
           isDemo
-            ? "px-0.5 -ml-2 -mt-4 max-h-14 bg-gray-600 lg:hidden text-gray-50 flex items-baseline justify-center leading-8 sm:leading-7 pb-16"
-            : "px-0.5 -ml-2 -mt-4 max-h-14 bg-balance-pshades-dark lg:hidden text-gray-50 flex items-baseline leading-8 sm:leading-7 pb-16 md:leading-6"
+            ? "px-0.5 -ml-2 -mt-4 max-h-14 bg-gray-600 lg:hidden text-gray-50 flex items-baseline justify-center leading-8 sm:leading-7 pb-16 border-b-4"
+            : "px-0.5 -ml-2 -mt-4 max-h-14 bg-balance-pshades-dark lg:hidden text-gray-50 flex items-baseline leading-8 sm:leading-7 pb-16 border-b-4 md:leading-6"
         }
         id="current-habit-label-sm"
       >
