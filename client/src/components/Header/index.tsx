@@ -138,7 +138,7 @@ const handleNextDate = (_:any) => {
                   </button>
                 </div>
               </div>
-              <ul className="nav-groups  justify-end lg:hidden flex flex-col-reverse w-full mb-8">
+              <ul className="nav-groups  justify-end lg:hidden rounded-t-r-3xl flex flex-col-reverse w-full mb-8">
                 {MENU_ROUTES.map(({ label, subpaths }: any, idx: number) => (
                   <ResponsiveNavGroup
                     key={idx}
