@@ -24,22 +24,22 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
     e.currentTarget.style.right = "-3rem";
     document.querySelector(".mask-wrapper").style.height = "21rem"
     document.getElementById("hamburger").checked = false;
-
     document.querySelector(".mask-wrapper .wide-nav").style.borderTopRightRadius = '1.5rem' 
-    document.querySelector(".habit-description-label").style.left = '-3rem'
-
-    document.getElementById("current-habit-label-sm").style.borderBottomWidth = '0px'    
+    document.querySelector(".date-card-wrapper").style.maxWidth = '83%' 
+    document.querySelector(".habit-description-label").style.left = '-3em'
+    document.getElementById("current-habit-label-sm").style.borderBottomWidth = '0px'   
+    setMobileFullyVisible(true)
   }
 
   const slideOut = (e) => {
     if(!isMobile || e.target.classList.contains("cal-date-nav")) return;
     e.currentTarget.style.right = "calc(100% - 4rem)";
     document.querySelector(".mask-wrapper").style.height = "initial"
-
     document.querySelector(".mask-wrapper .wide-nav").style.borderTopRightRadius = '0rem'
     document.querySelector(".habit-description-label").style.left = '0rem'
-
+    document.querySelector(".date-card-wrapper").style.maxWidth = '97%' 
     document.getElementById("current-habit-label-sm").style.borderBottomWidth = '3px'
+    setMobileFullyVisible(false)
   }
   const toggleSlide = (e) => {
     if(!isMobile || e.target.classList.contains("cal-date-nav")) return;
@@ -105,8 +105,12 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
         </span>
       </div>
       <div
-        className="date-card-wrapper rounded-3xl flex-end -mt-14 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent"
-        style={{ maxWidth: "85%" }}
+        className="date-card-wrapper rounded-3xl flex-end -mt-14 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent pt-4 md:pt-1 lg:pt-0 md:ml-6"
+        // style={{ maxWidth: "97%" }}
+        onMouseEnter={(e) => {
+          window.innerWidth < 1024 && (document.querySelector(".date-card-wrapper").style.opacity = 1)}}
+        onMouseLeave={(e) => {
+          window.innerWidth < 1024 && (document.querySelector(".date-card-wrapper").style.opacity = 0)}}
       >
         {currentWeek &&
           currentWeek.map(({ timeframe: { fromDate } }, idx: number) => {

@@ -22,18 +22,18 @@ export const DateCard = ({ date, completedStatus, isToday }) => {
   };
   return (
     <div
-      className="date-card bg-gray-50 rounded-3xl flex flex-col items-center justify-start flex-grow gap-1 p-2 pt-1 -mt-2.5"
+      className="date-card bg-gray-50 rounded-3xl flex flex-auto flex-col items-center justify-start flex-grow gap-1 p-2 pt-1 -mt-2.5"
       style={`border-color: ${
         isToday ? "#e3922f" : "#fefefe"
       }; box-sizing: initial; border-width: 3px; max-width:125px`}
     >
-      <span className="font-std block uppercase">{weekday || <br />}</span>
-      <span className="font-std block text-xl">{monthDay}</span>
-      <span className="block">{month}</span>
+      {/* <span className="font-std block uppercase">{weekday || <br />}</span>
+      <span className="font-std block text-xl">{monthDay}</span> */}
+      {/* <span className="block">{month}</span> */}
       <svg className="w-10 h-10 mt-1" viewBox="0 0 48 48">
         <g transform="translate(12, 14)">
           <circle
-            r="20"
+            r="10"
             cx="12"
             cy="12"
             fill={statusColour(completedStatus)}
