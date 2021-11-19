@@ -15,14 +15,21 @@ import { selectIsCompletedDate } from "features/habitDate/selectors";
 import { DateCard } from "./DateCard";
 
 export const CalendarWidget = () => {
+  const [mobileFullyVisible, setMobileFullyVisible] = useState(false);
   const dispatch = useAppDispatch();
+  const slideIn = (e) => e.currentTarget.style.right = "0"
+  const slideOut = (e) => e.currentTarget.style.right = "66%"
+  const toggleSlide = (e) => {
+    mobileFullyVisible ? slideIn(e) : slideOut(e)
+    setMobileFullyVisible(!mobileFullyVisible)
+  }
 
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
 
   return (
-    <div className="top-28 rounded-3xl lg:flex right-6 flex-nowrap absolute justify-end w-full h-full pt-1">
+    <div className="calendar-widget lg:top-28 top-20 rounded-3xl lg:flex lg:right-6 flex-nowrap absolute justify-end w-full h-full pt-5 right-2/3" onClick={toggleSlide} onMouseOver={slideIn} onMouseLeave ={slideOut} >
       <div className="-left-12 border-1 border-balance-basic-dgray habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 flex flex-col items-center w-full overflow-auto bg-gray-100">
         <h2 className="flex underline">Description</h2>
         <span className="flex">{currentHabit.meta.description}</span>

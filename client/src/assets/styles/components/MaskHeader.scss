@@ -223,6 +223,10 @@ li.hoverable {
   display: none;
 }
 
+.calendar-widget {
+  transition: 0.15s right cubic-bezier();
+}
+
 /* Fixed Nav Links in top-left */
 /* --------------------------- */
 #subnav .nav-links > li.hoverable,
