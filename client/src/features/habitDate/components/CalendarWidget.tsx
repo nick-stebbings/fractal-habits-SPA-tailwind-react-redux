@@ -20,19 +20,27 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
   const [mobileFullyVisible, setMobileFullyVisible] = useState(true);
   const dispatch = useAppDispatch();
   const slideIn = (e) => {
-    if(!isMobile) return;
+    if(!isMobile || e.target.classList.contains("cal-date-nav")) return;
     e.currentTarget.style.right = "-3rem";
     document.querySelector(".mask-wrapper").style.height = "21rem"
     document.getElementById("hamburger").checked = false;
+
+    document.querySelector(".mask-wrapper .wide-nav").style.borderTopRightRadius = '3rem' 
+
+    document.getElementById("current-habit-label-sm").style.borderBottomWidth = '0px'    
   }
 
   const slideOut = (e) => {
-    if(!isMobile) return;
+    if(!isMobile || e.target.classList.contains("cal-date-nav")) return;
     e.currentTarget.style.right = "66%";
     document.querySelector(".mask-wrapper").style.height = "initial"
+
+    document.querySelector(".mask-wrapper .wide-nav").style.borderTopRightRadius = '0rem'
+
+    document.getElementById("current-habit-label-sm").style.borderBottomWidth = '3px'
   }
   const toggleSlide = (e) => {
-    if(!isMobile) return;
+    if(!isMobile || e.target.classList.contains("cal-date-nav")) return;
     mobileFullyVisible ? slideIn(e) : slideOut(e)
     setMobileFullyVisible(!mobileFullyVisible)
   }
@@ -49,8 +57,8 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
         <h2 className="flex mt-1 underline">Initiated On</h2>
         <span className="flex">{stringifyDate(currentHabit.timeframe.fromDate)}</span>
 
-          <i                             className="cal-date-nav fa fa-chevron-circle-left text-3xl ml-2 relative -bottom-16 -left-1/3 lg:hidden" onClick={handlePrev} />
-        <i                          className="cal-date-nav fa fa-chevron-circle-right text-3xl ml-2 relative -bottom-5 -right-1/3 lg:hidden" onClick={handlePrev} />
+          <i                             className="cal-date-nav fa fa-chevron-circle-left text-3xl ml-2 relative -bottom-16 -left-1/4 lg:hidden" onClick={handlePrev} />
+        <i                          className="cal-date-nav fa fa-chevron-circle-right text-3xl ml-2 relative -bottom-5 -right-1/4 lg:hidden" onClick={handleNext} />
         <i className="fa-solid fa-circle-info" />
         <Link to={`habits/list?currentHabit=${"HabitStore.current()?.id"}`}>
           <span className={"absolute top-2  right-3 sm:right-4"}>
