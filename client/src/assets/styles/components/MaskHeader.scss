@@ -224,6 +224,7 @@ li.hoverable {
 }
 
 .calendar-widget {
+  right: calc(100% - 4rem);
   transition: 0.15s right cubic-bezier();
 }
 
