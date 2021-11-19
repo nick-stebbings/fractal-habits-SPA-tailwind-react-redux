@@ -14,7 +14,7 @@ import { selectIsCompletedDate } from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";
 
-export const CalendarWidget = () => {
+export const CalendarWidget = ({handlePrev, handleNext}) => {
 const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matches;
   
   const [mobileFullyVisible, setMobileFullyVisible] = useState(true);
@@ -48,6 +48,9 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
         <span className="flex">{currentHabit.meta.description}</span>
         <h2 className="flex mt-1 underline">Initiated On</h2>
         <span className="flex">{stringifyDate(currentHabit.timeframe.fromDate)}</span>
+
+          <i                             className="cal-date-nav fa fa-chevron-circle-left text-3xl ml-2 relative -bottom-16 -left-1/3 lg:hidden" onClick={handlePrev} />
+        <i                          className="cal-date-nav fa fa-chevron-circle-right text-3xl ml-2 relative -bottom-5 -right-1/3 lg:hidden" onClick={handlePrev} />
         <i className="fa-solid fa-circle-info" />
         <Link to={`habits/list?currentHabit=${"HabitStore.current()?.id"}`}>
           <span className={"absolute top-2  right-3 sm:right-4"}>

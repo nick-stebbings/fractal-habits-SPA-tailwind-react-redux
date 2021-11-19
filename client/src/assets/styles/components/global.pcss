@@ -32,10 +32,11 @@ main.wrapper {
   @apply flex-none px-2 my-1;
 }
 
-#hamburger-wrapper input ~ nav {
-  right: 0;
-  opacity: 1;
-  transition: opacity 1s ease-in;
+#hamburger-wrapper input:checked ~ nav {
+  transform: translateX(-130%);
+  transition: transform 0.7s ease-in;
+  -webkit-transition: transform 700ms;
+  -webkit-transition: -webkit-transform 200ms;
 }
 
 div.sm-selector-container .domain-selector {

@@ -40,7 +40,7 @@ const handleNextDate = (_:any) => {
           : "mask-wrapper bg-balance-pshades-dark"
       }
     >
-      <CalendarWidget />
+      <CalendarWidget handlePrev={handlePrevDate} handleNext={handleNextDate} />
       <header className={isDemo ? "bg-gray-600" : "bg-balance-pshades-dark"}>
         <div id="responsive-nav">
           <Link to="/">
@@ -83,7 +83,7 @@ const handleNextDate = (_:any) => {
               </label>
             </div>
             <input type="checkbox" id="hamburger" className="hidden" />
-            <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2  translate-x-0 opacity-0">
+            <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2  translate-x-full">
               <div className="label-wrapper" >
                 <div className="nav-label-primary domain-selector max-w-12">
                   <span className="lg:hidden xl:block pt-2 pb-0 mx-4 mb-1">
