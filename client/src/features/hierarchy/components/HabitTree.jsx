@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "app/hooks";
 import { fetchHabitTreeREST } from "../actions";
 // @ts-ignore
+import { getRequestStatus } from "features/ui/selectors";
 import { selectCurrentTree } from "features/hierarchy/selectors";
 import { selectCurrentDomain } from "features/domain/selectors";
 
@@ -39,8 +40,13 @@ import "../../../assets/styles/pages/d3vis.scss";
 
 export const HabitTree = function () {
   const dispatch = useAppDispatch();
-  const currentTree = useAppSelector(selectCurrentTree);
+  const currentHierarchy = useAppSelector(selectCurrentTree);
   const currentDomain = useAppSelector(selectCurrentDomain);
+  const currentRequestState = useAppSelector(getRequestStatus);
+
+  const [currentTree, setCurrentTree] = useState({
+    data: { name: "" },
+  });
 
   let demoData = true;
   let canvasWidth;
@@ -79,10 +85,26 @@ export const HabitTree = function () {
     //         );
     //     });
   }
+  const loadData = async function () {
+    await dispatch(fetchHabitTreeREST({ domainId: 1, dateId: 2 }));
+  };
 
   useEffect(() => {
-    dispatch(fetchHabitTreeREST({ domainId: 1, dateId: 2 }));
-    svg = select(`div${divId}`)
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    setCurrentTree(hierarchy(JSON.parse(currentHierarchy.json)));
+
+    console.log(
+      "currentTree :>> ",
+      hierarchy(JSON.parse(currentHierarchy.json)),
+      currentTree
+    );
+    if (currentTree.data.name == "") return;
+    ({ canvasWidth, canvasHeight } = d3SetupCanvas(document));
+
+    svg = select(`#div${divId}`)
       .classed("h-screen", true)
       .classed("w-full", true)
       .append("svg")
@@ -91,10 +113,8 @@ export const HabitTree = function () {
       .attr("height", "100%")
       .attr("style", "pointer-events: all");
 
-    ({ canvasWidth, canvasHeight } = d3SetupCanvas(document));
-    console.log("currentTree :>> ", currentTree.json);
     svg &&
-      currentTree &&
+      currentHierarchy &&
       renderTree(
         svg,
         false,
@@ -103,9 +123,10 @@ export const HabitTree = function () {
         canvasWidth,
         canvasHeight,
         "vis",
-        hierarchy(JSON.parse(currentTree.json))
+        currentTree
       );
-  }, []);
+    // return () => svg.selectAll("*").remove();
+  }, [currentRequestState]);
 
   return (
     <div id="vis" className="w-full h-full mx-auto">

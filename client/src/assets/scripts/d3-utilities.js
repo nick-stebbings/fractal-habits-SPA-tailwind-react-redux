@@ -2,11 +2,13 @@ import { select } from "d3-selection";
 import { scaleOrdinal, scaleLinear } from "d3-scale";
 import { zoomIdentity } from "d3-zoom";
 import { linkVertical } from "d3-shape";
-import { tree, cluster } from "d3-hierarchy";
+import { tree } from "d3-hierarchy";
 import { easeCubic, easePolyOut } from "d3-ease";
 import { legendColor } from "d3-svg-legend";
 // import Hammer from "hammerjs";
 
+import { store } from "app/store";
+import { updateHabitDateREST } from "features/habitDate/actions";
 import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
 
 const showHabitLabel = () =>
@@ -68,7 +70,6 @@ const setHabitLabel = (data) => {
     data?.name;
 };
 
-let zoomsG;
 const zooms = function (e) {
   const transform = e.transform;
   let scale = transform.k,
@@ -166,9 +167,8 @@ const renderTree = function (
 ) {
   let globalZoom, globalTranslate;
   // TODO change this to private data once more than one vis is live
-
+  let zoomsG;
   let rootData = inputTree;
-  console.log("rootData :>> ", rootData);
   if (rootData.name === "") return;
   let clickScale = 4.2;
   setNormalTransform(zoomClicked, zoomsG, clickScale);
@@ -177,7 +177,7 @@ const renderTree = function (
   let currentYTranslate = globalTranslate ? -globalTranslate[1] : 0;
 
   // SETTINGS
-  let scale = isDemo ? 9 : 14;
+  let scale = isDemo ? 9 : 9;
   const zoomBase = svg
     .append("g")
     .classed("canvas", true)
@@ -190,7 +190,6 @@ const renderTree = function (
   let levelsWide;
   let levelsHigh;
 
-  svg.selectAll("*").remove();
   const canvas = svg
     .append("g")
     .classed("canvas", true)
