@@ -18,6 +18,9 @@ import domainReducer from "features/domain/reducer";
 import habitDateReducer from "features/habitDate/reducer";
 
 // @ts-ignore
+import hierarchyReducer from "features/hierarchy/reducer";
+
+// @ts-ignore
 import spaceSlice from "features/space/slice";
 
 export const store = configureStore({
@@ -26,6 +29,7 @@ export const store = configureStore({
     todo: todoReducer,
     habit: habitReducer,
     domain: domainReducer,
+    hierarchy: hierarchyReducer,
     habitDate: habitDateReducer,
     space: spaceSlice.reducer,
   },

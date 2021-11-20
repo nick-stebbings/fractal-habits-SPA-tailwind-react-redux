@@ -11,6 +11,10 @@ import {
   expandTree,
 } from "../../assets/scripts/d3-utilities.js";
 
+// @ts-ignore
+import { selectCurrentTree } from "app/features/hierarchy/selectors";
+
+const currentTree = useAppSelector(selectCurrentTree);
 // import { addSwipeGestures } from "../../assets/scripts/animations";
 
 import "../../assets/styles/pages/d3vis.scss";
@@ -65,6 +69,18 @@ export const HabitTree = function () {
       .attr("style", "pointer-events: all");
 
     ({ canvasWidth, canvasHeight } = d3SetupCanvas(document));
+
+    svg &&
+      renderTree(
+        svg,
+        false,
+        zoomer,
+        {},
+        canvasWidth,
+        canvasHeight,
+        "vis",
+        currentTree
+      );
   }, []);
 
   return (

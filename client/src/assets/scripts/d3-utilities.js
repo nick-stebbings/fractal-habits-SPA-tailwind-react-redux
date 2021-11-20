@@ -182,14 +182,15 @@ const renderTree = function (
   zoomClicked,
   cW = canvasWidth,
   cH = canvasHeight,
-  mType = modalType
+  mType = modalType,
+  inputTree
 ) {
   canvasWidth = cW;
   canvasHeight = cH;
   modalType = mType;
   // TODO change this to private data once more than one vis is live
 
-  let rootData = TreeStore.root();
+  let rootData = inputTree;
   if (rootData.name === "") return;
   let clickScale = 4.2;
   setNormalTransform(zoomClicked, zoomsG, clickScale);
