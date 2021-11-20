@@ -5,21 +5,7 @@ import { linkVertical } from "d3-shape";
 import { tree, cluster } from "d3-hierarchy";
 import { easeCubic, easePolyOut } from "d3-ease";
 import { legendColor } from "d3-svg-legend";
-import { openModal } from "./animations";
-import { isTouchDevice } from "./utilities";
-import {
-  populateCalendar,
-  pendingCalendarRefresh,
-  newRecord,
-} from "./controller";
-import Hammer from "hammerjs";
-
-import TreeStore from "../../store/habit-tree-store";
-import NodeStore from "../../store/habit-node-store";
-import DateStore from "../../store/date-store";
-import HabitStore from "../../store/habit-store";
-import DomainStore from "../../store/domain-store";
-import HabitDateStore from "../../store/habit-date-store";
+// import Hammer from "hammerjs";
 
 let canvasHeight, canvasWidth;
 const margin = {
@@ -44,6 +30,7 @@ const d3SetupCanvas = function (document) {
 
   return { canvasWidth, canvasHeight };
 };
+
 const showHabitLabel = () =>
   (document.querySelector(".mask-wrapper").style.height = "5rem");
 
@@ -101,6 +88,7 @@ const setHabitLabel = (data) => {
   document.getElementById("current-habit-sm").nextElementSibling.textContent =
     data?.name;
 };
+
 let zoomsG;
 const zooms = function (e) {
   const transform = e.transform;

@@ -15,6 +15,7 @@ import { selectCurrentHabit } from "../features/habit/selectors";
 import { getUIStatus } from "../features/ui/selectors";
 
 import { withModal } from '../components/HOC/withModal'
+import {HabitTree} from "./Vis/HabitTree";
 
 interface indexProps {}
 
@@ -46,6 +47,7 @@ export const App: React.FC<indexProps> = ({}) => {
     <>
       <LayoutWithModal type={UIStatus} />
       <Header />
+      <HabitTree />
     </>
   );
 };

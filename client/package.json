@@ -10,6 +10,11 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
+    "d3-hierarchy": "^3.0.1",
+    "d3-selection": "^3.0.0",
+    "d3-shape": "^3.0.1",
+    "d3-svg-legend": "^2.25.6",
+    "d3-zoom": "^3.0.0",
     "deepmerge": "^4.2.2",
     "lodash": "^4.17.21",
     "luxon": "^2.1.1",
