@@ -1,10 +1,13 @@
 import React, { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "app/hooks";
 import { fetchHabitTreeREST } from "../actions";
+// @ts-ignore
+import { selectCurrentTree } from "features/hierarchy/selectors";
 import { selectCurrentDomain } from "features/domain/selectors";
 
 import { select } from "d3-selection";
 import { zoom } from "d3-zoom";
+import { hierarchy } from "d3-hierarchy";
 import {
   debounce,
   zooms,
@@ -29,9 +32,6 @@ const d3SetupCanvas = function (document) {
 
   return { canvasWidth, canvasHeight };
 };
-
-// @ts-ignore
-import { selectCurrentTree } from "features/hierarchy/selectors";
 
 // import { addSwipeGestures } from "../../assets/scripts/animations";
 
@@ -81,9 +81,7 @@ export const HabitTree = function () {
   }
 
   useEffect(() => {
-    dispatch(
-      fetchHabitTreeREST({ domainId: currentDomain.meta.id + 1, dateId: 2 })
-    );
+    dispatch(fetchHabitTreeREST({ domainId: 1, dateId: 2 }));
     svg = select(`div${divId}`)
       .classed("h-screen", true)
       .classed("w-full", true)
@@ -94,8 +92,9 @@ export const HabitTree = function () {
       .attr("style", "pointer-events: all");
 
     ({ canvasWidth, canvasHeight } = d3SetupCanvas(document));
-
+    console.log("currentTree :>> ", currentTree.json);
     svg &&
+      currentTree &&
       renderTree(
         svg,
         false,
@@ -104,7 +103,7 @@ export const HabitTree = function () {
         canvasWidth,
         canvasHeight,
         "vis",
-        currentTree
+        hierarchy(JSON.parse(currentTree.json))
       );
   }, []);
 

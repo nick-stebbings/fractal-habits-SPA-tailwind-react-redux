@@ -168,6 +168,7 @@ const renderTree = function (
   // TODO change this to private data once more than one vis is live
 
   let rootData = inputTree;
+  console.log("rootData :>> ", rootData);
   if (rootData.name === "") return;
   let clickScale = 4.2;
   setNormalTransform(zoomClicked, zoomsG, clickScale);
@@ -423,21 +424,21 @@ const renderTree = function (
         }, 500);
       });
 
-    selection._groups[0].forEach((node) => {
-      const manager = new Hammer.Manager(node);
-      // Create a recognizer
-      const singleTap = new Hammer.Tap({ event: "singletap" });
-      const doubleTap = new Hammer.Tap({
-        event: "doubletap",
-        taps: 2,
-        interval: 700,
-      });
-      manager.add([doubleTap, singleTap]);
-      manager.get("singletap").requireFailure("doubletap");
-      manager.on("doubletap", (ev) => {
-        handleStatusChange(ev, node.__data__);
-      });
-    });
+    // selection._groups[0].forEach((node) => {
+    //   const manager = new Hammer.Manager(node);
+    //   // Create a recognizer
+    //   const singleTap = new Hammer.Tap({ event: "singletap" });
+    //   const doubleTap = new Hammer.Tap({
+    //     event: "doubletap",
+    //     taps: 2,
+    //     interval: 700,
+    //   });
+    //   manager.add([doubleTap, singleTap]);
+    //   manager.get("singletap").requireFailure("doubletap");
+    //   manager.on("doubletap", (ev) => {
+    //     handleStatusChange(ev, node.__data__);
+    //   });
+    // });
   };
   function handleStatusToggle(node) {
     if (!rootData.leaves().includes(node) || node._children) return; // Non-leaf nodes have auto-generated cumulative status
@@ -499,6 +500,7 @@ const renderTree = function (
   rootData.sum((d) => {
     // Return a binary interpretation of whether the habit was completed that day
     const thisNode = rootData.descendants().find((node) => node.data == d);
+    console.log("thisNode :>> ", thisNode);
     let content = parseTreeValues(thisNode.data.content);
     if (content.status === "incomplete" || content.status === "") return 0;
     const statusValue = JSON.parse(content.status);

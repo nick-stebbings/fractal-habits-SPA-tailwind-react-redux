@@ -1,4 +1,4 @@
-import { actionCreators } from "./../habit/actions";
+import { actionCreators } from "./actions";
 import { Hierarchy } from "./types";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -16,7 +16,7 @@ export const hierarchySlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addDefaultCase((state, action) => {
+    builder.addCase("fetch_habit_tree/fulfilled", (state, action) => {
       if (!action?.payload) return state;
       state.current.json = JSON.stringify(action.payload.data);
     });
