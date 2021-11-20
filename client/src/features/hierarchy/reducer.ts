@@ -16,12 +16,12 @@ export const hierarchySlice = createSlice({
   name: "hierarchy",
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
-    builder.addMatcher(
-      (action) => isCrud(action, ...actionCreators),
-      (state, action) => crudReducer(state, action, ...actionCreators)
-    );
-  },
+  // extraReducers: (builder) => {
+  //   builder.addMatcher(
+  //     (action) => isCrud(action, ...actionCreators),
+  //     (state, action) => crudReducer(state, action, ...actionCreators)
+  //   );
+  // },
 });
 
 export default hierarchySlice.reducer;

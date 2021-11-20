@@ -1,32 +1,18 @@
 import { clientRoutes } from "services/restApis";
 import { createCrudActionCreators } from "app/store_utils";
 
-import { habitDateSlice } from "./reducer";
-// const {
-//   createHabitDate,
-//   deleteHabitDate,
-//   updateHabitDate,
-// } = habitDateSlice.actions;
+const BASE_PATH = "/habit_trees";
 
-const BASE_PATH = "/habit_dates";
+const FETCH_HABIT_TREE = "fetch_habit_tree";
 
-const CREATE_HABIT_DATE = "create_habit_date";
-const FETCH_HABIT_DATES = "fetch_habit_dates";
-const UPDATE_HABIT_DATE = "update_habit_date";
-const DESTROY_HABIT_DATE = "destroy_habit_date";
-const FETCH_HABIT_DATE = "fetch_habit_date";
+export const actionStrings = [FETCH_HABIT_TREE];
 
-export const actionStrings = [
-  CREATE_HABIT_DATE,
-  FETCH_HABIT_DATES,
-  UPDATE_HABIT_DATE,
-  DESTROY_HABIT_DATE,
-  FETCH_HABIT_DATE,
-];
-let clientRouteDict = clientRoutes(BASE_PATH);
-
-clientRouteDict.show_all = ({ id, periodLength }) =>
-  clientRoutes(`/habits/${id}/habit_dates?length=${periodLength}`).show_all();
+let clientRouteDict = {
+  show_all: ({ domainId, dateId }) =>
+    clientRoutes(
+      `/habit_trees/?domain_id=${domainId}&date_id=${dateId}`
+    ).show_all(),
+};
 
 const thunkCallBacks = Object.values(clientRouteDict);
 
@@ -35,19 +21,6 @@ export const actionCreators = createCrudActionCreators(
   thunkCallBacks
 );
 
-const [
-  createHabitDateREST,
-  fetchHabitDatesREST,
-  updateHabitDateREST,
-  destroyHabitDateREST,
-] = actionCreators;
+const [fetchHabitTreeREST] = actionCreators;
 
-export {
-  // createHabitDate,
-  // deleteHabitDate,
-  // updateHabitDate,
-  createHabitDateREST,
-  fetchHabitDatesREST,
-  updateHabitDateREST,
-  destroyHabitDateREST,
-};
+export { fetchHabitTreeREST };
