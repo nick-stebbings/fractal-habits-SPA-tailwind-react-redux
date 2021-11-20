@@ -15,7 +15,7 @@ import { selectCurrentHabit } from "../features/habit/selectors";
 import { getUIStatus } from "../features/ui/selectors";
 
 import { withModal } from '../components/HOC/withModal'
-import {HabitTree} from "./Vis/HabitTree";
+import {HabitTree} from "../features/hierarchy/components/HabitTree";
 
 interface indexProps {}
 

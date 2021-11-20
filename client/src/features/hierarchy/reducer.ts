@@ -1,8 +1,7 @@
+import { actionCreators } from "./../habit/actions";
 import { Hierarchy } from "./types";
 import { createSlice } from "@reduxjs/toolkit";
 
-import { crudReducer, isCrud } from "app/store_utils";
-import { actionCreators } from "./actions";
 import { Dictionary } from "app/types";
 
 export const initialState: Dictionary<Hierarchy> = {
@@ -16,12 +15,12 @@ export const hierarchySlice = createSlice({
   name: "hierarchy",
   initialState,
   reducers: {},
-  // extraReducers: (builder) => {
-  //   builder.addMatcher(
-  //     (action) => isCrud(action, ...actionCreators),
-  //     (state, action) => crudReducer(state, action, ...actionCreators)
-  //   );
-  // },
+  extraReducers: (builder) => {
+    builder.addDefaultCase((state, action) => {
+      if (!action?.payload) return state;
+      state.current.json = JSON.stringify(action.payload.data);
+    });
+  },
 });
 
 export default hierarchySlice.reducer;

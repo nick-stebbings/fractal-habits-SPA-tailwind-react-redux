@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
-import { useAppSelector } from "app/hooks";
+import { useAppSelector, useAppDispatch } from "app/hooks";
+import { fetchHabitTreeREST } from "../actions";
+import { selectCurrentDomain } from "features/domain/selectors";
 
 import { select } from "d3-selection";
 import { zoom } from "d3-zoom";
@@ -9,7 +11,7 @@ import {
   renderTree,
   collapseTree,
   expandTree,
-} from "../../assets/scripts/d3-utilities.js";
+} from "../../../assets/scripts/d3-utilities.js";
 
 let canvasHeight, canvasWidth;
 const margin = {
@@ -33,10 +35,13 @@ import { selectCurrentTree } from "features/hierarchy/selectors";
 
 // import { addSwipeGestures } from "../../assets/scripts/animations";
 
-import "../../assets/styles/pages/d3vis.scss";
+import "../../../assets/styles/pages/d3vis.scss";
 
 export const HabitTree = function () {
+  const dispatch = useAppDispatch();
   const currentTree = useAppSelector(selectCurrentTree);
+  const currentDomain = useAppSelector(selectCurrentDomain);
+
   let demoData = true;
   let canvasWidth;
   let canvasHeight;
@@ -76,6 +81,9 @@ export const HabitTree = function () {
   }
 
   useEffect(() => {
+    dispatch(
+      fetchHabitTreeREST({ domainId: currentDomain.meta.id + 1, dateId: 2 })
+    );
     svg = select(`div${divId}`)
       .classed("h-screen", true)
       .classed("w-full", true)

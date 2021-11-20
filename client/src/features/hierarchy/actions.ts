@@ -1,8 +1,6 @@
 import { clientRoutes } from "services/restApis";
 import { createCrudActionCreators } from "app/store_utils";
 
-const BASE_PATH = "/habit_trees";
-
 const FETCH_HABIT_TREE = "fetch_habit_tree";
 
 export const actionStrings = [FETCH_HABIT_TREE];
@@ -10,7 +8,7 @@ export const actionStrings = [FETCH_HABIT_TREE];
 let clientRouteDict = {
   show_all: ({ domainId, dateId }) =>
     clientRoutes(
-      `/habit_trees/?domain_id=${domainId}&date_id=${dateId}`
+      `/habit_trees?domain_id=${domainId}&date_id=${dateId}`
     ).show_all(),
 };
 
