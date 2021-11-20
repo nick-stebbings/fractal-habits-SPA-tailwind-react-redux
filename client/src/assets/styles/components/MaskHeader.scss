@@ -352,7 +352,7 @@ span.logo svg path,
 
 @media only screen and (min-width: 1920px) {
   div.mask-wrapper {
-    mask: none;
+    mask: no-repeat 15px -20px url("../../images/fib-mask-1900-420-rot.svg");
   }
   #subnav .nav-links {
     li::last-of-type {

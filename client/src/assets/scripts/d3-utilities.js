@@ -1,6 +1,6 @@
 import { select } from "d3-selection";
 import { scaleOrdinal, scaleLinear } from "d3-scale";
-import { zoomIdentity } from "d3-zoom";
+import { zoom, zoomIdentity } from "d3-zoom";
 import { linkVertical } from "d3-shape";
 import { tree } from "d3-hierarchy";
 import { easeCubic, easePolyOut } from "d3-ease";
@@ -70,28 +70,6 @@ const setHabitLabel = (data) => {
     data?.name;
 };
 
-const zooms = function (e) {
-  const transform = e.transform;
-  let scale = transform.k,
-    tbound = -canvasHeight * scale * 3,
-    bbound = canvasHeight * scale * 3;
-  scale = globalZoom ? globalZoom : scale;
-  const currentTranslation = [0, 0];
-  zoomsG = e.transform;
-  globalZoom = null;
-  globalTranslate = null;
-  const translation = [
-    globalTranslate ? globalTranslate[0] : currentTranslation[0] + transform.x,
-    globalTranslate
-      ? currentTranslation[1] + globalTranslate[1]
-      : currentTranslation[1] + transform.y,
-  ];
-  select(".canvas").attr(
-    "transform",
-    "translate(" + translation + ")" + " scale(" + scale + ")"
-  );
-};
-
 const deadNode = (event) =>
   event.target.__data__.data &&
   parseTreeValues(event.target.__data__.data.content)?.status == "";
@@ -158,7 +136,6 @@ const setNormalTransform = function (zoomClicked, zoomsG, clickScale) {
 const renderTree = function (
   svg,
   isDemo,
-  zoomer,
   zoomClicked,
   canvasWidth,
   canvasHeight,
@@ -215,6 +192,33 @@ const renderTree = function (
   let activeNode;
   let currentTooltip;
   let currentButton;
+  // --------------------------------------
+
+  const zooms = function (e) {
+    const transform = e.transform;
+    let scale = transform.k,
+      tbound = -canvasHeight * scale * 3,
+      bbound = canvasHeight * scale * 3;
+    scale = globalZoom ? globalZoom : scale;
+    const currentTranslation = [0, 0];
+    zoomsG = e.transform;
+    globalZoom = null;
+    globalTranslate = null;
+    const translation = [
+      globalTranslate
+        ? globalTranslate[0]
+        : currentTranslation[0] + transform.x,
+      globalTranslate
+        ? currentTranslation[1] + globalTranslate[1]
+        : currentTranslation[1] + transform.y,
+    ];
+    select(".canvas").attr(
+      "transform",
+      "translate(" + translation + ")" + " scale(" + scale + ")"
+    );
+  };
+
+  const zoomer = zoom().scaleExtent([0, 5]).duration(10000).on("zoom", zooms);
 
   calibrateViewPort();
   svg
@@ -454,7 +458,7 @@ const renderTree = function (
     HabitStore.runCurrentFilterByNode(nodeId);
     if (!node.data.name.includes("Sub-Habit")) {
       // If this was not a 'ternarising' sub habit that we created for more even distribution
-      return makePatchOrPutRequest(isDemo, currentStatus).then(m.redraw);
+      return makePatchOrPutRequest(isDemo, currentStatus);
     }
   }
 
@@ -845,7 +849,8 @@ const nodeStatusColours = (d) => {
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return neutralCol;
   const status = parseTreeValues(d.data.content).status;
-  if (status == "false" && TreeStore.root().leaves().includes(d))
+  if (status == "false")
+    // && rootData.leaves().includes(d)
     return negativeCol;
   if (status === "") return noNodeCol;
   switch (cumulativeValue(d)) {
@@ -872,7 +877,6 @@ export {
   renderTree,
   collapseTree,
   expandTree,
-  zooms,
   debounce,
   makePatchOrPutRequest,
 };

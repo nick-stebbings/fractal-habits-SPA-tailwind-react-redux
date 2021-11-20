@@ -583,7 +583,7 @@ nav .menu-card p {
   color: rgba(99, 74, 54, var(--tw-text-opacity));
   content: url(/images/icons/slash.svg);
   height: 4px;
-  left: 0.5rem;
+  left: 0.4rem;
   position: relative;
   top: -0.5rem;
   transform: rotate(39deg) scale(0.35);
@@ -3236,10 +3236,10 @@ li.hoverable
 #subnav .nav-links > li.hoverable:last-of-type:before {
   content: url(/images/icons/slash.svg);
   height: 4px;
-  left: 62px;
+  left: 63x;
   position: absolute;
-  top: -10px;
-  transform: rotate(39deg) scale(0.6);
+  top: -15px;
+  transform: rotate(40deg) scale(0.6);
   transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
   width: 4px;
   z-index: 40;
@@ -3343,10 +3343,6 @@ span.logo svg path:focus {
   }
 }
 @media only screen and (min-width: 1920px) {
-  div.mask-wrapper {
-    -webkit-mask: none;
-    mask: none;
-  }
   #subnav .nav-links {
     padding-left: 0;
   }

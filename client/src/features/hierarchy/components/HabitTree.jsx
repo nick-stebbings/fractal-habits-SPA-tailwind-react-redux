@@ -7,11 +7,9 @@ import { selectCurrentTree } from "features/hierarchy/selectors";
 import { selectCurrentDomain } from "features/domain/selectors";
 
 import { select } from "d3-selection";
-import { zoom } from "d3-zoom";
 import { hierarchy } from "d3-hierarchy";
 import {
   debounce,
-  zooms,
   renderTree,
   collapseTree,
   expandTree,
@@ -54,37 +52,8 @@ export const HabitTree = function () {
   let svg;
 
   const debounceInterval = 350;
-  const zoomer = zoom().scaleExtent([0, 5]).duration(10000).on("zoom", zooms);
   const divId = 1;
-  function updateStoresAndRenderTree(modalType) {
-    // DateStore.current()?.id &&
-    //   TreeStore.index(
-    //     demoData,
-    //     DomainStore.current().id,
-    //     DateStore.current().id
-    //   )
-    //     .then(() => {
-    //       DateStore.indexDatesOfHabit(HabitStore.current());
-    //       !demoData &&
-    //         HabitStore.current() &&
-    //         HabitDateStore.index().then(() =>
-    //           NodeStore.runCurrentFilterByHabit(HabitStore.current())
-    //         );
-    //     })
-    //     .then(() => {
-    //       TreeStore.root() &&
-    //         svg &&
-    //         renderTree(
-    //           svg,
-    //           demoData,
-    //           zoomer,
-    //           {},
-    //           canvasWidth,
-    //           canvasHeight,
-    //           modalType
-    //         );
-    //     });
-  }
+
   const loadData = async function () {
     await dispatch(fetchHabitTreeREST({ domainId: 1, dateId: 2 }));
   };
@@ -96,11 +65,6 @@ export const HabitTree = function () {
   useEffect(() => {
     setCurrentTree(hierarchy(JSON.parse(currentHierarchy.json)));
 
-    console.log(
-      "currentTree :>> ",
-      hierarchy(JSON.parse(currentHierarchy.json)),
-      currentTree
-    );
     if (currentTree.data.name == "") return;
     ({ canvasWidth, canvasHeight } = d3SetupCanvas(document));
 
@@ -115,26 +79,22 @@ export const HabitTree = function () {
 
     svg &&
       currentHierarchy &&
-      renderTree(
-        svg,
-        false,
-        zoomer,
-        {},
-        canvasWidth,
-        canvasHeight,
-        "vis",
-        currentTree
-      );
-    // return () => svg.selectAll("*").remove();
+      renderTree(svg, false, {}, canvasWidth, canvasHeight, "vis", currentTree);
+    return () => svg.selectAll("*").remove();
   }, [currentRequestState]);
 
   return (
     <div id="vis" className="w-full h-full mx-auto">
       <svg id="div1" />
-      <button type="button" id="reset-tree">
+      <button type="button" id="reset-tree" on onClick={() => expandTree()}>
         <span>Reset Tree</span>
       </button>
-      <button type="button" id="collapse-tree">
+      <button
+        type="button"
+        id="collapse-tree"
+        on
+        onClick={() => collapseTree()}
+      >
         <span>Collapse</span>
       </button>
     </div>
