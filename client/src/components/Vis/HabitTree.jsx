@@ -1,25 +1,42 @@
 import React, { useEffect } from "react";
+import { useAppSelector } from "app/hooks";
 
 import { select } from "d3-selection";
 import { zoom } from "d3-zoom";
 import {
   debounce,
   zooms,
-  d3SetupCanvas,
   renderTree,
   collapseTree,
   expandTree,
 } from "../../assets/scripts/d3-utilities.js";
 
-// @ts-ignore
-import { selectCurrentTree } from "app/features/hierarchy/selectors";
+let canvasHeight, canvasWidth;
+const margin = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
 
-const currentTree = useAppSelector(selectCurrentTree);
+const d3SetupCanvas = function (document) {
+  const { width, height } = document.body.getBoundingClientRect();
+
+  canvasWidth = width - margin.right - margin.left;
+  canvasHeight = height - margin.top - margin.bottom;
+
+  return { canvasWidth, canvasHeight };
+};
+
+// @ts-ignore
+import { selectCurrentTree } from "features/hierarchy/selectors";
+
 // import { addSwipeGestures } from "../../assets/scripts/animations";
 
 import "../../assets/styles/pages/d3vis.scss";
 
 export const HabitTree = function () {
+  const currentTree = useAppSelector(selectCurrentTree);
   let demoData = true;
   let canvasWidth;
   let canvasHeight;

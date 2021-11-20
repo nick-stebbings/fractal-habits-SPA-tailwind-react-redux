@@ -7,29 +7,7 @@ import { easeCubic, easePolyOut } from "d3-ease";
 import { legendColor } from "d3-svg-legend";
 // import Hammer from "hammerjs";
 
-let canvasHeight, canvasWidth;
-const margin = {
-  top: 0,
-  right: 0,
-  bottom: 0,
-  left: 0,
-};
-
-let modalType;
-const positiveCol = "#93cc96";
-const negativeCol = "#f2aa53";
-const noNodeCol = "#888";
-const neutralCol = "#888";
-let globalZoom, globalTranslate;
-
-const d3SetupCanvas = function (document) {
-  const { width, height } = document.body.getBoundingClientRect();
-
-  canvasWidth = width - margin.right - margin.left;
-  canvasHeight = height - margin.top - margin.bottom;
-
-  return { canvasWidth, canvasHeight };
-};
+import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
 
 const showHabitLabel = () =>
   (document.querySelector(".mask-wrapper").style.height = "5rem");
@@ -51,7 +29,8 @@ const addLegend = (svg) => {
     .attr("transform", "translate(20, 30) scale(2)");
 
   // Borrowing the habit label for the legend
-  if (isTouchDevice() || canvasWidth < 768) {
+  if (false) {
+    //isTouchDevice() ||
     gText
       .append("text")
       .text("Single Tap -> Select Habit & Focus")
@@ -96,7 +75,7 @@ const zooms = function (e) {
     tbound = -canvasHeight * scale * 3,
     bbound = canvasHeight * scale * 3;
   scale = globalZoom ? globalZoom : scale;
-  const currentTranslation = [margin.left, margin.top];
+  const currentTranslation = [0, 0];
   zoomsG = e.transform;
   globalZoom = null;
   globalTranslate = null;
@@ -180,14 +159,12 @@ const renderTree = function (
   isDemo,
   zoomer,
   zoomClicked,
-  cW = canvasWidth,
-  cH = canvasHeight,
-  mType = modalType,
+  canvasWidth,
+  canvasHeight,
+  mType,
   inputTree
 ) {
-  canvasWidth = cW;
-  canvasHeight = cH;
-  modalType = mType;
+  let globalZoom, globalTranslate;
   // TODO change this to private data once more than one vis is live
 
   let rootData = inputTree;
@@ -195,12 +172,18 @@ const renderTree = function (
   let clickScale = 4.2;
   setNormalTransform(zoomClicked, zoomsG, clickScale);
 
-  let currentXTranslate = globalTranslate ? -globalTranslate[0] : margin.left;
-  let currentYTranslate = globalTranslate ? -globalTranslate[1] : margin.top;
+  let currentXTranslate = globalTranslate ? -globalTranslate[0] : 0;
+  let currentYTranslate = globalTranslate ? -globalTranslate[1] : 0;
 
   // SETTINGS
   let scale = isDemo ? 9 : 14;
-  const zoomBase = canvas;
+  const zoomBase = svg
+    .append("g")
+    .classed("canvas", true)
+    .attr(
+      "transform",
+      `scale(${clickScale}), translate(${currentXTranslate},${currentYTranslate})`
+    );
   const smallScreen = canvasWidth < 768;
   const zoomedInView = Object.keys(zoomClicked).length === 0;
   let levelsWide;
@@ -291,6 +274,16 @@ const renderTree = function (
     }
     descendantsToCollapse.concat(nodeCousins).concat(aunts).forEach(collapse);
   };
+
+  function calibrateViewPort() {
+    viewportY = smallScreen ? -800 : -550;
+    viewportW = canvasWidth;
+    viewportX =
+      viewportW / clickScale +
+      clickScale * (!isDemo || smallScreen ? 3.5 : 10) * nodeRadius;
+    viewportH = canvasHeight * 5;
+    defaultView = `${viewportX} ${viewportY} ${viewportW} ${viewportH}`;
+  }
 
   const reset = function () {
     if (zoomBase === undefined) return;
@@ -463,16 +456,6 @@ const renderTree = function (
       // If this was not a 'ternarising' sub habit that we created for more even distribution
       return makePatchOrPutRequest(isDemo, currentStatus).then(m.redraw);
     }
-  }
-
-  function calibrateViewPort() {
-    viewportY = smallScreen ? -800 : -550;
-    viewportW = canvasWidth;
-    viewportX =
-      viewportW / clickScale +
-      clickScale * (!isDemo || smallScreen ? 3.5 : 10) * nodeRadius;
-    viewportH = canvasHeight * 5;
-    defaultView = `${viewportX} ${viewportY} ${viewportW} ${viewportH}`;
   }
 
   function getTransform(node, xScale) {
@@ -885,15 +868,10 @@ const debounce = function (func, delay) {
 };
 
 export {
-  d3SetupCanvas,
   renderTree,
   collapseTree,
   expandTree,
   zooms,
   debounce,
-  positiveCol,
-  neutralCol,
-  negativeCol,
-  noNodeCol,
   makePatchOrPutRequest,
 };
