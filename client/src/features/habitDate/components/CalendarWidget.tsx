@@ -16,7 +16,6 @@ import { DateCard } from "./DateCard";
 
 export const CalendarWidget = ({handlePrev, handleNext}) => {
 const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matches;
-  
   const [mobileFullyVisible, setMobileFullyVisible] = useState(true);
   const dispatch = useAppDispatch();
   const slideIn = (e) => {
@@ -25,8 +24,9 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
     document.querySelector(".mask-wrapper").style.height = "21rem"
     document.getElementById("hamburger").checked = false;
     document.querySelector(".mask-wrapper .wide-nav").style.borderTopRightRadius = '1.5rem' 
-    document.querySelector(".date-card-wrapper").style.maxWidth = '83%' 
+    document.querySelector(".date-card-wrapper").style.maxWidth = (window.innerWidth < 480 ? "83%" :'78%')
     document.querySelector(".habit-description-label").style.left = '-3em'
+    document.querySelector(".cal-date-nav-r").style.display = 'initial'
     document.getElementById("current-habit-label-sm").style.borderBottomWidth = '0px'   
     setMobileFullyVisible(true)
   }
@@ -39,6 +39,7 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
     document.querySelector(".habit-description-label").style.left = '0rem'
     document.querySelector(".date-card-wrapper").style.maxWidth = '97%' 
     document.getElementById("current-habit-label-sm").style.borderBottomWidth = '3px'
+    document.querySelector(".cal-date-nav-r").style.display = 'none'
     setMobileFullyVisible(false)
   }
   const toggleSlide = (e) => {
@@ -53,13 +54,15 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
 
   return (
     <div className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full h-full pt-8" onClick={toggleSlide} >
-      <div className="habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 flex flex-col items-center w-full overflow-none bg-gray-100 border-4">
-        <h2 className="flex mt-4 underline">Description</h2>
-        <span className="flex">{currentHabit.meta.description}</span>
-        <h2 className="flex mt-1 underline">Initiated On</h2>
-        <span className="flex">{stringifyDate(currentHabit.timeframe.fromDate)}</span>
-          <i                             className="cal-date-nav fa fa-chevron-circle-left text-3xl ml-2 relative -bottom-16 -left-1/4 lg:hidden" onClick={handlePrev} />
-        <i                          className="cal-date-nav fa fa-chevron-circle-right text-3xl ml-2 relative -bottom-5 -right-1/4 lg:hidden" onClick={handleNext} />
+      <div className="habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col w-full overflow-none lg:items-center bg-gray-100 border-4 pb-12 md:pb-0">
+        <div className="flex justify-end flex-col relative">
+          <h2 className="mt-4 underline">Description</h2>
+          <span className="">{currentHabit.meta.description}</span>
+          <h2 className="flex mt-1 underline">Initiated On</h2>
+          <span>{stringifyDate(currentHabit.timeframe.fromDate)}</span>
+          <i                             className="cal-date-nav fa fa-chevron-circle-left text-3xl ml-2 absolute -bottom-16 -left-1 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden" onClick={handlePrev} />
+          <i                          className="cal-date-nav cal-date-nav-r fa fa-chevron-circle-right text-3xl ml-2 absolute -bottom-16 right-4 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden" onClick={handleNext} style={{display: 'none'}}/>
+        </div>
         <i className="fa-solid fa-circle-info" />
         <Link to={`habits/list?currentHabit=${"HabitStore.current()?.id"}`}>
           <span className={"absolute top-2  right-3 sm:right-4"}>
@@ -106,7 +109,6 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
       </div>
       <div
         className="date-card-wrapper rounded-3xl flex-end -mt-14 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent pt-4 md:pt-1 lg:pt-0 md:ml-6"
-        // style={{ maxWidth: "97%" }}
         onMouseEnter={(e) => {
           window.innerWidth < 1024 && (document.querySelector(".date-card-wrapper").style.opacity = 1)}}
         onMouseLeave={(e) => {

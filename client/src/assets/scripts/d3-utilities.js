@@ -663,28 +663,28 @@ const renderTree = function (
     .attr("transform", `translate(${200}, -50), scale(2.75)`)
     .attr("style", "opacity: 0");
 
-  gButton
-    .append("rect")
-    .attr("rx", 15)
-    .attr("y", 5)
-    .attr("width", 100)
-    .attr("height", 30)
-    .on("click", (e) => {
-      e.stopPropagation();
-    });
-  gButton
-    .append("text")
-    .attr("x", 15)
-    .attr("y", isDemo ? 25 : 30)
-    .text((d) => "DETAILS")
-    .on("click", (e, n) => {
-      HabitStore.current(HabitStore.filterByName(n.data.name)[0]);
-      let currentId = HabitStore.current()?.id;
-      m.route.set(
-        m.route.param("demo") ? `/habits/list?demo=true` : `/habits/list`,
-        { currentHabit: currentId }
-      );
-    });
+  // gButton
+  // .append("rect")
+  // .attr("rx", 15)
+  // .attr("y", 5)
+  // .attr("width", 100)
+  // .attr("height", 30)
+  // .on("click", (e) => {
+  //   e.stopPropagation();
+  // });
+  // gButton
+  //   .append("text")
+  //   .attr("x", 15)
+  //   .attr("y", isDemo ? 25 : 30)
+  //   .text((d) => "DETAILS")
+  //   .on("click", (e, n) => {
+  //     HabitStore.current(HabitStore.filterByName(n.data.name)[0]);
+  //     let currentId = HabitStore.current()?.id;
+  //     m.route.set(
+  //       m.route.param("demo") ? `/habits/list?demo=true` : `/habits/list`,
+  //       { currentHabit: currentId }
+  //     );
+  //   });
   if (!isDemo) {
     gButton
       .append("rect")

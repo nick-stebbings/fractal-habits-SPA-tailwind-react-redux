@@ -238,6 +238,10 @@ html {
   .container {
     max-width: 768px;
   }
+
+  .date-card-wrapper {
+    max-width: "78%";
+  }
 }
 @media (min-width: 1024px) {
   .container {
@@ -657,6 +661,11 @@ body,
 html {
   overflow-x: hidden;
 }
+
+#app {
+  overflow-y: hidden;
+}
+
 div.inactive {
   display: none;
 }
