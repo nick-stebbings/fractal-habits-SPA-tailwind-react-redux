@@ -133,6 +133,40 @@ const setNormalTransform = function (zoomClicked, zoomsG, clickScale) {
   }
 };
 
+class Visualization {
+  constructor(svg, inputTree) {
+    this.isDemo = false;
+    this.zoomBase = svg;
+    this.rootData = inputTree;
+    this.canvas = svg
+      .append("g")
+      .classed("canvas", true)
+      .attr(
+        "transform",
+        `scale(${clickScale}), translate(${currentXTranslate},${currentYTranslate})`
+      );
+
+    // Flags/metrics from previous render
+    this.scale = 9;
+    this.clickScale = 4.2;
+    this.globalZoom = 1;
+    this.zoomClicked = {};
+    this.smallScreen = this.canvasWidth < 768;
+  }
+
+  reset() {
+    if (this.canvas === undefined) return;
+    scale = isDemo ? 8 : 14;
+    this.zoomBase.attr("viewBox", this.defaultView);
+    this.expandTree();
+    this.zoomClicked = {};
+    this.activeNode = null;
+    document.querySelector(".the-node.active") &&
+      document.querySelector(".the-node.active").classList.remove("active");
+    this.canvas.call(this.zoomer.transform, zoomIdentity);
+  }
+}
+
 const renderTree = function (
   svg,
   isDemo,
