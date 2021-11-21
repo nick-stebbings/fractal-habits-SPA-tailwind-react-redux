@@ -22,22 +22,33 @@ import {
   collapseAroundAndUnder,
   deadNode,
   oppositeStatus,
+  nodeStatusColours,
   parseTreeValues,
+  cumulativeValue,
 } from "./components/helpers";
+
 import { updateHabitDateREST } from "features/habitDate/actions";
 import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
 
-class Visualization {
-  constructor(svg, inputTree) {
+export default class Visualization {
+  constructor(svg, inputTree, canvasHeight, canvasWidth) {
     this.isDemo = false;
     this.zoomBase = svg;
     this.rootData = inputTree;
+    this.canvasHeight = canvasHeight;
+    this.canvasWidth = canvasWidth;
+    this.currentXTranslate = this.globalTranslate
+      ? -this.globalTranslate[0]
+      : 0;
+    this.currentYTranslate = this.globalTranslate
+      ? -this.globalTranslate[1]
+      : 0;
     this.canvas = svg
       .append("g")
       .classed("canvas", true)
       .attr(
         "transform",
-        `scale(${clickScale}), translate(${currentXTranslate},${currentYTranslate})`
+        `scale(${this.clickScale}), translate(${this.currentXTranslate},${this.currentYTranslate})`
       );
 
     // Flags/metrics from previous render
@@ -53,8 +64,8 @@ class Visualization {
       handleZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0 || deadNode(event))
           return this.reset();
-        this.this.globalZoom = this.this.clickScale;
-        this.this.globalTranslate = [node.x, node.y];
+        this.globalZoom = this.clickScale;
+        this.globalTranslate = [node.x, node.y];
         this.setActiveNode(forParent ? node.data : node.data);
         expand(node);
         // updateCurrentHabit(node, false);
@@ -154,7 +165,21 @@ class Visualization {
         // zoomsG?.k && setNormalTransform(zoomClicked, zoomsG, clickScale);
         // renderTree(svg, isDemo, zoomer, opts);
       },
-
+      handleMouseLeave: function () {
+        const g = select(this);
+        g.select(".tooltip").transition().duration(50).style("opacity", "0");
+        g.select(".habit-label-dash-button")
+          .transition()
+          .delay(1000)
+          .duration(150)
+          .style("opacity", "0");
+        setTimeout(() => {
+          this.currentButton = false;
+        }, 100);
+        setTimeout(() => {
+          this.currentTooltip = false;
+        }, 500);
+      },
       handleHover: function (e, d) {
         // If it is an animated concentric circle, delegate to parent node
         if (e.target.classList.length === 0) {
@@ -196,11 +221,11 @@ class Visualization {
       },
     };
   }
+
   setActiveNode(clickedNode) {
     this.activeNode = this.findNodeByContent(clickedNode);
     return this.activeNode;
   }
-
   findNodeByContent(node) {
     if (node === undefined || node.content === undefined) return;
     let found;
@@ -222,6 +247,12 @@ class Visualization {
     document.querySelector(".the-node.active") &&
       document.querySelector(".the-node.active").classList.remove("active");
     this.canvas.call(this.zoomer.transform, zoomIdentity);
+  }
+  expand() {
+    expand(this.rootData);
+  }
+  collapse() {
+    collapse(this.rootData);
   }
 
   setNormalTransform() {
@@ -251,6 +282,11 @@ class Visualization {
     }
     this.levelsWide *= 8;
   }
+  setdXdY() {
+    this.dx = this.canvasWidth / this.levelsHigh / 2;
+    this.dy = (this.canvasHeight / this.levelsWide) * 4;
+    this.dy *= this.zoomedInView && !this.smallScreen ? 10 : 14;
+  }
   setNodeRadius() {
     this.nodeRadius = (this.smallScreen ? 8 : 10) * this.scale;
   }
@@ -262,7 +298,7 @@ class Visualization {
         bbound = canvasHeight * scale * 3;
       const currentTranslation = [0, 0];
 
-      this.scale = this.globalZoom ? this.globalZoom : this.scale;
+      this.scale = this.globalZoom ? this.globalZoom : scale;
       this.zoomsG = e.transform;
       this.globalZoom = null;
       this.globalTranslate = null;
@@ -302,28 +338,170 @@ class Visualization {
       .on("dblclick.zoom", null);
   }
 
+  sumHierarchyData() {
+    this.rootData.sum((d) => {
+      // Return a binary interpretation of whether the habit was completed that day
+      const thisNode = this.rootData
+        .descendants()
+        .find((node) => node.data == d);
+      console.log("thisNode :>> ", thisNode);
+      let content = parseTreeValues(thisNode.data.content);
+      if (content.status === "incomplete" || content.status === "") return 0;
+      const statusValue = JSON.parse(content.status);
+      return +statusValue;
+    });
+  }
+  accumulateNodeValues() {
+    while (this.rootData.descendants().some((node) => node.value > 1)) {
+      // Convert node values to binary based on whether their descendant nodes are all completed
+      this.rootData.each((node) => {
+        if (node.value > 0) {
+          node.value = cumulativeValue(node);
+        }
+      });
+    }
+  }
+  activeOrNonActiveOpacity(d, dimmedOpacity) {
+    if (
+      !this.activeNode ||
+      (this.activeNode && d.ancestors().includes(this.activeNode))
+    )
+      return "1";
+    return !this.zoomClicked ? "1" : dimmedOpacity;
+  }
+
+  setLayout() {
+    this.layout = tree()
+      .size(this.canvasWidth, this.canvasHeight)
+      .nodeSize([this.dy, this.dx]);
+    this.layout(this.rootData);
+  }
+  setNodeAndLinkGroups() {
+    this.gLink = this.canvas
+      .append("g")
+      .classed("links", true)
+      .attr("transform", `translate(${this.viewportW / 2},${this.scale})`);
+    this.gNode = this.canvas
+      .append("g")
+      .classed("nodes", true)
+      .attr("transform", `translate(${this.viewportW / 2},${this.scale})`);
+  }
+  setNodeAndLinkEnterSelections() {
+    const links = this.gLink.selectAll("line.link").data(this.rootData.links());
+
+    this.enteringLinks = links
+      .enter()
+      .append("path")
+      .classed("link", true)
+      .attr("stroke-opacity", (d) =>
+        !this.activeNode ||
+        (this.activeNode && this.activeNode.descendants().includes(d.source))
+          ? 0.55
+          : 0.3
+      )
+      .attr(
+        "d",
+        linkVertical()
+          .x((d) => d.x)
+          .y((d) => d.y)
+      );
+
+    const nodes = this.gNode
+      .selectAll("g.node")
+      .data(this.rootData.descendants());
+
+    this.enteringNodes = nodes
+      .enter()
+      .append("g")
+      .attr("class", (d) =>
+        this.activeNode && d.data.content === this.activeNode.data.content
+          ? "the-node solid active"
+          : "the-node solid"
+      )
+      .style("fill", nodeStatusColours)
+      .style("opacity", (d) => this.activeOrNonActiveOpacity(d, "0.5"))
+      .style("stroke-width", (d) =>
+        this.activeNode !== undefined && d.ancestors().includes(this.activeNode)
+          ? "2px"
+          : "0"
+      )
+      .attr("transform", (d) => `translate(${d.x},${d.y})`)
+      .call(this.bindEventHandlers);
+  }
+  setCircleAndLabelGroups() {
+    this.gCircle = this.enteringNodes.append("g");
+    this.gTooltip = this.enteringNodes
+      .append("g")
+      .classed("tooltip", true)
+      .attr(
+        "transform",
+        `translate(${this.nodeRadius / this.scale}, 75), scale(2)`
+      )
+      .attr("opacity", (d) => this.activeOrNonActiveOpacity(d, "0"));
+  }
+
+  appendCirclesAndLabels() {
+    this.gCircle
+      .append("circle")
+      .attr("r", this.nodeRadius)
+      .on("mouseenter", this.eventHandlers.handleHover);
+  }
+  appendTooltips() {
+    this.gTooltip
+      .append("rect")
+      .attr("width", 3)
+      .attr("height", 45)
+      .attr("x", -6)
+      .attr("y", -25);
+
+    this.gTooltip
+      .append("rect")
+      .attr("width", 275)
+      .attr("height", 100)
+      .attr("x", -6)
+      .attr("y", -10)
+      .attr("rx", 15);
+
+    // Split the name label into two parts:
+    this.gTooltip
+      .append("text")
+      .attr("x", 5)
+      .attr("y", 20)
+      .text((d) => {
+        const words = d.data.name.split(" ").slice(0, 6);
+        return `${words[0] || ""} ${words[1] || ""} ${words[2] || ""} ${
+          words[3] || ""
+        }`;
+      });
+    this.gTooltip
+      .append("text")
+      .attr("x", 15)
+      .attr("y", 50)
+      .text((d) => {
+        const allWords = d.data.name.split(" ");
+        const words = allWords.slice(0, 6);
+        return `${words[4] || ""} ${words[5] || ""} ${words[6] || ""} ${
+          allWords.length > 7 ? "..." : ""
+        }`;
+      });
+  }
+
   bindEventHandlers(selection) {
     selection
-      .on("contextmenu", this.eventHandlers.handleStatusChange)
-      .on("mousewheel.zoom", this.eventHandlers.handleZoom, { passive: true })
-      .on("touchstart", this.eventHandlers.handleHover, { passive: true })
-      .on("touchend", this.eventHandlers.handleNodeToggle, { passive: true })
-      .on("click", this.eventHandlers.handleNodeToggle, { passive: true })
-      .on("mouseleave", function () {
-        const g = select(this);
-        g.select(".tooltip").transition().duration(50).style("opacity", "0");
-        g.select(".habit-label-dash-button")
-          .transition()
-          .delay(1000)
-          .duration(150)
-          .style("opacity", "0");
-        setTimeout(() => {
-          this.currentButton = false;
-        }, 100);
-        setTimeout(() => {
-          this.currentTooltip = false;
-        }, 500);
-      });
+      .on("contextmenu", this.eventHandlers.handleStatusChange.bind(this))
+      .on("mousewheel.zoom", this.eventHandlers.handleZoom.bind(this), {
+        passive: true,
+      })
+      .on("touchstart", this.eventHandlers.handleHover.bind(this), {
+        passive: true,
+      })
+      .on("touchend", this.eventHandlers.handleNodeToggle.bind(this), {
+        passive: true,
+      })
+      .on("click", this.eventHandlers.handleNodeToggle.bind(this), {
+        passive: true,
+      })
+      .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this));
   }
 
   addLegend() {
@@ -463,12 +641,25 @@ class Visualization {
   }
 
   render() {
-    this.setNormalTransform(this.zoomClicked, this.zoomsG, this.clickScale);
+    if (this.rootData.name === "") return;
+    this.setNormalTransform();
     this.setLevelsHighAndWide();
+    this.setdXdY();
     this.setNodeRadius();
     this.setZoomBehaviour();
     this.calibrateViewPortAttrs();
     this.calibrateViewBox();
+
+    this.sumHierarchyData();
+    this.accumulateNodeValues();
+    this.setLayout();
+
+    this.setNodeAndLinkGroups();
+    this.setNodeAndLinkEnterSelections();
+    this.setCircleAndLabelGroups();
+
+    this.appendCirclesAndLabels();
+    this.appendTooltips();
 
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       this.addLegend();

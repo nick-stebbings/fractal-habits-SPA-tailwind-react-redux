@@ -8,13 +8,13 @@ import { selectCurrentDomain } from "features/domain/selectors";
 
 import { select } from "d3-selection";
 import { hierarchy } from "d3-hierarchy";
-import { debounce } from "./helpers";
+import Vis from "../visConstructor";
 
-import {
-  renderTree,
-  collapseTree,
-  expandTree,
-} from "../../../assets/scripts/d3-utilities.js";
+// import {
+//   renderTree,
+//   collapseTree,
+//   expandTree,
+// } from "../../../assets/scripts/d3-utilities.js";
 
 let canvasHeight, canvasWidth;
 const margin = {
@@ -47,11 +47,7 @@ export const HabitTree = function () {
     data: { name: "" },
   });
 
-  let demoData = true;
-  let canvasWidth;
-  let canvasHeight;
   let svg;
-
   const debounceInterval = 350;
   const divId = 1;
 
@@ -78,9 +74,11 @@ export const HabitTree = function () {
       .attr("height", "100%")
       .attr("style", "pointer-events: all");
 
-    svg &&
-      currentHierarchy &&
-      renderTree(svg, false, {}, canvasWidth, canvasHeight, "vis", currentTree);
+    // if (svg && currentHierarchy) {
+    let vis = new Vis(svg, currentTree, canvasHeight, canvasWidth);
+    // }
+    console.log("vis :>> ", vis);
+
     return () => svg.selectAll("*").remove();
   }, [currentRequestState]);
 

@@ -1,21 +1,21 @@
-import {
-  select,
-  scaleOrdinal,
-  scaleLinear,
-  zoom,
-  zoomIdentity,
-  linkVertical,
-  tree,
-  easeCubic,
-  easePolyOut,
-} from "d3";
-import { legendColor } from "d3-svg-legend";
-// import Hammer from "hammerjs";
+// import {
+//   select,
+//   scaleOrdinal,
+//   scaleLinear,
+//   zoom,
+//   zoomIdentity,
+//   linkVertical,
+//   tree,
+//   easeCubic,
+//   easePolyOut,
+// } from "d3";
+// import { legendColor } from "d3-svg-legend";
+// // import Hammer from "hammerjs";
 
-import { store } from "app/store";
-import { getTransform, showHabitLabel } from "./helpers";
-import { updateHabitDateREST } from "features/habitDate/actions";
-import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
+// import { store } from "app/store";
+// import { getTransform, showHabitLabel } from "./helpers";
+// import { updateHabitDateREST } from "features/habitDate/actions";
+// import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
 
 // const showHabitLabel = () =>
 //   (document.querySelector(".mask-wrapper").style.height = "5rem");
@@ -599,56 +599,56 @@ const renderTree = function (
   mType,
   inputTree
 ) {
-  let globalZoom, globalTranslate;
+  // let globalZoom, globalTranslate;
   // TODO change this to private data once more than one vis is live
-  let zoomsG;
-  let rootData = inputTree;
-  if (rootData.name === "") return;
-  let clickScale = 4.2;
+  // let zoomsG;
+  // let rootData = inputTree;
+  // if (rootData.name === "") return;
+  // let clickScale = 4.2;
   // setNormalTransform(zoomClicked, zoomsG, clickScale);
 
-  let currentXTranslate = globalTranslate ? -globalTranslate[0] : 0;
-  let currentYTranslate = globalTranslate ? -globalTranslate[1] : 0;
+  // let currentXTranslate = globalTranslate ? -globalTranslate[0] : 0;
+  // let currentYTranslate = globalTranslate ? -globalTranslate[1] : 0;
 
   // SETTINGS
-  let scale = isDemo ? 9 : 9;
-  const zoomBase = svg
-    .append("g")
-    .classed("canvas", true)
-    .attr(
-      "transform",
-      `scale(${clickScale}), translate(${currentXTranslate},${currentYTranslate})`
-    );
-  const smallScreen = canvasWidth < 768;
-  const zoomedInView = Object.keys(zoomClicked).length === 0;
-  let levelsWide;
-  let levelsHigh;
+  // let scale = isDemo ? 9 : 9;
+  // const zoomBase = svg
+  //   .append("g")
+  //   .classed("canvas", true)
+  //   .attr(
+  //     "transform",
+  //     `scale(${clickScale}), translate(${currentXTranslate},${currentYTranslate})`
+  //   );
+  // const smallScreen = canvasWidth < 768;
+  // const zoomedInView = Object.keys(zoomClicked).length === 0;
+  // let levelsWide;
+  // let levelsHigh;
 
-  const canvas = svg
-    .append("g")
-    .classed("canvas", true)
-    .attr(
-      "transform",
-      `scale(${clickScale}), translate(${currentXTranslate},${currentYTranslate})`
-    );
+  // const canvas = svg
+  //   .append("g")
+  //   .classed("canvas", true)
+  //   .attr(
+  //     "transform",
+  //     `scale(${clickScale}), translate(${currentXTranslate},${currentYTranslate})`
+  //   );
 
-  if (smallScreen) {
-    levelsWide = zoomClicked ? 15 : 12;
-    levelsHigh = zoomClicked ? 0.5 : 3;
-  } else {
-    levelsWide = 12;
-    levelsHigh = 2;
-  }
-  levelsWide *= 8;
-  const nodeRadius = (smallScreen ? 8 : 10) * scale;
-  let dx = canvasWidth / levelsHigh / 2;
-  let dy = (canvasHeight / levelsWide) * 4;
-  dy *= zoomedInView && !smallScreen ? 10 : 14;
+  // if (smallScreen) {
+  //   levelsWide = zoomClicked ? 15 : 12;
+  //   levelsHigh = zoomClicked ? 0.5 : 3;
+  // } else {
+  //   levelsWide = 12;
+  //   levelsHigh = 2;
+  // }
+  // levelsWide *= 8;
+  // const nodeRadius = (smallScreen ? 8 : 10) * scale;
+  // let dx = canvasWidth / levelsHigh / 2;
+  // let dy = (canvasHeight / levelsWide) * 4;
+  // dy *= zoomedInView && !smallScreen ? 10 : 14;
 
-  let viewportX, viewportY, viewportW, viewportH, defaultView;
-  let activeNode;
-  let currentTooltip;
-  let currentButton;
+  // let viewportX, viewportY, viewportW, viewportH, defaultView;
+  // let activeNode;
+  // let currentTooltip;
+  // let currentButton;
   // --------------------------------------
 
   // const zooms = function (e) {
@@ -957,131 +957,131 @@ const renderTree = function (
     redraw && m.redraw();
   }
 
-  rootData.sum((d) => {
-    // Return a binary interpretation of whether the habit was completed that day
-    const thisNode = rootData.descendants().find((node) => node.data == d);
-    console.log("thisNode :>> ", thisNode);
-    let content = parseTreeValues(thisNode.data.content);
-    if (content.status === "incomplete" || content.status === "") return 0;
-    const statusValue = JSON.parse(content.status);
-    return +statusValue;
-  });
+  // rootData.sum((d) => {
+  //   // Return a binary interpretation of whether the habit was completed that day
+  //   const thisNode = rootData.descendants().find((node) => node.data == d);
+  //   console.log("thisNode :>> ", thisNode);
+  //   let content = parseTreeValues(thisNode.data.content);
+  //   if (content.status === "incomplete" || content.status === "") return 0;
+  //   const statusValue = JSON.parse(content.status);
+  //   return +statusValue;
+  // });
 
-  while (rootData.descendants().some((node) => node.value > 1)) {
-    // Convert node values to binary based on whether their descendant nodes are all completed
-    rootData.each((node) => {
-      if (node.value > 0) {
-        node.value = cumulativeValue(node);
-      }
-    });
-  }
+  // while (rootData.descendants().some((node) => node.value > 1)) {
+  //   // Convert node values to binary based on whether their descendant nodes are all completed
+  //   rootData.each((node) => {
+  //     if (node.value > 0) {
+  //       node.value = cumulativeValue(node);
+  //     }
+  //   });
+  // }
 
-  const treeLayout = tree().size(canvasWidth, canvasHeight).nodeSize([dy, dx]);
-  treeLayout(rootData);
+  // const treeLayout = tree().size(canvasWidth, canvasHeight).nodeSize([dy, dx]);
+  // treeLayout(rootData);
 
-  const gLink = canvas
-    .append("g")
-    .classed("links", true)
-    .attr("transform", `translate(${viewportW / 2},${scale})`);
-  const gNode = canvas
-    .append("g")
-    .classed("nodes", true)
-    .attr("transform", `translate(${viewportW / 2},${scale})`);
+  // const gLink = canvas
+  //   .append("g")
+  //   .classed("links", true)
+  //   .attr("transform", `translate(${viewportW / 2},${scale})`);
+  // const gNode = canvas
+  //   .append("g")
+  //   .classed("nodes", true)
+  //   .attr("transform", `translate(${viewportW / 2},${scale})`);
 
-  const links = gLink.selectAll("line.link").data(rootData.links());
+  // const links = gLink.selectAll("line.link").data(rootData.links());
 
-  const enteringLinks = links
-    .enter()
-    .append("path")
-    .classed("link", true)
-    .attr("stroke-opacity", (d) =>
-      !activeNode || (activeNode && activeNode.descendants().includes(d.source))
-        ? 0.55
-        : 0.3
-    )
-    .attr(
-      "d",
-      linkVertical()
-        .x((d) => d.x)
-        .y((d) => d.y)
-    );
+  // const enteringLinks = links
+  //   .enter()
+  //   .append("path")
+  //   .classed("link", true)
+  //   .attr("stroke-opacity", (d) =>
+  //     !activeNode || (activeNode && activeNode.descendants().includes(d.source))
+  //       ? 0.55
+  //       : 0.3
+  //   )
+  //   .attr(
+  //     "d",
+  //     linkVertical()
+  //       .x((d) => d.x)
+  //       .y((d) => d.y)
+  //   );
 
-  const nodes = gNode.selectAll("g.node").data(rootData.descendants());
+  // const nodes = gNode.selectAll("g.node").data(rootData.descendants());
 
-  const activeOrNonActiveOpacity = (d, dimmedOpacity) => {
-    if (!activeNode || (activeNode && d.ancestors().includes(activeNode)))
-      return "1";
-    return !zoomClicked ? "1" : dimmedOpacity;
-  };
+  // const activeOrNonActiveOpacity = (d, dimmedOpacity) => {
+  //   if (!this.activeNode || (this.activeNode && d.ancestors().includes(this.activeNode)))
+  //     return "1";
+  //   return !this.zoomClicked ? "1" : dimmedOpacity;
+  // };
 
-  const enteringNodes = nodes
-    .enter()
-    .append("g")
-    .attr("class", (d) =>
-      activeNode && d.data.content === activeNode.data.content
-        ? "the-node solid active"
-        : "the-node solid"
-    )
-    .style("fill", nodeStatusColours)
-    .style("opacity", (d) => activeOrNonActiveOpacity(d, "0.5"))
-    .style("stroke-width", (d) =>
-      activeNode !== undefined && d.ancestors().includes(activeNode)
-        ? "2px"
-        : "0"
-    )
-    .attr("transform", (d) => `translate(${d.x},${d.y})`)
-    .call(handleEvents);
+  // const enteringNodes = nodes
+  //   .enter()
+  //   .append("g")
+  //   .attr("class", (d) =>
+  //     activeNode && d.data.content === activeNode.data.content
+  //       ? "the-node solid active"
+  //       : "the-node solid"
+  //   )
+  //   .style("fill", nodeStatusColours)
+  //   .style("opacity", (d) => activeOrNonActiveOpacity(d, "0.5"))
+  //   .style("stroke-width", (d) =>
+  //     activeNode !== undefined && d.ancestors().includes(activeNode)
+  //       ? "2px"
+  //       : "0"
+  //   )
+  //   .attr("transform", (d) => `translate(${d.x},${d.y})`)
+  //   .call(handleEvents);
 
-  const gCircle = enteringNodes.append("g");
+  // const gCircle = enteringNodes.append("g");
 
   // activeNode && activeNodeAnimation();
 
   // Append circles and add hover event
-  gCircle.append("circle").attr("r", nodeRadius).on("mouseenter", handleHover);
+  // gCircle.append("circle").attr("r", nodeRadius).on("mouseenter", handleHover);
 
-  const gTooltip = enteringNodes
-    .append("g")
-    .classed("tooltip", true)
-    .attr("transform", `translate(${nodeRadius / scale}, 75), scale(2)`)
-    .attr("opacity", (d) => activeOrNonActiveOpacity(d, "0"));
+  // const gTooltip = enteringNodes
+  //   .append("g")
+  //   .classed("tooltip", true)
+  //   .attr("transform", `translate(${nodeRadius / scale}, 75), scale(2)`)
+  //   .attr("opacity", (d) => activeOrNonActiveOpacity(d, "0"));
 
-  gTooltip
-    .append("rect")
-    .attr("width", 3)
-    .attr("height", 45)
-    .attr("x", -6)
-    .attr("y", -25);
+  // gTooltip
+  //   .append("rect")
+  //   .attr("width", 3)
+  //   .attr("height", 45)
+  //   .attr("x", -6)
+  //   .attr("y", -25);
 
-  gTooltip
-    .append("rect")
-    .attr("width", 275)
-    .attr("height", 100)
-    .attr("x", -6)
-    .attr("y", -10)
-    .attr("rx", 15);
+  // gTooltip
+  //   .append("rect")
+  //   .attr("width", 275)
+  //   .attr("height", 100)
+  //   .attr("x", -6)
+  //   .attr("y", -10)
+  //   .attr("rx", 15);
 
-  // Split the name label into two parts:
-  gTooltip
-    .append("text")
-    .attr("x", 5)
-    .attr("y", 20)
-    .text((d) => {
-      const words = d.data.name.split(" ").slice(0, 6);
-      return `${words[0] || ""} ${words[1] || ""} ${words[2] || ""} ${
-        words[3] || ""
-      }`;
-    });
-  gTooltip
-    .append("text")
-    .attr("x", 15)
-    .attr("y", 50)
-    .text((d) => {
-      const allWords = d.data.name.split(" ");
-      const words = allWords.slice(0, 6);
-      return `${words[4] || ""} ${words[5] || ""} ${words[6] || ""} ${
-        allWords.length > 7 ? "..." : ""
-      }`;
-    });
+  // // Split the name label into two parts:
+  // gTooltip
+  //   .append("text")
+  //   .attr("x", 5)
+  //   .attr("y", 20)
+  //   .text((d) => {
+  //     const words = d.data.name.split(" ").slice(0, 6);
+  //     return `${words[0] || ""} ${words[1] || ""} ${words[2] || ""} ${
+  //       words[3] || ""
+  //     }`;
+  //   });
+  // gTooltip
+  //   .append("text")
+  //   .attr("x", 15)
+  //   .attr("y", 50)
+  //   .text((d) => {
+  //     const allWords = d.data.name.split(" ");
+  //     const words = allWords.slice(0, 6);
+  //     return `${words[4] || ""} ${words[5] || ""} ${words[6] || ""} ${
+  //       allWords.length > 7 ? "..." : ""
+  //     }`;
+  //   });
 
   // MY LABELS (for modified tree traversal)
   // enteringNodes
@@ -1260,13 +1260,13 @@ const renderTree = function (
   // }
 };
 
-function expandTree() {
-  expand(TreeStore.root());
-}
+// function expandTree() {
+//   expand(TreeStore.root());
+// }
 
-function collapseTree() {
-  collapse(TreeStore.root());
-}
+// function collapseTree() {
+//   collapse(TreeStore.root());
+// }
 
 // function expand(d) {
 //   var children = d.children ? d.children : d._children;
