@@ -10,7 +10,10 @@ const addActiveMenuStyles = function () {
   const currentPath = window.location.href.split("#!")[1];
   Array.from(navButtons).forEach((menuCardButton) => {
     const menuCard = menuCardButton.parentNode.parentNode;
-    if (currentPath !== '' && menuCardButton.getAttribute("href").endsWith(currentPath)) {
+    if (
+      currentPath !== "" &&
+      menuCardButton.getAttribute("href").endsWith(currentPath)
+    ) {
       menuCard.classList.add("active");
       menuCardButton.classList.add("active");
       menuCardButton.textContent = "You Are Here";
@@ -22,29 +25,25 @@ const addActiveMenuStyles = function () {
   });
 };
 
-function isTouchDevice() {
-  return (
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0 ||
-    navigator.msMaxTouchPoints > 0
-  );
-};
+// function isTouchDevice() {
+//   return (
+//     "ontouchstart" in window ||
+//     navigator.maxTouchPoints > 0 ||
+//     navigator.msMaxTouchPoints > 0
+//   );
+// };
 
-const redraw = () => {
-  m.redraw();
-};
+// function invert(inputStream) {
+//   inputStream(!inputStream());
+// };
 
-function invert(inputStream) {
-  inputStream(!inputStream());
-};
-
-const setRouteToBasePath = function (habitParam = null) {
-  let url = m.route.get();
-  let newUrl = m.route.param("demo")
-    ? url.split("demo=true")[0] + "demo=true"
-    : url.split("?")[0];
-  m.route.set(newUrl, (habitParam ? {currentHabit: habitParam} : {}));
-};
+// const setRouteToBasePath = function (habitParam = null) {
+//   let url = m.route.get();
+//   let newUrl = m.route.param("demo")
+//     ? url.split("demo=true")[0] + "demo=true"
+//     : url.split("?")[0];
+//   m.route.set(newUrl, (habitParam ? {currentHabit: habitParam} : {}));
+// };
 
 const handleAndRethrow = function (err) {
   if (!err.response) {
@@ -69,13 +68,12 @@ const handleErrorType = function (err, type = "warning") {
       err.response.status = 499;
     }
   }
-  const response =
-    err.response?.status
-      ? err.response.data.message || messages[Number(err.response.status)] // Allow server side validation message first
-      : err;
+  const response = err.response?.status
+    ? err.response.data.message || messages[Number(err.response.status)] // Allow server side validation message first
+    : err;
   const opts = {
     interactive: true,
-    timeout: 4000 
+    timeout: 4000,
   };
   switch (type) {
     case "info":
@@ -90,4 +88,12 @@ const handleErrorType = function (err, type = "warning") {
   }
   throw err;
 };
-export { isTouchDevice, handleAndRethrow, invert, handleErrorType, addActiveMenuStyles, redraw, setRouteToBasePath };
+export {
+  isTouchDevice,
+  handleAndRethrow,
+  invert,
+  handleErrorType,
+  addActiveMenuStyles,
+  redraw,
+  setRouteToBasePath,
+};

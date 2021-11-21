@@ -8,8 +8,9 @@ import { selectCurrentDomain } from "features/domain/selectors";
 
 import { select } from "d3-selection";
 import { hierarchy } from "d3-hierarchy";
+import { debounce } from "./helpers";
+
 import {
-  debounce,
   renderTree,
   collapseTree,
   expandTree,
