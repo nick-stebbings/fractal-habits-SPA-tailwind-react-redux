@@ -22,6 +22,7 @@ import {
   collapseAroundAndUnder,
   deadNode,
   oppositeStatus,
+  contentEqual,
   nodeStatusColours,
   parseTreeValues,
   cumulativeValue,
@@ -42,9 +43,13 @@ export default class Visualization {
       canvasHeight,
       canvasWidth,
       currentXTranslate: () =>
-        this._globalTranslate ? -this._globalTranslate[0] : 0,
+        this._viewConfig.globalTranslate
+          ? -this._viewConfig.globalTranslate[0]
+          : 0,
       currentYTranslate: () =>
-        this._globalTranslate ? -this._globalTranslate[0] : 0,
+        this._viewConfig.globalTranslate
+          ? -this._viewConfig.globalTranslate[0]
+          : 0,
       smallScreen: () => this.canvasWidth < 768,
     };
 
@@ -173,8 +178,8 @@ export default class Visualization {
         // zoomsG?.k && setNormalTransform(zoomClicked, zoomsG, clickScale);
         // renderTree(svg, isDemo, zoomer, opts);
       },
-      handleMouseLeave: function () {
-        const g = select(this);
+      handleMouseLeave: function (e) {
+        const g = select(e.target);
         g.select(".tooltip").transition().duration(50).style("opacity", "0");
         g.select(".habit-label-dash-button")
           .transition()
@@ -245,6 +250,10 @@ export default class Visualization {
     return found;
   }
 
+  clearCanvas() {
+    this.zoomBase.selectAll("*").remove();
+  }
+
   reset() {
     if (this._canvas === undefined) return;
     scale = isDemo ? 8 : 14;
@@ -311,8 +320,8 @@ export default class Visualization {
     const zooms = function (e) {
       const transform = e.transform;
       let scale = transform.k,
-        tbound = -canvasHeight * scale * 3,
-        bbound = canvasHeight * scale * 3;
+        tbound = -this._viewConfig.canvasHeight * this._viewConfig.scale * 3,
+        bbound = this._viewConfig.canvasHeight * this._viewConfig.scale * 3;
       const currentTranslation = [0, 0];
 
       this._viewConfig.scale = this._zoomConfig.globalZoom
@@ -320,13 +329,13 @@ export default class Visualization {
         : scale;
       this.zoomsG = e.transform;
       this._zoomConfig.globalZoom = null;
-      this.this._viewConfig.globalTranslate = null;
+      this._viewConfig.globalTranslate = null;
 
       const translation = [
-        globalTranslate
+        this._viewConfig.globalTranslate
           ? this._viewConfig.globalTranslate[0]
           : currentTranslation[0] + transform.x,
-        globalTranslate
+        this._viewConfig.globalTranslate
           ? currentTranslation[1] + this._viewConfig.globalTranslate[1]
           : currentTranslation[1] + transform.y,
       ];
@@ -340,7 +349,10 @@ export default class Visualization {
           ")"
       );
     };
-    this.zoomer = zoom().scaleExtent([0, 5]).duration(10000).on("zoom", zooms);
+    this.zoomer = zoom()
+      .scaleExtent([0, 5])
+      .duration(10000)
+      .on("zoom", zooms.bind(this));
   }
 
   calibrateViewPortAttrs() {
@@ -632,9 +644,9 @@ export default class Visualization {
         return pulseScale(d);
       });
 
-    function transition() {
+    const transition = function () {
       let data = pulseData
-        .map(function (d) {
+        .map((d) => {
           return d == 3 * this._viewConfig.nodeRadius
             ? 0
             : d + this._viewConfig.nodeRadius;
@@ -656,7 +668,7 @@ export default class Visualization {
         .style("stroke", function (d) {
           return pulseScale(d);
         })
-        .style("opacity", function (d) {
+        .style("opacity", (d) => {
           return d == 3 * this._viewConfig.nodeRadius ? 0 : 1;
         })
         .duration(500);
@@ -671,13 +683,14 @@ export default class Visualization {
         .style("stroke", function (d) {
           return pulseScale(d);
         });
-    }
+    }.bind(this);
     showHabitLabel();
     transition();
   }
 
   render() {
     if (this.rootData.name === "") return;
+    this.clearCanvas();
     this.setNormalTransform();
     this.setLevelsHighAndWide();
     this.setdXdY();

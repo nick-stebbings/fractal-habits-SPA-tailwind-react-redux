@@ -80,8 +80,7 @@ export const HabitTree = function () {
     if (svg && currentHierarchy && currentVis?.render) {
       currentVis.render();
     }
-
-    return () => svg.selectAll("*").remove();
+    // () => currentVis.clearCanvas();
   }, [currentRequestState, JSON.stringify(currentVis)]);
 
   return (
