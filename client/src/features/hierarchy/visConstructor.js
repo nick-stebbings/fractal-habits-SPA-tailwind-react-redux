@@ -25,6 +25,7 @@ import {
   nodeStatusColours,
   parseTreeValues,
   cumulativeValue,
+  isTouchDevice,
 } from "./components/helpers";
 
 import { updateHabitDateREST } from "features/habitDate/actions";
@@ -35,41 +36,48 @@ export default class Visualization {
     this.isDemo = false;
     this.zoomBase = svg;
     this.rootData = inputTree;
-    this.canvasHeight = canvasHeight;
-    this.canvasWidth = canvasWidth;
-    this.currentXTranslate = this.globalTranslate
-      ? -this.globalTranslate[0]
-      : 0;
-    this.currentYTranslate = this.globalTranslate
-      ? -this.globalTranslate[1]
-      : 0;
-    this.canvas = svg
+    this._viewConfig = {
+      scale: 9,
+      clickScale: 4.2,
+      canvasHeight,
+      canvasWidth,
+      currentXTranslate: () =>
+        this._globalTranslate ? -this._globalTranslate[0] : 0,
+      currentYTranslate: () =>
+        this._globalTranslate ? -this._globalTranslate[0] : 0,
+      smallScreen: () => this.canvasWidth < 768,
+    };
+
+    this._zoomConfig = {
+      globalZoom: 1,
+      zoomClicked: {},
+      zoomedInView: function () {
+        return Object.keys(this.zoomClicked).length === 0;
+      },
+    };
+    this._canvas = svg
       .append("g")
       .classed("canvas", true)
       .attr(
         "transform",
-        `scale(${this.clickScale}), translate(${this.currentXTranslate},${this.currentYTranslate})`
+        `scale(${
+          this._viewConfig.clickScale
+        }), translate(${this._viewConfig.currentXTranslate()},${this._viewConfig.currentYTranslate()})`
       );
 
     // Flags/metrics from previous render
-    this.scale = 9;
-    this.clickScale = 4.2;
-    this.globalZoom = 1;
-    // this.zoomsG = null;
-    this.zoomClicked = {};
-    this.zoomedInView = Object.keys(this.zoomClicked).length === 0;
-    this.smallScreen = this.canvasWidth < 768;
+    this.zoomsG = null;
 
     this.eventHandlers = {
       handleZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0 || deadNode(event))
           return this.reset();
-        this.globalZoom = this.clickScale;
-        this.globalTranslate = [node.x, node.y];
+        this._zoomConfig.globalZoom = this._viewConfig.clickScale;
+        this._viewConfig.globalTranslate = [node.x, node.y];
         this.setActiveNode(forParent ? node.data : node.data);
         expand(node);
         // updateCurrentHabit(node, false);
-        this.zoomClicked = {
+        this._zoomConfig.zoomClicked = {
           event: event,
           node: node,
           content: node.data,
@@ -238,15 +246,15 @@ export default class Visualization {
   }
 
   reset() {
-    if (this.canvas === undefined) return;
+    if (this._canvas === undefined) return;
     scale = isDemo ? 8 : 14;
-    this.zoomBase.attr("viewBox", this.defaultView);
+    this.zoomBase.attr("viewBox", this._viewConfig.defaultView);
     this.expandTree();
-    this.zoomClicked = {};
+    this._zoomConfig.zoomClicked = {};
     this.activeNode = null;
     document.querySelector(".the-node.active") &&
       document.querySelector(".the-node.active").classList.remove("active");
-    this.canvas.call(this.zoomer.transform, zoomIdentity);
+    this._canvas.call(this.zoomer.transform, zoomIdentity);
   }
   expand() {
     expand(this.rootData);
@@ -256,39 +264,48 @@ export default class Visualization {
   }
 
   setNormalTransform() {
-    this.zoomsG?.k && (this.zoomsG.k = this.clickScale);
+    this.zoomsG?.k && (this.zoomsG.k = this._viewConfig.clickScale);
 
-    if (this.zoomsG?.x && Object.keys(this.zoomClicked).length > 0) {
+    if (
+      this.zoomsG?.x &&
+      Object.keys(this._zoomConfig.zoomClicked).length > 0
+    ) {
       // Set the translation for a movement back to 'normal zoom' by feeding the node coordinates and multiplying by the current 'normal' scale
       this.zoomsG.x =
         this.zoomsG.k *
-        -(this.zoomClicked?.node.__data__
-          ? this.zoomClicked?.node.__data__.x
-          : this.zoomClicked?.node.x);
+        -(this._zoomConfig.zoomClicked?.node.__data__
+          ? this._zoomConfig.zoomClicked?.node.__data__.x
+          : this._zoomConfig.zoomClicked?.node.x);
       this.zoomsG.y =
         this.zoomsG.k *
-        -(this.zoomClicked?.node.__data__
+        -(this._zoomConfig.zoomClicked?.node.__data__
           ? this.zoomClicked?.node.__data__.y
           : this.zoomClicked?.node.y);
     }
   }
   setLevelsHighAndWide() {
-    if (this.smallScreen) {
-      this.levelsHigh = this.zoomClicked ? 15 : 12;
-      this.levelsWide = this.zoomClicked ? 0.5 : 3;
+    if (this._viewConfig.smallScreen()) {
+      this._viewConfig.levelsHigh = this.zoomClicked ? 15 : 12;
+      this._viewConfig.levelsWide = this.zoomClicked ? 0.5 : 3;
     } else {
-      this.levelsHigh = 12;
-      this.levelsWide = 2;
+      this._viewConfig.levelsHigh = 12;
+      this._viewConfig.levelsWide = 2;
     }
-    this.levelsWide *= 8;
+    this._viewConfig.levelsWide *= 8;
   }
   setdXdY() {
-    this.dx = this.canvasWidth / this.levelsHigh / 2;
-    this.dy = (this.canvasHeight / this.levelsWide) * 4;
-    this.dy *= this.zoomedInView && !this.smallScreen ? 10 : 14;
+    this._viewConfig.dx =
+      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh / 2;
+    this._viewConfig.dy =
+      (this._viewConfig.canvasHeight / this._viewConfig.levelsWide) * 4;
+    this._viewConfig.dy *=
+      this._zoomConfig.zoomedInView() && !this._viewConfig.smallScreen()
+        ? 10
+        : 14;
   }
   setNodeRadius() {
-    this.nodeRadius = (this.smallScreen ? 8 : 10) * this.scale;
+    this._viewConfig.nodeRadius =
+      (this._viewConfig.smallScreen() ? 8 : 10) * this._viewConfig.scale;
   }
   setZoomBehaviour() {
     const zooms = function (e) {
@@ -298,41 +315,48 @@ export default class Visualization {
         bbound = canvasHeight * scale * 3;
       const currentTranslation = [0, 0];
 
-      this.scale = this.globalZoom ? this.globalZoom : scale;
+      this._viewConfig.scale = this._zoomConfig.globalZoom
+        ? this._zoomConfig.globalZoom
+        : scale;
       this.zoomsG = e.transform;
-      this.globalZoom = null;
-      this.globalTranslate = null;
+      this._zoomConfig.globalZoom = null;
+      this.this._viewConfig.globalTranslate = null;
 
       const translation = [
         globalTranslate
-          ? this.globalTranslate[0]
+          ? this._viewConfig.globalTranslate[0]
           : currentTranslation[0] + transform.x,
         globalTranslate
-          ? currentTranslation[1] + this.globalTranslate[1]
+          ? currentTranslation[1] + this._viewConfig.globalTranslate[1]
           : currentTranslation[1] + transform.y,
       ];
       select(".canvas").attr(
         "transform",
-        "translate(" + translation + ")" + " scale(" + this.scale + ")"
+        "translate(" +
+          translation +
+          ")" +
+          " scale(" +
+          this._viewConfig.scale +
+          ")"
       );
     };
     this.zoomer = zoom().scaleExtent([0, 5]).duration(10000).on("zoom", zooms);
   }
 
   calibrateViewPortAttrs() {
-    this.viewportY = this.smallScreen ? -800 : -550;
-    this.viewportW = this.canvasWidth;
-    this.viewportX =
-      viewportW / clickScale +
-      clickScale *
-        (!this.isDemo || this.smallScreen ? 3.5 : 10) *
-        this.nodeRadius;
-    this.viewportH = this.canvasHeight * 5;
-    this.defaultView = `${this.viewportX} ${this.viewportY} ${this.viewportW} ${this.viewportH}`;
+    this._viewConfig.viewportY = this._viewConfig.smallScreen() ? -800 : -550;
+    this._viewConfig.viewportW = this._viewConfig.canvasWidth;
+    this._viewConfig.viewportX =
+      this._viewConfig.viewportW / this._viewConfig.clickScale +
+      this._viewConfig.clickScale *
+        (!this.isDemo || this._viewConfig.smallScreen() ? 3.5 : 10) *
+        this._viewConfig.nodeRadius;
+    this._viewConfig.viewportH = this._viewConfig.canvasHeight * 5;
+    this._viewConfig.defaultView = `${this._viewConfig.viewportX} ${this._viewConfig.viewportY} ${this._viewConfig.viewportW} ${this._viewConfig.viewportH}`;
   }
   calibrateViewBox() {
     this.zoomBase
-      .attr("viewBox", this.defaultView)
+      .attr("viewBox", this._viewConfig.defaultView)
       .attr("preserveAspectRatio", "xMidYMid meet")
       .call(this.zoomer)
       .on("dblclick.zoom", null);
@@ -372,24 +396,32 @@ export default class Visualization {
 
   setLayout() {
     this.layout = tree()
-      .size(this.canvasWidth, this.canvasHeight)
-      .nodeSize([this.dy, this.dx]);
+      .size(this._viewConfig.canvasWidth, this._viewConfig.canvasHeight)
+      .nodeSize([this._viewConfig.dy, this._viewConfig.dx]);
     this.layout(this.rootData);
   }
   setNodeAndLinkGroups() {
-    this.gLink = this.canvas
+    this._gLink = this._canvas
       .append("g")
       .classed("links", true)
-      .attr("transform", `translate(${this.viewportW / 2},${this.scale})`);
-    this.gNode = this.canvas
+      .attr(
+        "transform",
+        `translate(${this._viewConfig.viewportW / 2},${this._viewConfig.scale})`
+      );
+    this._gNode = this._canvas
       .append("g")
       .classed("nodes", true)
-      .attr("transform", `translate(${this.viewportW / 2},${this.scale})`);
+      .attr(
+        "transform",
+        `translate(${this._viewConfig.viewportW / 2},${this._viewConfig.scale})`
+      );
   }
   setNodeAndLinkEnterSelections() {
-    const links = this.gLink.selectAll("line.link").data(this.rootData.links());
+    const links = this._gLink
+      .selectAll("line.link")
+      .data(this.rootData.links());
 
-    this.enteringLinks = links
+    this._enteringLinks = links
       .enter()
       .append("path")
       .classed("link", true)
@@ -406,11 +438,11 @@ export default class Visualization {
           .y((d) => d.y)
       );
 
-    const nodes = this.gNode
+    const nodes = this._gNode
       .selectAll("g.node")
       .data(this.rootData.descendants());
 
-    this.enteringNodes = nodes
+    this._enteringNodes = nodes
       .enter()
       .append("g")
       .attr("class", (d) =>
@@ -418,7 +450,7 @@ export default class Visualization {
           ? "the-node solid active"
           : "the-node solid"
       )
-      .style("fill", nodeStatusColours)
+      .style("fill", (d) => nodeStatusColours(d, this.rootData))
       .style("opacity", (d) => this.activeOrNonActiveOpacity(d, "0.5"))
       .style("stroke-width", (d) =>
         this.activeNode !== undefined && d.ancestors().includes(this.activeNode)
@@ -426,35 +458,37 @@ export default class Visualization {
           : "0"
       )
       .attr("transform", (d) => `translate(${d.x},${d.y})`)
-      .call(this.bindEventHandlers);
+      .call(this.bindEventHandlers.bind(this));
   }
   setCircleAndLabelGroups() {
-    this.gCircle = this.enteringNodes.append("g");
-    this.gTooltip = this.enteringNodes
+    this._gCircle = this._enteringNodes.append("g");
+    this._gTooltip = this._enteringNodes
       .append("g")
       .classed("tooltip", true)
       .attr(
         "transform",
-        `translate(${this.nodeRadius / this.scale}, 75), scale(2)`
+        `translate(${
+          this._viewConfig.nodeRadius / this._viewConfig.scale
+        }, 75), scale(2)`
       )
       .attr("opacity", (d) => this.activeOrNonActiveOpacity(d, "0"));
   }
 
   appendCirclesAndLabels() {
-    this.gCircle
+    this._gCircle
       .append("circle")
-      .attr("r", this.nodeRadius)
+      .attr("r", this._viewConfig.nodeRadius)
       .on("mouseenter", this.eventHandlers.handleHover);
   }
   appendTooltips() {
-    this.gTooltip
+    this._gTooltip
       .append("rect")
       .attr("width", 3)
       .attr("height", 45)
       .attr("x", -6)
       .attr("y", -25);
 
-    this.gTooltip
+    this._gTooltip
       .append("rect")
       .attr("width", 275)
       .attr("height", 100)
@@ -463,7 +497,7 @@ export default class Visualization {
       .attr("rx", 15);
 
     // Split the name label into two parts:
-    this.gTooltip
+    this._gTooltip
       .append("text")
       .attr("x", 5)
       .attr("y", 20)
@@ -473,7 +507,7 @@ export default class Visualization {
           words[3] || ""
         }`;
       });
-    this.gTooltip
+    this._gTooltip
       .append("text")
       .attr("x", 15)
       .attr("y", 50)
@@ -567,13 +601,13 @@ export default class Visualization {
 
     const pulseScale = scaleLinear()
       .range(["#d0790f", "#5568d2", "#3349c1"])
-      .domain([0, 3 * this.nodeRadius]);
+      .domain([0, 3 * this._viewConfig.nodeRadius]);
 
     const pulseData = [
       0,
-      this.nodeRadius,
-      this.nodeRadius * 2,
-      this.nodeRadius * 2,
+      this._viewConfig.nodeRadius,
+      this._viewConfig.nodeRadius * 2,
+      this._viewConfig.nodeRadius * 2,
     ];
 
     const pulseCircles = gCircle
@@ -601,7 +635,9 @@ export default class Visualization {
     function transition() {
       let data = pulseData
         .map(function (d) {
-          return d == 3 * this.nodeRadius ? 0 : d + this.nodeRadius;
+          return d == 3 * this._viewConfig.nodeRadius
+            ? 0
+            : d + this._viewConfig.nodeRadius;
         })
         .slice(0, -2);
 
@@ -621,7 +657,7 @@ export default class Visualization {
           return pulseScale(d);
         })
         .style("opacity", function (d) {
-          return d == 3 * this.nodeRadius ? 0 : 1;
+          return d == 3 * this._viewConfig.nodeRadius ? 0 : 1;
         })
         .duration(500);
 

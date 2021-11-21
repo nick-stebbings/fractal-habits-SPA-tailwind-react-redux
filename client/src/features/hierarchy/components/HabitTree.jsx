@@ -46,6 +46,7 @@ export const HabitTree = function () {
   const [currentTree, setCurrentTree] = useState({
     data: { name: "" },
   });
+  const [currentVis, setCurrentVis] = useState({});
 
   let svg;
   const debounceInterval = 350;
@@ -74,25 +75,29 @@ export const HabitTree = function () {
       .attr("height", "100%")
       .attr("style", "pointer-events: all");
 
-    // if (svg && currentHierarchy) {
-    let vis = new Vis(svg, currentTree, canvasHeight, canvasWidth);
-    // }
-    console.log("vis :>> ", vis);
+    setCurrentVis(new Vis(svg, currentTree, canvasHeight, canvasWidth));
+    console.log("vis :>> ", currentVis);
+    if (svg && currentHierarchy && currentVis?.render) {
+      currentVis.render();
+    }
 
     return () => svg.selectAll("*").remove();
-  }, [currentRequestState]);
+  }, [currentRequestState, JSON.stringify(currentVis)]);
 
   return (
     <div id="vis" className="w-full h-full mx-auto">
       <svg id="div1" />
-      <button type="button" id="reset-tree" on onClick={() => expandTree()}>
+      <button
+        type="button"
+        id="reset-tree"
+        onClick={() => currentVis.expandTree()}
+      >
         <span>Reset Tree</span>
       </button>
       <button
         type="button"
         id="collapse-tree"
-        on
-        onClick={() => collapseTree()}
+        onClick={() => currentVis.collapseTree()}
       >
         <span>Collapse</span>
       </button>
