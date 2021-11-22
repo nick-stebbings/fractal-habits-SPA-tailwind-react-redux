@@ -79,7 +79,7 @@ export default class Visualization {
       handleZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0 || deadNode(event))
           return this.reset();
-        this._zoomConfig.globalZoom = this._viewConfig.clickScale;
+        this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
         this._viewConfig.globalTranslate = [node.x, node.y];
         this.setActiveNode(forParent ? node.data : node.data);
         expand(node);
@@ -89,7 +89,7 @@ export default class Visualization {
           node: node,
           content: node.data,
           scale: this._zoomConfig.zoomClicked
-            ? this._zoomConfig.clickScale
+            ? this._zoomConfig.scale //clickScale
             : this._zoomConfig.scale,
         };
         this.render();
@@ -114,72 +114,68 @@ export default class Visualization {
           );
       },
       handleNodeToggle: function (event, node) {
+        event.preventDefault();
         this.setActiveNode(node.data);
         this.activateNodeAnimation();
-        const targ = event.target;
-        if (targ.tagName == "circle") {
-          if (
-            targ.closest(".the-node").classList.contains("active") ||
-            deadNode(event)
-          )
-            return this.reset();
+        // const targ = event.target;
+        // if (targ.tagName == "circle") {
+        //   if (
+        //     targ.closest(".the-node").classList.contains("active") ||
+        //     deadNode(event)
+        //   )
+        //     return this.reset();
 
-          this.setCurrentHabit(node);
-          expand(node);
+        //   this.setCurrentHabit(node);
+        //   expand(node);
 
-          this.zoomsG?.k && this.setNormalTransform();
+        //   this.zoomsG?.k && this.setNormalTransform();
 
-          setHabitLabel(node.data);
-          // showHabitLabel();
-          collapseAroundAndUnder(node, false, false);
-          if (!this.isDemo) {
-            const nodeContent = parseTreeValues(node.data.content);
-            let newCurrent = selectCurrentNodeByMptt(
-              store.getState(),
-              nodeContent.left,
-              nodeContent.right
-            );
-            store.dispatch(updateCurrentNode(newCurrent));
-          }
-        }
+        //   setHabitLabel(node.data);
+        //   // showHabitLabel();
+        //   collapseAroundAndUnder(node, false, false);
+        //   if (!this.isDemo) {
+        //    this.setCurrentNode(node)
+        //   }
+        // }
       },
-      handleStatusToggle: function (node) {
+      handleStatusChange: function (node) {
         if (!this.rootData.leaves().includes(node) || node._children) return; // Non-leaf nodes have auto-generated cumulative status
-        const nodeContent = parseTreeValues(node.data.content);
-        // NodeStore.runCurrentFilterByMptt(nodeContent.left, nodeContent.right);
-        // HabitStore.runCurrentFilterByNode(NodeStore.current().id);
+        // (Only leaves can toggle)
+        this.setCurrentHabit(node);
+        this.setCurrentNode(node);
 
+        const nodeContent = parseTreeValues(node.data.content);
         const currentStatus = nodeContent.status;
+        // Toggle in memory
         node.data.content = node.data.content.replace(
           /true|false|incomplete/,
           oppositeStatus(currentStatus)
         );
-        // const nodeId = NodeStore.current().id;
-        // HabitStore.runCurrentFilterByNode(nodeId);
+
         if (!node.data.name.includes("Sub-Habit")) {
-          // If this was not a 'ternarising' sub habit that we created for more even distribution
-          // return makePatchOrPutRequest(isDemo, currentStatus);
+          // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
+          store.dispatch(updateNodeStatus(currentStatus));
         }
       },
-      handleStatusChange: function (event, node) {
+      handleNodeFocus: function (event, node) {
         event.preventDefault();
         if (node.children) return;
         this.setActiveNode(node.data);
         this.activateNodeAnimation();
-        const opts = {
-          event,
-          node,
-          content: node.data,
-        };
-        if (deadNode(event)) return this.reset();
+        // this.zoomClicked = {
+        //   event,
+        //   node,
+        //   content: node.data,
+        // };
+        // if (deadNode(event)) return this.reset();
 
-        expand(node);
-        this.render();
-        this.eventHandlers.handleStatusToggle.call(this, node);
-        setHabitLabel(node.data);
-        this.eventHandlers.handleZoom.call(this, event, node?.parent, false);
-        // zoomsG?.k && setNormalTransform(zoomClicked, zoomsG, clickScale);
-        this.render(); // pass opts TODo
+        // expand(node);
+        // this.render();
+        // this.eventHandlers.handleStatusChange.call(this, node);
+        // setHabitLabel(node.data);
+        // // this.eventHandlers.handleZoom.call(this, event, node?.parent, true);
+        // // this.zoomsG?.k && setNormalTransform();
+        // this.render();
       },
       handleMouseLeave: function (e) {
         const g = select(e.target);
@@ -253,6 +249,15 @@ export default class Visualization {
       }
     });
     return found;
+  }
+  setCurrentNode(node) {
+    const nodeContent = parseTreeValues(node.data.content);
+    let newCurrent = selectCurrentNodeByMptt(
+      store.getState(),
+      nodeContent.left,
+      nodeContent.right
+    );
+    store.dispatch(updateCurrentNode(newCurrent));
   }
   setCurrentHabit(node) {
     const nodeContent = parseTreeValues(node.data.content);
@@ -337,20 +342,16 @@ export default class Visualization {
         bbound = this._viewConfig.canvasHeight * this._viewConfig.scale * 3;
       const currentTranslation = [0, 0];
 
-      this._viewConfig.scale = this._zoomConfig.globalZoom
-        ? this._zoomConfig.globalZoom
+      this._viewConfig.scale = this._zoomConfig.globalZoomScale
+        ? this._zoomConfig.globalZoomScale
         : scale;
       this.zoomsG = e.transform;
-      this._zoomConfig.globalZoom = null;
+      this._zoomConfig.globalZoomScale = null;
       this._viewConfig.globalTranslate = null;
 
       const translation = [
-        this._viewConfig.globalTranslate
-          ? this._viewConfig.globalTranslate[0]
-          : currentTranslation[0] + transform.x,
-        this._viewConfig.globalTranslate
-          ? currentTranslation[1] + this._viewConfig.globalTranslate[1]
-          : currentTranslation[1] + transform.y,
+        currentTranslation[0] + transform.x,
+        currentTranslation[1] + transform.y,
       ];
       // console.log("translation :>> ", translation);
       select(".canvas").attr(
@@ -548,8 +549,8 @@ export default class Visualization {
 
   bindEventHandlers(selection) {
     selection
-      .on("contextmenu", this.eventHandlers.handleStatusChange.bind(this))
-      .on("mousewheel.zoom", this.eventHandlers.handleZoom.bind(this), {
+      .on("contextmenu", this.eventHandlers.handleNodeFocus.bind(this))
+      .on("mousewheel.zoom", this.eventHandlers.handleNodeZoom.bind(this), {
         passive: true,
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
@@ -758,7 +759,7 @@ export default class Visualization {
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       this.addLegend();
     }
-    if (this.zoomClicked !== undefined) {
+    if (Object.keys(this.zoomClicked).length > 0) {
       const { event, node, content } = this.zoomClicked;
       console.log("zoomClicked :>> ", this.zoomClicked);
       if (event !== undefined) this.eventHandlers.clickedZoom(event, node);
