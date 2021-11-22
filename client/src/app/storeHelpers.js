@@ -27,8 +27,8 @@ const mapCallbacks = {
         id,
         name,
         description,
-        domain_id,
-        habit_node_id,
+        domainId: domain_id,
+        habitNodeId: habit_node_id,
       },
     };
   },

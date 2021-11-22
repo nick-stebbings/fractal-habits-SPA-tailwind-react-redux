@@ -52,6 +52,10 @@ export const habitSlice = createSlice({
         current: { ...habitPatch, ...state.current },
       };
     },
+    updateCurrentHabit(state, action: PayloadAction<Habit>) {
+      console.log("action :>> ", action);
+      state.current = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -61,4 +65,4 @@ export const habitSlice = createSlice({
   },
 });
 
-export default habitSlice.reducer;
+export default habitSlice;

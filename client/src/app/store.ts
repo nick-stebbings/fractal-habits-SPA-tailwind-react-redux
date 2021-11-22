@@ -9,7 +9,7 @@ import uiSlice from "features/ui/reducer";
 import todoReducer from "features/todo/reducer";
 
 // @ts-ignore
-import habitReducer from "features/habit/reducer";
+import habitSlice from "features/habit/reducer";
 
 // @ts-ignore
 import domainReducer from "features/domain/reducer";
@@ -30,7 +30,7 @@ export const store = configureStore({
   reducer: {
     ui: uiSlice.reducer,
     todo: todoReducer,
-    habit: habitReducer,
+    habit: habitSlice.reducer,
     domain: domainReducer,
     habitDate: habitDateReducer,
     hierarchy: hierarchyReducer,

@@ -6,6 +6,7 @@ import {
   zoomIdentity,
   linkVertical,
   tree,
+  cluster,
   easeCubic,
   easePolyOut,
 } from "d3";
@@ -14,8 +15,13 @@ import { legendColor } from "d3-svg-legend";
 
 import { store } from "app/store";
 import { selectCurrentNodeByMptt } from "features/node/selectors";
-import { updateCurrentNode } from "features/node/actions";
+import { selectCurrentHabitByMptt } from "features/habit/selectors";
 import { updateHabitDateREST } from "features/habitDate/actions";
+import HabitSlice from "features/habit/reducer";
+const { updateCurrentHabit } = HabitSlice.actions;
+import NodeSlice from "features/node/reducer";
+const { updateCurrentNode } = NodeSlice.actions;
+
 import {
   getTransform,
   showHabitLabel,
@@ -70,7 +76,7 @@ export default class Visualization {
     this.zoomsG = null;
 
     this.eventHandlers = {
-      handleZoom: function (event, node, forParent = true) {
+      handleZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0 || deadNode(event))
           return this.reset();
         this._zoomConfig.globalZoom = this._viewConfig.clickScale;
@@ -119,28 +125,25 @@ export default class Visualization {
             return this.reset();
 
           this.setCurrentHabit(node);
-          console.log("this.activeNode :>> ", this.activeNode);
           expand(node);
 
           this.zoomsG?.k && this.setNormalTransform();
 
           setHabitLabel(node.data);
-          showHabitLabel();
+          // showHabitLabel();
           collapseAroundAndUnder(node, false, false);
           if (!this.isDemo) {
             const nodeContent = parseTreeValues(node.data.content);
-            // NodeStore.runCurrentFilterByMptt(
-            //   nodeContent.left,
-            //   nodeContent.right
-            // );
-            // HabitStore.runCurrentFilterByNode(NodeStore.current().id);
-            // pendingCalendarRefresh(true);
-            // populateCalendar().then(m.redraw);
+            let newCurrent = selectCurrentNodeByMptt(
+              store.getState(),
+              nodeContent.left,
+              nodeContent.right
+            );
+            store.dispatch(updateCurrentNode(newCurrent));
           }
         }
       },
       handleStatusToggle: function (node) {
-        console.log("this.rootData :>> ", this);
         if (!this.rootData.leaves().includes(node) || node._children) return; // Non-leaf nodes have auto-generated cumulative status
         const nodeContent = parseTreeValues(node.data.content);
         // NodeStore.runCurrentFilterByMptt(nodeContent.left, nodeContent.right);
@@ -253,17 +256,12 @@ export default class Visualization {
   }
   setCurrentHabit(node) {
     const nodeContent = parseTreeValues(node.data.content);
-    let newCurrent = selectCurrentNodeByMptt(store.getState(), [
+    let newCurrent = selectCurrentHabitByMptt(
+      store.getState(),
       nodeContent.left,
-      nodeContent.right,
-    ]);
-    store.dispatch(updateCurrentNode());
-    console.log(
-      "store.getState().node :>> ",
-      newCurrent,
-      store.getState().node
+      nodeContent.right
     );
-    // store.dispatch(setCurrentHabit)(NodeStore.current()?.id);
+    store.dispatch(updateCurrentHabit(newCurrent));
   }
 
   clearCanvas() {
@@ -273,7 +271,7 @@ export default class Visualization {
   reset() {
     this.scale = BASE_SCALE;
     this.zoomBase.attr("viewBox", this._viewConfig.defaultView);
-    this.expandTree();
+    this.expand();
     this._zoomConfig.zoomClicked = {};
     this.activeNode = null;
     document.querySelector(".the-node.active") &&
@@ -396,7 +394,7 @@ export default class Visualization {
       const thisNode = this.rootData
         .descendants()
         .find((node) => node.data == d);
-      console.log("thisNode :>> ", thisNode);
+      // console.log("thisNode :>> ", thisNode);
       let content = parseTreeValues(thisNode.data.content);
       if (content.status === "incomplete" || content.status === "") return 0;
       const statusValue = JSON.parse(content.status);
@@ -423,7 +421,7 @@ export default class Visualization {
   }
 
   setLayout() {
-    this.layout = tree()
+    this.layout = cluster()
       .size(this._viewConfig.canvasWidth, this._viewConfig.canvasHeight)
       .nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
     this.layout(this.rootData);

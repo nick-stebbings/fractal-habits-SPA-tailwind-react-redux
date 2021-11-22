@@ -1,8 +1,11 @@
 import { TimeFrame } from "app/types";
 
 export interface HabitMeta {
-  name: string;
   id: number;
+  name: string;
+  description: string;
+  habitNodeId: number;
+  domainId: number;
 }
 
 export interface Habit {

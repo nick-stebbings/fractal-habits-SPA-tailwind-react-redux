@@ -5,9 +5,6 @@ import { createCrudActionCreators } from "app/storeHelpers";
 // @ts-ignore
 import { fetchHabitDatesREST } from "features/habitDate/actions";
 
-// import { habitSlice } from "./reducer";
-// const { createHabit, deleteHabit, updateHabit } = habitSlice.actions;
-
 const BASE_PATH = "/habits";
 
 const CREATE_HABIT = "create_habit";
@@ -45,12 +42,4 @@ export const actionCreators = createCrudActionCreators(
 const [createHabitREST, fetchHabitsREST, updateHabitREST, destroyHabitREST] =
   actionCreators;
 
-export {
-  // createHabit,
-  // deleteHabit,
-  // updateHabit,
-  createHabitREST,
-  fetchHabitsREST,
-  updateHabitREST,
-  destroyHabitREST,
-};
+export { createHabitREST, fetchHabitsREST, updateHabitREST, destroyHabitREST };
