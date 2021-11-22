@@ -23,6 +23,10 @@ export const hierarchySlice = createSlice({
       if (state.treeVis?.id !== "undefined") state.treeVis = action.payload;
       return state;
     },
+    createRadial(state, action: PayloadAction<typeof Visualization>) {
+      if (state.radialVis?.id !== "undefined") state.radialVis = action.payload;
+      return state;
+    },
     updateViewConfig(state, action: PayloadAction<any>) {
       if (state.treeVis?.id !== "undefined")
         state.treeVis._viewConfig = action.payload;

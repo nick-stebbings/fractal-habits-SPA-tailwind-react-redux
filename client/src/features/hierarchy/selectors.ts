@@ -7,6 +7,11 @@ import { Hierarchy } from "app/features/hierarchy/types";
 export const selectCurrentHierarchy = (state: RootState): Hierarchy => {
   return state?.hierarchy.current;
 };
+
 export const selectCurrentTree = (state: RootState): Hierarchy => {
   return state?.hierarchy.treeVis;
+};
+
+export const selectCurrentRadial = (state: RootState): Hierarchy => {
+  return state?.hierarchy.radialVis;
 };

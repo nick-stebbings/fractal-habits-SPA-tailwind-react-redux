@@ -5,11 +5,11 @@ import { fetchHabitTreeREST } from "../actions";
 import { getRequestStatus } from "features/ui/selectors";
 
 import {
-  selectCurrentTree,
+  selectCurrentRadial,
   selectCurrentHierarchy,
 } from "features/hierarchy/selectors";
 import { visActions } from "features/hierarchy/reducer";
-const { createTree } = visActions;
+const { createRadial } = visActions;
 
 import { selectCurrentDomain } from "features/domain/selectors";
 
@@ -38,13 +38,13 @@ const d3SetupCanvas = function (document) {
 
 import "../../../assets/styles/pages/d3vis.scss";
 
-export const HabitTree = function () {
+export const RadialTree = function () {
   const dispatch = useAppDispatch();
   const currentDomain = useAppSelector(selectCurrentDomain);
   const currentRequestState = useAppSelector(getRequestStatus);
 
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
-  const currentTree = useAppSelector(selectCurrentTree);
+  const currentTree = useAppSelector(selectCurrentRadial);
   const [currentTreeData, setCurrentTreeData] = useState({
     data: { name: "" },
   });
@@ -83,14 +83,14 @@ export const HabitTree = function () {
       ({ canvasWidth, canvasHeight } = d3SetupCanvas(document));
 
       dispatch(
-        createTree(
+        createRadial(
           new Vis(
             svg,
             `#div${divId}`,
             currentTreeData,
             canvasHeight,
             canvasWidth,
-            "tree"
+            "cluster"
           )
         )
       );
@@ -119,4 +119,4 @@ export const HabitTree = function () {
   );
 };
 
-export default HabitTree;
+export default RadialTree;

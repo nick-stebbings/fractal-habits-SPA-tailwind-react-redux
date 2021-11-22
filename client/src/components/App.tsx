@@ -19,7 +19,7 @@ import {HabitTree} from "../features/hierarchy/components/HabitTree";
 
 interface indexProps {}
 
-export const App: React.FC<indexProps> = ({}) => {
+export const App: React.FC<indexProps> = ({children}) => {
 
   const LayoutWithModal = withModal(Layout)
   
@@ -47,7 +47,7 @@ export const App: React.FC<indexProps> = ({}) => {
     <>
       <LayoutWithModal type={UIStatus} />
       <Header />
-      <HabitTree />
+      {...children}
     </>
   );
 };

@@ -42,7 +42,8 @@ import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
 
 const BASE_SCALE = 4;
 export default class Visualization {
-  constructor(svg, svgId, inputTree, canvasHeight, canvasWidth) {
+  constructor(svg, svgId, inputTree, canvasHeight, canvasWidth, type) {
+    this.type = type;
     this.isDemo = false;
     this.zoomBase = svg;
     this._svgId = svgId;
@@ -425,7 +426,8 @@ export default class Visualization {
   }
 
   setLayout() {
-    this.layout = cluster()
+    this.layout = this.type == "tree" ? tree() : cluster();
+    this.layout
       .size(this._viewConfig.canvasWidth, this._viewConfig.canvasHeight)
       .nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
     this.layout(this.rootData);

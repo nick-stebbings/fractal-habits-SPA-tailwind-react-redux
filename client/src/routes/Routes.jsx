@@ -6,12 +6,16 @@ import {
 } from "react-router-dom";
 
 import Home from "../pages/Home";
+import HabitTree from "../pages/HabitTree";
+import RadialTree from "../pages/RadialTree";
 
 export const Routes = () => {
   return (
     <Router>
       <Switch>
         <Route path="/" element={<Home />} />
+        <Route path="/vis/habit-tree" element={<HabitTree />} />
+        <Route path="/habits/new" element={<RadialTree />} />
         <Route
           path="*"
           element={
