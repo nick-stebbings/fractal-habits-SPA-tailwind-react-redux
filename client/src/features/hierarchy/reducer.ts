@@ -23,6 +23,11 @@ export const hierarchySlice = createSlice({
       if (state.treeVis?.id !== "undefined") state.treeVis = action.payload;
       return state;
     },
+    updateViewConfig(state, action: PayloadAction<any>) {
+      if (state.treeVis?.id !== "undefined")
+        state.treeVis._viewConfig = action.payload;
+      return state;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase("fetch_habit_tree/fulfilled", (state, action) => {
