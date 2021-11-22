@@ -3,7 +3,14 @@ import { useAppSelector, useAppDispatch } from "app/hooks";
 import { fetchHabitTreeREST } from "../actions";
 // @ts-ignore
 import { getRequestStatus } from "features/ui/selectors";
-import { selectCurrentTree } from "features/hierarchy/selectors";
+
+import {
+  selectCurrentTree,
+  selectCurrentHierarchy,
+} from "features/hierarchy/selectors";
+import { visActions } from "features/hierarchy/reducer";
+const { createTree } = visActions;
+
 import { selectCurrentDomain } from "features/domain/selectors";
 
 import { select } from "d3-selection";
@@ -39,22 +46,22 @@ import "../../../assets/styles/pages/d3vis.scss";
 
 export const HabitTree = function () {
   const dispatch = useAppDispatch();
-  const currentHierarchy = useAppSelector(selectCurrentTree);
   const currentDomain = useAppSelector(selectCurrentDomain);
   const currentRequestState = useAppSelector(getRequestStatus);
 
-  const [currentTree, setCurrentTree] = useState({
+  const currentHierarchy = useAppSelector(selectCurrentHierarchy);
+  const currentTree = useAppSelector(selectCurrentTree);
+  const [currentTreeData, setCurrentTreeData] = useState({
     data: { name: "" },
   });
 
   const debounceInterval = 350;
   const divId = 1;
+  const [svg, setSvg] = useState(null);
 
   const loadData = async function () {
     await dispatch(fetchHabitTreeREST({ domainId: 1, dateId: 2 }));
   };
-
-  const [svg, setSvg] = useState();
 
   useEffect(() => {
     setSvg(
@@ -71,26 +78,29 @@ export const HabitTree = function () {
   }, []);
 
   useEffect(() => {
-    if (svg && currentHierarchy && currentVis?.render) {
-      currentVis.render();
-    }
-  }, [JSON.stringify(currentHierarchy)]);
-
-  useEffect(() => {
     loadData();
   }, []);
 
   useEffect(() => {
-    setCurrentTree(hierarchy(JSON.parse(currentHierarchy.json)));
+    setCurrentTreeData(hierarchy(JSON.parse(currentHierarchy.json)));
 
-    if (currentTree.data.name == "") return;
-    ({ canvasWidth, canvasHeight } = d3SetupCanvas(document));
+    if (currentTreeData.data.name == "") return;
+    if (currentRequestState === "SUCCESS" && !currentTree?._svgId) {
+      ({ canvasWidth, canvasHeight } = d3SetupCanvas(document));
 
-    console.log("Instantiated vis object :>> ");
-    !currentVis &&
-      setCurrentVis(
-        new Vis(svg, `#div${divId}`, currentTree, canvasHeight, canvasWidth)
+      dispatch(
+        createTree(
+          new Vis(
+            svg,
+            `#div${divId}`,
+            currentTreeData,
+            canvasHeight,
+            canvasWidth
+          )
+        )
       );
+      console.log("Instantiated vis object :>> ");
+    }
   }, [currentRequestState, JSON.stringify(currentHierarchy)]);
 
   return (

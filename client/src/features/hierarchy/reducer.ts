@@ -1,20 +1,29 @@
 import { actionCreators } from "./actions";
 import { Hierarchy } from "./types";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { Dictionary } from "app/types";
+import Visualization from "./visConstructor";
 
-export const initialState: Dictionary<Hierarchy> = {
+export const initialState: Dictionary<
+  Hierarchy | Dictionary<typeof Visualization>
+> = {
   current: {
     id: 0,
     json: JSON.stringify({ name: "", children: "" }),
   },
+  treeVis: {},
 };
 
 export const hierarchySlice = createSlice({
   name: "hierarchy",
   initialState,
-  reducers: {},
+  reducers: {
+    createTree(state, action: PayloadAction<typeof Visualization>) {
+      if (state.treeVis?.id !== "undefined") state.treeVis = action.payload;
+      return state;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase("fetch_habit_tree/fulfilled", (state, action) => {
       if (!action?.payload) return state;
@@ -24,3 +33,4 @@ export const hierarchySlice = createSlice({
 });
 
 export default hierarchySlice.reducer;
+export const visActions = hierarchySlice.actions;
