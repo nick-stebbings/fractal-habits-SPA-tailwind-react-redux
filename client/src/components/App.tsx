@@ -45,7 +45,7 @@ export const App: React.FC<indexProps> = ({children}) => {
 
   return (
     <>
-      <LayoutWithModal type={UIStatus} />
+      <LayoutWithModal isVis={false} type={UIStatus} />
       <Header />
       {...children}
     </>
