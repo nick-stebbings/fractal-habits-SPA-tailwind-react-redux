@@ -1,5 +1,5 @@
 import { clientRoutes } from "services/restApis";
-import { createCrudActionCreators } from "app/store_utils";
+import { createCrudActionCreators } from "app/storeHelpers";
 
 const BASE_PATH = "/habit_trees/nodes";
 

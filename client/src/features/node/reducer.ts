@@ -7,7 +7,7 @@ import {
 } from "./types";
 import { Dictionary } from "app/types";
 
-import { crudReducer, isCrud } from "app/store_utils";
+import { crudReducer, isCrud } from "app/storeHelpers";
 import { actionCreators } from "./actions";
 
 export const initialState: Dictionary<Dictionary<Node | Node[]>> = {

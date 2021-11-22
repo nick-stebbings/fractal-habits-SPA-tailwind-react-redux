@@ -12,7 +12,7 @@ import {
 import { Dictionary } from "app/types";
 
 // @ts-ignore
-import { crudReducer, isCrud } from "app/store_utils";
+import { crudReducer, isCrud } from "app/storeHelpers";
 import { actionCreators } from "./actions";
 
 export const initialState: Dictionary<Habit | Habit[]> = {

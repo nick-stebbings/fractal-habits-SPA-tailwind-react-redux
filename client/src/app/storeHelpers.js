@@ -14,14 +14,8 @@ const modelNameFromActionString = (actionString) =>
 
 const mapCallbacks = {
   habits: (element) => {
-    const {
-      id,
-      name,
-      description,
-      domain_id,
-      habit_node_id,
-      initiation_date,
-    } = element;
+    const { id, name, description, domain_id, habit_node_id, initiation_date } =
+      element;
     const intervalSpace = createInterval(
       0,
       1,
@@ -53,6 +47,9 @@ const mapCallbacks = {
       meta: element,
     };
   },
+  nodes: (element) => {
+    return element;
+  },
 };
 
 export function crudReducer(state, action, create, fetch, update, destroy) {
@@ -78,7 +75,7 @@ export function crudReducer(state, action, create, fetch, update, destroy) {
         .map(mapCallbacks[model])
         .filter((record) => record !== undefined);
       return {
-        current: mapped[0] || state.current,
+        current: mapped.slice(-1)[0] || state.current,
         myRecords: mapped,
       };
 
