@@ -33,9 +33,10 @@ import { updateHabitDateREST } from "features/habitDate/actions";
 import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
 
 export default class Visualization {
-  constructor(svg, inputTree, canvasHeight, canvasWidth) {
+  constructor(svg, svgId, inputTree, canvasHeight, canvasWidth) {
     this.isDemo = false;
     this.zoomBase = svg;
+    this._svgId = svgId;
     this.rootData = inputTree;
     this._viewConfig = {
       scale: 9,
@@ -60,16 +61,6 @@ export default class Visualization {
         return Object.keys(this.zoomClicked).length === 0;
       },
     };
-    this._canvas = svg
-      .append("g")
-      .classed("canvas", true)
-      .attr(
-        "transform",
-        `scale(${
-          this._viewConfig.clickScale
-        }), translate(${this._viewConfig.currentXTranslate()},${this._viewConfig.currentYTranslate()})`
-      );
-
     // Flags/metrics from previous render
     this.zoomsG = null;
 
@@ -251,11 +242,10 @@ export default class Visualization {
   }
 
   clearCanvas() {
-    this.zoomBase.selectAll("*").remove();
+    select(this._svgId).selectAll("*").remove();
   }
 
   reset() {
-    if (this._canvas === undefined) return;
     scale = isDemo ? 8 : 14;
     this.zoomBase.attr("viewBox", this._viewConfig.defaultView);
     this.expandTree();
@@ -689,8 +679,23 @@ export default class Visualization {
   }
 
   render() {
+    console.log("Rendering vis... :>>");
     if (this.rootData.name === "") return;
-    this.clearCanvas();
+
+    if (!document.querySelectorAll(".canvas")[0]) {
+      this._canvas = select(this._svgId)
+        .append("g")
+        .classed("canvas", true)
+        .attr(
+          "transform",
+          `scale(${
+            this._viewConfig.clickScale
+          }), translate(${this._viewConfig.currentXTranslate()},${this._viewConfig.currentYTranslate()})`
+        );
+    } else {
+      this.clearCanvas();
+    }
+
     this.setNormalTransform();
     this.setLevelsHighAndWide();
     this.setdXdY();

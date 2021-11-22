@@ -48,13 +48,34 @@ export const HabitTree = function () {
   });
   const [currentVis, setCurrentVis] = useState({});
 
-  let svg;
   const debounceInterval = 350;
   const divId = 1;
 
   const loadData = async function () {
     await dispatch(fetchHabitTreeREST({ domainId: 1, dateId: 2 }));
   };
+
+  const [svg, setSvg] = useState();
+
+  useEffect(() => {
+    setSvg(
+      select(`#vis`)
+        .classed("h-screen", true)
+        .classed("w-full", true)
+        .append("svg")
+        .attr("id", "div1")
+        .classed("vis-div", "true")
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .attr("style", "pointer-events: all")
+    );
+  }, []);
+
+  useEffect(() => {
+    if (svg && currentHierarchy && currentVis?.render) {
+      currentVis.render();
+    }
+  }, [JSON.stringify(currentVis)]);
 
   useEffect(() => {
     loadData();
@@ -66,26 +87,13 @@ export const HabitTree = function () {
     if (currentTree.data.name == "") return;
     ({ canvasWidth, canvasHeight } = d3SetupCanvas(document));
 
-    svg = select(`#div${divId}`)
-      .classed("h-screen", true)
-      .classed("w-full", true)
-      .append("svg")
-      .classed("vis-div", "true")
-      .attr("width", "100%")
-      .attr("height", "100%")
-      .attr("style", "pointer-events: all");
-
-    setCurrentVis(new Vis(svg, currentTree, canvasHeight, canvasWidth));
-    console.log("vis :>> ", currentVis);
-    if (svg && currentHierarchy && currentVis?.render) {
-      currentVis.render();
-    }
-    // () => currentVis.clearCanvas();
-  }, [currentRequestState, JSON.stringify(currentVis)]);
+    setCurrentVis(
+      new Vis(svg, `#div${divId}`, currentTree, canvasHeight, canvasWidth)
+    );
+  }, [currentRequestState, JSON.stringify(currentTree)]);
 
   return (
     <div id="vis" className="w-full h-full mx-auto">
-      <svg id="div1" />
       <button
         type="button"
         id="reset-tree"
