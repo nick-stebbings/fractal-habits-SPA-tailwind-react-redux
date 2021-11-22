@@ -26,6 +26,7 @@ export const hierarchySlice = createSlice({
     updateViewConfig(state, action: PayloadAction<any>) {
       if (state.treeVis?.id !== "undefined")
         state.treeVis._viewConfig = action.payload;
+      state.treeVis.render();
       return state;
     },
   },

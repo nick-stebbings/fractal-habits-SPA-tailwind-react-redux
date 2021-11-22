@@ -39,26 +39,28 @@ export default class Visualization {
     this._svgId = svgId;
     this.rootData = inputTree;
     this._viewConfig = {
-      scale: 9,
-      clickScale: 4.2,
+      scale: 4,
+      clickScale: 4,
       canvasHeight,
       canvasWidth,
       currentXTranslate: () =>
         this._viewConfig.globalTranslate
           ? -this._viewConfig.globalTranslate[0]
-          : 0,
+          : -120,
       currentYTranslate: () =>
         this._viewConfig.globalTranslate
           ? -this._viewConfig.globalTranslate[0]
           : 0,
-      smallScreen: () => this.canvasWidth < 768,
+      smallScreen: function () {
+        return this.canvasWidth < 768;
+      },
     };
 
     this._zoomConfig = {
       globalZoom: 1,
       zoomClicked: {},
       zoomedInView: function () {
-        return Object.keys(this.zoomClicked).length === 0;
+        return Object.keys(this.zoomClicked).length == 0;
       },
     };
     // Flags/metrics from previous render
@@ -287,8 +289,8 @@ export default class Visualization {
   }
   setLevelsHighAndWide() {
     if (this._viewConfig.smallScreen()) {
-      this._viewConfig.levelsHigh = this.zoomClicked ? 15 : 12;
-      this._viewConfig.levelsWide = this.zoomClicked ? 0.5 : 3;
+      this._viewConfig.levelsHigh = this.zoomClicked ? 5 : 5;
+      this._viewConfig.levelsWide = this.zoomClicked ? 1 : 2;
     } else {
       this._viewConfig.levelsHigh = 12;
       this._viewConfig.levelsWide = 2;
@@ -297,17 +299,17 @@ export default class Visualization {
   }
   setdXdY() {
     this._viewConfig.dx =
-      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh / 2;
+      (this._viewConfig.canvasWidth / this._viewConfig.levelsHigh) * 2;
     this._viewConfig.dy =
-      (this._viewConfig.canvasHeight / this._viewConfig.levelsWide) * 4;
-    this._viewConfig.dy *=
-      this._zoomConfig.zoomedInView() && !this._viewConfig.smallScreen()
-        ? 10
-        : 14;
+      (this._viewConfig.canvasHeight / this._viewConfig.levelsWide) * 8;
+
+    //adjust for taller aspect ratio
+    this._viewConfig.dx *= this._viewConfig.smallScreen() ? 2 : 1.5;
+    this._viewConfig.dy *= this._viewConfig.smallScreen() ? 1 : 0.5;
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
-      (this._viewConfig.smallScreen() ? 8 : 10) * this._viewConfig.scale;
+      (this._viewConfig.smallScreen() ? 12 : 20) * this._viewConfig.scale;
   }
   setZoomBehaviour() {
     const zooms = function (e) {
@@ -403,7 +405,7 @@ export default class Visualization {
   setLayout() {
     this.layout = tree()
       .size(this._viewConfig.canvasWidth, this._viewConfig.canvasHeight)
-      .nodeSize([this._viewConfig.dy, this._viewConfig.dx]);
+      .nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
     this.layout(this.rootData);
   }
   setNodeAndLinkGroups() {
