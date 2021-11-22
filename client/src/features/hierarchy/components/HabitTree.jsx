@@ -46,7 +46,6 @@ export const HabitTree = function () {
   const [currentTree, setCurrentTree] = useState({
     data: { name: "" },
   });
-  const [currentVis, setCurrentVis] = useState({});
 
   const debounceInterval = 350;
   const divId = 1;
@@ -75,7 +74,7 @@ export const HabitTree = function () {
     if (svg && currentHierarchy && currentVis?.render) {
       currentVis.render();
     }
-  }, [JSON.stringify(currentVis)]);
+  }, [JSON.stringify(currentHierarchy)]);
 
   useEffect(() => {
     loadData();
@@ -87,10 +86,12 @@ export const HabitTree = function () {
     if (currentTree.data.name == "") return;
     ({ canvasWidth, canvasHeight } = d3SetupCanvas(document));
 
-    setCurrentVis(
-      new Vis(svg, `#div${divId}`, currentTree, canvasHeight, canvasWidth)
-    );
-  }, [currentRequestState, JSON.stringify(currentTree)]);
+    console.log("Instantiated vis object :>> ");
+    !currentVis &&
+      setCurrentVis(
+        new Vis(svg, `#div${divId}`, currentTree, canvasHeight, canvasWidth)
+      );
+  }, [currentRequestState, JSON.stringify(currentHierarchy)]);
 
   return (
     <div id="vis" className="w-full h-full mx-auto">

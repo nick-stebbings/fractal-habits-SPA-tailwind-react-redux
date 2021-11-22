@@ -84,6 +84,7 @@ export default class Visualization {
       clickedZoom: function (e, that) {
         if (e?.defaultPrevented || typeof that === "undefined") return; // panning, not clicking
         const transformer = getTransform(that, clickScale);
+        console.log("transformer.translate :>> ", transformer.translate);
         select(".canvas")
           .transition()
           .ease(easePolyOut)
@@ -224,6 +225,8 @@ export default class Visualization {
         }
       },
     };
+
+    this.render();
   }
 
   setActiveNode(clickedNode) {
@@ -242,7 +245,7 @@ export default class Visualization {
   }
 
   clearCanvas() {
-    select(this._svgId).selectAll("*").remove();
+    select(".canvas").selectAll("*").remove();
   }
 
   reset() {
@@ -329,6 +332,7 @@ export default class Visualization {
           ? currentTranslation[1] + this._viewConfig.globalTranslate[1]
           : currentTranslation[1] + transform.y,
       ];
+      console.log("translation :>> ", translation);
       select(".canvas").attr(
         "transform",
         "translate(" +
@@ -403,6 +407,7 @@ export default class Visualization {
     this.layout(this.rootData);
   }
   setNodeAndLinkGroups() {
+    console.log("this._viewConfig :>> ", this._viewConfig);
     this._gLink = this._canvas
       .append("g")
       .classed("links", true)
@@ -679,10 +684,25 @@ export default class Visualization {
   }
 
   render() {
-    console.log("Rendering vis... :>>");
-    if (this.rootData.name === "") return;
-
-    if (!document.querySelectorAll(".canvas")[0]) {
+    console.log(
+      "Rendering vis... :>>",
+      select(document.querySelectorAll(".canvas")[0])
+    );
+    this._canvas = select(document.querySelectorAll(".canvas")[0]);
+    console.log(
+      "Current canvas:",
+      document.querySelectorAll(".canvas")[0],
+      typeof this?._canvas
+    );
+    console.log(
+      "need new canvas? :>> ",
+      typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
+        typeof this?._canvas == "undefined"
+    );
+    if (
+      typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
+      typeof this?._canvas == "undefined"
+    ) {
       this._canvas = select(this._svgId)
         .append("g")
         .classed("canvas", true)
@@ -692,28 +712,32 @@ export default class Visualization {
             this._viewConfig.clickScale
           }), translate(${this._viewConfig.currentXTranslate()},${this._viewConfig.currentYTranslate()})`
         );
+
+      console.log("Configured canvas... :>>", this._canvas);
+
+      this.setNormalTransform();
+      this.setLevelsHighAndWide();
+      this.setdXdY();
+      this.setNodeRadius();
+      this.setZoomBehaviour();
+      this.calibrateViewPortAttrs();
+      this.calibrateViewBox();
     } else {
       this.clearCanvas();
+
+      if (this.rootData.name === "" || typeof this._canvas == undefined)
+        return console.log("Data or canvas missing!");
+      this.sumHierarchyData();
+      this.accumulateNodeValues();
+      this.setLayout();
+
+      this.setNodeAndLinkGroups();
+      this.setNodeAndLinkEnterSelections();
+      this.setCircleAndLabelGroups();
+
+      this.appendCirclesAndLabels();
+      this.appendTooltips();
     }
-
-    this.setNormalTransform();
-    this.setLevelsHighAndWide();
-    this.setdXdY();
-    this.setNodeRadius();
-    this.setZoomBehaviour();
-    this.calibrateViewPortAttrs();
-    this.calibrateViewBox();
-
-    this.sumHierarchyData();
-    this.accumulateNodeValues();
-    this.setLayout();
-
-    this.setNodeAndLinkGroups();
-    this.setNodeAndLinkEnterSelections();
-    this.setCircleAndLabelGroups();
-
-    this.appendCirclesAndLabels();
-    this.appendTooltips();
 
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       this.addLegend();
