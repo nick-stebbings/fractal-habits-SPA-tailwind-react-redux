@@ -100,7 +100,7 @@ export default class Visualization {
       clickedZoom: function (e, that) {
         if (e?.defaultPrevented || typeof that === "undefined") return; // panning, not clicking
         const transformer = getTransform(that, clickScale);
-        console.log("transformer.translate :>> ", transformer.translate);
+        _p("transformer.translate :>> ", transformer.translate, "success");
         select(".canvas")
           .transition()
           .ease(easePolyOut)
@@ -780,7 +780,7 @@ export default class Visualization {
     //   "Rendering vis... :>>",
     //   select(document.querySelectorAll(".canvas")[0])
     // );
-    console.log("tis.._zoomConfig. :>> ", this._zoomConfig);
+    _p("zoomconfig", this._zoomConfig, "info");
     this._canvas = select(document.querySelectorAll(".canvas")[0]);
     // console.log(
     //   "need new canvas? :>> ",
@@ -829,13 +829,12 @@ export default class Visualization {
       this.appendButtons();
       // console.log("Appended SVG elements... :>>");
     }
-
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       this.addLegend();
     }
     if (this._zoomConfig.zoomedInView()) {
       const { event, node, content } = this._zoomConfig.zoomClicked;
-      console.log("zoomClicked :>> ", this._zoomConfig.zoomClicked);
+      _p("zoomClicked :>> ", this._zoomConfig.zoomClicked, "!");
       if (event !== undefined) this.eventHandlers.clickedZoom(event, node);
       if (content !== undefined) {
         this.setActiveNode(content);

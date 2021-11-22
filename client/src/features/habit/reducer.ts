@@ -53,7 +53,6 @@ export const habitSlice = createSlice({
       };
     },
     updateCurrentHabit(state, action: PayloadAction<Habit>) {
-      console.log("action :>> ", action);
       state.current = action.payload;
     },
   },

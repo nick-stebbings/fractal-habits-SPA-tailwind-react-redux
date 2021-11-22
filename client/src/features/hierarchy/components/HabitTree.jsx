@@ -93,7 +93,7 @@ export const HabitTree = function () {
           )
         )
       );
-      console.log("Instantiated vis object :>> ");
+      _p("Instantiated vis object :>> ", {}, "info");
     }
     currentTree?.render && currentTree.render();
   }, [currentRequestState, JSON.stringify(currentHierarchy)]);

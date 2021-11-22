@@ -1,3 +1,29 @@
+window._p = function customLog(message, objs, color='black') {
+     switch (color) {
+         case 'success':  
+              color = 'Green'
+              break
+         case '!':     
+                 color = 'pink'  
+              break;
+         case 'info':     
+                 color = 'Yellow'  
+              break;
+         case 'error':   
+              color = 'Red'   
+              break;
+         case 'warning':  
+              color = 'Orange' 
+              break;
+         default: 
+              color = color
+     }
+
+  console.log(`%c${message}`, `color:${color}`)
+  console.log(objs);
+  console.log(`%c================`, `color:${color}`)
+}
+
 import React from "react";
 import { render } from "react-dom";
 import { store } from "./app/store";
