@@ -374,7 +374,7 @@ export default class Visualization {
       const thisNode = this.rootData
         .descendants()
         .find((node) => node.data == d);
-      console.log("thisNode :>> ", thisNode);
+      // console.log("thisNode :>> ", thisNode);
       let content = parseTreeValues(thisNode.data.content);
       if (content.status === "incomplete" || content.status === "") return 0;
       const statusValue = JSON.parse(content.status);
@@ -689,11 +689,6 @@ export default class Visualization {
       select(document.querySelectorAll(".canvas")[0])
     );
     this._canvas = select(document.querySelectorAll(".canvas")[0]);
-    console.log(
-      "Current canvas:",
-      document.querySelectorAll(".canvas")[0],
-      typeof this?._canvas
-    );
     console.log(
       "need new canvas? :>> ",
       typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
