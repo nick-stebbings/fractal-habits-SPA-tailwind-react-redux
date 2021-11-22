@@ -1,6 +1,11 @@
 import { clientRoutes } from "services/restApis";
 import { createCrudActionCreators } from "app/storeHelpers";
-
+import nodeSlice from "./reducer";
+const {
+  // createNode,
+  // deleteNode,
+  updateCurrentNode,
+} = nodeSlice.actions;
 const BASE_PATH = "/habit_trees/nodes";
 
 const CREATE_NODE = "create_node";
@@ -27,4 +32,10 @@ export const actionCreators = createCrudActionCreators(
 const [createNodeREST, fetchNodesREST, updateNodeREST, destroyNodeREST] =
   actionCreators;
 
-export { createNodeREST, fetchNodesREST, updateNodeREST, destroyNodeREST };
+export {
+  updateCurrentNode,
+  createNodeREST,
+  fetchNodesREST,
+  updateNodeREST,
+  destroyNodeREST,
+};

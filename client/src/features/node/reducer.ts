@@ -22,7 +22,14 @@ export const initialState: Dictionary<Dictionary<Node | Node[]>> = {
 export const nodeSlice = createSlice({
   name: "node",
   initialState,
-  reducers: {},
+  reducers: {
+    updateCurrentNode(state, action: PayloadAction<any>) {
+      // if (state.treeVis?.id !== "undefined")
+      //   state.treeVis._viewConfig = action.payload;
+      // state.treeVis.render();
+      return state;
+    },
+  },
   extraReducers: (builder) => {
     builder.addMatcher(
       (action) => isCrud(action, ...actionCreators),
@@ -31,4 +38,4 @@ export const nodeSlice = createSlice({
   },
 });
 
-export default nodeSlice.reducer;
+export default nodeSlice;

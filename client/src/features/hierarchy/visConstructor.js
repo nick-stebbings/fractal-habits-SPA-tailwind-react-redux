@@ -13,6 +13,9 @@ import { legendColor } from "d3-svg-legend";
 // import Hammer from "hammerjs";
 
 import { store } from "app/store";
+import { selectCurrentNodeByMptt } from "features/node/selectors";
+import { updateCurrentNode } from "features/node/actions";
+import { updateHabitDateREST } from "features/habitDate/actions";
 import {
   getTransform,
   showHabitLabel,
@@ -29,9 +32,9 @@ import {
   isTouchDevice,
 } from "./components/helpers";
 
-import { updateHabitDateREST } from "features/habitDate/actions";
 import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
 
+const BASE_SCALE = 4;
 export default class Visualization {
   constructor(svg, svgId, inputTree, canvasHeight, canvasWidth) {
     this.isDemo = false;
@@ -39,7 +42,7 @@ export default class Visualization {
     this._svgId = svgId;
     this.rootData = inputTree;
     this._viewConfig = {
-      scale: 4,
+      scale: BASE_SCALE,
       clickScale: 4,
       canvasHeight,
       canvasWidth,
@@ -67,19 +70,21 @@ export default class Visualization {
     this.zoomsG = null;
 
     this.eventHandlers = {
-      handleZoom: function (event, node, forParent = false) {
+      handleZoom: function (event, node, forParent = true) {
         if (!event || !node || event.deltaY >= 0 || deadNode(event))
           return this.reset();
         this._zoomConfig.globalZoom = this._viewConfig.clickScale;
         this._viewConfig.globalTranslate = [node.x, node.y];
         this.setActiveNode(forParent ? node.data : node.data);
         expand(node);
-        // updateCurrentHabit(node, false);
+        this.setCurrentHabit(node);
         this._zoomConfig.zoomClicked = {
           event: event,
           node: node,
           content: node.data,
-          scale: clickedZoom ? clickScale : scale,
+          scale: this._zoomConfig.zoomClicked
+            ? this._zoomConfig.clickScale
+            : this._zoomConfig.scale,
         };
         this.render();
       },
@@ -113,7 +118,8 @@ export default class Visualization {
           )
             return this.reset();
 
-          // updateCurrentHabit(node, false);
+          this.setCurrentHabit(node);
+          console.log("this.activeNode :>> ", this.activeNode);
           expand(node);
 
           this.zoomsG?.k && this.setNormalTransform();
@@ -134,6 +140,7 @@ export default class Visualization {
         }
       },
       handleStatusToggle: function (node) {
+        console.log("this.rootData :>> ", this);
         if (!this.rootData.leaves().includes(node) || node._children) return; // Non-leaf nodes have auto-generated cumulative status
         const nodeContent = parseTreeValues(node.data.content);
         // NodeStore.runCurrentFilterByMptt(nodeContent.left, nodeContent.right);
@@ -164,13 +171,12 @@ export default class Visualization {
         if (deadNode(event)) return this.reset();
 
         expand(node);
-        // this.render(svg, isDemo, zoomer, opts);
-        this.handleStatusToggle(node);
-
-        // setHabitLabel(node.data);
-        this.handleZoom(event, node?.parent, true);
+        this.render();
+        this.eventHandlers.handleStatusToggle.call(this, node);
+        setHabitLabel(node.data);
+        this.eventHandlers.handleZoom.call(this, event, node?.parent, false);
         // zoomsG?.k && setNormalTransform(zoomClicked, zoomsG, clickScale);
-        // renderTree(svg, isDemo, zoomer, opts);
+        this.render(); // pass opts TODo
       },
       handleMouseLeave: function (e) {
         const g = select(e.target);
@@ -245,13 +251,27 @@ export default class Visualization {
     });
     return found;
   }
+  setCurrentHabit(node) {
+    const nodeContent = parseTreeValues(node.data.content);
+    let newCurrent = selectCurrentNodeByMptt(store.getState(), [
+      nodeContent.left,
+      nodeContent.right,
+    ]);
+    store.dispatch(updateCurrentNode());
+    console.log(
+      "store.getState().node :>> ",
+      newCurrent,
+      store.getState().node
+    );
+    // store.dispatch(setCurrentHabit)(NodeStore.current()?.id);
+  }
 
   clearCanvas() {
     select(".canvas").selectAll("*").remove();
   }
 
   reset() {
-    scale = isDemo ? 8 : 14;
+    this.scale = BASE_SCALE;
     this.zoomBase.attr("viewBox", this._viewConfig.defaultView);
     this.expandTree();
     this._zoomConfig.zoomClicked = {};
@@ -334,7 +354,7 @@ export default class Visualization {
           ? currentTranslation[1] + this._viewConfig.globalTranslate[1]
           : currentTranslation[1] + transform.y,
       ];
-      console.log("translation :>> ", translation);
+      // console.log("translation :>> ", translation);
       select(".canvas").attr(
         "transform",
         "translate(" +
@@ -376,7 +396,7 @@ export default class Visualization {
       const thisNode = this.rootData
         .descendants()
         .find((node) => node.data == d);
-      // console.log("thisNode :>> ", thisNode);
+      console.log("thisNode :>> ", thisNode);
       let content = parseTreeValues(thisNode.data.content);
       if (content.status === "incomplete" || content.status === "") return 0;
       const statusValue = JSON.parse(content.status);
@@ -409,7 +429,6 @@ export default class Visualization {
     this.layout(this.rootData);
   }
   setNodeAndLinkGroups() {
-    console.log("this._viewConfig :>> ", this._viewConfig);
     this._gLink = this._canvas
       .append("g")
       .classed("links", true)
@@ -686,16 +705,16 @@ export default class Visualization {
   }
 
   render() {
-    console.log(
-      "Rendering vis... :>>",
-      select(document.querySelectorAll(".canvas")[0])
-    );
+    // console.log(
+    //   "Rendering vis... :>>",
+    //   select(document.querySelectorAll(".canvas")[0])
+    // );
     this._canvas = select(document.querySelectorAll(".canvas")[0]);
-    console.log(
-      "need new canvas? :>> ",
-      typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
-        typeof this?._canvas == "undefined"
-    );
+    // console.log(
+    //   "need new canvas? :>> ",
+    //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
+    //     typeof this?._canvas == "undefined"
+    // );
     if (
       typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
       typeof this?._canvas == "undefined"
@@ -710,7 +729,7 @@ export default class Visualization {
           }), translate(${this._viewConfig.currentXTranslate()},${this._viewConfig.currentYTranslate()})`
         );
 
-      console.log("Configured canvas... :>>", this._canvas);
+      // console.log("Configured canvas... :>>", this._canvas);
 
       this.setNormalTransform();
       this.setLevelsHighAndWide();
@@ -735,7 +754,7 @@ export default class Visualization {
       this.appendCirclesAndLabels();
       this.appendTooltips();
 
-      console.log("Appended SVG elements... :>>");
+      // console.log("Appended SVG elements... :>>");
     }
 
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
@@ -743,6 +762,7 @@ export default class Visualization {
     }
     if (this.zoomClicked !== undefined) {
       const { event, node, content } = this.zoomClicked;
+      console.log("zoomClicked :>> ", this.zoomClicked);
       if (event !== undefined) this.eventHandlers.clickedZoom(event, node);
       if (content !== undefined) {
         this.setActiveNode(content);

@@ -17,13 +17,12 @@ export const selectCurrentNodes = (state: RootState) => {
   return state?.node?.myRecords.filter((record: Node) => {});
 };
 
-// export const selectIsCompletedDate = (fromDateUnixTs: number) => {
-//   return createSelector(
-//     [selectStoredNodes],
-//     (dates) =>
-//       dates &&
-//       dates.some(
-//         ({ timeframe }: TimeFrame) => timeframe.fromDate == fromDateUnixTs
-//       )
-//   );
-// };
+export const selectCurrentNodeByMptt = (
+  state: RootState,
+  lft: number,
+  rgt: number
+) => {
+  return state.node?.myRecords.filter(
+    (n: Node) => n.lft === +lft && n.rgt === +rgt
+  )[0];
+};

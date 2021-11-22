@@ -949,13 +949,13 @@ const renderTree = function (
   //     );
   // }
 
-  function updateCurrentHabit(node, redraw = true) {
-    const nodeContent = parseTreeValues(node.data.content);
-    NodeStore.runCurrentFilterByMptt(nodeContent.left, nodeContent.right);
-    HabitStore.current() &&
-      HabitStore.runCurrentFilterByNode(NodeStore.current()?.id);
-    redraw && m.redraw();
-  }
+  // function updateCurrentHabit(node, redraw = true) {
+  //   const nodeContent = parseTreeValues(node.data.content);
+  //   NodeStore.runCurrentFilterByMptt(nodeContent.left, nodeContent.right);
+  //   HabitStore.current() &&
+  //     HabitStore.runCurrentFilterByNode(NodeStore.current()?.id);
+  //   redraw && m.redraw();
+  // }
 
   // rootData.sum((d) => {
   //   // Return a binary interpretation of whether the habit was completed that day
