@@ -76,7 +76,9 @@ export default class Visualization {
     this.zoomsG = null;
 
     this.eventHandlers = {
-      handleZoom: function (event, node, forParent = false) {
+      handlePrependNode: function (event, node) {},
+      handleAppendNode: function (event, node) {},
+      handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0 || deadNode(event))
           return this.reset();
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
@@ -84,6 +86,7 @@ export default class Visualization {
         this.setActiveNode(forParent ? node.data : node.data);
         expand(node);
         this.setCurrentHabit(node);
+        this.setCurrentNode(node);
         this._zoomConfig.zoomClicked = {
           event: event,
           node: node,
@@ -500,6 +503,13 @@ export default class Visualization {
       )
       .attr("opacity", (d) => this.activeOrNonActiveOpacity(d, "0"));
   }
+  setButtonGroups() {
+    this._gButton = this._gCircle
+      .append("g")
+      .classed("habit-label-dash-button", true)
+      .attr("transform", `translate(${200}, -50), scale(2.75)`)
+      .attr("style", "opacity: 0");
+  }
 
   appendCirclesAndLabels() {
     this._gCircle
@@ -507,7 +517,7 @@ export default class Visualization {
       .attr("r", this._viewConfig.nodeRadius)
       .on("mouseenter", this.eventHandlers.handleHover);
   }
-  appendTooltips() {
+  appendLabels() {
     this._gTooltip
       .append("rect")
       .attr("width", 3)
@@ -545,6 +555,68 @@ export default class Visualization {
           allWords.length > 7 ? "..." : ""
         }`;
       });
+  }
+  appendButtons() {
+    this._gButton
+      .append("rect")
+      .attr("rx", 15)
+      .attr("y", 5)
+      .attr("width", 100)
+      .attr("height", 30)
+      .on("click", (e) => {
+        e.stopPropagation();
+      });
+    // this._gButton
+    //   .append("text")
+    //   .attr("x", 15)
+    //   .attr("y", isDemo ? 25 : 30)
+    //   .text((d) => "DETAILS")
+    //   .on("click", (e, n) => {
+    // HabitStore.current(HabitStore.filterByName(n.data.name)[0]);
+    // let currentId = HabitStore.current()?.id;
+    // m.route.set(
+    //   m.route.param("demo") ? `/habits/list?demo=true` : `/habits/list`,
+    //   { currentHabit: currentId }
+    // );
+    // });
+    if (!this.isDemo) {
+      this._gButton
+        .append("rect")
+        .attr("rx", 15)
+        .attr("y", -20)
+        .attr("width", 100)
+        .attr("height", 30)
+        .on("click", (e) => {
+          e.stopPropagation();
+        });
+      this._gButton
+        .append("text")
+        .attr("x", 15)
+        .attr("y", (d) => (d.parent ? 2 : 5))
+        .text((d) => "APPEND")
+        .on("click", (e, n) => {
+          this.eventHandlers.handleAppendNode(e, n);
+        });
+      this._gButton
+        .append("rect")
+        .attr("style", (d) => (d.parent ? "opacity: 0" : "opacity: 1"))
+        .attr("rx", 15)
+        .attr("y", -45)
+        .attr("width", 100)
+        .attr("height", 30)
+        .on("click", (e) => {
+          e.stopPropagation();
+        });
+      this._gButton
+        .append("text")
+        .attr("style", (d) => (d.parent ? "opacity: 0" : "opacity: 1"))
+        .attr("x", 12)
+        .attr("y", -20)
+        .text((d) => "PREPEND")
+        .on("click", (e, n) => {
+          this.eventHandlers.handlePrependNode(e, n);
+        });
+    }
   }
 
   bindEventHandlers(selection) {
@@ -708,6 +780,7 @@ export default class Visualization {
     //   "Rendering vis... :>>",
     //   select(document.querySelectorAll(".canvas")[0])
     // );
+    console.log("tis.._zoomConfig. :>> ", this._zoomConfig);
     this._canvas = select(document.querySelectorAll(".canvas")[0]);
     // console.log(
     //   "need new canvas? :>> ",
@@ -749,19 +822,20 @@ export default class Visualization {
       this.setNodeAndLinkGroups();
       this.setNodeAndLinkEnterSelections();
       this.setCircleAndLabelGroups();
+      this.setButtonGroups();
 
       this.appendCirclesAndLabels();
-      this.appendTooltips();
-
+      this.appendLabels();
+      this.appendButtons();
       // console.log("Appended SVG elements... :>>");
     }
 
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       this.addLegend();
     }
-    if (Object.keys(this.zoomClicked).length > 0) {
-      const { event, node, content } = this.zoomClicked;
-      console.log("zoomClicked :>> ", this.zoomClicked);
+    if (this._zoomConfig.zoomedInView()) {
+      const { event, node, content } = this._zoomConfig.zoomClicked;
+      console.log("zoomClicked :>> ", this._zoomConfig.zoomClicked);
       if (event !== undefined) this.eventHandlers.clickedZoom(event, node);
       if (content !== undefined) {
         this.setActiveNode(content);
@@ -771,3 +845,27 @@ export default class Visualization {
     this.activeNode && this.activateNodeAnimation();
   }
 }
+
+const makePatchOrPutRequest = function (isDemo, currentStatus) {
+  const requestBody = {
+    habit_id: HabitStore.current().id,
+    date_id: DateStore.current().id,
+    completed_status: oppositeStatus(currentStatus),
+  };
+  return HabitDateStore.runUpdate(
+    isDemo,
+    requestBody,
+    DomainStore.current().id
+  );
+};
+// enteringNodes
+//   .append("g")
+//   .attr("transform", "translate(" + "-20" + "," + "55" + ") scale( 2.5 )")
+//   .append("path")
+//   .attr("class", "expand-arrow")
+//   .attr("d", (d) => {
+//     return d._children
+//       ? "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
+//       : null;
+//   })
+//   .style("fill", "red");

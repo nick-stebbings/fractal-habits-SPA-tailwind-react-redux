@@ -17,12 +17,6 @@ import { select } from "d3-selection";
 import { hierarchy } from "d3-hierarchy";
 import Vis from "../visConstructor";
 
-// import {
-//   renderTree,
-//   collapseTree,
-//   expandTree,
-// } from "../../../assets/scripts/d3-utilities.js";
-
 let canvasHeight, canvasWidth;
 const margin = {
   top: 0,
