@@ -24,7 +24,6 @@ export const actionStrings = [
   FETCH_HABIT_DATE,
 ];
 let clientRouteDict = clientRoutes(BASE_PATH);
-console.log("clientRouteDict :>> ", clientRoutes);
 clientRouteDict.show_all = ({ id, periodLength }) =>
   clientRoutes(`/habits/${id}/habit_dates?length=${periodLength}`).show_all();
 

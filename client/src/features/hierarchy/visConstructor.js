@@ -724,9 +724,9 @@ export default class Visualization {
       this.calibrateViewBox();
     } else {
       this.clearCanvas();
-
       if (this.rootData.name === "" || typeof this._canvas == undefined)
         return console.log("Data or canvas missing!");
+
       this.sumHierarchyData();
       this.accumulateNodeValues();
       this.setLayout();
@@ -737,6 +737,8 @@ export default class Visualization {
 
       this.appendCirclesAndLabels();
       this.appendTooltips();
+
+      console.log("Appended SVG elements... :>>");
     }
 
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
