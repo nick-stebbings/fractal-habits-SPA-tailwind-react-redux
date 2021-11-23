@@ -7,6 +7,8 @@ import { Layout } from "./Layout";
 
 import { fetchHabitsREST } from "../features/habit/actions";
 import { fetchDomainsREST } from "../features/domain/actions";
+// @ts-ignore
+import { fetchHabitTreeREST } from "features/hierarchy/actions";
 import reducer from "../features/ui/reducer";
 const { toggleConfirm } = reducer.actions;
 
@@ -17,11 +19,12 @@ import { getUIStatus } from "../features/ui/selectors";
 import { withModal } from '../components/HOC/withModal'
 import {HabitTree} from "../features/hierarchy/components/HabitTree";
 
-interface indexProps {}
+interface indexProps {
+  children?: JSX.Element
+}
 
-export const App: React.FC<indexProps> = ({children}) => {
-
-  const LayoutWithModal = withModal(Layout)
+export default function App ({children}: indexProps) {
+  const LayoutWithModal = React.memo(withModal(Layout))
   
   const dispatch = useAppDispatch();
   const UIStatus = useAppSelector(getUIStatus);
@@ -34,20 +37,22 @@ export const App: React.FC<indexProps> = ({children}) => {
   const loadHabits = () => dispatch(fetchHabitsREST());
   const loadDomains = () => dispatch(fetchDomainsREST());
 
+  const isVis = true
+  
+  const loadTreeData = async () => dispatch(fetchHabitTreeREST({ domainId: 1, dateId: 2 }));
   const loadData = async function () {
     await loadDomains();
     setHabit(currentHabit);
-  };
 
+    isVis && await loadTreeData()
+  };
   useEffect(() => {
     loadData()
   }, []);
-
   return (
-    <>
-      <LayoutWithModal isVis={false} type={UIStatus} />
-      <Header />
-      {...children}
-    </>
+      <>
+        <LayoutWithModal type={UIStatus} isVis={isVis} children={children} />
+        <Header />
+      </>
   );
 };

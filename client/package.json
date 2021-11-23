@@ -9,6 +9,7 @@
     "watch:css": "npx postcss src/styles/tailwind.css -o src/styles/output.css"
   },
   "dependencies": {
+    "@types/d3-selection": "^3.0.1",
     "axios": "^0.24.0",
     "d3": "^7.1.1",
     "d3-hierarchy": "^3.0.1",

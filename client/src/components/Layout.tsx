@@ -1,15 +1,16 @@
 import React from 'react'
-import {VisLayout} from './VisLayout'
+import {withVis} from './HOC/withVis'
 
 interface LayoutProps {
-  isVis: boolean;
-  children: JSX.Element
+  isVis: boolean,
+  children?: JSX.Element
 }
 
-export const Layout: React.FC<LayoutProps> = ({isVis, children}) => {
+export const Layout: React.FC<LayoutProps> = ({ isVis, children }) => {
+  const LayoutWithVis = React.Children.only(children) && React.memo(withVis(children.type))
   return isVis ? (
-    <VisLayout>{children}</VisLayout>
+    <LayoutWithVis />
     ) : (
-    <>{children}</>
+      {children}
     );
 }
