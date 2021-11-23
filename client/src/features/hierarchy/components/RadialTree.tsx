@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "app/hooks";
-// // @ts-ignore
+// @ts-ignore
 import { hierarchy } from "d3-hierarchy";
+// @ts-ignore
 import { Selection } from "@types/d3-selection";
+// @ts-ignore
 import { selectCurrentRadial } from "features/hierarchy/selectors";
+// @ts-ignore
 import { getRequestStatus } from "features/ui/selectors";
+// @ts-ignore
 import { visActions } from "features/hierarchy/reducer";
 const { createRadial } = visActions;
 
 import { select } from "d3-selection";
 import Vis from "../visConstructor";
+import { selectCurrentHierarchy } from "../selectors";
 
 interface VisProps {
   canvasHeight: number
   canvasWidth: number
   divId: number
-  currentHierarchyJson: string
   render: any //(_:any):void
 }
 
@@ -23,12 +27,12 @@ export const RadialTree: React.FC<VisProps> = ({
   canvasHeight,
   canvasWidth,
   divId,
-  currentHierarchyJson,
   render,
 }) => {
   const dispatch = useAppDispatch();
-  const currentRadial = useAppSelector(selectCurrentRadial);
+  let currentRadial = useAppSelector(selectCurrentRadial);
   const currentRequestState = useAppSelector(getRequestStatus);
+  const currentHierarchy = useAppSelector(selectCurrentHierarchy);
   const [currentRadialData, setCurrentRadialData] = useState({
     data: { name: "" },
   });
@@ -46,14 +50,10 @@ export const RadialTree: React.FC<VisProps> = ({
   }, []);
 
   useEffect(() => {
-    console.log('DID IT :>> ', currentRadial);
-    currentHierarchyJson && setCurrentRadialData(hierarchy(JSON.parse(currentHierarchyJson)));
-
+    currentHierarchy && setCurrentRadialData(hierarchy(currentHierarchy));
     if (currentRadialData.data.name == "") return;
     if (currentRequestState === "SUCCESS" && !currentRadial?._svgId) {
-      dispatch(
-        createRadial(
-          new Vis(
+      currentRadial = new Vis(
             svg,
             `#div${divId}`,
             currentRadialData,
@@ -61,14 +61,17 @@ export const RadialTree: React.FC<VisProps> = ({
             canvasWidth,
             "cluster"
           )
+      dispatch(
+        createRadial(
+          currentRadial
         )
       );
-      _p("Instantiated vis object :>> ", {}, "info");
+      _p("Instantiated vis object :>> ", currentRadial, "info");
+      _p("Rendered from component", {}, '!' )
+      currentRadial.render();
     }
-    currentRadial?.render && currentRadial.render();
-  }, [currentHierarchyJson, currentRequestState]);
-
-  return render();
+  }, [currentHierarchy]);
+  return <div id="vis" className="w-full h-full mx-auto">{render(currentRadial)}</div>;
 };
 
 export default RadialTree;

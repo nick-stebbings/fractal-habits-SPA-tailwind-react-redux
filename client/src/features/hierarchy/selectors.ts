@@ -5,7 +5,9 @@ import { createSelector } from "@reduxjs/toolkit";
 import { Hierarchy } from "app/features/hierarchy/types";
 
 export const selectCurrentHierarchy = (state: RootState): Hierarchy => {
-  return state?.hierarchy.current;
+  return (
+    state?.hierarchy.current.json && JSON.parse(state?.hierarchy.current.json)
+  );
 };
 
 export const selectCurrentTree = (state: RootState): Hierarchy => {

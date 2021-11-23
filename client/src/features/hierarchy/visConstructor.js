@@ -784,11 +784,11 @@ export default class Visualization {
     // );
     _p("zoomconfig", this._zoomConfig, "info");
     this._canvas = select(document.querySelectorAll(".canvas")[0]);
-    // console.log(
-    //   "need new canvas? :>> ",
-    //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
-    //     typeof this?._canvas == "undefined"
-    // );
+    console.log(
+      "need new canvas? :>> ",
+      typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
+        typeof this?._canvas == "undefined"
+    );
     if (
       typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
       typeof this?._canvas == "undefined"
@@ -803,7 +803,7 @@ export default class Visualization {
           }), translate(${this._viewConfig.currentXTranslate()},${this._viewConfig.currentYTranslate()})`
         );
 
-      // console.log("Configured canvas... :>>", this._canvas);
+      console.log("Configured canvas... :>>", this._canvas);
 
       this.setNormalTransform();
       this.setLevelsHighAndWide();
@@ -829,7 +829,7 @@ export default class Visualization {
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
-      // console.log("Appended SVG elements... :>>");
+      console.log("Appended SVG elements... :>>");
     }
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       this.addLegend();

@@ -51,8 +51,8 @@ export default function App ({children}: indexProps) {
   }, []);
   return (
       <>
-        <LayoutWithModal type={UIStatus} isVis={isVis} children={children} />
         <Header />
+        <LayoutWithModal type={UIStatus} isVis={isVis} children={children} />
       </>
   );
 };

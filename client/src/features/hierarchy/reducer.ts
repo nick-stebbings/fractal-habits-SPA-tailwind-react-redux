@@ -13,6 +13,7 @@ export const initialState: Dictionary<
     json: JSON.stringify({ name: "", children: "" }),
   },
   treeVis: {},
+  radialVis: {},
 };
 
 export const hierarchySlice = createSlice({
