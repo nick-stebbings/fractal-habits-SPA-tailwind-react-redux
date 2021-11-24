@@ -2,10 +2,10 @@ import React, { ComponentType, useState } from 'react'
 import "../../../assets/styles/pages/d3vis.scss";
 
 const margin = {
-  top: 0,
+  top: 100,
   right: 0,
   bottom: 0,
-  left: 0,
+  left: -100,
 };
 
 const d3SetupCanvas = function () {
@@ -24,7 +24,7 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
 
   const NewC: React.FC = (hocProps: T) => {
     return (
-      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} divId={'1'} {...hocProps} render={(currentVis) => {
+      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={'1'} {...hocProps} render={(currentVis) => {
         currentVis?.render && currentVis.render()
         return (<>
       <button

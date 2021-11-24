@@ -40,9 +40,20 @@ import {
 
 import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
 
-const BASE_SCALE = 4;
+const BASE_SCALE = 1.5;
+const FOCUS_MODE_SCALE = 4;
+const LABEL_SCALE = 1;
+const BUTTON_SCALE = 1;
+const XS_NODE_RADIUS = 50;
+const LG_NODE_RADIUS = 50;
+const DEFAULT_MARGIN = {
+  top: 100,
+  right: 0,
+  bottom: 0,
+  left: -100,
+};
 export default class Visualization {
-  constructor(svg, svgId, inputTree, canvasHeight, canvasWidth, type) {
+  constructor(svg, svgId, inputTree, canvasHeight, canvasWidth, margin, type) {
     this.type = type;
     this.isDemo = false;
     this.zoomBase = svg;
@@ -50,17 +61,18 @@ export default class Visualization {
     this.rootData = inputTree;
     this._viewConfig = {
       scale: BASE_SCALE,
-      clickScale: 4,
+      clickScale: FOCUS_MODE_SCALE,
+      margin: margin || DEFAULT_MARGIN,
       canvasHeight,
       canvasWidth,
       currentXTranslate: () =>
         this._viewConfig.globalTranslate
           ? -this._viewConfig.globalTranslate[0]
-          : -120,
+          : this._viewConfig.margin.left, // Initial translate
       currentYTranslate: () =>
         this._viewConfig.globalTranslate
           ? -this._viewConfig.globalTranslate[0]
-          : 0,
+          : this._viewConfig.margin.top, // Initial translate
       smallScreen: function () {
         return this.canvasWidth < 768;
       },
@@ -70,7 +82,7 @@ export default class Visualization {
       globalZoom: 1,
       zoomClicked: {},
       zoomedInView: function () {
-        return Object.keys(this.zoomClicked).length == 0;
+        return Object.keys(this.zoomClicked).length !== 0;
       },
     };
     // Flags/metrics from previous render
@@ -336,7 +348,8 @@ export default class Visualization {
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
-      (this._viewConfig.smallScreen() ? 12 : 20) * this._viewConfig.scale;
+      (this._viewConfig.smallScreen() ? XS_NODE_RADIUS : LG_NODE_RADIUS) *
+      this._viewConfig.scale;
   }
   setZoomBehaviour() {
     const zooms = function (e) {
@@ -438,14 +451,18 @@ export default class Visualization {
       .classed("links", true)
       .attr(
         "transform",
-        `translate(${this._viewConfig.viewportW / 2},${this._viewConfig.scale})`
+        `translate(${this._viewConfig.viewportW / 2}) scale(${
+          this._viewConfig.scale / 5
+        })`
       );
     this._gNode = this._canvas
       .append("g")
       .classed("nodes", true)
       .attr(
         "transform",
-        `translate(${this._viewConfig.viewportW / 2},${this._viewConfig.scale})`
+        `translate(${this._viewConfig.viewportW / 2}) scale(${
+          this._viewConfig.scale / 5
+        })`
       );
   }
   setNodeAndLinkEnterSelections() {
@@ -501,7 +518,7 @@ export default class Visualization {
         "transform",
         `translate(${
           this._viewConfig.nodeRadius / this._viewConfig.scale
-        }, 75), scale(2)`
+        }, 75), scale(${LABEL_SCALE})`
       )
       .attr("opacity", (d) => this.activeOrNonActiveOpacity(d, "0"));
   }
@@ -509,7 +526,7 @@ export default class Visualization {
     this._gButton = this._gCircle
       .append("g")
       .classed("habit-label-dash-button", true)
-      .attr("transform", `translate(${200}, -50), scale(2.75)`)
+      .attr("transform", `translate(${200}, -50), scale(${BUTTON_SCALE})`)
       .attr("style", "opacity: 0");
   }
 
@@ -799,7 +816,7 @@ export default class Visualization {
         .attr(
           "transform",
           `scale(${
-            this._viewConfig.clickScale
+            this._viewConfig.scale
           }), translate(${this._viewConfig.currentXTranslate()},${this._viewConfig.currentYTranslate()})`
         );
 

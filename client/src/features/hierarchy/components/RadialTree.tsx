@@ -20,12 +20,14 @@ interface VisProps {
   canvasHeight: number
   canvasWidth: number
   divId: number
+  margin?: any //(_:any):void
   render: any //(_:any):void
 }
 
 export const RadialTree: React.FC<VisProps> = ({
   canvasHeight,
   canvasWidth,
+  margin,
   divId,
   render,
 }) => {
@@ -58,7 +60,8 @@ export const RadialTree: React.FC<VisProps> = ({
             `#div${divId}`,
             currentRadialData,
             canvasHeight,
-            canvasWidth,
+        canvasWidth,
+            margin,
             "cluster"
           )
       dispatch(
