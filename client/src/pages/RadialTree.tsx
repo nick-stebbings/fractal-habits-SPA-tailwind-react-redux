@@ -3,5 +3,5 @@ import App from "../components/App";
 import RadialTree from "features/hierarchy/components/RadialTree";
 
 export default function() {
-  return <App><RadialTree /></App>
+  return <App isVisComponent={true}><RadialTree /></App>
 }

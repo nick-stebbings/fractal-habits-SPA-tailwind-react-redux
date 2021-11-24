@@ -796,14 +796,14 @@ export default class Visualization {
   }
 
   render() {
-    console.log("Rendering vis... :>>", this?._canvas);
+    // console.log("Rendering vis... :>>", this?._canvas);
     // _p("zoomconfig", this._zoomConfig, "info");
     this._canvas = select(document.querySelectorAll(".canvas")[0]);
-    console.log(
-      "need new canvas? :>> ",
-      typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
-        typeof this?._canvas == "undefined"
-    );
+    // console.log(
+    //   "need new canvas? :>> ",
+    //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
+    //     typeof this?._canvas == "undefined"
+    // );
     if (
       typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
       typeof this?._canvas == "undefined"

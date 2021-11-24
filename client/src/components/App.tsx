@@ -20,10 +20,11 @@ import { withModal } from '../components/HOC/withModal'
 import {HabitTree} from "../features/hierarchy/components/HabitTree";
 
 interface indexProps {
+  isVisComponent?: boolean
   children?: JSX.Element
 }
 
-export default function App ({children}: indexProps) {
+export default function App ({isVisComponent, children}: indexProps) {
   const HeaderWithModal = React.memo(withModal(Header))
   
   const dispatch = useAppDispatch();
@@ -52,7 +53,7 @@ export default function App ({children}: indexProps) {
   return (
       <>
         <HeaderWithModal type={UIStatus} />
-        <Layout children={children} isVis={isVis} />
+        <Layout children={children} isVis={isVisComponent} />
       </>
   );
 };
