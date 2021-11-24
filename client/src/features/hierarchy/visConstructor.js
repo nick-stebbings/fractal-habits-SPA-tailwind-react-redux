@@ -5,6 +5,8 @@ import {
   zoom,
   zoomIdentity,
   linkVertical,
+  linkRadial,
+  linkHorizontal,
   tree,
   cluster,
   easeCubic,
@@ -439,11 +441,41 @@ export default class Visualization {
     return !this.zoomClicked ? "1" : dimmedOpacity;
   }
 
+  getLinkPathGenerator() {
+    switch (this.type) {
+      case "tree":
+        return linkVertical()
+          .x((d) => d.x)
+          .y((d) => d.y);
+      case "cluster":
+        return linkHorizontal()
+          .x((d) => d.y)
+          .y((d) => d.x);
+      case "radial":
+        return linkRadial()
+          .angle((d) => (d.x * Math.PI) / 180)
+          .radius((d) => d.y);
+    }
+  }
   setLayout() {
-    this.layout = this.type == "tree" ? tree() : cluster();
-    this.layout
-      .size(this._viewConfig.canvasWidth, this._viewConfig.canvasHeight)
-      .nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
+    switch (this.type) {
+      case "tree":
+        this.layout = tree().size(
+          this._viewConfig.canvasWidth,
+          this._viewConfig.canvasHeight
+        );
+        break;
+      case "cluster":
+        this.layout = cluster().size(
+          this._viewConfig.canvasWidth,
+          this._viewConfig.canvasHeight
+        );
+        break;
+      case "radial":
+        this.layout = cluster().size(360, this._viewConfig.canvasWidth / 2);
+        break;
+    }
+    this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
     this.layout(this.rootData);
   }
   setNodeAndLinkGroups() {
@@ -481,12 +513,7 @@ export default class Visualization {
           ? 0.55
           : 0.3
       )
-      .attr(
-        "d",
-        linkVertical()
-          .x((d) => d.x)
-          .y((d) => d.y)
-      );
+      .attr("d", this.getLinkPathGenerator());
 
     const nodes = this._gNode
       .selectAll("g.node")
@@ -507,7 +534,11 @@ export default class Visualization {
           ? "2px"
           : "0"
       )
-      .attr("transform", (d) => `translate(${d.x},${d.y})`)
+      .attr("transform", (d) =>
+        this.type == "cluster"
+          ? `translate(${d.y},${d.x})`
+          : `translate(${d.x},${d.y})`
+      )
       .call(this.bindEventHandlers.bind(this));
   }
   setCircleAndLabelGroups() {
@@ -534,6 +565,11 @@ export default class Visualization {
   appendCirclesAndLabels() {
     this._gCircle
       .append("circle")
+      // .attr("cx", (d) => d.x)
+      // .attr("cy", (d) => (this.type == "radial" ? -d.y : d.y))
+      .attr("transform", (d) =>
+        this.type == "radial" ? `rotate(${d.x}, 0, 0)` : ``
+      )
       .attr("r", this._viewConfig.nodeRadius)
       .on("mouseenter", this.eventHandlers.handleHover);
   }
