@@ -42,9 +42,13 @@ import {
 
 import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
 
+function radialPoint(x, y) {
+  return [(y = +y) * Math.cos((x -= Math.PI / 2)), y * Math.sin(x)];
+}
+
 const BASE_SCALE = 1.5;
 const FOCUS_MODE_SCALE = 4;
-const LABEL_SCALE = 1;
+const LABEL_SCALE = 1.5;
 const BUTTON_SCALE = 1;
 const XS_NODE_RADIUS = 50;
 const LG_NODE_RADIUS = 50;
@@ -453,7 +457,7 @@ export default class Visualization {
           .y((d) => d.x);
       case "radial":
         return linkRadial()
-          .angle((d) => (d.x * Math.PI) / 180)
+          .angle((d) => d.x)
           .radius((d) => d.y);
     }
   }
@@ -472,31 +476,25 @@ export default class Visualization {
         );
         break;
       case "radial":
-        this.layout = cluster().size(360, this._viewConfig.canvasWidth / 2);
+        this.layout = cluster().size(360, this._viewConfig.canvasWidth / 1.5);
         break;
     }
     this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
     this.layout(this.rootData);
   }
   setNodeAndLinkGroups() {
+    const transformation = `translate(${this._viewConfig.viewportW / 2}, ${
+      this.type == "radial" ? 200 : 0
+    }) scale(${this._viewConfig.scale / 5})`;
+
     this._gLink = this._canvas
       .append("g")
       .classed("links", true)
-      .attr(
-        "transform",
-        `translate(${this._viewConfig.viewportW / 2}) scale(${
-          this._viewConfig.scale / 5
-        })`
-      );
+      .attr("transform", transformation);
     this._gNode = this._canvas
       .append("g")
       .classed("nodes", true)
-      .attr(
-        "transform",
-        `translate(${this._viewConfig.viewportW / 2}) scale(${
-          this._viewConfig.scale / 5
-        })`
-      );
+      .attr("transform", transformation);
   }
   setNodeAndLinkEnterSelections() {
     const links = this._gLink
@@ -513,7 +511,7 @@ export default class Visualization {
           ? 0.55
           : 0.3
       )
-      .attr("d", this.getLinkPathGenerator());
+      .attr("d", (d) => this.getLinkPathGenerator());
 
     const nodes = this._gNode
       .selectAll("g.node")
@@ -534,11 +532,13 @@ export default class Visualization {
           ? "2px"
           : "0"
       )
-      .attr("transform", (d) =>
-        this.type == "cluster"
+      .attr("transform", (d) => {
+        if (this.type == "radial")
+          return "translate(" + radialPoint(d.x, d.y) + ")";
+        return this.type == "cluster"
           ? `translate(${d.y},${d.x})`
-          : `translate(${d.x},${d.y})`
-      )
+          : `translate(${d.x},${d.y})`;
+      })
       .call(this.bindEventHandlers.bind(this));
   }
   setCircleAndLabelGroups() {
