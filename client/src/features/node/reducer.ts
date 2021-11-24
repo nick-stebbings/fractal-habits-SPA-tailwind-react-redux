@@ -26,6 +26,12 @@ export const nodeSlice = createSlice({
     updateCurrentNode(state, action: PayloadAction<Node>) {
       state.current = action.payload;
     },
+    updateNodeStatus(state, action: PayloadAction<any>) {
+      // if (state.treeVis?.id !== "undefined")
+      //   state.treeVis._viewConfig = action.payload;
+      // state.treeVis.render();
+      return state;
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(

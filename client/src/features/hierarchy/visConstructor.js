@@ -22,7 +22,7 @@ import { updateHabitDateREST } from "features/habitDate/actions";
 import HabitSlice from "features/habit/reducer";
 const { updateCurrentHabit } = HabitSlice.actions;
 import NodeSlice from "features/node/reducer";
-const { updateCurrentNode } = NodeSlice.actions;
+const { updateCurrentNode, updateNodeStatus } = NodeSlice.actions;
 
 import {
   getTransform,
@@ -113,7 +113,6 @@ export default class Visualization {
             ? this._zoomConfig.scale //clickScale
             : this._zoomConfig.scale,
         };
-        this.render();
       },
       clickedZoom: function (e, that) {
         if (e?.defaultPrevented || typeof that === "undefined") return; // panning, not clicking
@@ -134,10 +133,12 @@ export default class Visualization {
               ")"
           );
       },
-      handleNodeToggle: function (event, node) {
+      handleNodeFocus: function (event, node) {
         event.preventDefault();
-        this.setActiveNode(node.data);
         this.activateNodeAnimation();
+
+        this.setActiveNode(node.data);
+        this.eventHandlers.handleStatusChange.call(this, node);
         // const targ = event.target;
         // if (targ.tagName == "circle") {
         //   if (
@@ -178,25 +179,25 @@ export default class Visualization {
           store.dispatch(updateNodeStatus(currentStatus));
         }
       },
-      handleNodeFocus: function (event, node) {
+      handleNodeToggle: function (event, node) {
         event.preventDefault();
         if (node.children) return;
         this.setActiveNode(node.data);
         this.activateNodeAnimation();
-        // this.zoomClicked = {
-        //   event,
-        //   node,
-        //   content: node.data,
-        // };
-        // if (deadNode(event)) return this.reset();
+        this.zoomClicked = {
+          event,
+          node,
+          content: node.data,
+        };
+        if (deadNode(event)) return this.reset();
 
-        // expand(node);
-        // this.render();
-        // this.eventHandlers.handleStatusChange.call(this, node);
-        // setHabitLabel(node.data);
-        // // this.eventHandlers.handleZoom.call(this, event, node?.parent, true);
-        // // this.zoomsG?.k && setNormalTransform();
-        // this.render();
+        expand(node);
+        this.render();
+        this.eventHandlers.handleStatusChange.call(this, node);
+        setHabitLabel(node.data);
+        // this.eventHandlers.handleZoom.call(this, event, node?.parent, true);
+        // this.zoomsG?.k && setNormalTransform();
+        this.render();
       },
       handleMouseLeave: function (e) {
         const g = select(e.target);
