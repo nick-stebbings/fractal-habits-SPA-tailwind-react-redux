@@ -46,12 +46,12 @@ function radialPoint(x, y) {
   return [(y = +y) * Math.cos((x -= Math.PI / 2)), y * Math.sin(x)];
 }
 
-const BASE_SCALE = 2.5;
+const BASE_SCALE = 3;
 const FOCUS_MODE_SCALE = 4;
 const LABEL_SCALE = 1.5;
 const BUTTON_SCALE = 1;
-const XS_NODE_RADIUS = 50;
-const LG_NODE_RADIUS = 50;
+const XS_NODE_RADIUS = 10;
+const LG_NODE_RADIUS = 20;
 const DEFAULT_MARGIN = {
   top: 100,
   right: 0,
@@ -78,7 +78,7 @@ export default class Visualization {
         this._viewConfig?.globalTranslate
           ? -this._viewConfig.globalTranslate[0]
           : this._viewConfig.margin.top * this._viewConfig.scale, // Initial translate
-      smallScreen: function () {
+      isSmallScreen: function () {
         return this.canvasWidth < 768;
       },
     };
@@ -334,8 +334,8 @@ export default class Visualization {
     }
   }
   setLevelsHighAndWide() {
-    if (this._viewConfig.smallScreen()) {
-      this._viewConfig.levelsHigh = this.zoomClicked ? 5 : 5;
+    if (this._viewConfig.isSmallScreen()) {
+      this._viewConfig.levelsHigh = this.zoomClicked ? 5 : 10;
       this._viewConfig.levelsWide = this.zoomClicked ? 1 : 2;
     } else {
       this._viewConfig.levelsHigh = 12;
@@ -350,12 +350,12 @@ export default class Visualization {
       (this._viewConfig.canvasHeight / this._viewConfig.levelsWide) * 8;
 
     //adjust for taller aspect ratio
-    this._viewConfig.dx *= this._viewConfig.smallScreen() ? 2 : 1.5;
-    this._viewConfig.dy *= this._viewConfig.smallScreen() ? 1 : 0.5;
+    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 3 : 1.5;
+    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 1 : 0.5;
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
-      (this._viewConfig.smallScreen() ? XS_NODE_RADIUS : LG_NODE_RADIUS) *
+      (this._viewConfig.isSmallScreen() ? XS_NODE_RADIUS : LG_NODE_RADIUS) *
       this._viewConfig.scale;
   }
   setZoomBehaviour() {
@@ -398,7 +398,7 @@ export default class Visualization {
 
     this._viewConfig.viewportX =
       -this._viewConfig.clickScale * (this._viewConfig.canvasWidth / 2);
-    this._viewConfig.viewportY = this._viewConfig.smallScreen() ? -800 : -550;
+    this._viewConfig.viewportY = this._viewConfig.isSmallScreen() ? -800 : -550;
 
     this._viewConfig.defaultView = `${this._viewConfig.viewportX} ${this._viewConfig.viewportY} ${this._viewConfig.viewportW} ${this._viewConfig.viewportH}`;
   }
@@ -482,8 +482,8 @@ export default class Visualization {
   }
   setNodeAndLinkGroups() {
     const transformation = `translate(${-this._viewConfig.viewportW / 2}, ${
-      this.type == "radial" ? -this._viewConfig.viewportH / 2 : 0
-    }) scale(${this._viewConfig.scale / 5})`;
+      this.type == "radial" ? 0 : 0
+    })`;
 
     this._gLink = this._canvas
       .append("g")
@@ -581,7 +581,7 @@ export default class Visualization {
 
     this._gTooltip
       .append("rect")
-      .attr("width", 275)
+      .attr("width", this.type == "radial" ? 120 : 275)
       .attr("height", 100)
       .attr("x", -6)
       .attr("y", -10)
@@ -597,10 +597,11 @@ export default class Visualization {
         return `${words[0] || ""} ${words[1] || ""} ${words[2] || ""} ${
           words[3] || ""
         }`;
-      });
+      })
+      .attr("transform", this.type == "radial" ? "scale(0.75)" : "");
     this._gTooltip
       .append("text")
-      .attr("x", 15)
+      .attr("x", 5)
       .attr("y", 50)
       .text((d) => {
         const allWords = d.data.name.split(" ");
@@ -608,7 +609,8 @@ export default class Visualization {
         return `${words[4] || ""} ${words[5] || ""} ${words[6] || ""} ${
           allWords.length > 7 ? "..." : ""
         }`;
-      });
+      })
+      .attr("transform", this.type == "radial" ? "scale(0.75)" : "");
   }
   appendButtons() {
     this._gButton
