@@ -76,12 +76,12 @@ export default class Visualization {
       canvasWidth,
       currentXTranslate: () =>
         this._viewConfig?.globalTranslate
-          ? -this._viewConfig.globalTranslate[0]
-          : this._viewConfig.margin.left * this._viewConfig.scale, // Initial translate
+          ? this._viewConfig.margin.left + this._viewConfig.globalTranslate[0]
+          : this._viewConfig.margin.left, // Initial translate
       currentYTranslate: () =>
         this._viewConfig?.globalTranslate
-          ? -this._viewConfig.globalTranslate[0]
-          : this._viewConfig.margin.top * this._viewConfig.scale, // Initial translate
+          ? this._viewConfig.margin.top + this._viewConfig.globalTranslate[0]
+          : this._viewConfig.margin.top, // Initial translate
       isSmallScreen: function () {
         return this.canvasWidth < 768;
       },
@@ -855,7 +855,18 @@ export default class Visualization {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true)
-        .attr("transform", `scale(${BASE_SCALE}), translate(${0}, ${0})`);
+        .attr(
+          "transform",
+          `scale(${BASE_SCALE}), translate(${
+            this.type == "cluster"
+              ? this._viewConfig.nodeRadius
+              : this._viewConfig.viewportW / 2
+          }, ${
+            this.type !== "tree"
+              ? this._viewConfig.viewportH / 2 - this._viewConfig.nodeRadius
+              : 0
+          })`
+        );
 
       console.log("Configured canvas... :>>", this._canvas);
 
