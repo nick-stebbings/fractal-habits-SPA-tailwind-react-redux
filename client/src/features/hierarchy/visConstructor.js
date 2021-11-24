@@ -46,7 +46,7 @@ function radialPoint(x, y) {
   return [(y = +y) * Math.cos((x -= Math.PI / 2)), y * Math.sin(x)];
 }
 
-const BASE_SCALE = 1.5;
+const BASE_SCALE = 2.5;
 const FOCUS_MODE_SCALE = 4;
 const LABEL_SCALE = 1.5;
 const BUTTON_SCALE = 1;
@@ -71,13 +71,13 @@ export default class Visualization {
       canvasHeight,
       canvasWidth,
       currentXTranslate: () =>
-        -canvasWidth / 2 + this._viewConfig.globalTranslate
+        this._viewConfig?.globalTranslate
           ? -this._viewConfig.globalTranslate[0]
-          : this._viewConfig.margin.left, // Initial translate
+          : this._viewConfig.margin.left * this._viewConfig.scale, // Initial translate
       currentYTranslate: () =>
-        this._viewConfig.globalTranslate
+        this._viewConfig?.globalTranslate
           ? -this._viewConfig.globalTranslate[0]
-          : this._viewConfig.margin.top, // Initial translate
+          : this._viewConfig.margin.top * this._viewConfig.scale, // Initial translate
       smallScreen: function () {
         return this.canvasWidth < 768;
       },
@@ -256,7 +256,7 @@ export default class Visualization {
   }
 
   zoomBase() {
-    return select(`#div${this._svgId}`);
+    return select(`#${this._svgId}`);
   }
 
   setActiveNode(clickedNode) {
@@ -360,52 +360,50 @@ export default class Visualization {
   }
   setZoomBehaviour() {
     const zooms = function (e) {
-      const transform = e.transform;
-      let scale = transform.k,
-        tbound = -this._viewConfig.canvasHeight * this._viewConfig.scale * 3,
-        bbound = this._viewConfig.canvasHeight * this._viewConfig.scale * 3;
-      const currentTranslation = [0, 0];
+      let scale = e.transform.k;
 
-      this._viewConfig.scale = this._zoomConfig.globalZoomScale
-        ? this._zoomConfig.globalZoomScale
-        : scale;
-      this.zoomsG = e.transform;
-      this._zoomConfig.globalZoomScale = null;
-      this._viewConfig.globalTranslate = null;
+      this._viewConfig.scale = scale;
 
-      const translation = [
-        currentTranslation[0] + transform.x,
-        currentTranslation[1] + transform.y,
+      const transform = [
+        this._viewConfig.currentXTranslate() +
+          e.transform.x -
+          (this._viewConfig.canvasWidth + this._viewConfig.nodeRadius) *
+            this._viewConfig.scale,
+        this._viewConfig.currentYTranslate() +
+          e.transform.y +
+          (this._viewConfig.canvasHeight + this._viewConfig.nodeRadius) *
+            this._viewConfig.scale,
       ];
-      // console.log("translation :>> ", translation);
+
       select(".canvas").attr(
         "transform",
         "translate(" +
-          translation +
-          ")" +
-          " scale(" +
-          this._viewConfig.scale +
+          transform[0] +
+          ", " +
+          transform[1] +
+          ")scale(" +
+          scale +
           ")"
       );
     };
     this.zoomer = zoom()
-      .scaleExtent([0, 5])
+      .scaleExtent([2, 5])
       .duration(10000)
       .on("zoom", zooms.bind(this));
   }
 
   calibrateViewPortAttrs() {
-    this._viewConfig.viewportH = this._viewConfig.canvasHeight;
     this._viewConfig.viewportW = this._viewConfig.canvasWidth;
-    this._viewConfig.viewportY = this._viewConfig.smallScreen() ? -800 : -550;
+    this._viewConfig.viewportH = this._viewConfig.canvasHeight * 5;
+
     this._viewConfig.viewportX =
-      this._viewConfig.viewportW / this._viewConfig.clickScale +
-      this._viewConfig.clickScale *
-        (!this.isDemo || this._viewConfig.smallScreen() ? 3.5 : 10) *
-        this._viewConfig.nodeRadius;
+      -this._viewConfig.clickScale * (this._viewConfig.canvasWidth / 2);
+    this._viewConfig.viewportY = this._viewConfig.smallScreen() ? -800 : -550;
+
     this._viewConfig.defaultView = `${this._viewConfig.viewportX} ${this._viewConfig.viewportY} ${this._viewConfig.viewportW} ${this._viewConfig.viewportH}`;
   }
   calibrateViewBox() {
+    console.log("this.zoomBase() :>> ", this.zoomBase());
     this.zoomBase()
       .attr("viewBox", this._viewConfig.defaultView)
       .attr("preserveAspectRatio", "xMidYMid meet")
@@ -483,8 +481,8 @@ export default class Visualization {
     this.layout(this.rootData);
   }
   setNodeAndLinkGroups() {
-    const transformation = `translate(${this._viewConfig.viewportW / 2}, ${
-      this.type == "radial" ? 200 : 0
+    const transformation = `translate(${-this._viewConfig.viewportW / 2}, ${
+      this.type == "radial" ? -this._viewConfig.viewportH / 2 : 0
     }) scale(${this._viewConfig.scale / 5})`;
 
     this._gLink = this._canvas
@@ -511,7 +509,7 @@ export default class Visualization {
           ? 0.55
           : 0.3
       )
-      .attr("d", (d) => this.getLinkPathGenerator());
+      .attr("d", this.getLinkPathGenerator());
 
     const nodes = this._gNode
       .selectAll("g.node")
@@ -840,6 +838,9 @@ export default class Visualization {
     //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
     //     typeof this?._canvas == "undefined"
     // );
+    this.setZoomBehaviour();
+    this.calibrateViewPortAttrs();
+    this.calibrateViewBox();
     if (
       typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
       typeof this?._canvas == "undefined"
@@ -860,18 +861,10 @@ export default class Visualization {
       this.setLevelsHighAndWide();
       this.setdXdY();
       this.setNodeRadius();
-      this.setZoomBehaviour();
-      this.calibrateViewPortAttrs();
-      this.calibrateViewBox();
     } else {
       this.clearCanvas();
       if (this.rootData.name === "" || typeof this._canvas == undefined)
-        return console.log("Data or canvas missing!");
-
-      this.calibrateViewPortAttrs();
-      this.calibrateViewBox();
-
-      this.sumHierarchyData();
+        this.sumHierarchyData();
       this.accumulateNodeValues();
       this.setLayout();
 

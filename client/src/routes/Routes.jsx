@@ -14,7 +14,7 @@ export const Routes = () => {
   return (
     <Router>
       <Switch>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HabitTree />} />
         <Route path="/vis/habit-tree" element={<HabitTree />} />
         <Route path="/vis/cluster" element={<Cluster />} />
         <Route path="/vis/radial-tree" element={<RadialTree />} />

@@ -32,7 +32,8 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
   }
 
   const slideOut = (e) => {
-    if(!isMobile || e.target.classList.contains("cal-date-nav")) return;
+    if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
+    console.log('slidout :>> ');
     e.currentTarget.style.right = "calc(100% - 4rem)";
     document.querySelector(".mask-wrapper").style.height = "initial"
     document.querySelector(".mask-wrapper .wide-nav").style.borderTopRightRadius = '0rem'
@@ -43,6 +44,7 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
     setMobileFullyVisible(false)
   }
   const toggleSlide = (e) => {
+    console.log('e.target.classList :>> ', e.target.classList);
     if(!isMobile || e.target.classList.contains("cal-date-nav")) return;
     mobileFullyVisible ? slideIn(e) : slideOut(e)
     setMobileFullyVisible(!mobileFullyVisible)
