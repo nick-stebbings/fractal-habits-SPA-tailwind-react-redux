@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+// @ts-ignore
 import { useAppSelector, useAppDispatch } from "app/hooks";
 import { hierarchy, select } from "d3";
 // @ts-ignore
@@ -8,19 +9,12 @@ import { selectCurrentRadial } from "features/hierarchy/selectors";
 // @ts-ignore
 import { getRequestStatus } from "features/ui/selectors";
 // @ts-ignore
-import { visActions } from "features/hierarchy/reducer";
-const { createRadial } = visActions;
 
+import {VisProps} from '../types';
 import Vis from "../visConstructor";
+import { visActions } from "../reducer";
+const { createVis } = visActions;
 import { selectCurrentHierarchy } from "../selectors";
-
-interface VisProps {
-  canvasHeight: number
-  canvasWidth: number
-  divId: number
-  margin?: any //(_:any):void
-  render: any //(_:any):void
-}
 
 export const RadialTree: React.FC<VisProps> = ({
   canvasHeight,
@@ -55,16 +49,19 @@ export const RadialTree: React.FC<VisProps> = ({
     if (currentRequestState === "SUCCESS" && !currentRadial?._svgId) {
       currentRadial = new Vis(
             svg,
-            `#div${divId}`,
+            `div${divId}`,
             currentRadialData,
             canvasHeight,
-        canvasWidth,
+            canvasWidth,
             margin,
             "radial"
           )
       dispatch(
-        createRadial(
-          currentRadial
+        createVis(          
+          {
+            label: 'radialVis',
+            vis: currentRadial
+          }
         )
       );
       _p("Instantiated vis object :>> ", currentRadial, "info");
@@ -72,7 +69,12 @@ export const RadialTree: React.FC<VisProps> = ({
       currentRadial.render();
     }
   }, [currentHierarchy]);
-  return <div id="vis" className="w-full h-full mx-auto">{render(currentRadial)}</div>;
+
+  return (
+    <div id="vis" className="w-full h-full mx-auto">
+      {render(currentRadial)}
+    </div>
+  );
 };
 
 export default RadialTree;

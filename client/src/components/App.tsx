@@ -24,7 +24,7 @@ interface indexProps {
 }
 
 export default function App ({children}: indexProps) {
-  const LayoutWithModal = React.memo(withModal(Layout))
+  const HeaderWithModal = React.memo(withModal(Header))
   
   const dispatch = useAppDispatch();
   const UIStatus = useAppSelector(getUIStatus);
@@ -51,8 +51,8 @@ export default function App ({children}: indexProps) {
   }, []);
   return (
       <>
-        <Header />
-        <LayoutWithModal type={UIStatus} isVis={isVis} children={children} />
+        <HeaderWithModal type={UIStatus} />
+        <Layout children={children} isVis={isVis} />
       </>
   );
 };

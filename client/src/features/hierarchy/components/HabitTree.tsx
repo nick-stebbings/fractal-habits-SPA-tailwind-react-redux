@@ -6,7 +6,7 @@ import { hierarchy, select } from "d3";
 // @ts-ignore
 import { Selection } from "@types/d3-selection";
 // @ts-ignore
-import { selectCurrentCluster } from "features/hierarchy/selectors";
+import { selectCurrentTree } from "features/hierarchy/selectors";
 // @ts-ignore
 import { getRequestStatus } from "features/ui/selectors";
 
@@ -16,7 +16,7 @@ import { visActions } from "../reducer";
 const { createVis } = visActions;
 import { selectCurrentHierarchy } from "../selectors";
 
-export const Cluster: React.FC<VisProps> = ({
+export const HabitTree: React.FC<VisProps> = ({
   canvasHeight,
   canvasWidth,
   margin,
@@ -24,10 +24,10 @@ export const Cluster: React.FC<VisProps> = ({
   render,
 }) => {
   const dispatch = useAppDispatch();
-  let currentCluster = useAppSelector(selectCurrentCluster);
+  let currentHabitTree = useAppSelector(selectCurrentTree);
   const currentRequestState = useAppSelector(getRequestStatus);
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
-  const [currentClusterData, setCurrentClusterData] = useState({
+  const [currentHabitTreeData, setCurrentHabitTreeData] = useState({
     data: { name: "" },
   });
 
@@ -44,37 +44,37 @@ export const Cluster: React.FC<VisProps> = ({
   }, []);
 
   useEffect(() => {
-    currentHierarchy && setCurrentClusterData(hierarchy(currentHierarchy));
-    if (currentClusterData.data.name == "") return;
-    if (currentRequestState === "SUCCESS" && !currentCluster?._svgId) {
-      currentCluster = new Vis(
+    currentHierarchy && setCurrentHabitTreeData(hierarchy(currentHierarchy));
+    if (currentHabitTreeData.data.name == "") return;
+    if (currentRequestState === "SUCCESS" && !currentHabitTree?._svgId) {
+      currentHabitTree = new Vis(
             svg,
             `div${divId}`,
-            currentClusterData,
+            currentHabitTreeData,
             canvasHeight,
             canvasWidth,
             margin,
-            "cluster"
+            "tree"
           )
       dispatch(
         createVis(
           {
-            label: 'clusterVis',
-            vis: currentCluster
+            label: 'treeVis',
+            vis: currentHabitTree
           }
         )
       );
-      _p("Instantiated vis object :>> ", currentCluster, "info");
+      _p("Instantiated vis object :>> ", currentHabitTree, "info");
       _p("Rendered from component", {}, '!' )
-      currentCluster.render();
+      currentHabitTree.render();
     }
   }, [currentHierarchy]);
 
   return (
     <div id="vis" className="w-full h-full mx-auto">
-      {render(currentCluster)}
+      {render(currentHabitTree)}
     </div>
   );
 };
 
-export default Cluster;
+export default HabitTree;

@@ -19,14 +19,16 @@ let MENU_ROUTES = [
         component: HabitTree,
         icon: "anicon",
       },
-      "/vis/habit-triangle": {
-        title: "Habit Triangle",
+      "/vis/cluster": {
+        status: "enabled",
+        title: "Horizontal Cluster",
         description:
           "Fractal pyramid of habits. Navigate all the way up to the sky or drill down into the minutiae.",
         component: Cluster,
         icon: "anicon",
       },
       "/vis/radial-tree": {
+        status: "enabled",
         title: "Radial Tree",
         description:
           "A pretty hierarchical tree diagram where your habits branch off from the centre of a circle.",

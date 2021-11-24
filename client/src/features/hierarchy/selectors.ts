@@ -17,3 +17,7 @@ export const selectCurrentTree = (state: RootState): Hierarchy => {
 export const selectCurrentRadial = (state: RootState): Hierarchy => {
   return state?.hierarchy.radialVis;
 };
+
+export const selectCurrentCluster = (state: RootState): Hierarchy => {
+  return state?.hierarchy.clusterVis;
+};

@@ -14,19 +14,19 @@ export const initialState: Dictionary<
   },
   treeVis: {},
   radialVis: {},
+  clusterVis: {},
 };
 
 export const hierarchySlice = createSlice({
   name: "hierarchy",
   initialState,
   reducers: {
-    createTree(state, action: PayloadAction<typeof Visualization>) {
-      if (state.treeVis?.id !== "undefined") state.treeVis = action.payload;
-      return state;
-    },
-    createRadial(state, action: PayloadAction<typeof Visualization>) {
-      if (state.radialVis?.id !== "undefined") state.radialVis = action.payload;
-      return state;
+    createVis(
+      state,
+      action: PayloadAction<Dictionary<string | typeof Visualization>>
+    ) {
+      const { vis, label } = action.payload;
+      if (typeof state[label]?.id == "undefined") state[label] = vis;
     },
     updateViewConfig(state, action: PayloadAction<any>) {
       if (state.treeVis?.id !== "undefined")
