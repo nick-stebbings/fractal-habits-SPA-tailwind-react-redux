@@ -46,17 +46,21 @@ function radialPoint(x, y) {
   return [(y = +y) * Math.cos((x -= Math.PI / 2)), y * Math.sin(x)];
 }
 
-const BASE_SCALE = 3;
+const BASE_SCALE = 1;
 const FOCUS_MODE_SCALE = 4;
 const LABEL_SCALE = 1.5;
 const BUTTON_SCALE = 1;
 const XS_NODE_RADIUS = 10;
-const LG_NODE_RADIUS = 20;
+const LG_NODE_RADIUS = 50;
+const XS_LEVELS_HIGH = 3;
+const LG_LEVELS_HIGH = 3;
+const XS_LEVELS_WIDE = 3;
+const LG_LEVELS_WIDE = 3;
 const DEFAULT_MARGIN = {
-  top: 100,
+  top: 0,
   right: 0,
   bottom: 0,
-  left: -100,
+  left: 0,
 };
 export default class Visualization {
   constructor(svg, svgId, inputTree, canvasHeight, canvasWidth, margin, type) {
@@ -67,7 +71,7 @@ export default class Visualization {
     this._viewConfig = {
       scale: BASE_SCALE,
       clickScale: FOCUS_MODE_SCALE,
-      margin: margin || DEFAULT_MARGIN,
+      margin: DEFAULT_MARGIN,
       canvasHeight,
       canvasWidth,
       currentXTranslate: () =>
@@ -116,10 +120,11 @@ export default class Visualization {
       },
       clickedZoom: function (e, that) {
         if (e?.defaultPrevented || typeof that === "undefined") return; // panning, not clicking
-        const transformer = getTransform(that, clickScale);
-        _p("transformer.translate :>> ", transformer.translate, "success");
+        const transformer = getTransform(that, this._viewConfig.clickScale);
+        _p("transformer.translate :>> ", transformer, "success");
         select(".canvas")
           .transition()
+          .ease(easePolyOut)
           .ease(easePolyOut)
           .duration(this.isDemo ? 0 : 550)
           .attr(
@@ -138,7 +143,6 @@ export default class Visualization {
         this.activateNodeAnimation();
 
         this.setActiveNode(node.data);
-        this.eventHandlers.handleStatusChange.call(this, node);
         // const targ = event.target;
         // if (targ.tagName == "circle") {
         //   if (
@@ -195,9 +199,7 @@ export default class Visualization {
         this.render();
         this.eventHandlers.handleStatusChange.call(this, node);
         setHabitLabel(node.data);
-        // this.eventHandlers.handleZoom.call(this, event, node?.parent, true);
-        // this.zoomsG?.k && setNormalTransform();
-        this.render();
+        this.eventHandlers.clickedZoom.call(this, event, node?.parent, true);
       },
       handleMouseLeave: function (e) {
         const g = select(e.target);
@@ -336,13 +338,16 @@ export default class Visualization {
   }
   setLevelsHighAndWide() {
     if (this._viewConfig.isSmallScreen()) {
-      this._viewConfig.levelsHigh = this.zoomClicked ? 5 : 10;
-      this._viewConfig.levelsWide = this.zoomClicked ? 1 : 2;
+      this._viewConfig.levelsHigh = this.zoomClicked
+        ? XS_LEVELS_HIGH
+        : XS_LEVELS_HIGH;
+      this._viewConfig.levelsWide = this.zoomClicked
+        ? XS_LEVELS_WIDE
+        : XS_LEVELS_WIDE;
     } else {
-      this._viewConfig.levelsHigh = 12;
-      this._viewConfig.levelsWide = 2;
+      this._viewConfig.levelsHigh = LG_LEVELS_HIGH;
+      this._viewConfig.levelsWide = LG_LEVELS_WIDE;
     }
-    this._viewConfig.levelsWide *= 8;
   }
   setdXdY() {
     this._viewConfig.dx =
@@ -394,12 +399,13 @@ export default class Visualization {
   }
 
   calibrateViewPortAttrs() {
-    this._viewConfig.viewportW = this._viewConfig.canvasWidth;
-    this._viewConfig.viewportH = this._viewConfig.canvasHeight * 5;
+    this._viewConfig.viewportW =
+      this._viewConfig.canvasWidth * this._viewConfig.levelsWide;
+    this._viewConfig.viewportH =
+      this._viewConfig.canvasHeight * this._viewConfig.levelsHigh;
 
-    this._viewConfig.viewportX =
-      -this._viewConfig.clickScale * (this._viewConfig.canvasWidth / 2);
-    this._viewConfig.viewportY = this._viewConfig.isSmallScreen() ? -800 : -550;
+    this._viewConfig.viewportX = 0;
+    this._viewConfig.viewportY = 0;
 
     this._viewConfig.defaultView = `${this._viewConfig.viewportX} ${this._viewConfig.viewportY} ${this._viewConfig.viewportW} ${this._viewConfig.viewportH}`;
   }
@@ -482,9 +488,7 @@ export default class Visualization {
     this.layout(this.rootData);
   }
   setNodeAndLinkGroups() {
-    const transformation = `translate(${-this._viewConfig.viewportW / 2}, ${
-      this.type == "radial" ? 0 : 0
-    })`;
+    const transformation = `translate(${0}, ${this.type == "radial" ? 0 : 0})`;
 
     this._gLink = this._canvas
       .append("g")
@@ -547,9 +551,9 @@ export default class Visualization {
       .classed("tooltip", true)
       .attr(
         "transform",
-        `translate(${
-          this._viewConfig.nodeRadius / this._viewConfig.scale
-        }, 75), scale(${LABEL_SCALE})`
+        `translate(${-this._viewConfig.nodeRadius / 4}, ${
+          this._viewConfig.nodeRadius
+        }), scale(${LABEL_SCALE})`
       )
       .attr("opacity", (d) => this.activeOrNonActiveOpacity(d, "0"));
   }
@@ -851,12 +855,7 @@ export default class Visualization {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true)
-        .attr(
-          "transform",
-          `scale(${
-            this._viewConfig.scale
-          }), translate(${this._viewConfig.currentXTranslate()},${this._viewConfig.currentYTranslate()})`
-        );
+        .attr("transform", `scale(${BASE_SCALE}), translate(${0}, ${0})`);
 
       console.log("Configured canvas... :>>", this._canvas);
 
