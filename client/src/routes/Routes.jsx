@@ -8,6 +8,7 @@ import {
 import Home from "../pages/Home";
 import HabitTree from "../pages/HabitTree";
 import RadialTree from "../pages/RadialTree";
+import Cluster from "../pages/Cluster";
 
 export const Routes = () => {
   return (
@@ -15,7 +16,8 @@ export const Routes = () => {
       <Switch>
         <Route path="/" element={<Home />} />
         <Route path="/vis/habit-tree" element={<HabitTree />} />
-        <Route path="/habits/new" element={<RadialTree />} />
+        <Route path="/vis/radial-tree" element={<RadialTree />} />
+        <Route path="/vis/cluster" element={<Cluster />} />
         <Route
           path="*"
           element={

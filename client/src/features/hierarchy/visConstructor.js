@@ -56,7 +56,6 @@ export default class Visualization {
   constructor(svg, svgId, inputTree, canvasHeight, canvasWidth, margin, type) {
     this.type = type;
     this.isDemo = false;
-    this.zoomBase = svg;
     this._svgId = svgId;
     this.rootData = inputTree;
     this._viewConfig = {
@@ -66,7 +65,7 @@ export default class Visualization {
       canvasHeight,
       canvasWidth,
       currentXTranslate: () =>
-        this._viewConfig.globalTranslate
+        -canvasWidth / 2 + this._viewConfig.globalTranslate
           ? -this._viewConfig.globalTranslate[0]
           : this._viewConfig.margin.left, // Initial translate
       currentYTranslate: () =>
@@ -225,8 +224,8 @@ export default class Visualization {
           return;
         }
         if (!this.currentTooltip) {
-          this.zoomBase.select("g.tooltip").transition();
-          this.currentTooltip = this.zoomBase
+          this.zoomBase().select("g.tooltip").transition();
+          this.currentTooltip = this.zoomBase()
             .selectAll("g.tooltip")
             .filter((t) => {
               return d == t;
@@ -234,8 +233,8 @@ export default class Visualization {
           this.currentTooltip.transition().duration(450).style("opacity", "1");
         }
         if (!this.currentButton) {
-          this.zoomBase.select("g.habit-label-dash-button").transition();
-          this.currentButton = this.zoomBase
+          this.zoomBase().select("g.habit-label-dash-button").transition();
+          this.currentButton = this.zoomBase()
             .selectAll("g.habit-label-dash-button")
             .filter((t) => {
               return d == t;
@@ -250,6 +249,10 @@ export default class Visualization {
     };
 
     this.render();
+  }
+
+  zoomBase() {
+    return select(`#div${this._svgId}`);
   }
 
   setActiveNode(clickedNode) {
@@ -291,7 +294,7 @@ export default class Visualization {
 
   reset() {
     this.scale = BASE_SCALE;
-    this.zoomBase.attr("viewBox", this._viewConfig.defaultView);
+    this.zoomBase().attr("viewBox", this._viewConfig.defaultView);
     this.expand();
     this._zoomConfig.zoomClicked = {};
     this.activeNode = null;
@@ -388,18 +391,18 @@ export default class Visualization {
   }
 
   calibrateViewPortAttrs() {
-    this._viewConfig.viewportY = this._viewConfig.smallScreen() ? -800 : -550;
+    this._viewConfig.viewportH = this._viewConfig.canvasHeight;
     this._viewConfig.viewportW = this._viewConfig.canvasWidth;
+    this._viewConfig.viewportY = this._viewConfig.smallScreen() ? -800 : -550;
     this._viewConfig.viewportX =
       this._viewConfig.viewportW / this._viewConfig.clickScale +
       this._viewConfig.clickScale *
         (!this.isDemo || this._viewConfig.smallScreen() ? 3.5 : 10) *
         this._viewConfig.nodeRadius;
-    this._viewConfig.viewportH = this._viewConfig.canvasHeight * 5;
     this._viewConfig.defaultView = `${this._viewConfig.viewportX} ${this._viewConfig.viewportY} ${this._viewConfig.viewportW} ${this._viewConfig.viewportH}`;
   }
   calibrateViewBox() {
-    this.zoomBase
+    this.zoomBase()
       .attr("viewBox", this._viewConfig.defaultView)
       .attr("preserveAspectRatio", "xMidYMid meet")
       .call(this.zoomer)
@@ -712,7 +715,7 @@ export default class Visualization {
   activateNodeAnimation() {
     // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
     // Credit: Andrew Reid
-    const gCircle = this.zoomBase.selectAll(
+    const gCircle = this.zoomBase().selectAll(
       "g.the-node.solid.active g:first-child"
     );
     gCircle.on("mouseover", this.eventHandlers.handleHover);
@@ -801,11 +804,11 @@ export default class Visualization {
     // );
     _p("zoomconfig", this._zoomConfig, "info");
     this._canvas = select(document.querySelectorAll(".canvas")[0]);
-    console.log(
-      "need new canvas? :>> ",
-      typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
-        typeof this?._canvas == "undefined"
-    );
+    // console.log(
+    //   "need new canvas? :>> ",
+    //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
+    //     typeof this?._canvas == "undefined"
+    // );
     if (
       typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
       typeof this?._canvas == "undefined"
@@ -833,6 +836,9 @@ export default class Visualization {
       this.clearCanvas();
       if (this.rootData.name === "" || typeof this._canvas == undefined)
         return console.log("Data or canvas missing!");
+
+      this.calibrateViewPortAttrs();
+      this.calibrateViewBox();
 
       this.sumHierarchyData();
       this.accumulateNodeValues();

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
+// @ts-ignore
 import { useAppSelector, useAppDispatch } from "app/hooks";
+// @ts-ignore
 import { hierarchy, select } from "d3";
 // @ts-ignore
 import { Selection } from "@types/d3-selection";
 // @ts-ignore
-import { selectCurrentRadial } from "features/hierarchy/selectors";
+import { selectCurrentCluster } from "features/hierarchy/selectors";
 // @ts-ignore
 import { getRequestStatus } from "features/ui/selectors";
 // @ts-ignore
 import { visActions } from "features/hierarchy/reducer";
-const { createRadial } = visActions;
+const { createCluster } = visActions;
 
 import Vis from "../visConstructor";
 import { selectCurrentHierarchy } from "../selectors";
@@ -22,7 +24,7 @@ interface VisProps {
   render: any //(_:any):void
 }
 
-export const RadialTree: React.FC<VisProps> = ({
+export const Cluster: React.FC<VisProps> = ({
   canvasHeight,
   canvasWidth,
   margin,
@@ -30,10 +32,10 @@ export const RadialTree: React.FC<VisProps> = ({
   render,
 }) => {
   const dispatch = useAppDispatch();
-  let currentRadial = useAppSelector(selectCurrentRadial);
+  let currentCluster = useAppSelector(selectCurrentCluster);
   const currentRequestState = useAppSelector(getRequestStatus);
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
-  const [currentRadialData, setCurrentRadialData] = useState({
+  const [currentClusterData, setCurrentClusterData] = useState({
     data: { name: "" },
   });
 
@@ -50,29 +52,29 @@ export const RadialTree: React.FC<VisProps> = ({
   }, []);
 
   useEffect(() => {
-    currentHierarchy && setCurrentRadialData(hierarchy(currentHierarchy));
-    if (currentRadialData.data.name == "") return;
-    if (currentRequestState === "SUCCESS" && !currentRadial?._svgId) {
-      currentRadial = new Vis(
+    currentHierarchy && setCurrentClusterData(hierarchy(currentHierarchy));
+    if (currentClusterData.data.name == "") return;
+    if (currentRequestState === "SUCCESS" && !currentCluster?._svgId) {
+      currentCluster = new Vis(
             svg,
             `#div${divId}`,
-            currentRadialData,
+            currentClusterData,
             canvasHeight,
         canvasWidth,
             margin,
-            "radial"
+            "cluster"
           )
       dispatch(
-        createRadial(
-          currentRadial
+        createCluster(
+          currentCluster
         )
       );
-      _p("Instantiated vis object :>> ", currentRadial, "info");
+      _p("Instantiated vis object :>> ", currentCluster, "info");
       _p("Rendered from component", {}, '!' )
-      currentRadial.render();
+      currentCluster.render();
     }
   }, [currentHierarchy]);
-  return <div id="vis" className="w-full h-full mx-auto">{render(currentRadial)}</div>;
+  return <div id="vis" className="w-full h-full mx-auto">{render(currentCluster)}</div>;
 };
 
-export default RadialTree;
+export default Cluster;
