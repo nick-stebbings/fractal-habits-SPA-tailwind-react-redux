@@ -247,8 +247,6 @@ export default class Visualization {
         }
       },
     };
-
-    this.render();
   }
 
   zoomBase() {
@@ -798,22 +796,19 @@ export default class Visualization {
   }
 
   render() {
-    // console.log(
-    //   "Rendering vis... :>>",
-    //   select(document.querySelectorAll(".canvas")[0])
-    // );
-    _p("zoomconfig", this._zoomConfig, "info");
+    console.log("Rendering vis... :>>", this?._canvas);
+    // _p("zoomconfig", this._zoomConfig, "info");
     this._canvas = select(document.querySelectorAll(".canvas")[0]);
-    // console.log(
-    //   "need new canvas? :>> ",
-    //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
-    //     typeof this?._canvas == "undefined"
-    // );
+    console.log(
+      "need new canvas? :>> ",
+      typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
+        typeof this?._canvas == "undefined"
+    );
     if (
       typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
       typeof this?._canvas == "undefined"
     ) {
-      this._canvas = select(this._svgId)
+      this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true)
         .attr(
@@ -859,7 +854,7 @@ export default class Visualization {
     }
     if (this._zoomConfig.zoomedInView()) {
       const { event, node, content } = this._zoomConfig.zoomClicked;
-      _p("zoomClicked :>> ", this._zoomConfig.zoomClicked, "!");
+      // _p("zoomClicked :>> ", this._zoomConfig.zoomClicked, "!");
       if (event !== undefined) this.eventHandlers.clickedZoom(event, node);
       if (content !== undefined) {
         this.setActiveNode(content);
