@@ -50,7 +50,7 @@ const BASE_SCALE = 1;
 const FOCUS_MODE_SCALE = 4;
 const LABEL_SCALE = 1.5;
 const BUTTON_SCALE = 1;
-const XS_NODE_RADIUS = 10;
+const XS_NODE_RADIUS = 80;
 const LG_NODE_RADIUS = 50;
 const XS_LEVELS_HIGH = 3;
 const LG_LEVELS_HIGH = 3;
@@ -89,13 +89,11 @@ export default class Visualization {
 
     this._zoomConfig = {
       globalZoom: 1,
-      zoomClicked: {},
+      previousRenderZoom: {},
       zoomedInView: function () {
-        return Object.keys(this.zoomClicked).length !== 0;
+        return Object.keys(this.previousRenderZoom).length !== 0;
       },
     };
-    // Flags/metrics from previous render
-    this.zoomsG = null;
 
     this.eventHandlers = {
       handlePrependNode: function (event, node) {},
@@ -109,11 +107,11 @@ export default class Visualization {
         expand(node);
         this.setCurrentHabit(node);
         this.setCurrentNode(node);
-        this._zoomConfig.zoomClicked = {
+        this._zoomConfig.previousRenderZoom = {
           event: event,
           node: node,
           content: node.data,
-          scale: this._zoomConfig.zoomClicked
+          scale: this._zoomConfig.previousRenderZoom
             ? this._zoomConfig.scale //clickScale
             : this._zoomConfig.scale,
         };
@@ -188,7 +186,7 @@ export default class Visualization {
         if (node.children) return;
         this.setActiveNode(node.data);
         this.activateNodeAnimation();
-        this.zoomClicked = {
+        this.previousRenderZoom = {
           event,
           node,
           content: node.data,
@@ -303,7 +301,7 @@ export default class Visualization {
     this.scale = BASE_SCALE;
     this.zoomBase().attr("viewBox", this._viewConfig.defaultView);
     this.expand();
-    this._zoomConfig.zoomClicked = {};
+    this._zoomConfig.previousRenderZoom = {};
     this.activeNode = null;
     document.querySelector(".the-node.active") &&
       document.querySelector(".the-node.active").classList.remove("active");
@@ -317,31 +315,31 @@ export default class Visualization {
   }
 
   setNormalTransform() {
-    this.zoomsG?.k && (this.zoomsG.k = this._viewConfig.clickScale);
+    // this.zoomsG?.k && (this.zoomsG.k = this._viewConfig.clickScale);
 
     if (
       this.zoomsG?.x &&
-      Object.keys(this._zoomConfig.zoomClicked).length > 0
+      Object.keys(this._zoomConfig.previousRenderZoom).length > 0
     ) {
       // Set the translation for a movement back to 'normal zoom' by feeding the node coordinates and multiplying by the current 'normal' scale
       this.zoomsG.x =
         this.zoomsG.k *
-        -(this._zoomConfig.zoomClicked?.node.__data__
-          ? this._zoomConfig.zoomClicked?.node.__data__.x
-          : this._zoomConfig.zoomClicked?.node.x);
+        -(this._zoomConfig.previousRenderZoom?.node.__data__
+          ? this._zoomConfig.previousRenderZoom?.node.__data__.x
+          : this._zoomConfig.previousRenderZoom?.node.x);
       this.zoomsG.y =
         this.zoomsG.k *
-        -(this._zoomConfig.zoomClicked?.node.__data__
-          ? this.zoomClicked?.node.__data__.y
-          : this.zoomClicked?.node.y);
+        -(this._zoomConfig.previousRenderZoom?.node.__data__
+          ? this.previousRenderZoom?.node.__data__.y
+          : this.previousRenderZoom?.node.y);
     }
   }
   setLevelsHighAndWide() {
     if (this._viewConfig.isSmallScreen()) {
-      this._viewConfig.levelsHigh = this.zoomClicked
+      this._viewConfig.levelsHigh = this.previousRenderZoom
         ? XS_LEVELS_HIGH
         : XS_LEVELS_HIGH;
-      this._viewConfig.levelsWide = this.zoomClicked
+      this._viewConfig.levelsWide = this.previousRenderZoom
         ? XS_LEVELS_WIDE
         : XS_LEVELS_WIDE;
     } else {
@@ -366,28 +364,29 @@ export default class Visualization {
   }
   setZoomBehaviour() {
     const zooms = function (e) {
-      let scale = e.transform.k;
+      let transform = e.transform;
+      let scale = transform.k;
 
-      this._viewConfig.scale = scale;
+      this._zoomConfig.globalZoom = scale;
 
-      const transform = [
-        this._viewConfig.currentXTranslate() +
-          e.transform.x -
-          (this._viewConfig.canvasWidth + this._viewConfig.nodeRadius) *
-            this._viewConfig.scale,
-        this._viewConfig.currentYTranslate() +
-          e.transform.y +
-          (this._viewConfig.canvasHeight + this._viewConfig.nodeRadius) *
-            this._viewConfig.scale,
-      ];
+      // const transform = [
+      //   // this._viewConfig.currentXTranslate() +
+      //   //   e.transform.x -
+      //   //   (this._viewConfig.canvasWidth + this._viewConfig.nodeRadius) *
+      //   //     this._viewConfig.scale,
+      //   // this._viewConfig.currentYTranslate() +
+      //   //   e.transform.y +
+      //   //   (this._viewConfig.canvasHeight + this._viewConfig.nodeRadius) *
+      //   //     this._viewConfig.scale,
+      // ];
 
       select(".canvas").attr(
         "transform",
-        "translate(" +
-          transform[0] +
-          ", " +
-          transform[1] +
-          ")scale(" +
+        `translate(${
+          transform.x // * this._viewConfig.levelsWide // map to user coord system
+        }, ${
+          transform.y // * this._viewConfig.levelsHigh // map to user coord system
+        })scale(` +
           scale +
           ")"
       );
@@ -410,12 +409,22 @@ export default class Visualization {
     this._viewConfig.defaultView = `${this._viewConfig.viewportX} ${this._viewConfig.viewportY} ${this._viewConfig.viewportW} ${this._viewConfig.viewportH}`;
   }
   calibrateViewBox() {
-    console.log("this.zoomBase() :>> ", this.zoomBase());
     this.zoomBase()
       .attr("viewBox", this._viewConfig.defaultView)
       .attr("preserveAspectRatio", "xMidYMid meet")
       .call(this.zoomer)
       .on("dblclick.zoom", null);
+  }
+  currentViewBox() {
+    const viewbox = this.zoomBase()
+      .attr("viewBox")
+      .split(" ")
+      .map((d) => +d);
+    viewbox.extent = [
+      [viewbox[0], viewbox[1]],
+      [viewbox[2] - viewbox[0], viewbox[3] - viewbox[1]],
+    ];
+    return viewbox;
   }
 
   sumHierarchyData() {
@@ -424,7 +433,6 @@ export default class Visualization {
       const thisNode = this.rootData
         .descendants()
         .find((node) => node.data == d);
-      // console.log("thisNode :>> ", thisNode);
       let content = parseTreeValues(thisNode.data.content);
       if (content.status === "incomplete" || content.status === "") return 0;
       const statusValue = JSON.parse(content.status);
@@ -447,7 +455,7 @@ export default class Visualization {
       (this.activeNode && d.ancestors().includes(this.activeNode))
     )
       return "1";
-    return !this.zoomClicked ? "1" : dimmedOpacity;
+    return !this.previousRenderZoom ? "1" : dimmedOpacity;
   }
 
   getLinkPathGenerator() {
@@ -868,7 +876,7 @@ export default class Visualization {
           })`
         );
 
-      console.log("Configured canvas... :>>", this._canvas);
+      // console.log("Configured canvas... :>>", this._canvas);
 
       this.setNormalTransform();
       this.setLevelsHighAndWide();
@@ -889,14 +897,14 @@ export default class Visualization {
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
-      console.log("Appended SVG elements... :>>");
+      // console.log("Appended SVG elements... :>>");
     }
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       this.addLegend();
     }
     if (this._zoomConfig.zoomedInView()) {
-      const { event, node, content } = this._zoomConfig.zoomClicked;
-      // _p("zoomClicked :>> ", this._zoomConfig.zoomClicked, "!");
+      const { event, node, content } = this._zoomConfig.previousRenderZoom;
+      // _p("previousRenderZoom :>> ", this._zoomConfig.previousRenderZoom, "!");
       if (event !== undefined) this.eventHandlers.clickedZoom(event, node);
       if (content !== undefined) {
         this.setActiveNode(content);
