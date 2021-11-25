@@ -172,12 +172,14 @@ export default class Visualization {
             return this.reset();
 
           console.log("NODE FOCUS :>> ");
-          this.setCurrentHabit(node);
           expand(node);
 
           setHabitLabel(node.data);
           collapseAroundAndUnder(node, false, false);
-          if (!this.isDemo) {
+          if (
+            !node.data.name == selectCurrentHabit(store.getState())?.meta.name
+          ) {
+            this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
         }
@@ -885,7 +887,7 @@ export default class Visualization {
       // console.log("Appended SVG elements... :>>");
     }
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
-      console.log("Added legend :>> ");
+      // console.log("Added legend :>> ");
       this.addLegend();
     }
     this.activeNode && this.activateNodeAnimation();

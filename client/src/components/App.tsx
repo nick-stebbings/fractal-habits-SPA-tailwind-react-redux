@@ -53,7 +53,7 @@ export default function App ({isVisComponent, children}: indexProps) {
   return (
       <>
         <HeaderWithModal type={UIStatus} />
-        {/* <Layout children={children} isVis={isVisComponent} /> */}
+        <Layout children={children} isVis={isVisComponent} />
       </>
   );
 };

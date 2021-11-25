@@ -24,11 +24,11 @@ export const HoverableLink = ({
     const oppositeLink = document.querySelector(
       "li.hoverable #" + links[1 - idx]
     );
-    this.classList.add("active");
+    e.target.classList.add("active");
     oppositeLink?.parentNode.classList.remove("active");
     document.querySelector("#current-habit-label")?.classList.add("inactive");
     document.querySelector("#current-habit-label")?.classList.remove("active");
-    const switchingTab = id;
+    // const switchingTab = id;
     // console.log("id :>> ", oppositeLink?.parentNode.classList);
     // console.log("id :>> ", navItem?.classList);
 
