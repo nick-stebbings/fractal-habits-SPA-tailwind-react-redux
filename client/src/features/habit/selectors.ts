@@ -5,11 +5,11 @@ import { selectCurrentNodeByMptt } from "../node/selectors";
 import { Habit } from "./types";
 import { Node } from "../node/types";
 
-export const selectCurrentHabit = (state: RootState) => {
+export const selectCurrentHabit = (state: RootState): Habit => {
   return state?.habit?.current;
 };
 
-export const selectStoredHabits = (state: RootState) => {
+export const selectStoredHabits = (state: RootState): Habit[] => {
   return state?.habit?.myRecords;
 };
 

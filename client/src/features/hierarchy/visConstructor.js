@@ -17,12 +17,17 @@ import { legendColor } from "d3-svg-legend";
 
 import { store } from "app/store";
 import { selectCurrentNodeByMptt } from "features/node/selectors";
-import { selectCurrentHabitByMptt } from "features/habit/selectors";
+import {
+  selectCurrentHabit,
+  selectCurrentHabitByMptt,
+} from "features/habit/selectors";
 import { updateHabitDateREST } from "features/habitDate/actions";
 import HabitSlice from "features/habit/reducer";
 const { updateCurrentHabit } = HabitSlice.actions;
 import NodeSlice from "features/node/reducer";
-const { updateCurrentNode, updateNodeStatus } = NodeSlice.actions;
+const { updateCurrentNode } = NodeSlice.actions;
+import HabitDateSlice from "features/habitDate/reducer";
+const { updateHabitDateForNode } = HabitDateSlice.actions;
 
 import {
   getTransform,
@@ -129,8 +134,7 @@ export default class Visualization {
       handlePrependNode: function (event, node) {},
       handleAppendNode: function (event, node) {},
       handleNodeZoom: function (event, node, forParent = false) {
-        if (!event || !node || event.deltaY >= 0 || deadNode(event))
-          return this.reset();
+        if (!event || !node || event.deltaY >= 0 || deadNode(event)) return;
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
         const parentNode = { ...node.parent };
         // Set for cross render transformation memory
@@ -150,31 +154,6 @@ export default class Visualization {
               this._zoomConfig.globalZoomScale
             })`
           );
-        // this.render();
-      },
-      clickedZoom: function (e, that) {
-        if (e?.defaultPrevented || typeof that === "undefined") return; // panning, not clicking
-
-        // console.log("THIS :>> ");
-        // const transformer = getTransform(that, this._viewConfig.clickScale);
-        // _p("transformer.translate :>> ", transformer, "success");
-        // select(".canvas")
-        //   .transition()
-        //   .ease(easePolyOut)
-        //   .ease(easePolyOut)
-        //   .duration(this.isDemo ? 0 : 550)
-        //   .attr(
-        //     "transform",
-        //     "translate(" +
-        //       this._viewConfig.viewportX +
-        //       transformer.translate[0] +
-        //       ", " +
-        //       this._viewConfig.viewporty +
-        //       transformer.translate[1] +
-        //       ")scale(" +
-        //       transformer.scale +
-        //       ")"
-        //   );
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
@@ -183,17 +162,15 @@ export default class Visualization {
         this.setActiveNode(node.data);
         const targ = event.target;
         if (targ.tagName == "circle") {
-          console.log("THIS :>> ");
           if (
             targ.closest(".the-node").classList.contains("active") ||
             deadNode(event)
           )
             return this.reset();
 
+          console.log("NODE FOCUS :>> ");
           this.setCurrentHabit(node);
           expand(node);
-
-          // this.zoomsG?.k && this.setNormalTransform();
 
           setHabitLabel(node.data);
           collapseAroundAndUnder(node, false, false);
@@ -213,10 +190,13 @@ export default class Visualization {
           /true|false|incomplete/,
           oppositeStatus(currentStatus)
         );
-
+        console.log("node.data.name :>> ", node.data.name);
         if (!node.data.name.includes("Sub-Habit")) {
           // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
-          store.dispatch(updateNodeStatus(currentStatus));
+          const habitId = selectCurrentHabit(store.getState())?.meta.id;
+          store.dispatch(
+            updateHabitDateForNode({ habitId, value: !currentStatus })
+          );
         }
       },
       handleNodeToggle: function (event, node) {
@@ -229,8 +209,8 @@ export default class Visualization {
         };
         if (deadNode(event)) return this.reset();
 
+        console.log("NODE TOGGLE :>> ");
         this.eventHandlers.handleStatusChange.call(this, node);
-        // this.render();
       },
       handleMouseLeave: function (e) {
         // const g = select(e.target);
@@ -700,12 +680,12 @@ export default class Visualization {
       })
       .on("touchend", (e, d) => {
         this.eventHandlers.handleNodeFocus.call(this, e, d);
-        this.eventHandlers.handleNodeToggle.bind(this);
+        this.eventHandlers.handleNodeToggle.call(this, e, d);
       })
       .on("contextmenu", (e, d) => {
         this.eventHandlers.handleNodeFocus.call(this, e, d);
-        this.eventHandlers.handleNodeZoom.call(this, e, d, true);
-        this.eventHandlers.handleNodeToggle.bind(this);
+        this.eventHandlers.handleNodeZoom.call(this, e, d, this.type == "tree");
+        this.eventHandlers.handleNodeToggle.call(this, e, d);
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this));
   }
@@ -759,7 +739,7 @@ export default class Visualization {
       .shapeRadius(15)
       .shapePadding(-5)
       .scale(ordinal);
-
+    // console.log("gLegend :>> ", gLegend);
     gLegend.call(colorLegend);
   }
 
@@ -895,33 +875,25 @@ export default class Visualization {
       // console.log("Appended SVG elements... :>>");
     }
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
+      console.log("Added legend :>> ");
       this.addLegend();
     }
-    if (this._zoomConfig.zoomedInView()) {
-      const { event, node, content } = this._zoomConfig.previousRenderZoom;
-      // _p("previousRenderZoom :>> ", this._zoomConfig.previousRenderZoom, "!");
-      if (event !== undefined) this.eventHandlers.clickedZoom(event, node);
-      if (content !== undefined) {
-        this.setActiveNode(content);
-      }
-    }
-
     this.activeNode && this.activateNodeAnimation();
   }
 }
 
-const makePatchOrPutRequest = function (isDemo, currentStatus) {
-  const requestBody = {
-    habit_id: HabitStore.current().id,
-    date_id: DateStore.current().id,
-    completed_status: oppositeStatus(currentStatus),
-  };
-  return HabitDateStore.runUpdate(
-    isDemo,
-    requestBody,
-    DomainStore.current().id
-  );
-};
+// const makePatchOrPutRequest = function (isDemo, currentStatus) {
+//   const requestBody = {
+//     habit_id: HabitStore.current().id,
+//     date_id: DateStore.current().id,
+//     completed_status: oppositeStatus(currentStatus),
+//   };
+//   return HabitDateStore.runUpdate(
+//     isDemo,
+//     requestBody,
+//     DomainStore.current().id
+//   );
+// };
 // enteringNodes
 //   .append("g")
 //   .attr("transform", "translate(" + "-20" + "," + "55" + ") scale( 2.5 )")

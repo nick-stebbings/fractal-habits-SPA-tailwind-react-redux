@@ -26,21 +26,21 @@ export const habitDateSlice = createSlice({
   name: "habitDate",
   initialState,
   reducers: {
-    createHabitDate(state, action: PayloadAction<NewHabitDatePayload>) {
-      const { habitDates, id } = action.payload.habitDate;
+    // createHabitDate(state, action: PayloadAction<NewHabitDatePayload>) {
+    //   const { habitDates, id } = action.payload.habitDate;
+    //   return {
+    //     ...state,
+    //     myRecords: { habitDate: habitDate || [] },
+    //   };
+    // },
+    // deleteHabitDate(state, action: PayloadAction<DeleteHabitDatePayload>) {
+    //   delete state[action.payload.id];
+    // },
+    updateHabitDateForNode(state, action: PayloadAction<any>) {
+      const { habitId, value } = action.payload;
       return {
-        ...state,
-        myRecords: { habitDate: habitDate || [] },
-      };
-    },
-    deleteHabitDate(state, action: PayloadAction<DeleteHabitDatePayload>) {
-      delete state[action.payload.id];
-    },
-    updateHabitDate(state, action: PayloadAction<NewHabitDatePayload>) {
-      const { habitDate, id } = action.payload.habitDate;
-      return {
-        ...state,
-        myHabitDates: { habitDate },
+        // ...state,
+        // myHabitDates: { habitDate },
       };
     },
   },
@@ -52,4 +52,4 @@ export const habitDateSlice = createSlice({
   },
 });
 
-export default habitDateSlice.reducer;
+export default habitDateSlice;

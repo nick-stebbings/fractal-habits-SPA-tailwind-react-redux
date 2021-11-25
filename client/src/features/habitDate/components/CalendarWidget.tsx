@@ -55,7 +55,7 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
   const currentSpace = useAppSelector(selectCurrentSpace);
 
   return (
-    <div className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full h-full pt-8" onClick={toggleSlide} >
+    <div className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-8" onClick={toggleSlide} >
       <div className="habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col w-full overflow-none lg:items-center bg-gray-100 border-4 pb-12 md:pb-0">
         <div className="flex justify-end flex-col relative">
           <h2 className="mt-4 underline">Description</h2>
