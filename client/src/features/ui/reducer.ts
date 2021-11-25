@@ -28,10 +28,7 @@ export const isErrorAction = (action: AnyAction) => {
 };
 
 export const isLoadingAction = (action: AnyAction) => {
-  return (
-    !action.type.endsWith("createVis") &&
-    !action.type.endsWith("nodes/fulfilled")
-  );
+  return !action.type.endsWith("createVis") && !isDataAction(action);
 };
 
 const initialState: Dictionary<boolean | string> = {
