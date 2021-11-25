@@ -132,18 +132,16 @@ export default class Visualization {
         if (!event || !node || event.deltaY >= 0 || deadNode(event))
           return this.reset();
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
+        const parentNode = { ...node.parent };
         // Set for cross render transformation memory
-        if (forParent) {
-          node = node.parent;
-          this.activateNodeAnimation();
-        }
         this._zoomConfig.previousRenderZoom = {
           event: event,
-          node: node,
+          node: forParent ? parentNode : node,
           content: node.data,
           scale: this._zoomConfig.globalZoomScale,
         };
         select(".canvas")
+          .transition()
           .ease(easePolyOut)
           .duration(this.isDemo ? 0 : 550)
           .attr(
@@ -152,7 +150,7 @@ export default class Visualization {
               this._zoomConfig.globalZoomScale
             })`
           );
-        this.render();
+        // this.render();
       },
       clickedZoom: function (e, that) {
         if (e?.defaultPrevented || typeof that === "undefined") return; // panning, not clicking
@@ -693,10 +691,9 @@ export default class Visualization {
 
   bindEventHandlers(selection) {
     selection
-      // .on("contextmenu", this.eventHandlers.handleNodeFocus.bind(this))
       .on("click", (e, d) => {
         this.eventHandlers.handleNodeFocus.call(this, e, d);
-        this.eventHandlers.handleNodeZoom.call(this, e, d, true);
+        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
         passive: true,
@@ -707,6 +704,7 @@ export default class Visualization {
       })
       .on("contextmenu", (e, d) => {
         this.eventHandlers.handleNodeFocus.call(this, e, d);
+        this.eventHandlers.handleNodeZoom.call(this, e, d, true);
         this.eventHandlers.handleNodeToggle.bind(this);
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this));
