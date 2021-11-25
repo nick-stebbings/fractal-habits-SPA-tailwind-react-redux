@@ -75,36 +75,41 @@ export default class Visualization {
       canvasHeight,
       canvasWidth,
       defaultCanvasTranslateX: () => {
-        if (typeof this._zoomConfig.previousRenderZoom?.x !== "undefined") {
-          console.log("used previous render transform :>> ");
-          return (
-            this._viewConfig.levelsWide *
-            (this.type == "cluster"
-              ? this._viewConfig.nodeRadius
-              : this._viewConfig.viewportW / 2 -
-                this._zoomConfig.previousRenderZoom?.node.x)
-          );
+        if (
+          // there was a previous zoom/translate to a node
+          typeof this._zoomConfig.previousRenderZoom?.node?.x !== "undefined"
+        ) {
+          // then add the node's coordinates
+          return this.type == "cluster"
+            ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius -
+                this._zoomConfig.previousRenderZoom?.node?.y
+            : this._viewConfig.viewportW / 2 -
+                this._zoomConfig.previousRenderZoom?.node?.x;
         } else {
-          console.log(
-            "used initial transform attrs :>> ",
-            this._zoomConfig.previousRenderZoom,
-            this._viewConfig.nodeRadius,
-            this._viewConfig.viewportW / 2
-          );
-          return this._viewConfig.levelsWide * this.type == "cluster"
-            ? this._viewConfig.nodeRadius
+          // Initial translation settings
+          return this.type == "cluster"
+            ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius
             : this._viewConfig.viewportW / 2;
         }
       },
       defaultCanvasTranslateY: () => {
-        return this._viewConfig.levelsHigh * this.type !== "tree"
-          ? this._viewConfig.viewportH / 2 - this._viewConfig.nodeRadius
-          : 0;
-        // const vb = this._viewConfig.defaultView.split` `;
-        // console.log("vb :>> ", vb);
-        // return this._viewConfig?.globalTranslate
-        //   ? this._viewConfig.margin.top + +this._viewConfig.viewportY
-        //   : this._viewConfig.margin.top; // Initial translate
+        if (
+          // there was a previous zoom/translate to a node
+          typeof this._zoomConfig.previousRenderZoom?.node?.y !== "undefined"
+        ) {
+          // then add the node's coordinates
+          return this.type == "cluster"
+            ? this._viewConfig.levelsHigh * this._viewConfig.nodeRadius -
+                this._zoomConfig.previousRenderZoom?.node?.x +
+                this._viewConfig.viewportH / 2
+            : -this._zoomConfig.previousRenderZoom?.node?.y;
+        } else {
+          // Initial translation settings
+          return this.type == "cluster" || this.type == "radial"
+            ? -this._viewConfig.levelsHigh * this._viewConfig.nodeRadius +
+                this._viewConfig.viewportH / 2
+            : 0;
+        }
       },
       isSmallScreen: function () {
         return this.canvasWidth < 768;
@@ -149,6 +154,7 @@ export default class Visualization {
             this._zoomConfig.globalZoomScale
           })`
         );
+        this.render();
       },
       clickedZoom: function (e, that) {
         if (e?.defaultPrevented || typeof that === "undefined") return; // panning, not clicking
@@ -179,27 +185,27 @@ export default class Visualization {
         this.activateNodeAnimation();
 
         this.setActiveNode(node.data);
-        // const targ = event.target;
-        // if (targ.tagName == "circle") {
-        //   console.log("THIS :>> ");
-        //   if (
-        //     targ.closest(".the-node").classList.contains("active") ||
-        //     deadNode(event)
-        //   )
-        //     return this.reset();
+        const targ = event.target;
+        if (targ.tagName == "circle") {
+          console.log("THIS :>> ");
+          if (
+            targ.closest(".the-node").classList.contains("active") ||
+            deadNode(event)
+          )
+            return this.reset();
 
-        //   this.setCurrentHabit(node);
-        //   expand(node);
+          this.setCurrentHabit(node);
+          expand(node);
 
-        //   this.zoomsG?.k && this.setNormalTransform();
+          // this.zoomsG?.k && this.setNormalTransform();
 
-        //   setHabitLabel(node.data);
-        //   // showHabitLabel();
-        //   collapseAroundAndUnder(node, false, false);
-        //   if (!this.isDemo) {
-        //     this.setCurrentNode(node);
-        //   }
-        // }
+          setHabitLabel(node.data);
+          // showHabitLabel();
+          collapseAroundAndUnder(node, false, false);
+          if (!this.isDemo) {
+            this.setCurrentNode(node);
+          }
+        }
       },
       handleStatusChange: function (node) {
         if (!this.rootData.leaves().includes(node) || node._children) return; // Non-leaf nodes have auto-generated cumulative status
@@ -387,9 +393,9 @@ export default class Visualization {
   }
   setdXdY() {
     this._viewConfig.dx =
-      (this._viewConfig.canvasWidth / this._viewConfig.levelsHigh) * 2;
+      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh;
     this._viewConfig.dy =
-      (this._viewConfig.canvasHeight / this._viewConfig.levelsWide) * 8;
+      this._viewConfig.canvasHeight / this._viewConfig.levelsWide;
 
     //adjust for taller aspect ratio
     this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 3 : 1.5;
@@ -404,18 +410,7 @@ export default class Visualization {
     const zooms = function (e) {
       let t = { ...e.transform };
       let scale = t.k;
-      console.log("t :>> ", t, this._viewConfig.defaultCanvasTranslateX());
 
-      // const transform = [
-      //   this._viewConfig.currentXTranslate() +
-      //     e.transform.x -
-      //     (this._viewConfig.canvasWidth + this._viewConfig.nodeRadius) *
-      //       this._viewConfig.scale,
-      //   this._viewConfig.currentYTranslate() +
-      //     e.transform.y +
-      //     (this._viewConfig.canvasHeight + this._viewConfig.nodeRadius) *
-      //       this._viewConfig.scale,
-      // ];
       // const viewbox = this.currentViewBox();
       // Limit translate within bounds
       // t.x = t.x < viewbox[0] ? viewbox[0] : t.x;
@@ -425,15 +420,13 @@ export default class Visualization {
       // if (t.k === 1) t.x = t.y = 0;
       t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
       t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
-      select(".canvas").attr(
-        "transform",
-        `translate(${t.x},${t.y}), scale(${scale})`
-      );
+      select(".canvas")
+        .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
+        .transition()
+        .ease(easePolyOut)
+        .duration(2500);
     };
-    this.zoomer = zoom()
-      .scaleExtent([1, 5])
-      .duration(10000)
-      .on("zoom", zooms.bind(this));
+    this.zoomer = zoom().scaleExtent([1, 5]).on("zoom", zooms.bind(this));
   }
 
   calibrateViewPortAttrs() {
