@@ -1,4 +1,4 @@
-import BASE_URL, { HabitFractActionTypes } from "services/restApis";
+import BASE_URL from "services/restApis";
 import { todoSlice } from "./reducer";
 const {
   createList,

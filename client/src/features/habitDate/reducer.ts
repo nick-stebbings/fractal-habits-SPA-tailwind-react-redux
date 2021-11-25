@@ -1,10 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  HabitDate,
-  NewHabitDatePayload,
-  DeleteHabitDatePayload,
-  UpdateHabitDatePayload,
-} from "./types";
+import { HabitDate } from "./types";
 import { Dictionary } from "app/types";
 
 import { crudReducer, isCrud } from "app/storeHelpers";
@@ -38,10 +33,9 @@ export const habitDateSlice = createSlice({
     // },
     updateHabitDateForNode(state, action: PayloadAction<any>) {
       const { habitId, value } = action.payload;
-      return {
-        // ...state,
-        // myHabitDates: { habitDate },
-      };
+      // store.dispatch(
+      // fetchHabitDatesREST({ id: firstHabitId, periodLength: 7 })
+      // );
     },
   },
   extraReducers: (builder) => {

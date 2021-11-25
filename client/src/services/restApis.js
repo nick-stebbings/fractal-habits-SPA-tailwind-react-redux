@@ -23,8 +23,6 @@ function clientRoutes(basePath) {
   };
 }
 
-const HabitFractActionTypes = [];
-
-export { clientRoutes, HabitFractActionTypes };
+export { clientRoutes };
 
 export default BASE_URL;

@@ -21,7 +21,10 @@ import {
   selectCurrentHabit,
   selectCurrentHabitByMptt,
 } from "features/habit/selectors";
-import { updateHabitDateREST } from "features/habitDate/actions";
+import {
+  fetchHabitDatesREST,
+  updateHabitDateREST,
+} from "features/habitDate/actions";
 import HabitSlice from "features/habit/reducer";
 const { updateCurrentHabit } = HabitSlice.actions;
 import NodeSlice from "features/node/reducer";
@@ -304,6 +307,12 @@ export default class Visualization {
       nodeContent.right
     );
     store.dispatch(updateCurrentHabit(newCurrent));
+    store.dispatch(
+      fetchHabitDatesREST({
+        id: newCurrent?.meta.id,
+        periodLength: 7,
+      })
+    );
   }
 
   clearCanvas() {
@@ -342,13 +351,14 @@ export default class Visualization {
   }
   setdXdY() {
     this._viewConfig.dx =
-      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh;
+      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh -
+      +(this.type == "cluster") * 100;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide;
 
     //adjust for taller aspect ratio
-    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 3 : 1.5;
-    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 1 : 0.5;
+    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 3 : 0.5;
+    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 1 : 1.5;
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
@@ -645,7 +655,7 @@ export default class Visualization {
         .attr("y", (d) => (d.parent ? 2 : 5))
         .text((d) => "APPEND")
         .on("click", (e, n) => {
-          this.eventHandlers.handleAppendNode(e, n);
+          this.eventHandlers.handleAppendNode.call(this, e, n);
         });
       this._gButton
         .append("rect")
@@ -664,7 +674,7 @@ export default class Visualization {
         .attr("y", -20)
         .text((d) => "PREPEND")
         .on("click", (e, n) => {
-          this.eventHandlers.handlePrependNode(e, n);
+          this.eventHandlers.handlePrependNode.call(this, e, n);
         });
     }
   }
@@ -672,8 +682,8 @@ export default class Visualization {
   bindEventHandlers(selection) {
     selection
       .on("click", (e, d) => {
-        this.eventHandlers.handleNodeFocus.call(this, e, d);
         this.eventHandlers.handleNodeZoom.call(this, e, d, false);
+        this.eventHandlers.handleNodeFocus.call(this, e, d);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
         passive: true,

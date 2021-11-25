@@ -40,7 +40,7 @@ export default function App ({isVisComponent, children}: indexProps) {
 
   const isVis = true
   
-  const loadTreeData = async () => dispatch(fetchHabitTreeREST({ domainId: 1, dateId: 2 }));
+  const loadTreeData = async () => dispatch(fetchHabitTreeREST({ domainId: 1, dateId: 1 }));
   const loadData = async function () {
     await loadDomains();
     setHabit(currentHabit);
