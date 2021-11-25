@@ -9,13 +9,12 @@ interface indexProps {
   children?: JSX.Element
 }
 
-export default function App ({isVisComponent, children}: indexProps) {
-  const LayoutWithModal = withModal(Layout)
+export default withModal(function App ({isVisComponent, children}: indexProps) {
   console.log('render app :>> ');
   return (
       <>
         <Header isVis={isVisComponent}/>
-        <LayoutWithModal children={children} isVis={isVisComponent} />
+        <Layout children={children} isVis={isVisComponent} />
       </>
   );
-};
+});

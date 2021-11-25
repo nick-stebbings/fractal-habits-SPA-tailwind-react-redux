@@ -16,7 +16,8 @@ export const idleState: RequestState = {
 };
 
 export const isDataAction = (action: AnyAction) => {
-  return action.type.endsWith("/fulfilled");
+  // return action.type.endsWith("/fulfilled");
+  return action.type.endsWith("nodes/fulfilled");
 };
 
 export const isErrorAction = (action: AnyAction) => {
@@ -24,7 +25,10 @@ export const isErrorAction = (action: AnyAction) => {
 };
 
 export const isLoadingAction = (action: AnyAction) => {
-  return action.type.endsWith("/pending");
+  return (
+    !action.type.endsWith("createVis") &&
+    !action.type.endsWith("nodes/fulfilled")
+  );
 };
 
 const initialState: Dictionary<boolean | string> = {

@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 // @ts-ignore
 import { useAppSelector, useAppDispatch } from "app/hooks";
 // @ts-ignore
 import { hierarchy, select } from "d3";
-// @ts-ignore
-import { Selection } from "@types/d3-selection";
 // @ts-ignore
 import { selectCurrentCluster } from "features/hierarchy/selectors";
 // @ts-ignore
@@ -45,11 +43,11 @@ export const Cluster: React.FC<VisProps> = ({
         currentCluster.rootData = hierarchy(currentHierarchy)
       }
     }
-    console.log('currentCluster :>> ', currentCluster);
   }, [currentHierarchy])
 
   useEffect(() => {
     if (currentHierarchy.name == "") return;
+    console.log('currentRequestState :>> ', currentRequestState);
     if (currentRequestState === "SUCCESS" && !currentCluster?._svgId) {
       currentCluster = new Vis(
             `div${divId}`,
@@ -69,9 +67,8 @@ export const Cluster: React.FC<VisProps> = ({
       );
       _p("Instantiated vis object :>> ", currentCluster, "info");
       _p("Rendered from component", {}, '!' )
-      currentCluster.render();
     }
-  }, [currentHierarchy]);
+  }, [currentHierarchy.name]);
 
   return (
     <div id="vis" className="w-full h-full mx-auto">

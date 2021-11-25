@@ -1,5 +1,9 @@
 import React, { ComponentType } from 'react'
 // @ts-ignore
+import { useAppSelector } from 'app/hooks';
+import { getUIStatus } from 'features/ui/selectors';
+
+// @ts-ignore
 import { Modal } from 'components/Modal';
 
 const openModal = function (open = true) {
@@ -32,21 +36,22 @@ const openModal = function (open = true) {
   document.body.scrollTop = 0;
 };
 
-export function withModal<T> (Component : ComponentType<T>) {
+export function withModal<T>(Component: ComponentType<T>) {
+  
   return (hocProps: T) => {
-    const uiStatus = hocProps?.type;
+    const uiStatus = useAppSelector(getUIStatus);
     const type = uiStatus?.responseStatus.status
     const confirmStatus = uiStatus?.confirmStatus
-
+console.log('uiStatus :>> ', uiStatus);
     openModal()
     switch (true) {
-      case (type == 'LOADING'):
-        return (
-          <>
-          <Modal type={'Spinner'} />
-          <Component {...hocProps}></Component>
-          </>
-        )
+      // case (type == 'LOADING'):
+      //   return (
+      //     <>
+      //     <Modal type={'Spinner'} />
+      //     <Component {...hocProps}></Component>
+      //     </>
+      //   )
       case (type == 'ERROR'):
         return (
           <>
