@@ -1,4 +1,4 @@
-import React, { ComponentType } from 'react'
+import React, { ComponentType, useEffect } from 'react'
 // @ts-ignore
 import { useAppSelector } from 'app/hooks';
 import { getUIStatus } from 'features/ui/selectors';
@@ -23,6 +23,7 @@ const openModal = function (open = true) {
     modal.style["z-index"] = 101;
     document.documentElement.style.overflow = "hidden";
   } else {
+    debugger;
     modalCl.add("-translate-y-full");
     setTimeout(() => {
       modalCl.add("opacity-0");
@@ -37,13 +38,14 @@ const openModal = function (open = true) {
 };
 
 export function withModal<T>(Component: ComponentType<T>) {
-  
-  return (hocProps: T) => {
+  return React.memo((hocProps: T) => {
+    useEffect(() => {
+      openModal()
+    },[])
     const uiStatus = useAppSelector(getUIStatus);
     const type = uiStatus?.responseStatus.status
     const confirmStatus = uiStatus?.confirmStatus
-console.log('uiStatus :>> ', uiStatus);
-    openModal()
+    console.log('uiStatus :>> ', uiStatus);
     switch (true) {
       case (type == 'ERROR'):
         return (
@@ -69,5 +71,5 @@ console.log('uiStatus :>> ', uiStatus);
       default:
         return <Component {...hocProps}></Component>
     }
-  }
+  })
 }

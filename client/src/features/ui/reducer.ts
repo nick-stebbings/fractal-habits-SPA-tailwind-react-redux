@@ -50,6 +50,7 @@ const uiStatus = createSlice({
       state.responseStatus = dataState;
     });
     builder.addMatcher(isLoadingAction, (state) => {
+      if (state.responseStatus.status == "ERROR") return state;
       state.responseStatus = loadingState;
     });
     builder.addMatcher(isErrorAction, (state) => {

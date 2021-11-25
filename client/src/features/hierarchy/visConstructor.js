@@ -876,6 +876,7 @@ export default class Visualization {
       this.sumHierarchyData();
       this.accumulateNodeValues();
       this.setLayout();
+      // Update the current day's rootData
       if (typeof this?._nextRootData !== "undefined")
         this.rootData = hierarchy(JSON.parse(this._nextRootData));
 
