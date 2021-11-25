@@ -39,6 +39,8 @@ export const DropdownNav = function ({ routes, showMegaMenu, hideMegaMenu }) {
               id={`nav-${route.label.toLowerCase()}`}
               subpaths={route.subpaths}
               listItems={routes[index].subpaths}
+              hideMegaMenu={hideMegaMenu}
+              showMegaMenu={showMegaMenu}
             />
           ))}
         </ul>

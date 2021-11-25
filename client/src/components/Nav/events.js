@@ -23,44 +23,4 @@ document.addEventListener("DOMContentLoaded", () => {
     //   lastWeekSpace.slice(-1)[0];
     // };
   });
-
-  // Menu links
-  [...document.querySelectorAll(".nav li.hoverable")].forEach((navItem) => {
-    navItem.addEventListener("click", (e) => {
-      const { id } = e.target;
-      if (
-        document.body.classList.contains("scroll-down") ||
-        document.body.classList.contains("scroll-up")
-      ) {
-        // Allow finding the top of the page again using active nav list item
-        document.body.scroll(0, 0);
-      }
-      const links = ["nav-visualise", "nav-habits"];
-      const idx = links.indexOf(id);
-      const oppositeLink = document.querySelector(
-        "li.hoverable #" + links[1 - idx]
-      );
-      navItem?.classList.add("active");
-      oppositeLink?.parentNode.classList.remove("active");
-      document.querySelector("#current-habit-label")?.classList.add("inactive");
-      document
-        .querySelector("#current-habit-label")
-        ?.classList.remove("active");
-      const switchingTab = id;
-      console.log("id :>> ", oppositeLink?.parentNode.classList);
-      console.log("id :>> ", navItem?.classList);
-
-      document.querySelector(".mask-wrapper").style.height === "5rem"
-        ? showMegaMenu(idx)
-        : hideMegaMenu();
-    });
-  });
-  const calendarWidget = document.querySelector(".date-card-wrapper");
-  const habitLabel = document.querySelector("#current-habit-label");
-
-  // habitLabel.addEventListener("click", );
-
-  // calendarWidget.addEventListener("mouseenter", showMegaMenu);
-  // calendarWidget.addEventListener("mouseenter", checkAndUpdateCalendar);
-  // calendarWidget.addEventListener("mouseleave", hideMegaMenu);
 });
