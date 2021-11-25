@@ -7,8 +7,9 @@ import { useAppDispatch, useAppSelector } from "app/hooks";
 // @ts-ignore
 import { selectCurrentHabit } from "features/habit/selectors";
 // @ts-ignore
-import slice, { selectCurrentSpaceIndex } from 'features/space/slice';
+import slice, { selectCurrentDateId } from 'features/space/slice';
 const { decrementIdx, incrementIdx } = slice.actions;
+import { fetchHabitTreeREST } from "features/hierarchy/actions";
 
 // @ts-ignore
 import { CalendarWidget } from "features/habitDate/components/CalendarWidget";
@@ -43,15 +44,17 @@ const hideMegaMenu = () => {
   document.querySelector(".mask-wrapper").style.zIndex = "10";
 };
 
-export const Header = () => {
+export const Header = ({isVis}) => {
   const dispatch = useAppDispatch()
-  
+  const currentDateId = useAppSelector(selectCurrentDateId);
   const currentHabit = useAppSelector(selectCurrentHabit);
   
   const handlePrevDate = (_:any) => {
+    isVis && dispatch(fetchHabitTreeREST({ domainId: 1, dateId: currentDateId - 1 }))
     dispatch(decrementIdx())
 }
-const handleNextDate = (_:any) => {
+  const handleNextDate = (_: any) => {
+    isVis && dispatch(fetchHabitTreeREST({ domainId: 1, dateId: currentDateId + 1 }))
     dispatch(incrementIdx())
 }
 

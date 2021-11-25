@@ -160,9 +160,7 @@ export default class Visualization {
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
-        this.activateNodeAnimation();
 
-        this.setActiveNode(node.data);
         const targ = event.target;
         if (targ.tagName == "circle") {
           if (
@@ -171,7 +169,9 @@ export default class Visualization {
           )
             return this.reset();
 
-          console.log("NODE FOCUS :>> ");
+          this.activateNodeAnimation();
+          this.setActiveNode(node.data);
+
           expand(node);
 
           setHabitLabel(node.data);
@@ -195,7 +195,6 @@ export default class Visualization {
           /true|false|incomplete/,
           oppositeStatus(currentStatus)
         );
-        console.log("node.data.name :>> ", node.data.name);
         if (!node.data.name.includes("Sub-Habit")) {
           // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
           const habitId = selectCurrentHabit(store.getState())?.meta.id;
@@ -218,19 +217,19 @@ export default class Visualization {
         this.eventHandlers.handleStatusChange.call(this, node);
       },
       handleMouseLeave: function (e) {
-        // const g = select(e.target);
-        // g.select(".tooltip").transition().duration(50).style("opacity", "0");
-        // g.select(".habit-label-dash-button")
-        //   .transition()
-        //   .delay(1000)
-        //   .duration(150)
-        //   .style("opacity", "0");
-        // setTimeout(() => {
-        //   this.currentButton = false;
-        // }, 100);
-        // setTimeout(() => {
-        //   this.currentTooltip = false;
-        // }, 500);
+        const g = select(e.target);
+        g.select(".tooltip").transition().duration(50).style("opacity", "0");
+        g.select(".habit-label-dash-button")
+          .transition()
+          .delay(1000)
+          .duration(150)
+          .style("opacity", "0");
+        setTimeout(() => {
+          this.currentButton = false;
+        }, 100);
+        setTimeout(() => {
+          this.currentTooltip = false;
+        }, 500);
       },
       handleHover: function (e, d) {
         // If it is an animated concentric circle, delegate to parent node

@@ -15,8 +15,8 @@ export const selectThisWeekSpaces = (state: RootState) => state?.space.thisWeek;
 export const selectLastWeekSpaces = (state: RootState) => state?.space.lastWeek;
 
 export const selectCurrentSpace = (state: RootState) => state?.space.current;
-export const selectCurrentSpaceIndex = (state: RootState) =>
-  state?.space.currentIdx;
+export const selectCurrentDateId = (state: RootState) =>
+  state?.space.currentRelativeIdx + 2;
 
 export interface Space {
   timeframe: TimeFrame;
@@ -61,7 +61,7 @@ export const spaceSlice = createSlice({
     incrementIdx(state) {
       const todaysDate = DateTime.now().startOf("day").ts;
       let future = state.current.timeframe.fromDate == todaysDate;
-      if (future) return state;
+      // if (future) return state; // TODO reinstate
 
       let newIdx = state.currentIdx + 1;
       if (newIdx % 7 == 0) {
