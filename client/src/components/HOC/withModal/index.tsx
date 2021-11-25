@@ -45,7 +45,6 @@ export function withModal<T>(Component: ComponentType<T>) {
     const uiStatus = useAppSelector(getUIStatus);
     const type = uiStatus?.responseStatus.status
     const confirmStatus = uiStatus?.confirmStatus
-    console.log('uiStatus :>> ', uiStatus);
     switch (true) {
       case (type == 'ERROR'):
         return (

@@ -3,6 +3,7 @@ import React from "react";
 import { selectCurrentDomain } from "features/domain/selectors";
 
 import { DialogBox } from "./DialogBox";
+import { InfoBox } from "./InfoBox";
 import { useAppSelector } from "app/hooks";
 
 const TITLES = {
@@ -15,7 +16,7 @@ export const Modal = ({ type }) => {
   const currentDomain = useAppSelector(selectCurrentDomain);
   // _p("modal type :>> ", type, "warning");
 
-  let confirmationDialog = ["Confirm", "Error", "AddHabit"].includes(type);
+  let confirmationDialog = ["Confirm", "AddHabit"].includes(type);
   return (
     <div
       id="modal_overlay"
@@ -61,18 +62,18 @@ export const Modal = ({ type }) => {
                 title="Confirm choice"
                 message="Are you sure?"
                 type={type}
-                iconColor="#e3922f"
+                iconColor="text-balance-terhades-light"
                 iconPath="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
               />
             )}
             {type == "Error" && (
-              <DialogBox
-                type="habit-delete"
-                title="Delete Habit and all Child Habits"
-                message="Are you sure?"
+              <InfoBox
+                type="error"
+                title="There was a problem fetching data"
+                message="Apologies - Please try again later."
                 type={type}
-                iconColor="#e3922f"
-                iconPath="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                iconColor="text-balance-buttonbg-closelighter"
+                iconPath="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             )}
           </div>
