@@ -11,6 +11,7 @@ import {
   cluster,
   easeCubic,
   easePolyOut,
+  hierarchy,
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 // import Hammer from "hammerjs";
@@ -420,6 +421,7 @@ export default class Visualization {
   }
 
   sumHierarchyData() {
+    console.log("this.rootData :>> ", this.rootData);
     this.rootData.sum((d) => {
       // Return a binary interpretation of whether the habit was completed that day
       const thisNode = this.rootData
@@ -871,20 +873,35 @@ export default class Visualization {
       this.setdXdY();
     } else {
       this.clearCanvas();
+    }
+
+    if (
+      !this?._rootData ||
+      (typeof this?._rootData !== "undefined" &&
+        this._rootData !== JSON.stringify(this.rootData.data))
+    ) {
+      // New hierarchy
+      console.log(
+        "Formed new layout :>> ",
+        typeof this?._rootData !== "undefined" &&
+          this._rootData !== JSON.stringify(this.rootData.data)
+      );
       this.sumHierarchyData();
       this.accumulateNodeValues();
       this.setLayout();
-
-      this.setNodeAndLinkGroups();
-      this.setNodeAndLinkEnterSelections();
-      this.setCircleAndLabelGroups();
-      this.setButtonGroups();
-
-      this.appendCirclesAndLabels();
-      this.appendLabels();
-      this.appendButtons();
-      // console.log("Appended SVG elements... :>>");
+      if (typeof this?._rootData !== "undefined")
+        this.rootData = hierarchy(JSON.parse(this._rootData));
     }
+
+    this.setNodeAndLinkGroups();
+    this.setNodeAndLinkEnterSelections();
+    this.setCircleAndLabelGroups();
+    this.setButtonGroups();
+    this.appendCirclesAndLabels();
+    this.appendLabels();
+    this.appendButtons();
+    // console.log("Appended SVG elements... :>>");
+
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       // console.log("Added legend :>> ");
       this.addLegend();

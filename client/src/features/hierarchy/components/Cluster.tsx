@@ -27,9 +27,7 @@ export const Cluster: React.FC<VisProps> = ({
   let currentCluster = useAppSelector(selectCurrentCluster);
   const currentRequestState = useAppSelector(getRequestStatus);
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
-  const [currentClusterData, setCurrentClusterData] = useState({
-    data: { name: "" },
-  });
+  const [currentClusterData, setCurrentClusterData] = useState({ name: "" });
 
   const [svg, setSvg] = useState<Selection<SVGGElement, any, any, any> | null>(null);
   useEffect(() => {
@@ -44,19 +42,24 @@ export const Cluster: React.FC<VisProps> = ({
   }, []);
 
   useEffect(() => {
-    setCurrentClusterData(hierarchy(currentHierarchy))
-    currentCluster && (currentCluster.rootData = currentClusterData)
+    if (currentHierarchy.name == "") {
+      return;
+    } else {
+      setCurrentClusterData(currentHierarchy);
+      if (currentCluster?.svgId) {
+        currentCluster.rootData = hierarchy(currentClusterData)
+      }
+    }
     console.log('currentCluster :>> ', currentCluster);
   }, [currentHierarchy])
 
   useEffect(() => {
-    currentHierarchy && setCurrentClusterData(hierarchy(currentHierarchy));
-    if (currentClusterData.data.name == "") return;
+    if (currentClusterData.name == "") return;
     if (currentRequestState === "SUCCESS" && !currentCluster?._svgId) {
       currentCluster = new Vis(
             svg,
             `div${divId}`,
-            currentClusterData,
+            hierarchy(currentClusterData),
             canvasHeight,
             canvasWidth,
             margin,
