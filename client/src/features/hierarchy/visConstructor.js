@@ -102,7 +102,8 @@ export default class Visualization {
             ? this._viewConfig.levelsHigh * this._viewConfig.nodeRadius -
                 this._zoomConfig.previousRenderZoom?.node?.x +
                 this._viewConfig.viewportH / 2
-            : -this._zoomConfig.previousRenderZoom?.node?.y;
+            : -this._zoomConfig.previousRenderZoom?.node?.y +
+                (+(this.type == "radial") * this._viewConfig.viewportH) / 2;
         } else {
           // Initial translation settings
           return this.type == "cluster" || this.type == "radial"
@@ -131,29 +132,26 @@ export default class Visualization {
         if (!event || !node || event.deltaY >= 0 || deadNode(event))
           return this.reset();
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
-        // this._viewConfig.globalTranslate = [node.x, node.y];
-        this.setActiveNode(forParent ? node.data : node.data);
-        expand(node);
-        this.setCurrentHabit(node);
-        this.setCurrentNode(node);
         // Set for cross render transformation memory
+        if (forParent) {
+          node = node.parent;
+          this.activateNodeAnimation();
+        }
         this._zoomConfig.previousRenderZoom = {
           event: event,
           node: node,
           content: node.data,
           scale: this._zoomConfig.globalZoomScale,
         };
-        _p(
-          "this._zoomConfig.previousRenderZoom",
-          this._zoomConfig.previousRenderZoom,
-          "success"
-        );
-        select(".canvas").attr(
-          "transform",
-          `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
-            this._zoomConfig.globalZoomScale
-          })`
-        );
+        select(".canvas")
+          .ease(easePolyOut)
+          .duration(this.isDemo ? 0 : 550)
+          .attr(
+            "transform",
+            `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
+              this._zoomConfig.globalZoomScale
+            })`
+          );
         this.render();
       },
       clickedZoom: function (e, that) {
@@ -200,7 +198,6 @@ export default class Visualization {
           // this.zoomsG?.k && this.setNormalTransform();
 
           setHabitLabel(node.data);
-          // showHabitLabel();
           collapseAroundAndUnder(node, false, false);
           if (!this.isDemo) {
             this.setCurrentNode(node);
@@ -210,8 +207,6 @@ export default class Visualization {
       handleStatusChange: function (node) {
         if (!this.rootData.leaves().includes(node) || node._children) return; // Non-leaf nodes have auto-generated cumulative status
         // (Only leaves can toggle)
-        this.setCurrentHabit(node);
-        this.setCurrentNode(node);
 
         const nodeContent = parseTreeValues(node.data.content);
         const currentStatus = nodeContent.status;
@@ -227,21 +222,17 @@ export default class Visualization {
         }
       },
       handleNodeToggle: function (event, node) {
-        // event.preventDefault();
-        // if (node.children) return;
-        // this.setActiveNode(node.data);
-        // this.activateNodeAnimation();
-        // this.previousRenderZoom = {
-        //   event,
-        //   node,
-        //   content: node.data,
-        // };
-        // if (deadNode(event)) return this.reset();
-        // expand(node);
+        event.preventDefault();
+        if (node.children) return;
+        this.previousRenderZoom = {
+          event,
+          node,
+          content: node.data,
+        };
+        if (deadNode(event)) return this.reset();
+
+        this.eventHandlers.handleStatusChange.call(this, node);
         // this.render();
-        // this.eventHandlers.handleStatusChange.call(this, node);
-        // setHabitLabel(node.data);
-        // this.eventHandlers.clickedZoom.call(this, event, node?.parent, true);
       },
       handleMouseLeave: function (e) {
         // const g = select(e.target);
@@ -358,26 +349,6 @@ export default class Visualization {
     collapse(this.rootData);
   }
 
-  setNormalTransform() {
-    // this.zoomsG?.k && (this.zoomsG.k = this._viewConfig.clickScale);
-
-    if (
-      this.zoomsG?.x &&
-      Object.keys(this._zoomConfig.previousRenderZoom).length > 0
-    ) {
-      // Set the translation for a movement back to 'normal zoom' by feeding the node coordinates and multiplying by the current 'normal' scale
-      this.zoomsG.x =
-        this.zoomsG.k *
-        -(this._zoomConfig.previousRenderZoom?.node.__data__
-          ? this._zoomConfig.previousRenderZoom?.node.__data__.x
-          : this._zoomConfig.previousRenderZoom?.node.x);
-      this.zoomsG.y =
-        this.zoomsG.k *
-        -(this._zoomConfig.previousRenderZoom?.node.__data__
-          ? this.previousRenderZoom?.node.__data__.y
-          : this.previousRenderZoom?.node.y);
-    }
-  }
   setLevelsHighAndWide() {
     if (this._viewConfig.isSmallScreen()) {
       this._viewConfig.levelsHigh = this.previousRenderZoom
@@ -591,7 +562,7 @@ export default class Visualization {
       .classed("tooltip", true)
       .attr(
         "transform",
-        `translate(${-this._viewConfig.nodeRadius / 4}, ${
+        `translate(${this._viewConfig.nodeRadius / 10}, ${
           this._viewConfig.nodeRadius
         }), scale(${LABEL_SCALE})`
       )
@@ -722,16 +693,21 @@ export default class Visualization {
 
   bindEventHandlers(selection) {
     selection
-      .on("contextmenu", this.eventHandlers.handleNodeFocus.bind(this))
-      .on("mousewheel.zoom", this.eventHandlers.handleNodeZoom.bind(this))
+      // .on("contextmenu", this.eventHandlers.handleNodeFocus.bind(this))
+      .on("click", (e, d) => {
+        this.eventHandlers.handleNodeFocus.call(this, e, d);
+        this.eventHandlers.handleNodeZoom.call(this, e, d, true);
+      })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
         passive: true,
       })
-      .on("touchend", this.eventHandlers.handleNodeToggle.bind(this), {
-        passive: true,
+      .on("touchend", (e, d) => {
+        this.eventHandlers.handleNodeFocus.call(this, e, d);
+        this.eventHandlers.handleNodeToggle.bind(this);
       })
-      .on("click", this.eventHandlers.handleNodeToggle.bind(this), {
-        passive: true,
+      .on("contextmenu", (e, d) => {
+        this.eventHandlers.handleNodeFocus.call(this, e, d);
+        this.eventHandlers.handleNodeToggle.bind(this);
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this));
   }
@@ -898,12 +874,11 @@ export default class Visualization {
 
       // console.log("Configured canvas... :>>", this._canvas);
 
+      this.setNodeRadius();
       this.calibrateViewPortAttrs();
       this.calibrateViewBox();
-      // this.setNormalTransform();
       this.setLevelsHighAndWide();
       this.setdXdY();
-      this.setNodeRadius();
     } else {
       this.clearCanvas();
       if (this.rootData.name === "" || typeof this._canvas == undefined)
