@@ -16,7 +16,7 @@ export const selectLastWeekSpaces = (state: RootState) => state?.space.lastWeek;
 
 export const selectCurrentSpace = (state: RootState) => state?.space.current;
 export const selectCurrentDateId = (state: RootState) =>
-  state?.space.currentRelativeIdx + 2;
+  state?.space.currentRelativeIdx + 1;
 
 export interface Space {
   timeframe: TimeFrame;

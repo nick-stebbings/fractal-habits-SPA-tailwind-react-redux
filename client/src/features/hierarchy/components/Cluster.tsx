@@ -44,6 +44,12 @@ export const Cluster: React.FC<VisProps> = ({
   }, []);
 
   useEffect(() => {
+    setCurrentClusterData(hierarchy(currentHierarchy))
+    currentCluster && (currentCluster.rootData = currentClusterData)
+    console.log('currentCluster :>> ', currentCluster);
+  }, [currentHierarchy])
+
+  useEffect(() => {
     currentHierarchy && setCurrentClusterData(hierarchy(currentHierarchy));
     if (currentClusterData.data.name == "") return;
     if (currentRequestState === "SUCCESS" && !currentCluster?._svgId) {

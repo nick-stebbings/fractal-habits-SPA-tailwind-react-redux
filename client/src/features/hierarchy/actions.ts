@@ -16,7 +16,7 @@ const fetchRoute = clientRouteDict.show_all.bind({});
 
 clientRouteDict.show_all = async ({ domainId, dateId }: any, thunkAPI: any) =>
   fetchRoute({ domainId, dateId }).then((response: any) => {
-    thunkAPI.dispatch(fetchNodesREST()); // Populate Nodes
+    thunkAPI.dispatch(fetchNodesREST()); // Populate Nodes TODO: limit this
     return thunkAPI.fulfillWithValue(response);
   });
 

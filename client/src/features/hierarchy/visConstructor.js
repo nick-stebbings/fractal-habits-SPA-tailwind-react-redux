@@ -426,8 +426,9 @@ export default class Visualization {
         .descendants()
         .find((node) => node.data == d);
       let content = parseTreeValues(thisNode.data.content);
-      if (content.status === "incomplete" || content.status === "") return 0;
+      if (content.status === "") return 0;
       const statusValue = JSON.parse(content.status);
+      console.log("statusValue :>> ", content, statusValue);
       return +statusValue;
     });
   }
@@ -870,8 +871,7 @@ export default class Visualization {
       this.setdXdY();
     } else {
       this.clearCanvas();
-      if (this.rootData.name === "" || typeof this._canvas == undefined)
-        this.sumHierarchyData();
+      this.sumHierarchyData();
       this.accumulateNodeValues();
       this.setLayout();
 
