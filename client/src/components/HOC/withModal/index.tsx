@@ -10,14 +10,14 @@ const openModal = function (open = true) {
   if (!modalCl) return;
   if (open) {
     modalOverlay?.classList.remove("hidden");
-    [...document.querySelectorAll('div[id^="tippy"]')].forEach((tooltip) => {
-      tooltip?.classList.add("hidden");
-    });
+    // [...document.querySelectorAll('div[id^="tippy"]')].forEach((tooltip) => {
+    //   tooltip?.classList.add("hidden");
+    // });
       modalCl.remove("opacity-0");
       modalCl.remove("-translate-y-full");
-      modalCl.remove("scale-150");
-      modal.style["z-index"] = 101;
-      document.documentElement.style.overflow = "hidden";
+    modalCl.remove("scale-150");
+    modal.style["z-index"] = 101;
+    document.documentElement.style.overflow = "hidden";
   } else {
     modalCl.add("-translate-y-full");
     setTimeout(() => {

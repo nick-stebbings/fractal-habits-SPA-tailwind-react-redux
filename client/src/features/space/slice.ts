@@ -15,8 +15,14 @@ export const selectThisWeekSpaces = (state: RootState) => state?.space.thisWeek;
 export const selectLastWeekSpaces = (state: RootState) => state?.space.lastWeek;
 
 export const selectCurrentSpace = (state: RootState) => state?.space.current;
-export const selectCurrentDateId = (state: RootState) =>
-  state?.space.currentRelativeIdx + 1;
+export const selectCurrentDateId = (state: RootState) => {
+  let baseDate = DateTime.fromISO("2021-11-25").startOf("day"); // Hard coded for the demo app
+  let dateDiff = DateTime.local()
+    .startOf("day")
+    .diff(baseDate, ["day"])
+    .toObject().days;
+  return state?.space.currentRelativeIdx + 1 + dateDiff;
+};
 
 export interface Space {
   timeframe: TimeFrame;

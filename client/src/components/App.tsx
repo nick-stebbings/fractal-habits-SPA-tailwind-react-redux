@@ -29,13 +29,7 @@ export default function App ({isVisComponent, children}: indexProps) {
   
   const dispatch = useAppDispatch();
   const UIStatus = useAppSelector(getUIStatus);
-  const currentList = useAppSelector(selectCurrentList);
-  const currentHabit = useAppSelector(selectCurrentHabit);
 
-  const [lists, setLists] = useState(currentList);
-  const [habit, setHabit] = useState(currentHabit);
-
-  const loadHabits = () => dispatch(fetchHabitsREST());
   const loadDomains = () => dispatch(fetchDomainsREST());
 
   const isVis = true
@@ -43,13 +37,14 @@ export default function App ({isVisComponent, children}: indexProps) {
   const loadTreeData = async () => dispatch(fetchHabitTreeREST({ domainId: 1, dateId: 1 }));
   const loadData = async function () {
     await loadDomains();
-    setHabit(currentHabit);
 
     isVis && await loadTreeData()
   };
+  
   useEffect(() => {
     loadData()
   }, []);
+
   return (
       <>
         <HeaderWithModal type={UIStatus} isVis={isVisComponent}/>
