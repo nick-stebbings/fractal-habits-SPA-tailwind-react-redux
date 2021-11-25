@@ -38,7 +38,7 @@ export const hierarchySlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase("fetch_habit_tree/fulfilled", (state, action) => {
       if (!action?.payload) return state;
-      state.clusterVis._rootData = JSON.stringify(action.payload.data);
+      state.clusterVis._nextRootData = JSON.stringify(action.payload.data);
       state.current.json = JSON.stringify(action.payload.data);
     });
   },

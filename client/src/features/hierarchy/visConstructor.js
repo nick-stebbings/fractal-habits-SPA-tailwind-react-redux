@@ -388,6 +388,7 @@ export default class Visualization {
         .duration(2500);
     };
     this.zoomer = zoom().scaleExtent([1, 5]).on("zoom", zooms.bind(this));
+    this.zoomBase().call(this.zoomer);
   }
 
   calibrateViewPortAttrs() {
@@ -405,19 +406,14 @@ export default class Visualization {
     this.zoomBase()
       .attr("viewBox", this._viewConfig.defaultView)
       .attr("preserveAspectRatio", "xMidYMid meet")
-      .call(this.zoomer)
       .on("dblclick.zoom", null);
   }
-  currentViewBox() {
-    const viewbox = this.zoomBase()
-      .attr("viewBox")
-      .split(" ")
-      .map((d) => +d);
-    viewbox.extent = [
-      [viewbox[0], viewbox[1]],
-      [viewbox[2] - viewbox[0], viewbox[3] - viewbox[1]],
-    ];
-    return viewbox;
+
+  newHierarchyData() {
+    return (
+      typeof this?._nextRootData !== "undefined" &&
+      this._nextRootData !== JSON.stringify(this.rootData.data)
+    );
   }
 
   sumHierarchyData() {
@@ -850,56 +846,48 @@ export default class Visualization {
     //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
     //     typeof this?._canvas == "undefined"
     // );
-    this.setZoomBehaviour();
     if (
       typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
       typeof this?._canvas == "undefined"
     ) {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
-        .classed("canvas", true)
-        .attr(
-          "transform",
-          `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
-        );
+        .classed("canvas", true);
 
-      // console.log("Configured canvas... :>>", this._canvas);
+      console.log("Configured canvas... :>>", this._canvas);
 
       this.setNodeRadius();
+      this.setLevelsHighAndWide();
       this.calibrateViewPortAttrs();
       this.calibrateViewBox();
-      this.setLevelsHighAndWide();
       this.setdXdY();
+      this._canvas.attr(
+        "transform",
+        `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
+      );
+      this.setZoomBehaviour();
     } else {
       this.clearCanvas();
     }
 
-    if (
-      !this?._rootData ||
-      (typeof this?._rootData !== "undefined" &&
-        this._rootData !== JSON.stringify(this.rootData.data))
-    ) {
-      // New hierarchy
-      // console.log(
-      //   "Formed new layout :>> ",
-      //   typeof this?._rootData !== "undefined" &&
-      //     this._rootData !== JSON.stringify(this.rootData.data)
-      // );
+    if (!this?._nextRootData || this.newHierarchyData()) {
+      // First render OR New hierarchy needs to be rendered
+      _p("Formed new layout", "", "!");
       this.sumHierarchyData();
       this.accumulateNodeValues();
       this.setLayout();
-      if (typeof this?._rootData !== "undefined")
-        this.rootData = hierarchy(JSON.parse(this._rootData));
-    }
+      if (typeof this?._nextRootData !== "undefined")
+        this.rootData = hierarchy(JSON.parse(this._nextRootData));
 
-    this.setNodeAndLinkGroups();
-    this.setNodeAndLinkEnterSelections();
-    this.setCircleAndLabelGroups();
-    this.setButtonGroups();
-    this.appendCirclesAndLabels();
-    this.appendLabels();
-    this.appendButtons();
-    // console.log("Appended SVG elements... :>>");
+      this.setNodeAndLinkGroups();
+      this.setNodeAndLinkEnterSelections();
+      this.setCircleAndLabelGroups();
+      this.setButtonGroups();
+      this.appendCirclesAndLabels();
+      this.appendLabels();
+      this.appendButtons();
+      console.log("Appended SVG elements... :>>");
+    }
 
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       // console.log("Added legend :>> ");

@@ -17,7 +17,10 @@ export const idleState: RequestState = {
 
 export const isDataAction = (action: AnyAction) => {
   // return action.type.endsWith("/fulfilled");
-  return action.type.endsWith("nodes/fulfilled");
+  return (
+    action.type.endsWith("nodes/fulfilled") ||
+    action.type.endsWith("habit_dates/fulfilled")
+  );
 };
 
 export const isErrorAction = (action: AnyAction) => {

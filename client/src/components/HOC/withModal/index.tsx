@@ -45,13 +45,6 @@ export function withModal<T>(Component: ComponentType<T>) {
 console.log('uiStatus :>> ', uiStatus);
     openModal()
     switch (true) {
-      // case (type == 'LOADING'):
-      //   return (
-      //     <>
-      //     <Modal type={'Spinner'} />
-      //     <Component {...hocProps}></Component>
-      //     </>
-      //   )
       case (type == 'ERROR'):
         return (
           <>
@@ -63,6 +56,13 @@ console.log('uiStatus :>> ', uiStatus);
         return (
           <>
           <Modal type={'Confirm'} />
+          <Component {...hocProps}></Component>
+          </>
+        )
+      case (type == 'LOADING'):
+        return (
+          <>
+          <Modal type={'Spinner'} />
           <Component {...hocProps}></Component>
           </>
         )

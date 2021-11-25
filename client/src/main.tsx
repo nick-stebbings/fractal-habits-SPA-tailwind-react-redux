@@ -20,8 +20,7 @@ window._p = function customLog(message, objs, color='black') {
      }
 
   console.log(`%c${message}`, `color:${color}`)
-  typeof objs == 'object'?console.table(objs):console.log(objs);
-  console.log(`%c================`, `color:${color}`)
+  typeof objs == 'object' && console.table(objs);
 }
 
 import React from "react";
