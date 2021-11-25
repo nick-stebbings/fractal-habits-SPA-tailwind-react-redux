@@ -19,6 +19,30 @@ import { DateSelector } from "../Nav/UI/Inputs/DateSelector";
 
 import "../../assets/styles/components/MaskHeader.scss";
 
+const showMegaMenu = (id) => {
+  document.querySelector(".mask-wrapper").style.height = "357px";
+  const menus = [...document.querySelectorAll(".mega-menu")];
+  menus.forEach((menu, idx) => {
+    if (id === idx) {
+      menu.style.display = "block";
+    } else {
+      menu.style.display = "none";
+    }
+  });
+  document.querySelector(".mask-wrapper").style.zIndex = "40";
+  menus.every((menu) => menu.style.display === "none") &&
+    (document.querySelector(".habit-description-label").style.opacity = "1");
+};
+
+const hideMegaMenu = () => {
+  document.querySelector(".mask-wrapper").style.height = "5rem";
+  [...document.querySelectorAll(".mega-menu")].forEach((menu) => {
+    menu.style.display = "none";
+  });
+  document.querySelector(".habit-description-label").style.opacity = "0";
+  document.querySelector(".mask-wrapper").style.zIndex = "10";
+};
+
 export const Header = () => {
   const dispatch = useAppDispatch()
   
@@ -40,7 +64,7 @@ const handleNextDate = (_:any) => {
           : "mask-wrapper bg-balance-pshades-dark"
       }
     >
-      <CalendarWidget handlePrev={handlePrevDate} handleNext={handleNextDate} />
+      <CalendarWidget handlePrev={handlePrevDate} handleNext={handleNextDate} hideMegaMenu={hideMegaMenu} showMegaMenu={showMegaMenu} />
       <header className={isDemo ? "bg-gray-600" : "bg-balance-pshades-dark"}>
         <div id="responsive-nav">
           <Link to="/">
@@ -83,7 +107,7 @@ const handleNextDate = (_:any) => {
               </label>
             </div>
             <input type="checkbox" id="hamburger" className="hidden" />
-            <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2  translate-x-full">
+            <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2  translate-x-full" onClick={hideMegaMenu}>
               <div className="label-wrapper" >
                 <div className="nav-label-primary domain-selector max-w-12">
                   <span className="lg:hidden xl:block pt-2 pb-0 mx-4 mb-1">
@@ -155,7 +179,7 @@ const handleNextDate = (_:any) => {
           </div>
         </div>
         <nav id="subnav">
-          <DropdownNav routes={MENU_ROUTES} />
+          <DropdownNav routes={MENU_ROUTES} hideMegaMenu={hideMegaMenu} showMegaMenu={showMegaMenu} />
         </nav>
       </header>
       <div

@@ -14,10 +14,9 @@ import { selectIsCompletedDate } from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";
 
-export const CalendarWidget = ({handlePrev, handleNext}) => {
+export const CalendarWidget = ({handlePrev, handleNext, hideMegaMenu, showMegaMenu}) => {
 const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matches;
   const [mobileFullyVisible, setMobileFullyVisible] = useState(true);
-  const dispatch = useAppDispatch();
   const slideIn = (e) => {
     if(!isMobile || e.target.classList.contains("cal-date-nav")) return;
     e.currentTarget.style.right = "-3rem";
@@ -30,7 +29,6 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
     document.getElementById("current-habit-label-sm").style.borderBottomWidth = '0px'   
     setMobileFullyVisible(true)
   }
-
   const slideOut = (e) => {
     if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
     console.log('slidout :>> ');
@@ -112,8 +110,10 @@ const isMobile = window.matchMedia("only screen and (max-width: 1024px)").matche
       <div
         className="date-card-wrapper rounded-3xl flex-end -mt-14 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent pt-4 md:pt-1 lg:pt-0 md:ml-6"
         onMouseEnter={(e) => {
+          showMegaMenu()
           window.innerWidth < 1024 && (document.querySelector(".date-card-wrapper").style.opacity = 1)}}
         onMouseLeave={(e) => {
+          hideMegaMenu()
           window.innerWidth < 1024 && (document.querySelector(".date-card-wrapper").style.opacity = 0)}}
       >
         {currentWeek &&
