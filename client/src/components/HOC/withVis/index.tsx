@@ -1,4 +1,6 @@
-import React, { ComponentType, useState } from 'react'
+import React, { ComponentType, } from 'react'
+
+import useFetch from '../../../hooks/useFetch'
 import "../../../assets/styles/pages/d3vis.scss";
 
 const margin = {
@@ -12,7 +14,6 @@ const d3SetupCanvas = function () {
   const { height,width } = document.body.getBoundingClientRect();
   const canvasHeight = height - margin.top - margin.bottom;
   const canvasWidth = width - margin.right - margin.left;
-  console.log('canvasHeight, canvasWidth :>> ', canvasHeight, canvasWidth);
 
   return { canvasHeight, canvasWidth };
 };
@@ -20,9 +21,10 @@ const d3SetupCanvas = function () {
 export function withVis<T> (C : ComponentType<T>) : React.FC {
   const debounceInterval = 350
   const divId = 1;
-  const { canvasHeight, canvasWidth } = d3SetupCanvas()
-
+  useFetch(true)
+  
   const NewC: React.FC = (hocProps: T) => {
+    const { canvasHeight, canvasWidth } = d3SetupCanvas()
     return (
       <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={'1'} {...hocProps} render={(currentVis) => {
         currentVis?.render && currentVis.render()

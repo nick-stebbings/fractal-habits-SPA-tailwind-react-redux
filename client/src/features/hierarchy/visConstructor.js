@@ -72,7 +72,7 @@ const DEFAULT_MARGIN = {
   left: 0,
 };
 export default class Visualization {
-  constructor(svg, svgId, inputTree, canvasHeight, canvasWidth, margin, type) {
+  constructor(svgId, inputTree, canvasHeight, canvasWidth, margin, type) {
     this.type = type;
     this.isDemo = false;
     this._svgId = svgId;
@@ -80,7 +80,7 @@ export default class Visualization {
     this._viewConfig = {
       scale: BASE_SCALE,
       clickScale: FOCUS_MODE_SCALE,
-      margin: DEFAULT_MARGIN,
+      margin: margin || DEFAULT_MARGIN,
       canvasHeight,
       canvasWidth,
       defaultCanvasTranslateX: () => {
@@ -214,7 +214,7 @@ export default class Visualization {
         };
         if (deadNode(event)) return this.reset();
 
-        console.log("NODE TOGGLE :>> ");
+        // console.log("NODE TOGGLE :>> ");
         this.eventHandlers.handleStatusChange.call(this, node);
       },
       handleMouseLeave: function (e) {
@@ -421,7 +421,6 @@ export default class Visualization {
   }
 
   sumHierarchyData() {
-    console.log("this.rootData :>> ", this.rootData);
     this.rootData.sum((d) => {
       // Return a binary interpretation of whether the habit was completed that day
       const thisNode = this.rootData
@@ -430,7 +429,7 @@ export default class Visualization {
       let content = parseTreeValues(thisNode.data.content);
       if (content.status === "") return 0;
       const statusValue = JSON.parse(content.status);
-      console.log("statusValue :>> ", content, statusValue);
+      // console.log("statusValue :>> ", content, statusValue);
       return +statusValue;
     });
   }
@@ -881,11 +880,11 @@ export default class Visualization {
         this._rootData !== JSON.stringify(this.rootData.data))
     ) {
       // New hierarchy
-      console.log(
-        "Formed new layout :>> ",
-        typeof this?._rootData !== "undefined" &&
-          this._rootData !== JSON.stringify(this.rootData.data)
-      );
+      // console.log(
+      //   "Formed new layout :>> ",
+      //   typeof this?._rootData !== "undefined" &&
+      //     this._rootData !== JSON.stringify(this.rootData.data)
+      // );
       this.sumHierarchyData();
       this.accumulateNodeValues();
       this.setLayout();
