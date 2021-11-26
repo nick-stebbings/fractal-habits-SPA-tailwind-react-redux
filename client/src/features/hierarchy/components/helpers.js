@@ -71,19 +71,27 @@ export const parseTreeValues = (valueString) => {
 export const cumulativeValue = (node) => {
   const content = parseTreeValues(node.data.content).status;
   try {
+    // if collapsed
     if (node?._children) {
       return +(
-        sumChildrenValues(node, true) >= node._children.length &&
-        node._children.every((n) => cumulativeValue(n) === 1)
+        // return 1 or 0
+        (
+          sumChildrenValues(node, true) >= node._children.length &&
+          node._children.every((n) => cumulativeValue(n) === 1)
+        ) // All children have accumulated value 1
       );
     }
-    if (![undefined, "incomplete", false, ""].includes(content)) {
+    // if expanded
+    if (content === true) {
       return 1;
     } else if (node && node.children)
       return node && node.children
         ? +(
-            sumChildrenValues(node) >= node.children.length &&
-            node.children.every((n) => cumulativeValue(n) === 1)
+            // Were all descendant nodes accumulated to have a 1 value each?
+            (
+              sumChildrenValues(node) >= node.children.length &&
+              node.children.every((n) => cumulativeValue(n) === 1)
+            )
           )
         : 0;
   } catch (err) {
@@ -96,19 +104,22 @@ export const contentEqual = (node, other) =>
   other.content.split("-").slice(0, 1)[0];
 
 export const nodeStatusColours = (d, currentHierarchy) => {
+  // Guard clause for 'no record'
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return neutralCol;
+
   const status = parseTreeValues(d.data.content).status;
   if (status == "false" && currentHierarchy.leaves().includes(d))
     return negativeCol;
-  if (status === "") return noNodeCol;
+  if (status === "") return negativeCol; // No habit_date recorded for that date
+  _p("node " + cumulativeValue(d), d, "!");
   switch (cumulativeValue(d)) {
     case 1:
       return positiveCol;
     case 0:
-      return neutralCol;
-    default:
       return negativeCol;
+    default:
+      return neutralCol;
   }
 };
 

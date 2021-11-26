@@ -22,7 +22,6 @@ export const selectCurrentDateId = (state: RootState) => {
     .startOf("day")
     .diff(baseDate, ["day"])
     .toObject().days;
-  console.log("dateDiff :>> ", dateDiff);
   return state?.space.currentRelativeIdx + 1 + dateDiff;
 };
 

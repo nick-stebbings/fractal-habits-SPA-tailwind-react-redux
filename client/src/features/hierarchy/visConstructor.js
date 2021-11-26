@@ -435,17 +435,20 @@ export default class Visualization {
       const thisNode = this.rootData
         .descendants()
         .find((node) => node.data == d);
+      console.log("thisNode :>> ", thisNode);
       let content = parseTreeValues(thisNode.data.content);
+      console.log("content :>> ", content);
       if (content.status === "") return 0;
       const statusValue = JSON.parse(content.status);
-      // console.log("statusValue :>> ", content, statusValue);
+      console.log("statusValue :>> ", statusValue);
       return +statusValue;
     });
   }
   accumulateNodeValues() {
     while (this.rootData.descendants().some((node) => node.value > 1)) {
       // Convert node values to binary based on whether their descendant nodes are all completed
-      this.rootData.each((node) => {
+      this.rootData.each((node, idx) => {
+        _p("node" + idx, node, "success");
         if (node.value > 0) {
           node.value = cumulativeValue(node);
         }
