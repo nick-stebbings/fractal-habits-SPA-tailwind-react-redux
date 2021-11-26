@@ -36,15 +36,19 @@ export const Cluster: React.FC<VisProps> = ({
         .attr("style", "pointer-events: all")
   }, []);
 
-  useEffect(() => {
+    useEffect(() => {
     if (currentHierarchy.name == "") {
       return;
     } else {
-      if (currentCluster?.svgId) {
-        currentCluster.rootData = hierarchy(currentHierarchy)
+      const newHier = hierarchy(currentHierarchy)
+      const compareString = JSON.stringify(newHier.data)
+      if (currentCluster?._svgId && JSON.stringify(currentCluster.rootData.data) !== compareString) {
+        currentCluster._nextRootData = newHier
+        currentCluster.render()
+        _p("Rendered from component & updated ", {}, '!' )
       }
     }
-  }, [currentHierarchy.name])
+  }, [JSON.stringify(currentHierarchy)])
 
   useEffect(() => {
     if (currentHierarchy.name == "") return;

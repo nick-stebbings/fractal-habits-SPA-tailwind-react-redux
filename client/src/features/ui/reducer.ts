@@ -18,7 +18,7 @@ export const idleState: RequestState = {
 export const isDataAction = (action: AnyAction) => {
   // return action.type.endsWith("/fulfilled");
   return (
-    action.type.endsWith("nodes/fulfilled") ||
+    // action.type.endsWith("nodes/fulfilled") ||
     action.type.endsWith("habit_dates/fulfilled")
   );
 };
@@ -28,6 +28,7 @@ export const isErrorAction = (action: AnyAction) => {
 };
 
 export const isLoadingAction = (action: AnyAction) => {
+  return action.type.endsWith("/pending");
   return !action.type.endsWith("createVis") && !isDataAction(action);
 };
 

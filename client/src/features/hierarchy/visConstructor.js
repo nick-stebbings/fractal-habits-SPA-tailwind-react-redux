@@ -286,6 +286,7 @@ export default class Visualization {
     return typeof this?._canvas == "undefined";
   }
   hasNextData() {
+    console.log("!!this?._nextRootData :>> ", !!this?._nextRootData);
     return !!this?._nextRootData;
   }
   hasNewHierarchyData() {
@@ -501,8 +502,6 @@ export default class Visualization {
       .append("g")
       .classed("links", true)
       .attr("transform", transformation);
-    console.log(this._canvas);
-    debugger;
     this._gNode = this._canvas
       .append("g")
       .classed("nodes", true)
@@ -876,11 +875,6 @@ export default class Visualization {
     }
 
     if (this.firstRender() || this.hasNewHierarchyData()) {
-      console.log(
-        this._hasRendered,
-        this.firstRender(),
-        this.hasNewHierarchyData()
-      );
       if (this.noCanvas()) return;
       // First render OR New hierarchy needs to be rendered
       console.log("Formed new layout", this, "!");
@@ -889,8 +883,7 @@ export default class Visualization {
       this.setLayout();
 
       // Update the current day's rootData
-      if (this.hasNextData())
-        this.rootData = hierarchy(JSON.parse(this._nextRootData));
+      if (this.hasNextData()) this.rootData = this._nextRootData;
 
       this.setZoomBehaviour();
       this.clearCanvas();

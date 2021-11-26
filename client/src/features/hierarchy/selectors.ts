@@ -6,7 +6,7 @@ import { Hierarchy } from "app/features/hierarchy/types";
 
 export const selectCurrentHierarchy = (state: RootState): Hierarchy => {
   return (
-    state?.hierarchy.current.json && JSON.parse(state?.hierarchy.current.json)
+    !!state?.hierarchy.current.json && JSON.parse(state?.hierarchy.current.json)
   );
 };
 
