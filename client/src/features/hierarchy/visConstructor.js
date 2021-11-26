@@ -22,10 +22,7 @@ import {
   selectCurrentHabit,
   selectCurrentHabitByMptt,
 } from "features/habit/selectors";
-import {
-  fetchHabitDatesREST,
-  updateHabitDateREST,
-} from "features/habitDate/actions";
+import { fetchHabitDatesREST } from "features/habitDate/actions";
 import UISlice from "features/ui/reducer";
 const { toggleConfirm } = UISlice.actions;
 import HabitSlice from "features/habit/reducer";
@@ -292,7 +289,6 @@ export default class Visualization {
     return typeof this?._canvas == "undefined";
   }
   hasNextData() {
-    console.log("!!this?._nextRootData :>> ", !!this?._nextRootData);
     return !!this?._nextRootData;
   }
   hasNewHierarchyData() {
@@ -894,7 +890,7 @@ export default class Visualization {
       this.setLayout();
 
       // Update the current day's rootData
-      if (this.hasNextData()) this.rootData = this._nextRootDatara;
+      if (this.hasNextData()) this.rootData = this._nextRootData;
 
       this.setZoomBehaviour();
       this.clearCanvas();

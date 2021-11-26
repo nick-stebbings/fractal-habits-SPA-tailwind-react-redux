@@ -3,7 +3,7 @@ import React from "react";
 export const InputGroup = ({ classString, label, name, children }) => {
   return (
     <div className="flex flex-col mt-6">
-      <label className={classString} for={name}>
+      <label className={classString} htmlFor={name}>
         {label}
       </label>
       {children}

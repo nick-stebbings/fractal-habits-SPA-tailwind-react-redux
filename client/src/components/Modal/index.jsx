@@ -40,7 +40,7 @@ export const Modal = ({ type }) => {
                 {TITLES[type]}
               </h2>
               <h3 className="mt-2 text-2xl font-bold text-center">
-                {type == "AddHabit" && <span>{currentDomain}</span>}
+                {type == "AddHabit" && <span>{`${currentDomain}`}</span>}
               </h3>
             </div>
             {type == "AddHabit" && (
