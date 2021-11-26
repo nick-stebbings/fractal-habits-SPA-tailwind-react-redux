@@ -513,22 +513,6 @@ export default class Visualization {
       .attr("transform", transformation);
   }
   setNodeAndLinkEnterSelections() {
-    const links = this._gLink
-      .selectAll("line.link")
-      .data(this.rootData.links());
-
-    this._enteringLinks = links
-      .enter()
-      .append("path")
-      .classed("link", true)
-      .attr("stroke-opacity", (d) =>
-        !this.activeNode ||
-        (this.activeNode && this.activeNode.descendants().includes(d.source))
-          ? 0.55
-          : 0.3
-      )
-      .attr("d", this.getLinkPathGenerator());
-
     const nodes = this._gNode
       .selectAll("g.node")
       .data(this.rootData.descendants());
@@ -557,6 +541,24 @@ export default class Visualization {
           : `translate(${d.x},${d.y})`;
       })
       .call(this.bindEventHandlers.bind(this));
+
+    // Links
+    const links = this._gLink.selectAll("line.link").data(
+      this.rootData
+        .links()
+        .filter(({ _, target }) => target.value !== undefined) // Remove habits that weren't being tracked then
+    );
+    this._enteringLinks = links
+      .enter()
+      .append("path")
+      .classed("link", true)
+      .attr("stroke-opacity", (d) =>
+        !this.activeNode ||
+        (this.activeNode && this.activeNode.descendants().includes(d.source))
+          ? 0.55
+          : 0.3
+      )
+      .attr("d", this.getLinkPathGenerator());
   }
   setCircleAndLabelGroups() {
     this._gCircle = this._enteringNodes.append("g");
