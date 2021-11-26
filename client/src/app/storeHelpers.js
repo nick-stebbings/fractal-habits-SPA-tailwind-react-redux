@@ -75,7 +75,7 @@ export function crudReducer(state, action, create, fetch, update, destroy) {
         .map(mapCallbacks[model])
         .filter((record) => record !== undefined);
       return {
-        current: mapped.slice(-1)[0] || state.current,
+        current: mapped[0] || state.current, //.slice(-1)
         myRecords: mapped,
       };
 

@@ -141,26 +141,26 @@ export default class Visualization {
       },
       handleAppendNode: function (event, node) {},
       handleNodeZoom: function (event, node, forParent = false) {
-        if (!event || !node || event.deltaY >= 0 || deadNode(event)) return;
-        this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
-        const parentNode = { ...node.parent };
-        // Set for cross render transformation memory
-        this._zoomConfig.previousRenderZoom = {
-          event: event,
-          node: forParent ? parentNode : node,
-          content: node.data,
-          scale: this._zoomConfig.globalZoomScale,
-        };
-        select(".canvas")
-          .transition()
-          .ease(easePolyOut)
-          .duration(this.isDemo ? 0 : 550)
-          .attr(
-            "transform",
-            `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
-              this._zoomConfig.globalZoomScale
-            })`
-          );
+        // if (!event || !node || event.deltaY >= 0 || deadNode(event)) return;
+        // this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
+        // const parentNode = { ...node.parent };
+        // // Set for cross render transformation memory
+        // this._zoomConfig.previousRenderZoom = {
+        //   event: event,
+        //   node: forParent ? parentNode : node,
+        //   content: node.data,
+        //   scale: this._zoomConfig.globalZoomScale,
+        // };
+        // select(".canvas")
+        //   .transition()
+        //   .ease(easePolyOut)
+        //   .duration(this.isDemo ? 0 : 550)
+        //   .attr(
+        //     "transform",
+        //     `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
+        //       this._zoomConfig.globalZoomScale
+        //     })`
+        //   );
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
@@ -172,7 +172,7 @@ export default class Visualization {
             deadNode(event)
           )
             return this.reset();
-
+          console.log("event,node :>> ", event, node);
           this.activateNodeAnimation();
           this.setActiveNode(node.data);
 
@@ -549,6 +549,7 @@ export default class Visualization {
           : "0"
       )
       .attr("transform", (d) => {
+        console.log("d :>> ", d);
         if (this.type == "radial")
           return "translate(" + radialPoint(d.x, d.y) + ")";
         return this.type == "cluster"
@@ -887,13 +888,12 @@ export default class Visualization {
     if (this.firstRender() || this.hasNewHierarchyData()) {
       if (this.noCanvas()) return;
       // First render OR New hierarchy needs to be rendered
+      // Update the current day's rootData
+      if (this.hasNextData()) this.rootData = this._nextRootData;
+      this.setLayout();
       console.log("Formed new layout", this, "!");
       this.sumHierarchyData();
       this.accumulateNodeValues();
-      this.setLayout();
-
-      // Update the current day's rootData
-      if (this.hasNextData()) this.rootData = this._nextRootData;
 
       this.setZoomBehaviour();
       this.clearCanvas();
