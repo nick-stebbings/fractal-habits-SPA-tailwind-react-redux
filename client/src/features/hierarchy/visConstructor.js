@@ -58,7 +58,7 @@ function radialPoint(x, y) {
 const BASE_SCALE = 1;
 const FOCUS_MODE_SCALE = 1;
 const LABEL_SCALE = 1.5;
-const BUTTON_SCALE = 1;
+const BUTTON_SCALE = 2;
 const XS_NODE_RADIUS = 80;
 const LG_NODE_RADIUS = 50;
 const XS_LEVELS_HIGH = 3;
@@ -569,20 +569,23 @@ export default class Visualization {
     this._gButton = this._gCircle
       .append("g")
       .classed("habit-label-dash-button", true)
-      .attr("transform", `translate(${200}, -50), scale(${BUTTON_SCALE})`)
+      .attr(
+        "transform",
+        `translate(${-2 * this._viewConfig.nodeRadius}, ${
+          -1.5 * this._viewConfig.nodeRadius
+        }), scale(${BUTTON_SCALE})`
+      )
       .attr("style", "opacity: 0");
   }
 
   appendCirclesAndLabels() {
     this._gCircle
       .append("circle")
-      // .attr("cx", (d) => d.x)
-      // .attr("cy", (d) => (this.type == "radial" ? -d.y : d.y))
       .attr("transform", (d) =>
         this.type == "radial" ? `rotate(${d.x}, 0, 0)` : ``
       )
       .attr("r", this._viewConfig.nodeRadius)
-      .on("mouseenter", this.eventHandlers.handleHover);
+      .on("mouseenter", this.eventHandlers.handleHover.bind(this));
   }
   appendLabels() {
     this._gTooltip
@@ -626,15 +629,15 @@ export default class Visualization {
       .attr("transform", this.type == "radial" ? "scale(0.75)" : "");
   }
   appendButtons() {
-    this._gButton
-      .append("rect")
-      .attr("rx", 15)
-      .attr("y", 5)
-      .attr("width", 100)
-      .attr("height", 30)
-      .on("click", (e) => {
-        e.stopPropagation();
-      });
+    // this._gButton
+    //   .append("rect")
+    //   .attr("rx", 15)
+    //   .attr("y", 5)
+    //   .attr("width", 100)
+    //   .attr("height", 30)
+    //   .on("click", (e) => {
+    //     e.stopPropagation();
+    //   });
     // this._gButton
     //   .append("text")
     //   .attr("x", 15)
@@ -681,6 +684,8 @@ export default class Visualization {
         .attr("style", (d) => (d.parent ? "opacity: 0" : "opacity: 1"))
         .attr("x", 12)
         .attr("y", -20)
+        // .attr("x", 15)
+        // .attr("y", -45)
         .text((d) => "PREPEND")
         .on("click", (e, n) => {
           this.eventHandlers.handlePrependNode.call(this, e, n);
@@ -883,7 +888,7 @@ export default class Visualization {
       this.setLayout();
 
       // Update the current day's rootData
-      if (this.hasNextData()) this.rootData = this._nextRootData;
+      if (this.hasNextData()) this.rootData = this._nextRootDatara;
 
       this.setZoomBehaviour();
       this.clearCanvas();
