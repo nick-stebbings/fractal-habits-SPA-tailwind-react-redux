@@ -515,7 +515,7 @@ export default class Visualization {
   setNodeAndLinkEnterSelections() {
     const nodes = this._gNode
       .selectAll("g.node")
-      .data(this.rootData.descendants());
+      .data(this.rootData.descendants().filter((n) => n.value !== undefined)); // Remove habits that weren't being tracked then);
 
     this._enteringNodes = nodes
       .enter()
