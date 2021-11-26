@@ -279,7 +279,7 @@ export default class Visualization {
   }
 
   firstRender() {
-    return !this?._hasRendered;
+    return typeof this?._hasRendered == "undefined";
   }
 
   noCanvas() {
@@ -497,11 +497,12 @@ export default class Visualization {
   }
   setNodeAndLinkGroups() {
     const transformation = `translate(${0}, ${this.type == "radial" ? 0 : 0})`;
-
     this._gLink = this._canvas
       .append("g")
       .classed("links", true)
       .attr("transform", transformation);
+    console.log(this._canvas);
+    debugger;
     this._gNode = this._canvas
       .append("g")
       .classed("nodes", true)
@@ -848,7 +849,7 @@ export default class Visualization {
   }
 
   render() {
-    // console.log("Rendering vis... :>>", this?._canvas);
+    console.log("Rendering vis... :>>", this?._canvas);
     // _p("zoomconfig", this._zoomConfig, "info");
     // this._canvas = select(document.querySelectorAll(".canvas")[0]);
     // console.log(
@@ -856,7 +857,7 @@ export default class Visualization {
     //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
     //     typeof this?._canvas == "undefined"
     // );
-    if (this.firstRender() && this.noCanvas()) {
+    if (this.firstRender()) {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true);
@@ -872,32 +873,41 @@ export default class Visualization {
         "transform",
         `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
       );
-      this.setZoomBehaviour();
-    } else {
-      this.clearCanvas();
     }
 
     if (this.firstRender() || this.hasNewHierarchyData()) {
+      console.log(
+        this._hasRendered,
+        this.firstRender(),
+        this.hasNewHierarchyData()
+      );
+      if (this.noCanvas()) return;
       // First render OR New hierarchy needs to be rendered
-      _p("Formed new layout", this.firstRender(), "!");
+      console.log("Formed new layout", this, "!");
       this.sumHierarchyData();
       this.accumulateNodeValues();
       this.setLayout();
+
       // Update the current day's rootData
       if (this.hasNextData())
         this.rootData = hierarchy(JSON.parse(this._nextRootData));
 
+      this.setZoomBehaviour();
+      this.clearCanvas();
       this.setNodeAndLinkGroups();
       this.setNodeAndLinkEnterSelections();
       this.setCircleAndLabelGroups();
       this.setButtonGroups();
+      console.log("Appended and set groups... :>>");
+
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
-
       console.log("Appended SVG elements... :>>");
-      this._hasRendered == true;
+
+      this._hasRendered = true;
     }
+
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       // console.log("Added legend :>> ");
       this.addLegend();

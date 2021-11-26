@@ -23,7 +23,6 @@ const openModal = function (open = true) {
     modal.style["z-index"] = 101;
     document.documentElement.style.overflow = "hidden";
   } else {
-    debugger;
     modalCl.add("-translate-y-full");
     setTimeout(() => {
       modalCl.add("opacity-0");

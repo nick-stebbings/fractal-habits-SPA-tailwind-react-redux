@@ -27,7 +27,6 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
     const { canvasHeight, canvasWidth } = d3SetupCanvas()
     return (
       <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={'1'} {...hocProps} render={(currentVis) => {
-        currentVis?.render && currentVis.render()
         return (<>
       <button
         type="button"

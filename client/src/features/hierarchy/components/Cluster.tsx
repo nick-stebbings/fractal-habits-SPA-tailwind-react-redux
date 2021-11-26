@@ -27,6 +27,7 @@ export const Cluster: React.FC<VisProps> = ({
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
 
   useEffect(() => {
+    select(`#div${divId}`).empty() &&
       select(`#vis`)
         .append<SVGGElement>("svg")
         .attr("id", `div${divId}`)
@@ -65,14 +66,13 @@ export const Cluster: React.FC<VisProps> = ({
         )
       );
       _p("Instantiated vis object :>> ", currentCluster, "info");
-      // _p("Rendered from component", {}, '!' )
+      currentCluster.render()
+      _p("Rendered from component", {}, '!' )
     }
   }, [currentHierarchy.name]);
 
   return (
-    <div id="vis" className="w-full h-full mx-auto">
-      {render(currentCluster)}
-    </div>
+      <>{render(currentCluster)}</>
   );
 };
 

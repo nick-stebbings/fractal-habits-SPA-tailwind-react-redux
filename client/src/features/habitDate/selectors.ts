@@ -13,9 +13,7 @@ export const selectStoredHabitDates = (state: RootState) => {
 };
 
 export const selectCurrentHabitDates = (state: RootState) => {
-  return state?.habitDate?.myRecords.filter((record: Habit) => {
-    debugger;
-  });
+  return state?.habitDate?.myRecords.filter((record: Habit) => {});
 };
 
 export const selectIsCompletedDate = (fromDateUnixTs: number) => {
