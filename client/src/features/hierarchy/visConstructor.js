@@ -278,6 +278,23 @@ export default class Visualization {
     return select(`#${this._svgId}`);
   }
 
+  firstRender() {
+    return !this?._hasRendered;
+  }
+
+  noCanvas() {
+    return typeof this?._canvas == "undefined";
+  }
+  hasNextData() {
+    return !!this?._nextRootData;
+  }
+  hasNewHierarchyData() {
+    return (
+      this.hasNextData() &&
+      this._nextRootData !== JSON.stringify(this.rootData.data)
+    );
+  }
+
   setActiveNode(clickedNode) {
     this.activeNode = this.findNodeByContent(clickedNode);
     return this.activeNode;
@@ -407,13 +424,6 @@ export default class Visualization {
       .attr("viewBox", this._viewConfig.defaultView)
       .attr("preserveAspectRatio", "xMidYMid meet")
       .on("dblclick.zoom", null);
-  }
-
-  newHierarchyData() {
-    return (
-      typeof this?._nextRootData !== "undefined" &&
-      this._nextRootData !== JSON.stringify(this.rootData.data)
-    );
   }
 
   sumHierarchyData() {
@@ -840,16 +850,13 @@ export default class Visualization {
   render() {
     // console.log("Rendering vis... :>>", this?._canvas);
     // _p("zoomconfig", this._zoomConfig, "info");
-    this._canvas = select(document.querySelectorAll(".canvas")[0]);
+    // this._canvas = select(document.querySelectorAll(".canvas")[0]);
     // console.log(
     //   "need new canvas? :>> ",
     //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
     //     typeof this?._canvas == "undefined"
     // );
-    if (
-      typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
-      typeof this?._canvas == "undefined"
-    ) {
+    if (this.firstRender() && this.noCanvas()) {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true);
@@ -870,14 +877,14 @@ export default class Visualization {
       this.clearCanvas();
     }
 
-    if (!this?._nextRootData || this.newHierarchyData()) {
+    if (this.firstRender() || this.hasNewHierarchyData()) {
       // First render OR New hierarchy needs to be rendered
-      _p("Formed new layout", "", "!");
+      _p("Formed new layout", this.firstRender(), "!");
       this.sumHierarchyData();
       this.accumulateNodeValues();
       this.setLayout();
       // Update the current day's rootData
-      if (typeof this?._nextRootData !== "undefined")
+      if (this.hasNextData())
         this.rootData = hierarchy(JSON.parse(this._nextRootData));
 
       this.setNodeAndLinkGroups();
@@ -887,9 +894,10 @@ export default class Visualization {
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
-      console.log("Appended SVG elements... :>>");
-    }
 
+      console.log("Appended SVG elements... :>>");
+      this._hasRendered == true;
+    }
     if (select("svg .legend").empty() && select("svg .controls").empty()) {
       // console.log("Added legend :>> ");
       this.addLegend();

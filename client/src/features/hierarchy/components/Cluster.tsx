@@ -43,12 +43,11 @@ export const Cluster: React.FC<VisProps> = ({
         currentCluster.rootData = hierarchy(currentHierarchy)
       }
     }
-  }, [currentHierarchy])
+  }, [currentHierarchy.name])
 
   useEffect(() => {
     if (currentHierarchy.name == "") return;
-    console.log('currentRequestState :>> ', currentRequestState);
-    if (currentRequestState === "SUCCESS" && !currentCluster?._svgId) {
+    if (currentRequestState === "SUCCESS" && !currentCluster._svgId) {
       currentCluster = new Vis(
             `div${divId}`,
             hierarchy(currentHierarchy),
@@ -66,7 +65,7 @@ export const Cluster: React.FC<VisProps> = ({
         )
       );
       _p("Instantiated vis object :>> ", currentCluster, "info");
-      _p("Rendered from component", {}, '!' )
+      // _p("Rendered from component", {}, '!' )
     }
   }, [currentHierarchy.name]);
 
