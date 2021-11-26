@@ -1,4 +1,4 @@
-import { React } from "react";
+import React from "react";
 
 import { FormHeader } from "./FormHeader.jsx";
 import { FormBody } from "./FormBody.jsx";
@@ -7,7 +7,8 @@ import { SubmitButton } from "../Nav/UI/Buttons/SubmitButton.jsx";
 import { CancelButton } from "../Nav/UI/Buttons/CancelButton.jsx";
 // @ts-ignore
 import { selectCurrentDomain } from "features/domain/selectors";
-
+import { useAppDispatch, useAppSelector } from "app/hooks";
+useAppDispatch;
 const randId = String(Math.ceil(Math.random() * 100));
 
 // const processFormData = function (dom, attrs) {
@@ -75,6 +76,7 @@ export const CreateForm = ({
   resourceDescription,
   addHeader,
 }) => {
+  const isDemo = false;
   const dispatch = useAppDispatch();
   const currentDomain = useAppSelector(selectCurrentDomain);
   // document.querySelector(

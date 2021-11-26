@@ -26,10 +26,12 @@ import {
   fetchHabitDatesREST,
   updateHabitDateREST,
 } from "features/habitDate/actions";
+import UISlice from "features/ui/reducer";
+const { toggleConfirm } = UISlice.actions;
 import HabitSlice from "features/habit/reducer";
 const { updateCurrentHabit } = HabitSlice.actions;
 import NodeSlice from "features/node/reducer";
-import { createNodeREST } from "features/node/actions";
+import { createHabitREST } from "features/habit/actions";
 const { updateCurrentNode } = NodeSlice.actions;
 import HabitDateSlice from "features/habitDate/reducer";
 const { updateHabitDateForNode } = HabitDateSlice.actions;
@@ -137,7 +139,8 @@ export default class Visualization {
 
     this.eventHandlers = {
       handlePrependNode: function (event, node) {
-        store.dispatch(createNodeREST());
+        store.dispatch(toggleConfirm());
+        // store.dispatch(createHabitREST());
       },
       handleAppendNode: function (event, node) {},
       handleNodeZoom: function (event, node, forParent = false) {

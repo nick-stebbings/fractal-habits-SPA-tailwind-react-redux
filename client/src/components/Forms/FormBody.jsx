@@ -1,5 +1,5 @@
-import { React } from "react";
+import React from "react";
 
 export const FormBody = ({ children }) => {
-  return <div class="input-container">{children}</div>;
+  return <div className="input-container">{children}</div>;
 };

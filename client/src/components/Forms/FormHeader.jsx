@@ -1,4 +1,4 @@
-import { React } from "react";
+import React from "react";
 
 export const FormHeader = ({
   domainDescription,
@@ -7,13 +7,13 @@ export const FormHeader = ({
   title,
 }) => {
   return (
-    <div class="flex items-center space-x-5">
-      <div class="form-header flex flex-shrink-0 justify-center items-center w-14 h-14 font-mono rounded-full bg-balance-tershades-gray">
+    <div className="flex items-center space-x-5">
+      <div className="form-header flex flex-shrink-0 justify-center items-center w-14 h-14 font-mono rounded-full bg-balance-tershades-gray">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          class={iconColor}
+          className={iconColor}
           stroke="currentColor"
         >
           <path
@@ -24,9 +24,9 @@ export const FormHeader = ({
           />
         </svg>
       </div>
-      <div class="block self-start pl-2 text-xl font-semibold text-gray-700">
-        <h2 class="leading-relaxed">{title}</h2>
-        <p class="text-sm font-normal leading-relaxed text-gray-500">
+      <div className="block self-start pl-2 text-xl font-semibold text-gray-700">
+        <h2 className="leading-relaxed">{title}</h2>
+        <p className="text-sm font-normal leading-relaxed text-gray-500">
           {domainDescription}
         </p>
       </div>

@@ -15,7 +15,7 @@ const TITLES = {
 
 export const Modal = ({ type }) => {
   const currentDomain = useAppSelector(selectCurrentDomain);
-  // _p("modal type :>> ", type, "warning");
+  _p("modal type :>> ", type, "warning");
 
   let confirmationDialog = ["Confirm", "AddHabit"].includes(type);
   return (

@@ -6,7 +6,7 @@ import { getUIStatus } from 'features/ui/selectors';
 // @ts-ignore
 import { Modal } from 'components/Modal';
 
-const openModal = function (open = true) {
+export const openModal = function (open = true) {
   const modalOverlay = document.querySelector("#modal_overlay");
   if (!modalOverlay) return;
   const modal = modalOverlay.querySelector("#modal");
@@ -40,6 +40,7 @@ export function withModal<T>(Component: ComponentType<T>) {
   return React.memo((hocProps: T) => {
     useEffect(() => {
       openModal()
+      console.log('opened modal :>> ');
     },[])
     const uiStatus = useAppSelector(getUIStatus);
     const type = uiStatus?.responseStatus.status
@@ -49,6 +50,13 @@ export function withModal<T>(Component: ComponentType<T>) {
         return (
           <>
           <Modal type={'Error'} />
+          <Component {...hocProps}></Component>
+          </>
+        )
+      case (type == 'IDLE' && confirmStatus):
+        return (
+          <>
+          <Modal type={'AddHabit'} />
           <Component {...hocProps}></Component>
           </>
         )
@@ -63,13 +71,6 @@ export function withModal<T>(Component: ComponentType<T>) {
         return (
           <>
           <Modal type={'Spinner'} />
-          <Component {...hocProps}></Component>
-          </>
-        )
-      case (type == 'IDLE' && confirmStatus):
-        return (
-          <>
-          <Modal type={'AddHabit'} />
           <Component {...hocProps}></Component>
           </>
         )

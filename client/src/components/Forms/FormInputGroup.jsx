@@ -1,9 +1,9 @@
-import { React } from "react";
+import React from "react";
 
 export const InputGroup = ({ classString, label, name, children }) => {
   return (
-    <div class="flex flex-col mt-6">
-      <label class={classString} for={name}>
+    <div className="flex flex-col mt-6">
+      <label className={classString} for={name}>
         {label}
       </label>
       {children}
