@@ -66,6 +66,13 @@ export function withModal<T>(Component: ComponentType<T>) {
           <Component {...hocProps}></Component>
           </>
         )
+      case (type == 'IDLE' && confirmStatus):
+        return (
+          <>
+          <Modal type={'AddHabit'} />
+          <Component {...hocProps}></Component>
+          </>
+        )
       default:
         return <Component {...hocProps}></Component>
     }

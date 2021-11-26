@@ -29,6 +29,7 @@ import {
 import HabitSlice from "features/habit/reducer";
 const { updateCurrentHabit } = HabitSlice.actions;
 import NodeSlice from "features/node/reducer";
+import { createNodeREST } from "features/node/actions";
 const { updateCurrentNode } = NodeSlice.actions;
 import HabitDateSlice from "features/habitDate/reducer";
 const { updateHabitDateForNode } = HabitDateSlice.actions;
@@ -135,7 +136,9 @@ export default class Visualization {
     };
 
     this.eventHandlers = {
-      handlePrependNode: function (event, node) {},
+      handlePrependNode: function (event, node) {
+        store.dispatch(createNodeREST());
+      },
       handleAppendNode: function (event, node) {},
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0 || deadNode(event)) return;

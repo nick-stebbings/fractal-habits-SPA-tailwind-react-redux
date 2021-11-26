@@ -2,6 +2,7 @@ import React from "react";
 
 import { selectCurrentDomain } from "features/domain/selectors";
 
+import { CreateForm } from "../Forms/CreateForm";
 import { DialogBox } from "./DialogBox";
 import { InfoBox } from "./InfoBox";
 import { useAppSelector } from "app/hooks";
@@ -42,20 +43,14 @@ export const Modal = ({ type }) => {
                 {type == "AddHabit" && <span>{currentDomain}</span>}
               </h3>
             </div>
-            {type == "AddHabit" &&
-              // <CreateForm
-              //   addHeader={false}
-              //   resourceName={
-              //     typeof attrs.modalType() === "string" &&
-              //     attrs.modalType().includes("d3vis")
-              //       ? "new-habit-child"
-              //       : "Habit"
-              //   }
-              //   domain={DomainStore.current}
-              //   resourceDescription="A way of keeping track of your daily behaviours"
-              //   modalType={attrs.modalType}
-              // />
-              "s"}
+            {type == "AddHabit" && (
+              <CreateForm
+                modalType={type}
+                resourceName="Habit"
+                addHeader={false}
+                resourceDescription="A way of keeping track of your daily behaviours"
+              />
+            )}
             {type == "Confirm" && (
               <DialogBox
                 type="confirm"

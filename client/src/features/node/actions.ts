@@ -26,10 +26,4 @@ export const actionCreators = createCrudActionCreators(
 const [createNodeREST, fetchNodesREST, updateNodeREST, destroyNodeREST] =
   actionCreators;
 
-export {
-  updateCurrentNode,
-  createNodeREST,
-  fetchNodesREST,
-  updateNodeREST,
-  destroyNodeREST,
-};
+export { createNodeREST, fetchNodesREST, updateNodeREST, destroyNodeREST };

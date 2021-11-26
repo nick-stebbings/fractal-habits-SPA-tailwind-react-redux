@@ -24,7 +24,6 @@ export const nodeSlice = createSlice({
   initialState,
   reducers: {
     updateCurrentNode(state, action: PayloadAction<Node>) {
-      console.log("state, action.payload :>> ", state, action.payload);
       state.current = action.payload;
     },
   },
