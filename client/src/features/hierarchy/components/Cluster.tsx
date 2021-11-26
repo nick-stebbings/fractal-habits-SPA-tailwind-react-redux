@@ -40,6 +40,7 @@ export const Cluster: React.FC<VisProps> = ({
     if (currentHierarchy.name == "") {
       return;
     } else {
+      // Check if the hierarchy in the store is a new one (a new tree needs rendering)
       const newHier = hierarchy(currentHierarchy)
       const compareString = JSON.stringify(newHier.data)
       if (currentCluster?._svgId && JSON.stringify(currentCluster.rootData.data) !== compareString) {
