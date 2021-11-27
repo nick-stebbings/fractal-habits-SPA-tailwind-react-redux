@@ -49,7 +49,13 @@ import {
   isTouchDevice,
 } from "./components/helpers";
 
-import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
+import {
+  positiveCol,
+  negativeCol,
+  noNodeCol,
+  neutralCol,
+  parentPositiveCol,
+} from "app/constants";
 
 function radialPoint(x, y) {
   return [(y = +y) * Math.cos((x -= Math.PI / 2)), y * Math.sin(x)];
@@ -394,7 +400,7 @@ export default class Visualization {
   setdXdY() {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh -
-      +(this.type == "cluster") * 100;
+      +(this.type == "cluster") * 1000;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide;
 
@@ -452,15 +458,10 @@ export default class Visualization {
   sumHierarchyData() {
     this.rootData.sum((d) => {
       // Return a binary interpretation of whether the habit was completed that day
-      const thisNode = this.rootData
-        .descendants()
-        .find((node) => node.data == d);
-      console.log("thisNode :>> ", thisNode);
+      const thisNode = this.rootData;
       let content = parseTreeValues(thisNode.data.content);
-      console.log("content :>> ", content);
       if (content.status === "") return 0;
       const statusValue = JSON.parse(content.status);
-      console.log("statusValue :>> ", statusValue);
       return +statusValue;
     });
   }
@@ -541,18 +542,23 @@ export default class Visualization {
       .enter()
       .append("g")
       .attr("class", (d) => {
-        console.log(d.data.content, this?.activeNode?.data.content);
         return this.activeNode &&
           d.data.content === this.activeNode.data.content
           ? "the-node solid active"
           : "the-node solid";
       })
       .style("fill", (d) => nodeStatusColours(d, this.rootData))
+      .style("stroke", (d) =>
+        nodeStatusColours(d, this.rootData) === parentPositiveCol
+          ? positiveCol
+          : noNodeCol
+      )
       .style("opacity", (d) => this.activeOrNonActiveOpacity(d, "0.5"))
       .style("stroke-width", (d) =>
-        this.activeNode !== undefined && d.ancestors().includes(this.activeNode)
-          ? "2px"
-          : "0"
+        // !!this.activeNode && d.ancestors().includes(this.activeNode)
+        nodeStatusColours(d, this.rootData) === parentPositiveCol
+          ? "40px"
+          : "1px"
       )
       .attr("transform", (d) => {
         console.log("d :>> ", d);
@@ -911,12 +917,6 @@ export default class Visualization {
         `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
       );
     }
-    console.log(
-      "this.hasNewHierarchyData() :>> ",
-      this.firstRender(),
-      typeof this._hasRendered
-    );
-    console.log("this.hasNewHierarchyData() :>> ", this);
 
     if (this.firstRender() || this.hasNewHierarchyData()) {
       if (this.noCanvas()) return;
@@ -925,11 +925,13 @@ export default class Visualization {
       if (this.hasNextData()) this.rootData = this._nextRootData;
       this.setLayout();
       console.log("Formed new layout", this, "!");
+
       this.sumHierarchyData();
       this.accumulateNodeValues();
 
       this.setZoomBehaviour();
       this.setActiveNode(this.rootData.data.content);
+      this.clearCanvas();
 
       this.setNodeAndLinkGroups();
       this.setNodeAndLinkEnterSelections();

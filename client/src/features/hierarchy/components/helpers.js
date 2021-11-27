@@ -1,4 +1,9 @@
-import { positiveCol, negativeCol, noNodeCol, neutralCol } from "app/constants";
+import {
+  positiveCol,
+  negativeCol,
+  parentPositiveCol,
+  neutralCol,
+} from "app/constants";
 
 // General helpers
 
@@ -112,7 +117,8 @@ export const nodeStatusColours = (d, currentHierarchy) => {
   if (status == "false" && currentHierarchy.leaves().includes(d))
     return negativeCol;
   if (status === "") return negativeCol; // No habit_date recorded for that date
-  _p("node " + cumulativeValue(d), d, "!");
+  if (cumulativeValue(d) === 0 && status === "true") return parentPositiveCol; // Node is complete but some of its descendants are not.
+
   switch (cumulativeValue(d)) {
     case 1:
       return positiveCol;
