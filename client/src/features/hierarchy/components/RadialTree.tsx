@@ -65,7 +65,7 @@ export const RadialTree: React.FC<VisProps> = ({
       dispatch(
         createVis(
           {
-            label: 'clusterVis',
+            label: 'radialVis',
             vis: currentRadial
           }
         )

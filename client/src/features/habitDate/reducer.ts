@@ -71,21 +71,19 @@ export const habitDateSlice = createSlice({
   name: "habitDate",
   initialState,
   reducers: {
-    // createHabitDate(state, action: PayloadAction<NewHabitDatePayload>) {
-    //   const { habitDates, id } = action.payload.habitDate;
-    //   return {
-    //     ...state,
-    //     myRecords: { habitDate: habitDate || [] },
-    //   };
-    // },
-    // deleteHabitDate(state, action: PayloadAction<DeleteHabitDatePayload>) {
-    //   delete state[action.payload.id];
+    createHabitDate(state, action: PayloadAction<NewHabitDatePayload>) {
+      const { habitDates, id } = action.payload.habitDate;
+      return {
+        ...state,
+        myRecords: { habitDate: habitDate || [] },
+      };
+    },
+    // deleteHabitDate(state, action: PayloadAction<number>) {
+    //   delete state[action.payload];
     // },
     updateHabitDateForNode(state, action: PayloadAction<any>) {
       const { habitId, value } = action.payload;
-      // store.dispatch(
-      // fetchHabitDatesREST({ id: firstHabitId, periodLength: 7 })
-      // );
+      state.tempForCurrentDate;
     },
   },
   extraReducers: (builder) => {

@@ -53,7 +53,7 @@ export const HabitTree: React.FC<VisProps> = ({
 
   useEffect(() => {
     if (currentHierarchy.name == "") return;
-    if (currentRequestState === "SUCCESS" && !currentHabitTree._svgId) {
+    if (currentRequestState === "SUCCESS" && !(currentHabitTree._svgId)) {
       currentHabitTree = new Vis(
             `div${divId}`,
             hierarchy(currentHierarchy),
@@ -65,7 +65,7 @@ export const HabitTree: React.FC<VisProps> = ({
       dispatch(
         createVis(
           {
-            label: 'clusterVis',
+            label: 'treeVis',
             vis: currentHabitTree
           }
         )

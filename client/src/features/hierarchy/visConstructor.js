@@ -141,26 +141,26 @@ export default class Visualization {
       },
       handleAppendNode: function (event, node) {},
       handleNodeZoom: function (event, node, forParent = false) {
-        // if (!event || !node || event.deltaY >= 0 || deadNode(event)) return;
-        // this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
-        // const parentNode = { ...node.parent };
-        // // Set for cross render transformation memory
-        // this._zoomConfig.previousRenderZoom = {
-        //   event: event,
-        //   node: forParent ? parentNode : node,
-        //   content: node.data,
-        //   scale: this._zoomConfig.globalZoomScale,
-        // };
-        // select(".canvas")
-        //   .transition()
-        //   .ease(easePolyOut)
-        //   .duration(this.isDemo ? 0 : 550)
-        //   .attr(
-        //     "transform",
-        //     `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
-        //       this._zoomConfig.globalZoomScale
-        //     })`
-        //   );
+        if (!event || !node || event.deltaY >= 0) return;
+        this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
+        const parentNode = { ...node.parent };
+        // Set for cross render transformation memory
+        this._zoomConfig.previousRenderZoom = {
+          event: event,
+          node: forParent ? parentNode : node,
+          content: node.data,
+          scale: this._zoomConfig.globalZoomScale,
+        };
+        select(".canvas")
+          .transition()
+          .ease(easePolyOut)
+          .duration(this.isDemo ? 0 : 550)
+          .attr(
+            "transform",
+            `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
+              this._zoomConfig.globalZoomScale
+            })`
+          );
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
@@ -171,35 +171,35 @@ export default class Visualization {
             return this.reset();
           if (deadNode(event)) {
             //P: There is no habit node for this habit. To track a habit for this day we need to:
-            // - add a habit_date creation action, dispatched on toggle of a new habit_date node.
-            // If a toggle happened, set the new record accordingly in the store
+            // - add a habit_date via creation action, dispatched on toggle of a new habit_date node.
             // This should be immediately visible in the calendar widget
             // - Once a certain amount of time has passed, in order to save the data, we need to do a batch PUT request to the API to update the habit_dates for all habits on that date.
             // - Do this before moving to a new date
             // notify the user of the save with a flash message.
           }
-          console.log("event,node :>> ", event, node);
-          this.setActiveNode(node.data);
-          this.activateNodeAnimation();
-          setHabitLabel(node.data);
-          console.log(
-            "selectCurrentHabit(store.getState())?.meta.name, node.data :>> ",
-            selectCurrentHabit(store.getState())?.meta.name,
-            node.data
-          );
-          expand(node);
-          collapseAroundAndUnder(node, false, false);
           if (
             !(node.data.name == selectCurrentHabit(store.getState())?.meta.name)
           ) {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
+          setHabitLabel(node.data);
+          console.log("event,node :>> ", event, node);
+          this.setActiveNode(node.data, event);
+
+          this.activateNodeAnimation();
+
+          expand(node);
+          collapseAroundAndUnder(node, false, false);
         }
       },
       handleStatusChange: function (node) {
-        if (!this.rootData.leaves().includes(node) || node._children) return; // Non-leaf nodes have auto-generated cumulative status
-        // (Only leaves can toggle)
+        if (!this.rootData.leaves().includes(node) || node._children) {
+          // return;
+          // Non-leaf nodes have auto-generated cumulative status
+          // (Only leaves can toggle)
+          //  TODO: ENACT parentCompleted LOGIC
+        }
 
         const nodeContent = parseTreeValues(node.data.content);
         const currentStatus = nodeContent.status;
@@ -218,16 +218,21 @@ export default class Visualization {
       },
       handleNodeToggle: function (event, node) {
         event.preventDefault();
-        if (node.children) return;
+        if (node.children) {
+          // return;
+          // Non-leaf nodes have auto-generated cumulative status
+          // (Only leaves can toggle)
+          //  TODO: ENACT parentCompleted LOGIC
+        }
         this.previousRenderZoom = {
           event,
           node,
           content: node.data,
         };
         if (deadNode(event)) return this.reset();
-
-        // console.log("NODE TOGGLE :>> ");
         this.eventHandlers.handleStatusChange.call(this, node);
+
+        console.log("NODE TOGGLE :>> ");
       },
       handleMouseLeave: function (e) {
         const g = select(e.target);
@@ -307,8 +312,14 @@ export default class Visualization {
     );
   }
 
-  setActiveNode(clickedNode) {
-    this.activeNode = this.findNodeByContent(clickedNode);
+  setActiveNode(clickedNodeContent, event = null) {
+    this.activeNode = this.findNodeByContent(clickedNodeContent);
+
+    if (event) {
+      const currentActiveG = document.querySelector(".the-node.active");
+      if (currentActiveG) currentActiveG.classList.toggle("active");
+      event.target.closest(".the-node").classList.toggle("active");
+    }
     return this.activeNode;
   }
   findNodeByContent(node) {
@@ -529,11 +540,13 @@ export default class Visualization {
     this._enteringNodes = nodes
       .enter()
       .append("g")
-      .attr("class", (d) =>
-        this.activeNode && d.data.content === this.activeNode.data.content
+      .attr("class", (d) => {
+        console.log(d.data.content, this?.activeNode?.data.content);
+        return this.activeNode &&
+          d.data.content === this.activeNode.data.content
           ? "the-node solid active"
-          : "the-node solid"
-      )
+          : "the-node solid";
+      })
       .style("fill", (d) => nodeStatusColours(d, this.rootData))
       .style("opacity", (d) => this.activeOrNonActiveOpacity(d, "0.5"))
       .style("stroke-width", (d) =>
@@ -570,7 +583,9 @@ export default class Visualization {
       .attr("d", this.getLinkPathGenerator());
   }
   setCircleAndLabelGroups() {
-    this._gCircle = this._enteringNodes.append("g");
+    this._gCircle = this._enteringNodes
+      .append("g")
+      .classed("node-subgroup", true);
     this._gTooltip = this._enteringNodes
       .append("g")
       .classed("tooltip", true)
@@ -787,8 +802,10 @@ export default class Visualization {
   activateNodeAnimation() {
     // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
     // Credit: Andrew Reid
+    this.zoomBase().selectAll(".active-circle").remove();
+
     const gCircle = this.zoomBase().selectAll(
-      "g.the-node.solid.active g:first-child"
+      "g.the-node.solid.active g.node-subgroup"
     );
     gCircle.on("mouseover", this.eventHandlers.handleHover);
 
@@ -804,12 +821,12 @@ export default class Visualization {
     ];
 
     const pulseCircles = gCircle
-      .append("g")
+      .insert("g", ".habit-label-dash-button")
       .classed("active-circle", true)
       .attr("stroke-opacity", (d) => {
         return this.activeNode &&
           d.data.content === this.activeNode.data.content
-          ? "1"
+          ? "0.8"
           : "0";
       })
       .selectAll("circle")
@@ -865,7 +882,6 @@ export default class Visualization {
           return pulseScale(d);
         });
     }.bind(this);
-    showHabitLabel();
     transition();
   }
 
@@ -895,6 +911,12 @@ export default class Visualization {
         `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
       );
     }
+    console.log(
+      "this.hasNewHierarchyData() :>> ",
+      this.firstRender(),
+      typeof this._hasRendered
+    );
+    console.log("this.hasNewHierarchyData() :>> ", this);
 
     if (this.firstRender() || this.hasNewHierarchyData()) {
       if (this.noCanvas()) return;
@@ -907,7 +929,8 @@ export default class Visualization {
       this.accumulateNodeValues();
 
       this.setZoomBehaviour();
-      this.clearCanvas();
+      this.setActiveNode(this.rootData.data.content);
+
       this.setNodeAndLinkGroups();
       this.setNodeAndLinkEnterSelections();
       this.setCircleAndLabelGroups();
