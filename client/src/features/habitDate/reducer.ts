@@ -32,7 +32,40 @@ export const initialState: Dictionary<HabitDate[]> = {
 
 // If a completed habit has new child nodes added, it should become 'semi completed'. This means it can only achieve full completion once all ancestor nodes are complete.
 
-// If a habit didn't exist on a day, it should not be rendered
+//// \ If a habit didn't exist on a day, it should not be rendered
+
+// - WHEN a node is toggled and it is a parent
+//   - AND it is incomplete
+//     - THEN ask the user if all descendants should be complete,
+//     - AND add positive habit_nodes for all descendants
+//      - AND potentially collapse the node
+
+//    - OR if it should just become parentCompleted status
+//      - AND No new habit_dates are created for the descendants, but the node in question has habit_date toggled
+
+//   - AND it is complete
+//     - THEN ask the user if all descendants should be incomplete
+//     - AND add negative habit_nodes for all descendants
+//    - OR if it should just become incomplete status - the node in question has habit_date toggled
+
+// - WHEN a node is completed and a child is appended
+//   - THEN appended nodes don't yet have habit_dates
+//   - AND the view should update parent completed node to parentCompleted colour
+
+// E:
+
+// A:
+// - Set a new constant for node color 'parentCompleted', to yellow.
+
+// - WHEN a node is toggled and it is a parent
+//   - AND it is incomplete
+//   - AND it is complete
+
+// - WHEN a node is completed and a child is appended
+//   - THEN its new
+//   -
+
+// Set the calendar widget and tree to display the parentCompleted colour when a node is completed but it has children
 
 export const habitDateSlice = createSlice({
   name: "habitDate",

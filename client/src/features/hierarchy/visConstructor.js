@@ -167,11 +167,17 @@ export default class Visualization {
 
         const targ = event.target;
         if (targ.tagName == "circle") {
-          if (
-            targ.closest(".the-node").classList.contains("active") ||
-            deadNode(event)
-          )
+          if (targ.closest(".the-node").classList.contains("active"))
             return this.reset();
+          if (deadNode(event)) {
+            //P: There is no habit node for this habit. To track a habit for this day we need to:
+            // - add a habit_date creation action, dispatched on toggle of a new habit_date node.
+            // If a toggle happened, set the new record accordingly in the store
+            // This should be immediately visible in the calendar widget
+            // - Once a certain amount of time has passed, in order to save the data, we need to do a batch PUT request to the API to update the habit_dates for all habits on that date.
+            // - Do this before moving to a new date
+            // notify the user of the save with a flash message.
+          }
           console.log("event,node :>> ", event, node);
           this.activateNodeAnimation();
           this.setActiveNode(node.data);
