@@ -816,7 +816,7 @@ export default class Visualization {
     gCircle.on("mouseover", this.eventHandlers.handleHover);
 
     const pulseScale = scaleLinear()
-      .range(["#d0790f", "#5568d2", "#3349c1"])
+      .range(["#fff", "#5568d2", "#3349c1"])
       .domain([0, 3 * this._viewConfig.nodeRadius]);
 
     const pulseData = [

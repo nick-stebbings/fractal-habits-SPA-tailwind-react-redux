@@ -1,12 +1,19 @@
 import React from "react";
 
-import { positiveCol, negativeCol, noNodeCol } from "app/constants";
+import {
+  positiveCol,
+  negativeCol,
+  noNodeCol,
+  parentPositiveCol,
+} from "app/constants";
 function getColor(completedStatus) {
   switch (completedStatus) {
     case true:
       return positiveCol;
     case false:
       return negativeCol;
+    case "parentCompleted":
+      return parentPositiveCol;
     default:
       return noNodeCol;
   }
