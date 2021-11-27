@@ -55,7 +55,7 @@ export const initialState: Dictionary<HabitDate[]> = {
 // E:
 
 // A:
-// - Set a new constant for node color 'parentCompleted', to yellow.
+//\ Set a new constant for node color 'parentCompleted', to yellow.
 
 // - WHEN a node is toggled and it is a parent
 //   - AND it is incomplete

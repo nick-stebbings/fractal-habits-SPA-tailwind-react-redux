@@ -179,15 +179,18 @@ export default class Visualization {
             // notify the user of the save with a flash message.
           }
           console.log("event,node :>> ", event, node);
-          this.activateNodeAnimation();
           this.setActiveNode(node.data);
-
-          expand(node);
-
+          this.activateNodeAnimation();
           setHabitLabel(node.data);
+          console.log(
+            "selectCurrentHabit(store.getState())?.meta.name, node.data :>> ",
+            selectCurrentHabit(store.getState())?.meta.name,
+            node.data
+          );
+          expand(node);
           collapseAroundAndUnder(node, false, false);
           if (
-            !node.data.name == selectCurrentHabit(store.getState())?.meta.name
+            !(node.data.name == selectCurrentHabit(store.getState())?.meta.name)
           ) {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
