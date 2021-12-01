@@ -93,16 +93,21 @@ export const cumulativeValue = (node) => {
     // if expanded
     if (content === "true") {
       return 1;
-    } else if (node && node.children)
-      return node && node.children
-        ? +(
-            // Were all descendant nodes accumulated to have a 1 value each?
-            (
-              sumChildrenValues(node) >= node.children.length &&
-              node.children.every((n) => cumulativeValue(n) === 1)
-            )
-          )
-        : 0;
+    } else if (node && node.children) {
+      // console.log(
+      //   "object :>> ",
+      //   sumChildrenValues(node) >= node.children.length,
+      //   node.children.every((n) => cumulativeValue(n) === 1),
+      //   sumChildrenValues(node)
+      // );
+      return +(
+        // Were all descendant nodes accumulated to have a 1 value each?
+        (
+          sumChildrenValues(node) >= node.children.length &&
+          node.children.every((n) => cumulativeValue(n) === 1)
+        )
+      );
+    }
   } catch (err) {
     console.log("Could not accumulate.");
   }
@@ -118,10 +123,10 @@ export const nodeStatusColours = (d, currentHierarchy) => {
     return neutralCol;
 
   const status = parseTreeValues(d.data.content).status;
-  console.log("d :>> ", status);
+
   if (status == "false" && currentHierarchy.leaves().includes(d))
     return negativeCol;
-  if (status === "") console.log(d); // No habit_date recorded for that date
+
   if (cumulativeValue(d) === 0 && status === "true") return parentPositiveCol; // Node is complete but some of its descendants are not.
 
   switch (cumulativeValue(d)) {
@@ -130,7 +135,6 @@ export const nodeStatusColours = (d, currentHierarchy) => {
     case 0:
       return negativeCol;
     default:
-      console.log("left thil last :>> ");
       return neutralCol;
   }
 };

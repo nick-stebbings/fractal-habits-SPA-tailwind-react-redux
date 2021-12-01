@@ -459,7 +459,9 @@ export default class Visualization {
   sumHierarchyData() {
     this.rootData.sum((d) => {
       // Return a binary interpretation of whether the habit was completed that day
-      const thisNode = this.rootData;
+      const thisNode = this.rootData
+        .descendants()
+        .find((node) => node.data == d);
       let content = parseTreeValues(thisNode.data.content);
       if (content.status === "") return 0;
       const statusValue = JSON.parse(content.status);
@@ -562,7 +564,6 @@ export default class Visualization {
           : "1px"
       )
       .attr("transform", (d) => {
-        console.log("d :>> ", d);
         if (this.type == "radial")
           return "translate(" + radialPoint(d.x, d.y) + ")";
         return this.type == "cluster"
@@ -573,7 +574,11 @@ export default class Visualization {
 
     // Links
     const links = this._gLink.selectAll("line.link").data(
-      this.rootData.links().filter(({ _, target }) => nodeExists(target)) // Remove habits that weren't being tracked then
+      this.rootData
+        .links()
+        .filter(
+          ({ source, target }) => nodeExists(source) && nodeExists(target)
+        ) // Remove habits that weren't being tracked then
     );
     this._enteringLinks = links
       .enter()
@@ -923,10 +928,9 @@ export default class Visualization {
       // Update the current day's rootData
       if (this.hasNextData()) this.rootData = this._nextRootData;
       this.setLayout();
-      console.log("Formed new layout", this, "!");
-
       this.sumHierarchyData();
       this.accumulateNodeValues();
+      console.log("Formed new layout", this, "!");
 
       this.setZoomBehaviour();
       this.setActiveNode(this.rootData.data.content);
