@@ -47,6 +47,7 @@ import {
   parseTreeValues,
   cumulativeValue,
   isTouchDevice,
+  nodeExists,
 } from "./components/helpers";
 
 import {
@@ -358,7 +359,7 @@ export default class Visualization {
     store.dispatch(
       fetchHabitDatesREST({
         id: newCurrent?.meta.id,
-        periodLength: 7,
+        periodLength: 3, // TODO change this back to 7
       })
     );
   }
@@ -536,7 +537,7 @@ export default class Visualization {
   setNodeAndLinkEnterSelections() {
     const nodes = this._gNode
       .selectAll("g.node")
-      .data(this.rootData.descendants().filter((n) => n.value !== undefined)); // Remove habits that weren't being tracked then);
+      .data(this.rootData.descendants().filter(nodeExists)); // Remove habits that weren't being tracked then);
 
     this._enteringNodes = nodes
       .enter()
@@ -572,9 +573,7 @@ export default class Visualization {
 
     // Links
     const links = this._gLink.selectAll("line.link").data(
-      this.rootData
-        .links()
-        .filter(({ _, target }) => target.value !== undefined) // Remove habits that weren't being tracked then
+      this.rootData.links().filter(({ _, target }) => nodeExists(target)) // Remove habits that weren't being tracked then
     );
     this._enteringLinks = links
       .enter()

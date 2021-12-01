@@ -18,7 +18,7 @@ export const actionStrings = [
 ];
 let clientRouteDict = clientRoutes(BASE_PATH);
 clientRouteDict.show_all = ({ id, periodLength }) =>
-  clientRoutes(`/habits/${id}/habit_dates?length=${365}`).show_all();
+  clientRoutes(`/habits/${id}/habit_dates?length=${periodLength}`).show_all();
 
 const thunkCallBacks = Object.values(clientRouteDict);
 

@@ -17,7 +17,7 @@ export const selectLastWeekSpaces = (state: RootState) => state?.space.lastWeek;
 export const selectCurrentSpace = (state: RootState) => state?.space.current;
 
 export const selectCurrentDateId = (state: RootState) => {
-  let baseDate = DateTime.fromISO("2021-11-25").startOf("day"); // Hard coded for the demo app. There is no date model but there is in the API until it is phased out.
+  let baseDate = DateTime.fromISO("2021-11-29").startOf("day"); // Hard coded for the demo app. There is no date model but there is in the API until it is phased out.
   let dateDiff = DateTime.local()
     .startOf("day")
     .diff(baseDate, ["day"])
@@ -30,7 +30,7 @@ export interface Space {
 }
 
 export const initialState: Dictionary<Space[] | number> = {
-  thisWeek: weekOfDaySpaces(),
+  thisWeek: weekOfDaySpaces(0),
   lastWeek: weekOfDaySpaces(-7),
   nextWeek: weekOfDaySpaces(7),
   current: createInterval(),

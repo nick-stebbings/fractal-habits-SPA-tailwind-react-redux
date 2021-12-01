@@ -28,11 +28,15 @@ export const selectIsCompletedDate = (fromDateUnixTs: number) => {
         dates.some(
           ({ timeframe }: TimeFrame) => timeframe.fromDate == fromDateUnixTs
         );
+      console.log(
+        "isCompleted :>> " + currentHabit.meta.name,
+        isCompleted,
+        fromDateUnixTs
+      );
+
       const currentHabitHierarchyNode = hierarchy(hierarchyData).find(
         (n: any) => n.data.name == currentHabit.meta.name
       );
-      console.log(currentHabitHierarchyNode);
-
       const hasDescendantsIncomplete =
         !!currentHabitHierarchyNode?.children &&
         currentHabitHierarchyNode.children.some(

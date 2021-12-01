@@ -34,7 +34,6 @@ const mapCallbacks = {
   },
   habit_dates: (element) => {
     const { date, completed_status, habit_id } = element;
-    if (!completed_status) return;
 
     const daySpace = createInterval(0, 1, DateTime.fromSQL(date));
     return {
@@ -71,9 +70,11 @@ export function crudReducer(state, action, create, fetch, update, destroy) {
 
     case fetch.fulfilled().type:
       // parsed is e.g. { "habits": [ { "id": 1, "name": "another test"... }, ... ]
+      console.log("parsed :>> ", parsed);
       mapped = Object.values(parsed)[0]
         .map(mapCallbacks[model])
         .filter((record) => record !== undefined);
+      console.log("mapped :>> ", mapped);
       return {
         current: mapped[0] || state.current, //.slice(-1)
         myRecords: mapped,
