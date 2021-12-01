@@ -47,7 +47,7 @@ import {
   parseTreeValues,
   cumulativeValue,
   isTouchDevice,
-  nodeExists,
+  habitDatePersisted,
 } from "./components/helpers";
 
 import {
@@ -177,9 +177,9 @@ export default class Visualization {
           if (targ.closest(".the-node").classList.contains("active"))
             return this.reset();
           if (deadNode(event)) {
-            //P: There is no habit node for this habit. To track a habit for this day we need to:
-            // - add a habit_date via creation action, dispatched on toggle of a new habit_date node.
-            // This should be immediately visible in the calendar widget
+            //P: There is no habit node for this habit. To track a habit for this day:
+            // - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
+            // - We need a visual representation of the node. When a node with this state is toggled, it has a nonPersisted habitDate in the store, set to COMPLETE (a red dot).
             // - Once a certain amount of time has passed, in order to save the data, we need to do a batch PUT request to the API to update the habit_dates for all habits on that date.
             // - Do this before moving to a new date
             // notify the user of the save with a flash message.
@@ -191,7 +191,7 @@ export default class Visualization {
             this.setCurrentNode(node);
           }
           setHabitLabel(node.data);
-          console.log("event,node :>> ", event, node);
+          // console.log("event,node :>> ", event, node);
           this.setActiveNode(node.data, event);
 
           this.activateNodeAnimation();
@@ -201,11 +201,21 @@ export default class Visualization {
         }
       },
       handleStatusChange: function (node) {
-        if (!this.rootData.leaves().includes(node) || node._children) {
-          // return;
-          // Non-leaf nodes have auto-generated cumulative status
-          // (Only leaves can toggle)
+        if (this.isNotALeaf(node)) {
           //  TODO: ENACT parentCompleted LOGIC
+          // 3 state changes possible:
+          // - FROM P_C to all subtree completed
+          // - FROM P_N_C to all subtree completed
+          // - FROM P_N_C to all subtree not-completed?
+        }
+        if (!habitDatePersisted(node)) {
+          // return if not a leaf;
+          // if !habitDateStored
+          // then dispatch a new habitDate action.
+          // turn the ui green for that node.
+          // turn all single parents green too
+          // alter the logic for parentCompleted nodes such that they recognise temp habitDates in the store
+        } else {
         }
 
         const nodeContent = parseTreeValues(node.data.content);
@@ -306,6 +316,9 @@ export default class Visualization {
     return typeof this?._hasRendered == "undefined";
   }
 
+  isNotALeaf(node) {
+    !this.rootData.leaves().includes(node) || node?._children;
+  }
   noCanvas() {
     return typeof this?._canvas == "undefined";
   }
@@ -539,7 +552,7 @@ export default class Visualization {
   setNodeAndLinkEnterSelections() {
     const nodes = this._gNode
       .selectAll("g.node")
-      .data(this.rootData.descendants().filter(nodeExists)); // Remove habits that weren't being tracked then);
+      .data(this.rootData.descendants()); // Remove habits that weren't being tracked then); //.filter(habitDatePersisted)
 
     this._enteringNodes = nodes
       .enter()
@@ -550,7 +563,10 @@ export default class Visualization {
           ? "the-node solid active"
           : "the-node solid";
       })
-      .style("fill", (d) => nodeStatusColours(d, this.rootData))
+      .style("fill", (d) => {
+        if (!habitDatePersisted(d)) return parentPositiveCol;
+        return nodeStatusColours(d, this.rootData);
+      })
       .style("stroke", (d) =>
         nodeStatusColours(d, this.rootData) === parentPositiveCol
           ? positiveCol
@@ -574,11 +590,10 @@ export default class Visualization {
 
     // Links
     const links = this._gLink.selectAll("line.link").data(
-      this.rootData
-        .links()
-        .filter(
-          ({ source, target }) => nodeExists(source) && nodeExists(target)
-        ) // Remove habits that weren't being tracked then
+      this.rootData.links()
+      // .filter(
+      //   ({ source, target }) => habitDatePersisted(source) && habitDatePersisted(target)
+      // ) // Remove habits that weren't being tracked then
     );
     this._enteringLinks = links
       .enter()

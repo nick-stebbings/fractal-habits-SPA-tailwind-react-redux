@@ -73,7 +73,7 @@ export const parseTreeValues = (valueString) => {
   }
 };
 
-export const nodeExists = (node) =>
+export const habitDatePersisted = (node) =>
   // node.value !== undefined &&
   node?.data?.content && parseTreeValues(node.data.content).status !== "";
 
@@ -93,12 +93,6 @@ export const cumulativeValue = (node) => {
     // if expanded
     if (content === "true") {
       if (node && node.children) {
-        console.log(
-          "object :>> ",
-          sumChildrenValues(node) >= node.children.length,
-          node.children.every((n) => cumulativeValue(n) === 1),
-          sumChildrenValues(node)
-        );
         return +(
           // Were all descendant nodes accumulated to have a 1 value each?
           (
@@ -128,7 +122,6 @@ export const nodeStatusColours = (d, currentHierarchy) => {
 
   if (status == "false" && currentHierarchy.leaves().includes(d))
     return negativeCol;
-  console.log("object :>> ", cumulativeValue(d));
   if (cumulativeValue(d) === 0 && status === "true") return parentPositiveCol; // Node is complete but some of its descendants are not.
 
   switch (cumulativeValue(d)) {

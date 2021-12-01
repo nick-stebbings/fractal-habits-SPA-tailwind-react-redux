@@ -48,7 +48,7 @@ export const Header = ({isVis}) => {
   const dispatch = useAppDispatch()
   const currentDateId = useAppSelector(selectCurrentDateId);
   const currentHabit = useAppSelector(selectCurrentHabit);
-  console.log('render header');
+  // console.log('render header');
   const handlePrevDate = (_:any) => {
     isVis && dispatch(fetchHabitTreeREST({ domainId: 1, dateId: currentDateId - 1 }))
     dispatch(decrementIdx())
