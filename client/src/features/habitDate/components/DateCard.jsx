@@ -7,6 +7,7 @@ import {
   parentPositiveCol,
 } from "app/constants";
 function getColor(completedStatus) {
+  console.log("completedStatus :>> ", completedStatus);
   switch (completedStatus) {
     case true:
       return positiveCol;
