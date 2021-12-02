@@ -29,14 +29,6 @@ clientRouteDict.show_all = async (_: any, thunkAPI: any) =>
   fetchRoute().then((response: any) => {
     const parsed = JSON.parse(response!.data);
     const s = thunkAPI.getState();
-    console.log(
-      "!(selectCurrentHabit(s)?.meta.id) :>> ",
-      !selectCurrentHabit(s)?.meta.id
-    );
-    console.log(
-      selectCurrentHabit(s)?.meta.id,
-      selectCurrentHabitDate(s)?.habitId
-    );
     if (
       !selectCurrentHabit(s)?.meta.id ||
       selectCurrentHabit(s)?.meta.id !== selectCurrentHabitDate(s)?.habitId

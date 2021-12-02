@@ -3,13 +3,13 @@ import React, { ComponentType, useEffect } from 'react'
 import { useAppSelector } from 'app/hooks';
 import uiSlice from 'features/ui/reducer';
 const {toggleConfirm} = uiSlice.actions
-import { getUIStatus } from 'features/ui/selectors';
+import { getUIStatus, getConfirmStatus } from 'features/ui/selectors';
 
 // @ts-ignore
 import { Modal } from 'components/Modal';
 import { store } from 'app/store';
 
-export const openModal = function ({open = true} = {open: true}) {
+export const openModal = function ({open = true}) {
   const modalOverlay = document.querySelector("#modal_overlay");
   if (!modalOverlay) return;
   const modal = modalOverlay.querySelector("#modal");
@@ -40,15 +40,18 @@ export const openModal = function ({open = true} = {open: true}) {
 };
 
 export function withModal<T>(Component: ComponentType<T>) {
-  return React.memo((hocProps: T) => {
-    useEffect(() => {
-      openModal()
-    }, [])
+  return (hocProps: T) => {
     const resetConfirm = () => store.dispatch(toggleConfirm())
     
     const uiStatus = useAppSelector(getUIStatus);
     const type = uiStatus?.responseStatus.status
-    const confirmStatus = uiStatus?.confirmStatus
+    const confirmStatus = useAppSelector(getConfirmStatus)
+
+    useEffect(() => {
+      console.log('opened');
+      openModal({ open: !!confirmStatus })
+    }, [])
+    
     switch (true) {
       case (type == 'ERROR'):
         return (
@@ -57,20 +60,13 @@ export function withModal<T>(Component: ComponentType<T>) {
           <Component {...hocProps}></Component>
           </>
         )
-      case (type == 'IDLE' && confirmStatus):
+      case (confirmStatus):
         return (
           <>
           <Modal type={uiStatus?.confirmType} toggle={openModal} resetConfirm={resetConfirm} />
           <Component {...hocProps}></Component>
           </>
         )
-      // case (confirmStatus):
-      //   return (
-      //     <>
-      //     <Modal type={'Confirm'} toggle={openModal} />
-      //     <Component {...hocProps}></Component>
-      //     </>
-      //   )
       case (type == 'LOADING'):
         return (
           <>
@@ -81,5 +77,5 @@ export function withModal<T>(Component: ComponentType<T>) {
       default:
         return <Component {...hocProps}></Component>
     }
-  })
+  }
 }

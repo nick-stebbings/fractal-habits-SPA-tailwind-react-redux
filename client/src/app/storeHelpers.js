@@ -72,6 +72,10 @@ export function crudReducer(
     // CREATE AND UPDATE SHARE A RESPONSE TYPE
     case create.fulfilled().type:
     case update.fulfilled().type:
+      state = {
+        ...state,
+        myRecords: [...state.myRecords].concat(mapCallbacks["habits"](parsed)),
+      };
     // FETCH ONE ALSO
     case fetchOne?.fulfilled().type:
       return model == "habit"

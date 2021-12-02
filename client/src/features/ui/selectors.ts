@@ -9,5 +9,5 @@ export const getRequestStatus = (state: RootState) => {
 };
 
 export const getConfirmStatus = (state: RootState) => {
-  return state?.ui.confirmStatus.status;
+  return state?.ui.confirmStatus;
 };

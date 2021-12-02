@@ -43,10 +43,12 @@ const uiStatus = createSlice({
   initialState,
   reducers: {
     toggleConfirm(state, action) {
-      state.confirmStatus = !state.confirmStatus;
-      if (state.confirmStatus) {
-        const { type } = action.payload;
+      const type = action?.payload?.type;
+      if (typeof type !== "undefined") {
         state.confirmType = type;
+        state.confirmStatus = true;
+      } else {
+        state.confirmStatus = !state.confirmStatus;
       }
       return state;
     },
@@ -63,7 +65,7 @@ const uiStatus = createSlice({
       state.responseStatus = errorState;
     });
     builder.addDefaultCase((state) => ({
-      confirmStatus: false,
+      ...state,
       responseStatus: idleState,
     }));
   },

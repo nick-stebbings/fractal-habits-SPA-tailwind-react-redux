@@ -12,14 +12,23 @@ import { destroyHabitREST } from "features/habit/actions";
 
 const TITLES = {
   Confirm: "Message: You are about to...",
-  AddHabit: "Create a new habit under the life domain",
+  Prepend: "Create a new root habit for the life domain",
+  Append: "Create a new child habit under the life domain",
   Error: "There has been an error!",
   Delete: "You are about to...",
 };
 
 export const Modal = ({ type, toggle, resetConfirm }) => {
   const currentDomain = useAppSelector(selectCurrentDomain);
+  const currentHabit = useAppSelector(selectCurrentHabit);
   _p("modal type :>> " + type, type, "warning");
+
+  const formTitle = (type) => {
+    const currentHabitName = currentHabit?.meta?.name;
+    return type == "Prepend"
+      ? `a parent of the "${currentHabitName}" habit`
+      : `a child of the "${currentHabitName}" habit`;
+  };
 
   let confirmationDialog = ["Confirm", "Delete"].includes(type);
   return (
@@ -44,17 +53,25 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
                 {TITLES[type]}
               </h2>
               <h3 className="mt-2 text-2xl font-bold text-center">
-                {type == "AddHabit" && (
-                  <span>{`${currentDomain.meta.name}`}</span>
-                )}
+                {type == "Prepend" ||
+                  (type == "Append" && (
+                    <span>{`${currentDomain.meta.name}`}</span>
+                  ))}
               </h3>
             </div>
             {["Prepend", "Append"].includes(type) && (
               <CreateForm
+                title=""
+                message={formTitle(type)}
                 modalType={type}
                 resourceName="habit"
                 addHeader={false}
-                toggleClose={toggle}
+                toggleClose={() => {
+                  resetConfirm();
+                  toggle({
+                    open: false,
+                  });
+                }}
               />
             )}
             {type == "Confirm" && (

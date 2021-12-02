@@ -18,6 +18,8 @@ const randId = String(Math.ceil(Math.random() * 100));
 
 export const CreateForm = ({
   modalType,
+  title,
+  message,
   resourceName,
   addHeader,
   toggleClose,
@@ -67,84 +69,89 @@ export const CreateForm = ({
 
     createHabit(data);
     // Close the modal
-    toggleClose({ open: false });
+    toggleClose();
   };
 
   return isDemo ? (
     <div className="my-2 mx-2">No Habit creation in Demo mode!</div>
   ) : (
-    <form id={`create-habit`} onSubmit={handleSubmit}>
-      {addHeader && (
-        <FormHeader
-          iconPath="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-          title={`Create a ${resourceName}`}
-          domain={currentDomain.meta.name}
-        />
-      )}
-
-      <FormBody>
-        <InputGroup
-          name={`habit-title-${randId}`}
-          label={"Habit Name"}
-          classString={"reqd"}
-        >
-          <input
-            type="text"
-            name="name"
-            id={`habit-title-${randId}`}
-            className={"form-input"}
-            required={true}
-            maxLength={50}
-            placeholder={"e.g. Hydrate in the A.M."}
-          />
-        </InputGroup>
-
-        <InputGroup
-          name={`habit-description-${randId}`}
-          label={"Habit Description"}
-        >
-          <input
-            type={"text"}
-            name={"description"}
-            id={`habit-description-${randId}`}
-            className={"form-input"}
-            maxLength={"80"}
-            placeholder={"e.g. Drinking water each day after waking"}
-          />
-        </InputGroup>
-        <InputGroup
-          name={`initiation-date-${randId}`}
-          label={"Initiation Date"}
-          classString={"reqd"}
-        >
-          <input
-            type={"date"}
-            id={`initiation-date-${randId}`}
-            required={true}
-            name="initiation-date"
-            className="form-input w-3/4 sm:w-2/3 md:w-1/2"
-            max={new Date().toDateInputValue()}
-            defaultValue={new Date().toDateInputValue()}
-            min="2021-06-01"
-          />
-        </InputGroup>
-      </FormBody>
-
-      <div className="button-group py-3 bg-white border-t border-gray-200">
-        <CancelButton
-          id={`close-modal-${randId}`}
-          name="close"
-          label="Forget It"
-          modalType={modalType}
-          toggleClose={toggleClose}
-        />
-        <SubmitButton
-          id={`submit-form-${String(Math.ceil(Math.random() * 100))}`}
-          name="submit"
-          label="Start Tracking"
-        />
+    <div className="m-0">
+      <div className="self-start block pl-2 text-xl font-semibold text-gray-700">
+        <h2 className="leading-relaxed">{title}</h2>
+        <p className="text-sm font-normal leading-relaxed text-gray-500">
+          {message}
+        </p>
       </div>
-    </form>
+      <form id={`create-habit`} onSubmit={handleSubmit}>
+        {addHeader && (
+          <FormHeader
+            iconPath="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+            title={`Create a ${resourceName}`}
+            domain={currentDomain.meta.name}
+          />
+        )}
+        <FormBody>
+          <InputGroup
+            name={`habit-title-${randId}`}
+            label={"Habit Name"}
+            classString={"reqd"}
+          >
+            <input
+              type="text"
+              name="name"
+              id={`habit-title-${randId}`}
+              className={"form-input"}
+              required={true}
+              maxLength={50}
+              placeholder={"e.g. Hydrate in the A.M."}
+            />
+          </InputGroup>
+          <InputGroup
+            name={`habit-description-${randId}`}
+            label={"Habit Description"}
+          >
+            <input
+              type={"text"}
+              name={"description"}
+              id={`habit-description-${randId}`}
+              className={"form-input"}
+              maxLength={"80"}
+              placeholder={"e.g. Drinking water each day after waking"}
+            />
+          </InputGroup>
+          <InputGroup
+            name={`initiation-date-${randId}`}
+            label={"Initiation Date"}
+            classString={"reqd"}
+          >
+            <input
+              type={"date"}
+              id={`initiation-date-${randId}`}
+              required={true}
+              name="initiation-date"
+              className="form-input w-3/4 sm:w-2/3 md:w-1/2"
+              max={new Date().toDateInputValue()}
+              defaultValue={new Date().toDateInputValue()}
+              min="2021-06-01"
+            />
+          </InputGroup>
+        </FormBody>
+        <div className="button-group py-3 bg-white border-t border-gray-200">
+          <CancelButton
+            id={`close-modal-${randId}`}
+            name="close"
+            label="Forget It"
+            modalType={modalType}
+            handleClose={toggleClose}
+          />
+          <SubmitButton
+            id={`submit-form-${String(Math.ceil(Math.random() * 100))}`}
+            name="submit"
+            label="Start Tracking"
+          />
+        </div>
+      </form>
+    </div>
   );
 };
 
