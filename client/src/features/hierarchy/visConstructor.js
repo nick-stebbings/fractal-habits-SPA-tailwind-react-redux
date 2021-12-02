@@ -143,6 +143,9 @@ export default class Visualization {
 
     this.eventHandlers = {
       handlePrependNode: function (event, node) {
+        let isRoot = node.parent == undefined;
+        console.log("isRoot :>> ", isRoot);
+        // debugger
         store.dispatch(toggleConfirm({ type: "Prepend" }));
       },
       handleAppendNode: function (event, node) {
