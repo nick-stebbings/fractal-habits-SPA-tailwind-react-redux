@@ -379,10 +379,6 @@ export default class Visualization {
     );
     store.dispatch(updateCurrentHabit(newCurrent));
     const s = store.getState();
-    console.log(
-      selectCurrentHabit(s)?.meta.id,
-      selectCurrentHabitDate(s)?.habitId
-    );
     if (selectCurrentHabit(s)?.meta.id !== selectCurrentHabitDate(s)?.habitId) {
       store.dispatch(
         fetchHabitDatesREST({

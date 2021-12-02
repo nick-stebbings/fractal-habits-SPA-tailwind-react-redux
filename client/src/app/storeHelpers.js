@@ -71,7 +71,6 @@ export function crudReducer(
   switch (type) {
     // CREATE AND UPDATE SHARE A RESPONSE TYPE
     case create.fulfilled().type:
-      console.log("parsed :>> ", parsed);
     case update.fulfilled().type:
     // FETCH ONE ALSO
     case fetchOne?.fulfilled().type:
@@ -98,10 +97,12 @@ export function crudReducer(
     // DESTROY
 
     case destroy.fulfilled().type:
-      mapped = Object.values(parsed)[0].map(mapCallbacks[model]);
+      const newMyRecords = [...state.myRecords].filter(
+        (r) => r.meta.id !== +payload.config.url.split`/`.reverse()[0]
+      );
       return {
-        ...state,
-        myRecords: mapped,
+        myRecords: newMyRecords,
+        current: newMyRecords[0] || {},
       };
     default:
       return state;

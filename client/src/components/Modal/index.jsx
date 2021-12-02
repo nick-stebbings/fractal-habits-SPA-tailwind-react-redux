@@ -1,11 +1,14 @@
 import React from "react";
 
 import { selectCurrentDomain } from "features/domain/selectors";
+import { selectCurrentHabit } from "features/habit/selectors";
 
 import { CreateForm } from "../Forms/CreateForm";
 import { DialogBox } from "./DialogBox";
 import { InfoBox } from "./InfoBox";
 import { useAppSelector } from "app/hooks";
+import { store } from "app/store";
+import { destroyHabitREST } from "features/habit/actions";
 
 const TITLES = {
   Confirm: "Message: You are about to...",
@@ -80,7 +83,12 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
                   resetConfirm();
                   toggle({ open: false });
                 }}
-                handleConfirm={() => {}}
+                handleConfirm={(e) => {
+                  e.preventDefault();
+                  const currentId = selectCurrentHabit(store.getState()).meta
+                    .id;
+                  store.dispatch(destroyHabitREST({ id: currentId }));
+                }}
               />
             )}
             {type == "Error" && (
