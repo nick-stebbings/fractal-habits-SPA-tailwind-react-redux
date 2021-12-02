@@ -51,9 +51,7 @@ export const setHabitLabel = (data) => {
 // Node Status helpers
 
 export const oppositeStatus = (current) =>
-  current === undefined || current === "false" || current == "incomplete"
-    ? "true"
-    : "false";
+  [undefined, "false", "incomplete", ""].includes(current) ? "true" : "false";
 
 export const sumChildrenValues = (node, hidden = false) =>
   hidden

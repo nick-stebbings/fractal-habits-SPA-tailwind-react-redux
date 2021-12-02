@@ -147,6 +147,7 @@ export default class Visualization {
         // store.dispatch(createHabitREST());
       },
       handleAppendNode: function (event, node) {},
+      handleDeleteNode: function (event, node) {},
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
@@ -224,6 +225,10 @@ export default class Visualization {
         node.data.content = node.data.content.replace(
           /true|false|incomplete/,
           oppositeStatus(currentStatus)
+          // TODO:
+          // 1.alter the node status in memory
+          // 2. re-sum, re-accumulate node values.
+          // 3. re-render without reloading hierarchy data.
         );
         if (!node.data.name.includes("Sub-Habit")) {
           // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
@@ -246,7 +251,7 @@ export default class Visualization {
           node,
           content: node.data,
         };
-        if (deadNode(event)) return this.reset();
+        // if (deadNode(event)) return this.reset();
         this.eventHandlers.handleStatusChange.call(this, node);
 
         console.log("NODE TOGGLE :>> ");
@@ -686,33 +691,23 @@ export default class Visualization {
       .attr("transform", this.type == "radial" ? "scale(0.75)" : "");
   }
   appendButtons() {
-    // this._gButton
-    //   .append("rect")
-    //   .attr("rx", 15)
-    //   .attr("y", 5)
-    //   .attr("width", 100)
-    //   .attr("height", 30)
-    //   .on("click", (e) => {
-    //     e.stopPropagation();
-    //   });
+    const delBtnG = this._gButton.append("g");
+    delBtnG
+      .append("path")
+      .attr("d", "M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z")
+      .attr("fill", "#e06a58")
+      .on("click", this.eventHandlers.handleDeleteNode.bind(this));
     // this._gButton
     //   .append("text")
     //   .attr("x", 15)
-    //   .attr("y", isDemo ? 25 : 30)
-    //   .text((d) => "DETAILS")
-    //   .on("click", (e, n) => {
-    // HabitStore.current(HabitStore.filterByName(n.data.name)[0]);
-    // let currentId = HabitStore.current()?.id;
-    // m.route.set(
-    //   m.route.param("demo") ? `/habits/list?demo=true` : `/habits/list`,
-    //   { currentHabit: currentId }
-    // );
-    // });
+    //   .attr("y", this.isDemo ? 25 : 30)
+    //   .text((d) => "DELETE")
+    //   .on("click", (e, n) => {});
     if (!this.isDemo) {
       this._gButton
         .append("rect")
         .attr("rx", 15)
-        .attr("y", -20)
+        .attr("y", -30)
         .attr("width", 100)
         .attr("height", 30)
         .on("click", (e) => {
@@ -721,7 +716,7 @@ export default class Visualization {
       this._gButton
         .append("text")
         .attr("x", 15)
-        .attr("y", (d) => (d.parent ? 2 : 5))
+        .attr("y", (d) => (d.parent ? -8 : -5))
         .text((d) => "APPEND")
         .on("click", (e, n) => {
           this.eventHandlers.handleAppendNode.call(this, e, n);
@@ -730,7 +725,7 @@ export default class Visualization {
         .append("rect")
         .attr("style", (d) => (d.parent ? "opacity: 0" : "opacity: 1"))
         .attr("rx", 15)
-        .attr("y", -45)
+        .attr("y", -55)
         .attr("width", 100)
         .attr("height", 30)
         .on("click", (e) => {
@@ -740,7 +735,7 @@ export default class Visualization {
         .append("text")
         .attr("style", (d) => (d.parent ? "opacity: 0" : "opacity: 1"))
         .attr("x", 12)
-        .attr("y", -20)
+        .attr("y", -30)
         // .attr("x", 15)
         // .attr("y", -45)
         .text((d) => "PREPEND")
