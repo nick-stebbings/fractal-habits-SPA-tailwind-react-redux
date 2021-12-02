@@ -28,7 +28,6 @@ const { toggleConfirm } = UISlice.actions;
 import HabitSlice from "features/habit/reducer";
 const { updateCurrentHabit } = HabitSlice.actions;
 import NodeSlice from "features/node/reducer";
-import { createHabitREST } from "features/habit/actions";
 const { updateCurrentNode } = NodeSlice.actions;
 import HabitDateSlice from "features/habitDate/reducer";
 const { updateHabitDateForNode } = HabitDateSlice.actions;
@@ -699,7 +698,7 @@ export default class Visualization {
       .append("path")
       .attr("d", "M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z")
       .attr("fill", "#e06a58")
-      .on("click", this.eventHandlers.handleDeleteNode.bind(this));
+      .on("click", this.eventHandlers.handleDeleteNode);
     // this._gButton
     //   .append("text")
     //   .attr("x", 15)

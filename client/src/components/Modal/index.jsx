@@ -11,13 +11,14 @@ const TITLES = {
   Confirm: "Message: You are about to...",
   AddHabit: "Create a new habit under the life domain",
   Error: "There has been an error!",
+  Delete: "You are about to...",
 };
 
-export const Modal = ({ type, toggle }) => {
+export const Modal = ({ type, toggle, resetConfirm }) => {
   const currentDomain = useAppSelector(selectCurrentDomain);
   _p("modal type :>> " + type, type, "warning");
 
-  let confirmationDialog = ["Confirm", "DeleteHabit"].includes(type);
+  let confirmationDialog = ["Confirm", "Delete"].includes(type);
   return (
     <div
       id="modal_overlay"
@@ -29,7 +30,7 @@ export const Modal = ({ type, toggle }) => {
         <div
           id="modal"
           className={
-            type == "Error"
+            type == "Error" || confirmationDialog
               ? "h-72 inset-y-1/3 inset-x-10 sm:inset-1/4 rounded-2xl shadow-tershades-gray absolute flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
               : "h-5/6 inset-4 sm:inset-12 rounded-2xl shadow-tershades-gray absolute bottom-auto flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
           }
@@ -61,7 +62,25 @@ export const Modal = ({ type, toggle }) => {
                 type={type}
                 iconColor="text-balance-terhades-light"
                 iconPath="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                toggleClose={toggle}
+                handleClose={(e) => {
+                  resetConfirm();
+                  toggle({ open: false });
+                }}
+              />
+            )}
+            {type == "Delete" && (
+              <DialogBox
+                type="delete"
+                title="Delete Habit and All Descendants"
+                message="Are you sure?"
+                type={type}
+                iconColor="text-balance-buttonbg-closelighter"
+                iconPath="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                handleClose={(e) => {
+                  resetConfirm();
+                  toggle({ open: false });
+                }}
+                handleConfirm={() => {}}
               />
             )}
             {type == "Error" && (

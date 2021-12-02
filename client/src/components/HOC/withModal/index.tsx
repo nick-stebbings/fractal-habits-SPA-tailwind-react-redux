@@ -1,10 +1,13 @@
 import React, { ComponentType, useEffect } from 'react'
 // @ts-ignore
 import { useAppSelector } from 'app/hooks';
+import uiSlice from 'features/ui/reducer';
+const {toggleConfirm} = uiSlice.actions
 import { getUIStatus } from 'features/ui/selectors';
 
 // @ts-ignore
 import { Modal } from 'components/Modal';
+import { store } from 'app/store';
 
 export const openModal = function ({open = true} = {open: true}) {
   const modalOverlay = document.querySelector("#modal_overlay");
@@ -40,7 +43,9 @@ export function withModal<T>(Component: ComponentType<T>) {
   return React.memo((hocProps: T) => {
     useEffect(() => {
       openModal()
-    },[])
+    }, [])
+    const resetConfirm = () => store.dispatch(toggleConfirm())
+    
     const uiStatus = useAppSelector(getUIStatus);
     const type = uiStatus?.responseStatus.status
     const confirmStatus = uiStatus?.confirmStatus
@@ -55,7 +60,7 @@ export function withModal<T>(Component: ComponentType<T>) {
       case (type == 'IDLE' && confirmStatus):
         return (
           <>
-          <Modal type={uiStatus?.confirmType} toggle={openModal} />
+          <Modal type={uiStatus?.confirmType} toggle={openModal} resetConfirm={resetConfirm} />
           <Component {...hocProps}></Component>
           </>
         )

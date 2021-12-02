@@ -6,7 +6,7 @@ export const CancelButton = ({
   disabled,
   classString,
   label,
-  toggleClose,
+  handleClose,
 }) => {
   return (
     <div className="button-container cancel-button">
@@ -15,7 +15,7 @@ export const CancelButton = ({
         type="reset"
         name={name}
         disabled={disabled}
-        onClick={(e) => toggleClose({ open: false })}
+        onClick={handleClose}
         className={
           classString
             ? `${classString} mr-2 flex-no-shrinkrounded-3xl text-balance-buttontext-neutral font-heavy flex items-center h-8 px-2 my-1 font-sans tracking-wide uppercase`

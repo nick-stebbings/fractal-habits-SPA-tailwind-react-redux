@@ -3,16 +3,17 @@ import React from "react";
 import { CancelButton } from "../Nav/UI/Buttons/CancelButton";
 import { SubmitButton } from "../Nav/UI/Buttons/SubmitButton";
 
-export const DialogBox = ({ title, message, type, iconPath, iconColor }) => {
+export const DialogBox = ({
+  title,
+  message,
+  type,
+  iconPath,
+  iconColor,
+  handleClose,
+  handleConfirm,
+}) => {
   const randId = String(Math.ceil(Math.random() * 100));
-  console.log(
-    "{ title, message, type, iconPath, iconColor } :>> ",
-    title,
-    message,
-    type,
-    iconPath,
-    iconColor
-  );
+
   return (
     <div className="sm:m-8 flex items-center m-4">
       <div className="form-header w-14 h-14 bg-balance-tershades-gray flex items-center justify-center flex-shrink-0 font-mono rounded-full">
@@ -44,11 +45,13 @@ export const DialogBox = ({ title, message, type, iconPath, iconColor }) => {
             name="close"
             label="Forget It"
             type={type}
+            handleClose={handleClose}
           />
           <SubmitButton
             id={`submit-form-${randId}`}
             name="submit"
             label="Confirm"
+            handleConfirm={handleConfirm}
           />
         </div>
       </form>

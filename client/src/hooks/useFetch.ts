@@ -30,9 +30,7 @@ export default function useFetch(isVisComponent: boolean) {
   }, []);
 
   useEffect(() => {
-    if (currentHabit?.meta.id == 0 || currentHabit?.meta?.name) {
-      return;
-    }
+    if (currentHabit?.meta.id == 0 || currentHabit?.meta?.name) return;
     loadNewCurrentHabit();
     isVisComponent && loadTreeData();
   }, [currentHabit?.meta?.id]);
