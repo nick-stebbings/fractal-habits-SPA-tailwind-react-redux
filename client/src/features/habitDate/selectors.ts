@@ -15,6 +15,9 @@ export const selectStoredHabitDates = (state: RootState) => {
   return state?.habitDate?.myRecords;
 };
 
+export const selectCurrentHabitDate = (state: RootState) => {
+  return state?.habitDate?.current;
+};
 export const selectCurrentHabitDates = (state: RootState) => {
   return state?.habitDate?.myRecords.filter((record: Habit) => {});
 };

@@ -4,6 +4,8 @@ import { clientRoutes } from "services/restApis";
 import { createCrudActionCreators } from "app/storeHelpers";
 // @ts-ignore
 import { fetchHabitDatesREST } from "features/habitDate/actions";
+import { selectCurrentHabit } from "./selectors";
+import { selectCurrentHabitDate } from "./../habitDate/selectors";
 
 const BASE_PATH = "/habits";
 
@@ -26,10 +28,25 @@ const fetchRoute = clientRouteDict.show_all.bind({});
 clientRouteDict.show_all = async (_: any, thunkAPI: any) =>
   fetchRoute().then((response: any) => {
     const parsed = JSON.parse(response!.data);
-    const firstHabitId = parsed.habits[0].id;
-    thunkAPI.dispatch(
-      fetchHabitDatesREST({ id: firstHabitId, periodLength: 7 })
-    ); // Populate HabitDates for the last week
+    const s = thunkAPI.getState();
+    console.log(
+      "!(selectCurrentHabit(s)?.meta.id) :>> ",
+      !selectCurrentHabit(s)?.meta.id
+    );
+    console.log(
+      selectCurrentHabit(s)?.meta.id,
+      selectCurrentHabitDate(s)?.habitId
+    );
+    if (
+      !selectCurrentHabit(s)?.meta.id ||
+      selectCurrentHabit(s)?.meta.id !== selectCurrentHabitDate(s)?.habitId
+    ) {
+      // If we need to reload
+      const firstHabitId = parsed.habits[0].id;
+      thunkAPI.dispatch(
+        fetchHabitDatesREST({ id: firstHabitId, periodLength: 7 })
+      ); // Populate HabitDates for the last week
+    }
     return thunkAPI.fulfillWithValue(response);
   });
 

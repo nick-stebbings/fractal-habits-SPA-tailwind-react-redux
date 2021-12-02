@@ -148,6 +148,7 @@ export default class Visualization {
         store.dispatch(toggleConfirm({ type: "Append" }));
       },
       handleDeleteNode: function (event, node) {
+        this.setCurrentHabit(node);
         store.dispatch(toggleConfirm({ type: "Delete" }));
       },
       handleNodeZoom: function (event, node, forParent = false) {
@@ -698,7 +699,7 @@ export default class Visualization {
       .append("path")
       .attr("d", "M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z")
       .attr("fill", "#e06a58")
-      .on("click", this.eventHandlers.handleDeleteNode);
+      .on("click", this.eventHandlers.handleDeleteNode.bind(this));
     // this._gButton
     //   .append("text")
     //   .attr("x", 15)
