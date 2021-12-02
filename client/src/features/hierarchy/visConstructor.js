@@ -23,6 +23,7 @@ import {
   selectCurrentHabitByMptt,
 } from "features/habit/selectors";
 import { fetchHabitDatesREST } from "features/habitDate/actions";
+import { selectCurrentHabitDate } from "features/habitDate/selectors";
 import UISlice from "features/ui/reducer";
 const { toggleConfirm } = UISlice.actions;
 import HabitSlice from "features/habit/reducer";
@@ -377,12 +378,19 @@ export default class Visualization {
       nodeContent.right
     );
     store.dispatch(updateCurrentHabit(newCurrent));
-    store.dispatch(
-      fetchHabitDatesREST({
-        id: newCurrent?.meta.id,
-        periodLength: 3, // TODO change this back to 7
-      })
+    const s = store.getState();
+    console.log(
+      selectCurrentHabit(s)?.meta.id,
+      selectCurrentHabitDate(s)?.habitId
     );
+    if (selectCurrentHabit(s)?.meta.id !== selectCurrentHabitDate(s)?.habitId) {
+      store.dispatch(
+        fetchHabitDatesREST({
+          id: newCurrent?.meta.id,
+          periodLength: 3, // TODO change this back to 7
+        })
+      );
+    }
   }
 
   clearCanvas() {

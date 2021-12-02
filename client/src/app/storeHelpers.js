@@ -38,7 +38,7 @@ const mapCallbacks = {
     const daySpace = createInterval(0, 1, DateTime.fromSQL(date));
     return {
       ...daySpace,
-      habit_id,
+      habitId: habit_id,
     };
   },
   domains: (element) => {
