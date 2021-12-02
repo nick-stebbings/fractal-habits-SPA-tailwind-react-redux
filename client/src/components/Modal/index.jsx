@@ -53,10 +53,9 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
                 {TITLES[type]}
               </h2>
               <h3 className="mt-2 text-2xl font-bold text-center">
-                {type == "Prepend" ||
-                  (type == "Append" && (
-                    <span>{`${currentDomain.meta.name}`}</span>
-                  ))}
+                {(type == "Prepend" || type == "Append") && (
+                  <span>{`${currentDomain.meta.name}`}</span>
+                )}
               </h3>
             </div>
             {["Prepend", "Append"].includes(type) && (
