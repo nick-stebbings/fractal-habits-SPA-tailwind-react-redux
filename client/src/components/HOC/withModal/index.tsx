@@ -55,7 +55,7 @@ export function withModal<T>(Component: ComponentType<T>) {
       case (type == 'IDLE' && confirmStatus):
         return (
           <>
-          <Modal type={'AddHabit'} toggle={openModal} />
+          <Modal type={uiStatus?.confirmType} toggle={openModal} />
           <Component {...hocProps}></Component>
           </>
         )

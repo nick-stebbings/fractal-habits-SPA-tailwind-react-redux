@@ -19,7 +19,6 @@ const randId = String(Math.ceil(Math.random() * 100));
 export const CreateForm = ({
   modalType,
   resourceName,
-  resourceDescription,
   addHeader,
   toggleClose,
 }) => {
@@ -55,17 +54,13 @@ export const CreateForm = ({
     FD.forEach((value, key) => {
       data[key.replace(/-/g, "_")] = value;
     }); // Assign values while swapping for snake_case
-
     data.domain_id = currentDomain.meta.id;
-    if (resourceName === "new-habit-child") {
+    if (modalType === "Append") {
       // Assign a -1 id for parent if it is a d3vis-prepend modalType (root node)
       // Then pass the domain_id as a string to signal to the API to reorder nodes
       data.parent_node_id =
-        modalType === "d3vis-prepend"
-          ? `D${data.domain_id}`
-          : currentHabit.meta.id;
-    } else {
-      // Assume it is the front page modal and thus a root node
+        modalType === "Prepend" ? `D${data.domain_id}` : currentHabit.meta.id;
+    } else if (modalType === "Root") {
       data.parent_node_id = null;
     }
 
@@ -77,7 +72,7 @@ export const CreateForm = ({
   return isDemo ? (
     <div className="my-2 mx-2">No Habit creation in Demo mode!</div>
   ) : (
-    <form id={`create-habit`}>
+    <form id={`create-habit`} onSubmit={handleSubmit}>
       {addHeader && (
         <FormHeader
           iconPath="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
@@ -146,7 +141,6 @@ export const CreateForm = ({
           id={`submit-form-${String(Math.ceil(Math.random() * 100))}`}
           name="submit"
           label="Start Tracking"
-          handleSubmit={handleSubmit}
         />
       </div>
     </form>

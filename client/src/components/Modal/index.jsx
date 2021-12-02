@@ -29,8 +29,8 @@ export const Modal = ({ type, toggle }) => {
         <div
           id="modal"
           className={
-            confirmationDialog
-              ? "h-5/6 inset-y-1/3 inset-x-10 sm:inset-1/4 rounded-2xl shadow-tershades-gray absolute flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
+            type == "Error"
+              ? "h-72 inset-y-1/3 inset-x-10 sm:inset-1/4 rounded-2xl shadow-tershades-gray absolute flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
               : "h-5/6 inset-4 sm:inset-12 rounded-2xl shadow-tershades-gray absolute bottom-auto flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
           }
         >
@@ -45,7 +45,7 @@ export const Modal = ({ type, toggle }) => {
                 )}
               </h3>
             </div>
-            {type == "AddHabit" && (
+            {["Prepend", "Append"].includes(type) && (
               <CreateForm
                 modalType={type}
                 resourceName="habit"
