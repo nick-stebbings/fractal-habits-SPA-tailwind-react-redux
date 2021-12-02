@@ -3,8 +3,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DateTime } from "luxon";
 import { createInterval } from "../features/space/utils";
 
-export function isCrud(action, create, fetch, update, destroy) {
-  return [create, fetch, update, destroy]
+export function isCrud(action, create, fetch, update, destroy, fetchOne) {
+  return [create, fetch, update, destroy, fetchOne]
     .map((a) => a.fulfilled().type)
     .includes(action.type);
 }
@@ -51,22 +51,39 @@ const mapCallbacks = {
   },
 };
 
-export function crudReducer(state, action, create, fetch, update, destroy) {
+export function crudReducer(
+  state,
+  action,
+  create,
+  fetch,
+  update,
+  destroy,
+  fetchOne = {}
+) {
   const { payload, type } = action;
   const model = modelNameFromActionString(type);
-  const parsed = payload?.data && JSON.parse(payload?.data);
+  const parsed =
+    payload?.data && typeof payload.data == "string"
+      ? JSON.parse(payload.data)
+      : payload.data;
   let mapped;
 
   switch (type) {
     // CREATE AND UPDATE SHARE A RESPONSE TYPE
     case create.fulfilled().type:
+      console.log("parsed :>> ", parsed);
     case update.fulfilled().type:
-      return {
-        ...state,
-        //
-      };
-
-    // FETCH
+    // FETCH ONE ALSO
+    case fetchOne?.fulfilled().type:
+      return model == "habit"
+        ? {
+            ...state,
+            current: mapCallbacks["habits"](parsed),
+          }
+        : {
+            ...state,
+            current: { meta: parsed },
+          };
 
     case fetch.fulfilled().type:
       // parsed is e.g. { "habits": [ { "id": 1, "name": "another test"... }, ... ]
@@ -96,5 +113,6 @@ export function createCrudActionCreators(actionTypes, callBacks) {
   const fetchAll = createAsyncThunk(actionTypes[1], callBacks[1]);
   const update = createAsyncThunk(actionTypes[2], callBacks[2]);
   const destroy = createAsyncThunk(actionTypes[3], callBacks[3]);
-  return [create, fetchAll, update, destroy];
+  const fetch = createAsyncThunk(actionTypes[4], callBacks[4]);
+  return [create, fetchAll, update, destroy, fetch];
 }

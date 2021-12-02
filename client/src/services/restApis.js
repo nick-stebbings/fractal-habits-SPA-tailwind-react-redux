@@ -18,7 +18,7 @@ function clientRoutes(basePath) {
     show_all: () => axios.get(basePath),
     update: (id, update) => axios.patch(`${basePath}/${id}`, update),
     destroy: (id) => axios.delete(`${basePath}/${id}`),
-    show_one: (id) => axios.get(`${basePath}/${id}`),
+    show_one: ({ id }) => axios.get(`${basePath}/${id}`),
     replace: (id, update) => axios.put(`${basePath}/${id}`, update),
   };
 }

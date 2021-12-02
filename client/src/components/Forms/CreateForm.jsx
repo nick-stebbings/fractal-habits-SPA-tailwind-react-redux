@@ -24,7 +24,7 @@ export const CreateForm = ({
 }) => {
   const dispatch = useAppDispatch();
   const createHabit = (data) => {
-    dispatch(createHabitREST({ payload: data }));
+    dispatch(createHabitREST(data));
   };
 
   const isDemo = false;

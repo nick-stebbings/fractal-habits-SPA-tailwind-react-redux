@@ -39,7 +39,18 @@ export const actionCreators = createCrudActionCreators(
   thunkCallBacks
 );
 
-const [createHabitREST, fetchHabitsREST, updateHabitREST, destroyHabitREST] =
-  actionCreators;
+const [
+  createHabitREST,
+  fetchHabitsREST,
+  updateHabitREST,
+  destroyHabitREST,
+  fetchHabitREST,
+] = actionCreators;
 
-export { createHabitREST, fetchHabitsREST, updateHabitREST, destroyHabitREST };
+export {
+  createHabitREST,
+  fetchHabitsREST,
+  updateHabitREST,
+  destroyHabitREST,
+  fetchHabitREST,
+};

@@ -59,13 +59,13 @@ export function withModal<T>(Component: ComponentType<T>) {
           <Component {...hocProps}></Component>
           </>
         )
-      case (confirmStatus):
-        return (
-          <>
-          <Modal type={'Confirm'} toggle={openModal} />
-          <Component {...hocProps}></Component>
-          </>
-        )
+      // case (confirmStatus):
+      //   return (
+      //     <>
+      //     <Modal type={'Confirm'} toggle={openModal} />
+      //     <Component {...hocProps}></Component>
+      //     </>
+      //   )
       case (type == 'LOADING'):
         return (
           <>
