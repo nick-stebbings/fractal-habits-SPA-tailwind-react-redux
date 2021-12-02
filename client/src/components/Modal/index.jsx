@@ -50,7 +50,6 @@ export const Modal = ({ type, toggle }) => {
                 modalType={type}
                 resourceName="habit"
                 addHeader={false}
-                resourceDescription="A way of keeping track of your daily behaviours"
                 toggleClose={toggle}
               />
             )}

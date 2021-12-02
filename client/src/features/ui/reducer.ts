@@ -35,14 +35,19 @@ export const isLoadingAction = (action: AnyAction) => {
 const initialState: Dictionary<boolean | string> = {
   responseStatus: idleState,
   confirmStatus: false,
+  confirmType: "",
 };
 
 const uiStatus = createSlice({
   name: "ui",
   initialState,
   reducers: {
-    toggleConfirm(state) {
+    toggleConfirm(state, action) {
       state.confirmStatus = !state.confirmStatus;
+      if (state.confirmStatus) {
+        const { type } = action.payload;
+        state.confirmType = type;
+      }
       return state;
     },
   },

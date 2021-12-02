@@ -143,11 +143,14 @@ export default class Visualization {
 
     this.eventHandlers = {
       handlePrependNode: function (event, node) {
-        store.dispatch(toggleConfirm());
-        // store.dispatch(createHabitREST());
+        store.dispatch(toggleConfirm({ type: "Prepend" }));
       },
-      handleAppendNode: function (event, node) {},
-      handleDeleteNode: function (event, node) {},
+      handleAppendNode: function (event, node) {
+        store.dispatch(toggleConfirm({ type: "Append" }));
+      },
+      handleDeleteNode: function (event, node) {
+        store.dispatch(toggleConfirm({ type: "Delete" }));
+      },
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
