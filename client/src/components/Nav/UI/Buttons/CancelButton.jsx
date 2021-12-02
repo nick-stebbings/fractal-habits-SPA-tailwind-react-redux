@@ -7,18 +7,8 @@ export const CancelButton = ({
   disabled,
   classString,
   label,
-  type,
+  toggleClose,
 }) => {
-  const handleClick = function (e) {
-    // dom.addEventListener("click", () => {
-    // openModal(false);
-    // newRecord(true);
-    // attrs.modalType && attrs.modalType(false);
-    // [...document.querySelectorAll(".not-added")].forEach((label) =>
-    //   label.classList.remove("not-added")
-    // );
-    // m.route.set(m.route.get(), null);
-  };
   return (
     <div className="button-container cancel-button">
       <button
@@ -26,7 +16,7 @@ export const CancelButton = ({
         type="reset"
         name={name}
         disabled={disabled}
-        onClick={handleClick}
+        onClick={(e) => toggleClose({ open: false })}
         className={
           classString
             ? `${classString} mr-2 flex-no-shrinkrounded-3xl text-balance-buttontext-neutral font-heavy flex items-center h-8 px-2 my-1 font-sans tracking-wide uppercase`

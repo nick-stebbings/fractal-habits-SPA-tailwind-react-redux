@@ -75,6 +75,7 @@ export const CreateForm = ({
   resourceName,
   resourceDescription,
   addHeader,
+  toggleClose,
 }) => {
   const isDemo = false;
   const dispatch = useAppDispatch();
@@ -147,6 +148,7 @@ export const CreateForm = ({
           name="close"
           label="Forget It"
           modalType={modalType}
+          toggleClose={toggleClose}
         />
         <SubmitButton
           id={`submit-form-${String(Math.ceil(Math.random() * 100))}`}

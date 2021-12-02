@@ -11,10 +11,9 @@ export default function App ({isVisComponent, children}: indexProps) {
   // console.log('render app :>> ');
   return (
       <>
-      <Header isVis={isVisComponent} />
-      
-    <div id="vis" className="w-full h-full mx-auto"></div>
+        <Header isVis={isVisComponent} />
         <Layout children={children} isVis={isVisComponent} />
+        {isVisComponent && <div id="vis" className="w-full h-full mx-auto"></div>}
       </>
   );
 };
