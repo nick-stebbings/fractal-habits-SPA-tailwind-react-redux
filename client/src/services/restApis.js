@@ -1,12 +1,13 @@
 const BASE_URL = "http://localhost:9292"; // "https://api.habfract.life";
 
 import axios from "axios";
+import { handleErrorType } from "app/helpers";
 
 axios.defaults.baseURL = BASE_URL;
 axios.defaults.headers.common.Accept = "application/json;charset=utf-8";
 axios.defaults.headers.common["Content-Type"] =
   "application/json;charset=utf-8";
-// axios.interceptors.response.use((res) => res, handleAndRethrow);
+axios.interceptors.response.use((res) => res, handleErrorType);
 
 // Indicates whether or not cross-site Access-Control requests
 // should be made using credentials

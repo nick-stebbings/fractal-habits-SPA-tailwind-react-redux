@@ -380,7 +380,11 @@ export default class Visualization {
       nodeContent.left,
       nodeContent.right
     );
-    newCurrent && store.dispatch(updateCurrentHabit(newCurrent));
+    if (!newCurrent) {
+      window.FlashMessage.warning("Couldn't select habit");
+      return;
+    }
+    store.dispatch(updateCurrentHabit(newCurrent));
     const s = store.getState();
     if (selectCurrentHabit(s)?.meta.id !== selectCurrentHabitDate(s)?.habitId) {
       store.dispatch(
