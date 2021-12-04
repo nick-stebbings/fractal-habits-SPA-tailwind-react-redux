@@ -2,19 +2,24 @@ import { clientRoutes } from "services/restApis";
 import { createCrudActionCreators } from "app/storeHelpers";
 import { fetchNodesREST } from "features/node/actions";
 const FETCH_HABIT_TREE = "fetch_habit_tree";
+const FETCH_HABIT_TREES = "fetch_habit_trees";
 
-export const actionStrings = [FETCH_HABIT_TREE];
+export const actionStrings = [FETCH_HABIT_TREE, FETCH_HABIT_TREES];
 
 let clientRouteDict = {
-  show_all: ({ domainId, dateId }: any): Promise<any> =>
+  show_one: ({ domainId, dateId }: any): Promise<any> =>
     clientRoutes(
       `/habit_trees?domain_id=${domainId}&date_id=${dateId}`
     ).show_all(),
+  show_all: ({ domainId, dateId }: any): Promise<any> =>
+    clientRoutes(
+      `/habit_trees/weekly?domain_id=${domainId}&start_date_id=${dateId}`
+    ).show_all(),
 };
 
-const fetchRoute = clientRouteDict.show_all.bind({});
+const fetchRoute = clientRouteDict.show_one.bind({});
 
-clientRouteDict.show_all = async ({ domainId, dateId }: any, thunkAPI: any) =>
+clientRouteDict.show_one = async ({ domainId, dateId }: any, thunkAPI: any) =>
   fetchRoute({ domainId, dateId }).then((response: any) => {
     thunkAPI.dispatch(fetchNodesREST()); // Populate Nodes TODO: limit this
     return thunkAPI.fulfillWithValue(response);
@@ -27,6 +32,6 @@ export const actionCreators = createCrudActionCreators(
   thunkCallBacks
 );
 
-const [fetchHabitTreeREST] = actionCreators;
+const [fetchHabitTreeREST, fetchHabitTreesREST] = actionCreators;
 
-export { fetchHabitTreeREST };
+export { fetchHabitTreeREST, fetchHabitTreesREST };
