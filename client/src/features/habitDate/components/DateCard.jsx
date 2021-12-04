@@ -5,6 +5,7 @@ import {
   negativeCol,
   noNodeCol,
   parentPositiveCol,
+  neutralCol,
 } from "app/constants";
 function getColor(completedStatus) {
   console.log("completedStatus :>> ", completedStatus);
@@ -13,6 +14,10 @@ function getColor(completedStatus) {
       return positiveCol;
     case false:
       return negativeCol;
+    case "OOB":
+      return noNodeCol;
+    case "noHabitDate":
+      return neutralCol;
     case "parentCompleted":
       return parentPositiveCol;
     default:
@@ -22,7 +27,11 @@ function getColor(completedStatus) {
 
 export const DateCard = ({ date, completedStatus, isToday }) => {
   const [weekday, month, monthday] = date.split(/\W+/);
-
+  console.log("{ date, completedStatus, isToday } :>> ", {
+    date,
+    completedStatus,
+    isToday,
+  });
   return (
     <div
       className="date-card bg-gray-50 rounded-3xl flex flex-col items-center justify-start flex-grow md:gap-1 p-1 md:p-2 pt-1 -mt-2.5"

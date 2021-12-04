@@ -73,11 +73,6 @@ export const parseTreeValues = (valueString) => {
 };
 
 export const outOfBoundsNode = (d, rootData) => {
-  console.log(
-    "d, nodeStatusColours(d, rootData) == noNodeCol :>> ",
-    d,
-    nodeStatusColours(d, rootData)
-  );
   return nodeStatusColours(d, rootData) == noNodeCol;
 };
 

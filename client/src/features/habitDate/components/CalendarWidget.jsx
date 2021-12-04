@@ -10,7 +10,12 @@ import { selectCurrentSpace, selectThisWeekSpaces } from "features/space/slice";
 // @ts-ignore
 import { selectCurrentHabit } from "features/habit/selectors";
 // @ts-ignore
-import { selectIsCompletedDate } from "features/habitDate/selectors";
+import { selectCurrentHierarchy } from "features/hierarchy/selectors";
+// @ts-ignore
+import {
+  selectIsCompletedDate,
+  selectStoredHabitDates,
+} from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";
 
@@ -65,7 +70,8 @@ export const CalendarWidget = ({
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
-
+  const habitDates = useAppSelector(selectStoredHabitDates);
+  const currentHierarchy = useAppSelector(selectCurrentHierarchy);
   return (
     <div
       className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-8"
@@ -160,14 +166,18 @@ export const CalendarWidget = ({
         }}
       >
         {currentWeek &&
-          currentWeek.map(({ timeframe: { fromDate } }, idx) => {
-            const isOOB = currentHabit?.timeframe.fromDate > fromDate;
-            const isCompleted = useAppSelector(selectIsCompletedDate(fromDate));
+          currentWeek.map(({ timeframe: { fromDate } }) => {
+            const statusCol = selectIsCompletedDate(
+              fromDate,
+              habitDates,
+              currentHierarchy,
+              currentHabit
+            );
             return (
               <DateCard
-                key={idx}
+                key={fromDate}
                 date={fromDate && stringifyDate(fromDate)}
-                completedStatus={isOOB ? "OOB" : isCompleted}
+                completedStatus={statusCol}
                 isToday={
                   stringifyDate(currentSpace.timeframe.fromDate) ===
                   stringifyDate(fromDate)

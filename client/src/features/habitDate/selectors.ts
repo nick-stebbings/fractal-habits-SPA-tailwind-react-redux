@@ -22,28 +22,36 @@ export const selectCurrentHabitDates = (state: RootState) => {
   return state?.habitDate?.myRecords.filter((record: Habit) => {});
 };
 
-export const selectIsCompletedDate = (fromDateUnixTs: number) => {
-  return createSelector(
-    [selectStoredHabitDates, selectCurrentHierarchy, selectCurrentHabit],
-    (dates, hierarchyData, currentHabit) => {
-      const isCompleted =
-        dates &&
-        dates.some(
-          ({ timeframe }: TimeFrame) => timeframe.fromDate == fromDateUnixTs
-        );
+export const selectIsCompletedDate = (
+  fromDateUnixTs: number,
+  dates: any,
+  hierarchyData: any,
+  currentHabit: any
+) => {
+  const dateIsCompleted =
+    dates &&
+    dates.some(
+      ({ timeframe }: TimeFrame) => timeframe.fromDate == fromDateUnixTs
+    ); // is this a 'Red dot' marked day?
 
-      const currentHabitHierarchyNode = hierarchy(hierarchyData).find(
-        (n: any) => n.data.name == currentHabit.meta.name
-      );
-      const hasDescendantsIncomplete =
-        !!currentHabitHierarchyNode?.children &&
-        currentHabitHierarchyNode.children.some(
-          (childNode: any) =>
-            parseTreeValues(childNode.data.content).status !== "true"
-        );
-      return isCompleted && hasDescendantsIncomplete
-        ? "parentCompleted"
-        : isCompleted;
-    }
+  const currentHabitHierarchyNode = hierarchy(hierarchyData).find(
+    (n: any) => n.data.name == currentHabit.meta.name
   );
+  if (!!currentHabitHierarchyNode?.data?.content) {
+    const currentHabitStatus = parseTreeValues(
+      currentHabitHierarchyNode.data.content
+    ).status;
+    if (currentHabitStatus == "OOB") return "OOB";
+    if (currentHabitStatus == "") return "noHabitDate";
+  }
+
+  const hasDescendantsIncomplete =
+    !!currentHabitHierarchyNode?.children &&
+    currentHabitHierarchyNode.children.some(
+      (childNode: any) =>
+        parseTreeValues(childNode.data.content).status !== "true"
+    );
+  return dateIsCompleted && hasDescendantsIncomplete
+    ? "parentCompleted"
+    : dateIsCompleted;
 };
