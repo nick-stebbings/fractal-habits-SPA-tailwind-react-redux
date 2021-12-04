@@ -15,7 +15,7 @@ import {
 // @ts-ignore
 import { selectCurrentHabit } from "features/habit/selectors";
 // @ts-ignore
-import { selectCurrentHierarchy } from "features/hierarchy/selectors";
+import { selectCurrentHierarchyRecords } from "features/hierarchy/selectors";
 // @ts-ignore
 import {
   selectAccumulatedStatusForDate,
@@ -72,6 +72,7 @@ export const CalendarWidget = ({
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
+  const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords);
   return (
     <div
       className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-8"
@@ -166,6 +167,7 @@ export const CalendarWidget = ({
         }}
       >
         {currentWeek &&
+          currentHierarchyRecords &&
           currentWeek.map(({ timeframe: { fromDate } }) => {
             const relativeDateId = useAppSelector(
               selectRelativeDateId(fromDate)
