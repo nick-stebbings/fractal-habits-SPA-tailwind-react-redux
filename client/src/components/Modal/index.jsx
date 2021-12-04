@@ -1,17 +1,21 @@
 import React from "react";
-import { useAppDispatch } from "app/hooks";
+import { useAppDispatch, useAppSelector } from "app/hooks";
+import { store } from "app/store";
 
 import { selectCurrentDomain } from "features/domain/selectors";
 import { selectCurrentHabit } from "features/habit/selectors";
+import { selectCurrentNode } from "features/node/selectors";
 
 import { CreateForm } from "../Forms/CreateForm";
 import { DialogBox } from "./DialogBox";
 import { InfoBox } from "./InfoBox";
-import { useAppSelector } from "app/hooks";
-import { store } from "app/store";
+
 import { destroyHabitREST } from "features/habit/actions";
+import { destroyNodeREST } from "features/node/actions";
 import HabitSlice from "features/habit/reducer";
 const { deleteCurrentHabit } = HabitSlice.actions;
+import NodeSlice from "features/node/reducer";
+const { deleteCurrentNode } = NodeSlice.actions;
 
 const TITLES = {
   Confirm: "Message: You are about to...",
@@ -101,8 +105,13 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
                   e.preventDefault();
                   const currentId = selectCurrentHabit(store.getState()).meta
                     .id;
+                  const currentNodeId = selectCurrentNode(store.getState()).id;
                   store.dispatch(destroyHabitREST({ id: currentId }));
                   store.dispatch(deleteCurrentHabit());
+
+                  store.dispatch(destroyNodeREST({ id: currentNodeId }));
+                  store.dispatch(deleteCurrentNode());
+
                   closeModal();
                 }}
               />

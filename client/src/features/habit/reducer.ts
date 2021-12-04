@@ -36,7 +36,12 @@ export const habitSlice = createSlice({
       state.current.timeframe = action.payload.habit.timeframe;
     },
     deleteCurrentHabit(state, _: PayloadAction<any>) {
-      delete state.current.meta;
+      if (!!state?.myRecords) {
+        state.myRecords = [...state.myRecords].filter(
+          (r) => r.meta.id !== state.current.meta.id
+        );
+      }
+      state.current = initialState.current;
     },
     updateHabit(state, action: PayloadAction<UpdateHabitPayload>) {
       const { id, habitPatch } = action.payload;
