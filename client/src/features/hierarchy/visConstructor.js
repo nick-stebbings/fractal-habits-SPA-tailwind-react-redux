@@ -48,6 +48,7 @@ import {
   cumulativeValue,
   isTouchDevice,
   habitDatePersisted,
+  outOfBoundsNode,
 } from "./components/helpers";
 
 import {
@@ -144,7 +145,6 @@ export default class Visualization {
     this.eventHandlers = {
       handlePrependNode: function (event, node) {
         let isRoot = node.parent == undefined;
-        console.log("isRoot :>> ", isRoot);
         // debugger
         store.dispatch(toggleConfirm({ type: "Prepend" }));
       },
@@ -492,6 +492,7 @@ export default class Visualization {
         .find((node) => node.data == d);
       let content = parseTreeValues(thisNode.data.content);
       if (content.status === "") return 0;
+      if (content.status === "OOB") return 0;
       const statusValue = JSON.parse(content.status);
       return +statusValue;
     });
@@ -565,9 +566,11 @@ export default class Visualization {
       .attr("transform", transformation);
   }
   setNodeAndLinkEnterSelections() {
-    const nodes = this._gNode
-      .selectAll("g.node")
-      .data(this.rootData.descendants()); // Remove habits that weren't being tracked then); //.filter(habitDatePersisted)
+    const nodes = this._gNode.selectAll("g.node").data(
+      this.rootData.descendants().filter((d) => {
+        return !outOfBoundsNode(d, this.rootData);
+      })
+    ); // Remove habits that weren't being tracked then);
 
     this._enteringNodes = nodes
       .enter()
@@ -579,7 +582,8 @@ export default class Visualization {
           : "the-node solid";
       })
       .style("fill", (d) => {
-        if (!habitDatePersisted(d)) return parentPositiveCol;
+        if (!habitDatePersisted(d)) return neutralCol;
+        debugger;
         return nodeStatusColours(d, this.rootData);
       })
       .style("stroke", (d) =>
@@ -605,10 +609,13 @@ export default class Visualization {
 
     // Links
     const links = this._gLink.selectAll("line.link").data(
-      this.rootData.links()
-      // .filter(
-      //   ({ source, target }) => habitDatePersisted(source) && habitDatePersisted(target)
-      // ) // Remove habits that weren't being tracked then
+      this.rootData
+        .links()
+        .filter(
+          ({ source, target }) =>
+            !outOfBoundsNode(source, this.rootData) &&
+            !outOfBoundsNode(target, this.rootData)
+        ) // Remove habits that weren't being tracked then
     );
     this._enteringLinks = links
       .enter()

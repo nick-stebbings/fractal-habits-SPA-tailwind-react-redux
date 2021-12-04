@@ -3,6 +3,7 @@ import {
   negativeCol,
   parentPositiveCol,
   neutralCol,
+  noNodeCol,
 } from "app/constants";
 
 // General helpers
@@ -71,8 +72,16 @@ export const parseTreeValues = (valueString) => {
   }
 };
 
+export const outOfBoundsNode = (d, rootData) => {
+  console.log(
+    "d, nodeStatusColours(d, rootData) == noNodeCol :>> ",
+    d,
+    nodeStatusColours(d, rootData)
+  );
+  return nodeStatusColours(d, rootData) == noNodeCol;
+};
+
 export const habitDatePersisted = (node) =>
-  // node.value !== undefined &&
   node?.data?.content && parseTreeValues(node.data.content).status !== "";
 
 export const cumulativeValue = (node) => {
@@ -116,16 +125,19 @@ export const nodeStatusColours = (d, currentHierarchy) => {
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return neutralCol;
 
+  const cumulativeVal = cumulativeValue(d);
   const status = parseTreeValues(d.data.content).status;
 
   if (status == "false" && currentHierarchy.leaves().includes(d))
-    return negativeCol;
-  if (cumulativeValue(d) === 0 && status === "true") return parentPositiveCol; // Node is complete but some of its descendants are not.
+    return negativeCol; // False leaf nodes are negative
+  if (status == "OOB") return noNodeCol; // Untracked (out of bounds) nodes are neutral
+  if (cumulativeVal === 0 && status === "true") return parentPositiveCol; // Node is complete but some of its descendants are not.
 
-  switch (cumulativeValue(d)) {
-    case 1:
+  switch (cumulativeVal) {
+    case 1: // All descendants are positive
       return positiveCol;
-    case 0:
+    case 0: // Not all descendants are positive
+      debugger;
       return negativeCol;
     default:
       return neutralCol;

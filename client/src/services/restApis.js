@@ -1,4 +1,4 @@
-const BASE_URL = "https://api.habfract.life";
+const BASE_URL = "http://localhost:9292"; // "https://api.habfract.life";
 
 import axios from "axios";
 

@@ -30,6 +30,11 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
       : `a child of the "${currentHabitName}" habit`;
   };
 
+  const closeModal = () => {
+    resetConfirm();
+    toggle({ open: false });
+  };
+
   let confirmationDialog = ["Confirm", "Delete"].includes(type);
   return (
     <div
@@ -65,12 +70,7 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
                 modalType={type}
                 resourceName="habit"
                 addHeader={false}
-                toggleClose={() => {
-                  resetConfirm();
-                  toggle({
-                    open: false,
-                  });
-                }}
+                toggleClose={closeModal}
               />
             )}
             {type == "Confirm" && (
@@ -81,10 +81,7 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
                 type={type}
                 iconColor="text-balance-terhades-light"
                 iconPath="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                handleClose={(e) => {
-                  resetConfirm();
-                  toggle({ open: false });
-                }}
+                handleClose={closeModal}
               />
             )}
             {type == "Delete" && (
@@ -95,10 +92,7 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
                 type={type}
                 iconColor="text-balance-buttonbg-closelighter"
                 iconPath="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                handleClose={(e) => {
-                  resetConfirm();
-                  toggle({ open: false });
-                }}
+                handleClose={closeModal}
                 handleConfirm={(e) => {
                   e.preventDefault();
                   const currentId = selectCurrentHabit(store.getState()).meta
