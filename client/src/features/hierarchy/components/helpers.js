@@ -123,7 +123,6 @@ export const nodeStatusColours = (d, currentHierarchy) => {
     return noNodeCol;
   const cumulativeVal = cumulativeValue(d?.data || d);
   const status = parseTreeValues(d.data.content).status;
-  console.log("d :>> ", d);
   if (
     currentHierarchy.leaves().includes(d) ||
     d?.children?.every((d) => parseTreeValues(d.data.content).status === "OOB")

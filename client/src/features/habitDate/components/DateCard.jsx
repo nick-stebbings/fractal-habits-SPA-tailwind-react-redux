@@ -8,7 +8,6 @@ import {
   neutralCol,
 } from "app/constants";
 function getColor(completedStatus) {
-  console.log("completedStatus :>> ", completedStatus);
   switch (completedStatus) {
     case true:
       return positiveCol;
@@ -27,11 +26,6 @@ function getColor(completedStatus) {
 
 export const DateCard = ({ date, completedStatus, isToday }) => {
   const [weekday, month, monthday] = date.split(/\W+/);
-  console.log("{ date, completedStatus, isToday } :>> ", {
-    date,
-    completedStatus,
-    isToday,
-  });
   return (
     <div
       className="date-card bg-gray-50 rounded-3xl flex flex-col items-center justify-start flex-grow md:gap-1 p-1 md:p-2 pt-1 -mt-2.5"

@@ -1,5 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 
+import { DB_DATE_ID_OFFSET } from "app/constants";
 // @ts-ignore
 import { Dictionary, TimeFrame } from "app/types";
 
@@ -25,8 +26,20 @@ export const selectCurrentDateId = (state: RootState) => {
     .startOf("day")
     .diff(baseDate, ["day"])
     .toObject().days;
-  return state?.space.currentRelativeIdx + 2 + dateDiff;
+  return state?.space.currentRelativeIdx + 1 + DB_DATE_ID_OFFSET + dateDiff;
 };
+
+export const selectRelativeDateId = (fromDateTimestampUnix: number) =>
+  createSelector(
+    [selectCurrentDateId, selectCurrentSpace],
+    (dateIdNow, currentSpace) => {
+      let dateDiff = DateTime.fromMillis(fromDateTimestampUnix)
+        .diff(DateTime.fromMillis(currentSpace.timeframe.fromDate), ["day"])
+        .toObject().days;
+
+      return dateDiff + dateIdNow + 1 + -DB_DATE_ID_OFFSET;
+    }
+  );
 
 export interface Space {
   timeframe: TimeFrame;

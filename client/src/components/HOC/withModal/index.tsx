@@ -48,7 +48,6 @@ export function withModal<T>(Component: ComponentType<T>) {
     const confirmStatus = useAppSelector(getConfirmStatus)
 
     useEffect(() => {
-      console.log('opened');
       openModal({ open: !!confirmStatus })
     }, [])
     

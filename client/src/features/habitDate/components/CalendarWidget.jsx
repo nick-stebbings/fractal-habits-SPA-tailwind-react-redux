@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 // @ts-ignore
+import { store } from "app/store";
 import { useAppSelector } from "app/hooks";
 import { Link } from "react-router-dom";
 
 // @ts-ignore
 import { stringifyDate } from "features/habitDate/utils";
 // @ts-ignore
-import { selectCurrentSpace, selectThisWeekSpaces } from "features/space/slice";
+import {
+  selectCurrentSpace,
+  selectThisWeekSpaces,
+  selectRelativeDateId,
+} from "features/space/slice";
 // @ts-ignore
 import { selectCurrentHabit } from "features/habit/selectors";
 // @ts-ignore
@@ -47,7 +52,6 @@ export const CalendarWidget = ({
   };
   const slideOut = (e) => {
     if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
-    console.log("slidout :>> ");
     e.currentTarget.style.right = "calc(100% - 4rem)";
     document.querySelector(".mask-wrapper").style.height = "initial";
     document.querySelector(
@@ -61,17 +65,13 @@ export const CalendarWidget = ({
     setMobileFullyVisible(false);
   };
   const toggleSlide = (e) => {
-    console.log("e.target.classList :>> ", e.target.classList);
     if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
     mobileFullyVisible ? slideIn(e) : slideOut(e);
     setMobileFullyVisible(!mobileFullyVisible);
   };
-
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
-  const habitDates = useAppSelector(selectStoredHabitDates);
-  const currentHierarchy = useAppSelector(selectCurrentHierarchy);
   return (
     <div
       className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-8"
@@ -167,17 +167,17 @@ export const CalendarWidget = ({
       >
         {currentWeek &&
           currentWeek.map(({ timeframe: { fromDate } }) => {
-            const statusCol = selectIsCompletedDate(
-              fromDate,
-              habitDates,
-              currentHierarchy,
-              currentHabit
+            const relativeDateId = useAppSelector(
+              selectRelativeDateId(fromDate)
             );
             return (
               <DateCard
                 key={fromDate}
                 date={fromDate && stringifyDate(fromDate)}
-                completedStatus={statusCol}
+                completedStatus={selectIsCompletedDate(
+                  fromDate,
+                  relativeDateId
+                )(store.getState())}
                 isToday={
                   stringifyDate(currentSpace.timeframe.fromDate) ===
                   stringifyDate(fromDate)
