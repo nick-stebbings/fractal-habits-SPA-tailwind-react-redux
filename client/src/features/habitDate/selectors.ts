@@ -1,4 +1,3 @@
-import { uiSlice } from "features/ui/reducer";
 // @ts-ignore
 import { RootState } from "app/store";
 import { createSelector } from "@reduxjs/toolkit";
@@ -25,7 +24,7 @@ export const selectCurrentHabitDates = (state: RootState) => {
   return state?.habitDate?.myRecords.filter((record: Habit) => {});
 };
 
-export const selectIsCompletedDate = (
+export const selectAccumulatedStatusForDate = (
   fromDateUnixTs: number,
   dateId: number
 ) => {
@@ -60,7 +59,9 @@ export const selectIsCompletedDate = (
         !!currentHabitHierarchyNode?.children &&
         currentHabitHierarchyNode.children.some(
           (childNode: any) =>
-            parseTreeValues(childNode.data.content)!.status !== "true"
+            !["true", "OOB"].includes(
+              parseTreeValues(childNode.data.content)!.status
+            )
         );
       return dateIsCompleted && hasDescendantsIncomplete
         ? "parentCompleted"

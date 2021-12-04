@@ -18,7 +18,7 @@ import { selectCurrentHabit } from "features/habit/selectors";
 import { selectCurrentHierarchy } from "features/hierarchy/selectors";
 // @ts-ignore
 import {
-  selectIsCompletedDate,
+  selectAccumulatedStatusForDate,
   selectStoredHabitDates,
 } from "features/habitDate/selectors";
 
@@ -174,7 +174,7 @@ export const CalendarWidget = ({
               <DateCard
                 key={fromDate}
                 date={fromDate && stringifyDate(fromDate)}
-                completedStatus={selectIsCompletedDate(
+                completedStatus={selectAccumulatedStatusForDate(
                   fromDate,
                   relativeDateId
                 )(store.getState())}
