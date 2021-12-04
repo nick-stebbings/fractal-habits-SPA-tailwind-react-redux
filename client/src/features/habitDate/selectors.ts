@@ -38,13 +38,17 @@ export const selectAccumulatedStatusForDate = (
         );
 
       const hierarchyDataForDateId = hierarchyData[dateId];
-      const currentHabitHierarchyNode =
-        hierarchyDataForDateId &&
-        hierarchy(JSON.parse(hierarchyDataForDateId)).find(
+      const currentHabitHierarchyNode = console.log(
+        "hierarchyDataForDateId :>> ",
+        hierarchyDataForDateId
+      );
+      !!hierarchyDataForDateId &&
+        hierarchyDataForDateId.find(
           (n: any) => n.data.name == currentHabit.meta.name
         );
       if (!hierarchyDataForDateId) return "OOB";
-
+      if (!dateIsCompleted && dateId == 1) {
+      }
       const currentHabitNodeDataForDate =
         currentHabitHierarchyNode?.data?.content;
       if (!!currentHabitNodeDataForDate) {

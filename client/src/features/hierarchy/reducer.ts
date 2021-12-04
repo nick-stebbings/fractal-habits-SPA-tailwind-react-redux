@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { hierarchy } from "d3";
 import { Hierarchy } from "./types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -40,31 +41,35 @@ export const hierarchySlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase("fetch_habit_tree/fulfilled", (state, action) => {
       if (!action?.payload) return state;
+      const newJsonTree = hierarchy(action.payload.data);
+      Visualization.sumHierarchyData.call(null, newJsonTree);
+      Visualization.accumulateNodeValues.call(null, newJsonTree);
 
-      state.myRecords[action.meta.arg.dateId] = JSON.stringify(
-        action.payload.data
-      );
-      state.current.json = JSON.stringify(action.payload.data);
+      state.myRecords[action.meta.arg.dateId] = newJsonTree;
+      console.log("state.myRecords :>> ", { ...state.myRecords });
+      state.current.json = newJsonTree;
     });
     builder.addCase("fetch_habit_trees/fulfilled", (state, action) => {
       if (!action?.payload) return state;
       const { data: treeJsons } = action.payload;
       const dateIds = Object.keys(treeJsons);
 
-      dateIds.map((dateId) => {
+      const newTreeJsons = dateIds.map((dateId) => {
         try {
           const jsonTree = hierarchy(JSON.parse(treeJsons[dateId]));
-
+          console.log("jsonTree :>> ", jsonTree);
           Visualization.sumHierarchyData.call(null, jsonTree);
           Visualization.accumulateNodeValues.call(null, jsonTree);
+          return jsonTree;
         } catch (error) {
           console.error("Failed accumulating weekly tree jsons: ", error);
         }
       });
+      const newRecords = _.zip(dateIds, newTreeJsons);
 
       state.myRecords = {
         ...state.myRecords,
-        ...treeJsons,
+        ...newRecords,
       };
     });
   },

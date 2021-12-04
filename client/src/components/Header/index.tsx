@@ -62,9 +62,10 @@ export const Header = ({isVis}) => {
   const handlePrevDate = (_:any) => {
     if (isVis) {
       dispatch(updateCurrentHierarchy({nextDateId: currentDateId - 1}))
+      const newDateId = Math.max.apply(null, [1, currentDateId - 7]) // Account for minimum date Id
 
-      currentDatePositionIdx == 0 && 
-    dispatch(fetchHabitTreesREST({ domainId: 1, dateId: currentDateId - 7 }));
+      currentDatePositionIdx == 0 && !isMemoised(newDateId) &&
+        dispatch(fetchHabitTreesREST({ domainId: 1, dateId: newDateId }));
     }
     dispatch(decrementIdx())
 }
