@@ -85,10 +85,10 @@ export const habitDatePersisted = (node) =>
   node?.data?.content && parseTreeValues(node.data.content).status !== "";
 
 export const cumulativeValue = (node) => {
-  const content = parseTreeValues(node.data.content).status;
+  const content = parseTreeValues(node.content).status;
   try {
     // if collapsed
-    if (node?._children) {
+    if (!!node?._children) {
       return +(
         // return 1 or 0
         (
@@ -99,7 +99,7 @@ export const cumulativeValue = (node) => {
     }
     // if expanded
     if (content === "true") {
-      if (node && node.children) {
+      if (node && node?.children.length > 0) {
         return +(
           // Were all descendant nodes accumulated to have a 1 value each?
           (
@@ -107,6 +107,8 @@ export const cumulativeValue = (node) => {
             node.children.every((n) => cumulativeValue(n) === 1)
           )
         );
+      } else {
+        return 1;
       }
     } else {
       return 0;
@@ -123,21 +125,18 @@ export const contentEqual = (node, other) =>
 export const nodeStatusColours = (d, currentHierarchy) => {
   // Guard clause for 'no record'
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
-    return neutralCol;
-
-  const cumulativeVal = cumulativeValue(d);
+    return noNodeCol;
+  const cumulativeVal = cumulativeValue(d?.data || d);
   const status = parseTreeValues(d.data.content).status;
 
   if (status == "false" && currentHierarchy.leaves().includes(d))
     return negativeCol; // False leaf nodes are negative
   if (status == "OOB") return noNodeCol; // Untracked (out of bounds) nodes are neutral
   if (cumulativeVal === 0 && status === "true") return parentPositiveCol; // Node is complete but some of its descendants are not.
-
   switch (cumulativeVal) {
     case 1: // All descendants are positive
       return positiveCol;
     case 0: // Not all descendants are positive
-      debugger;
       return negativeCol;
     default:
       return neutralCol;

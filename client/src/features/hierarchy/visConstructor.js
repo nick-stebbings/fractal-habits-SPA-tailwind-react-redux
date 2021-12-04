@@ -583,7 +583,6 @@ export default class Visualization {
       })
       .style("fill", (d) => {
         if (!habitDatePersisted(d)) return neutralCol;
-        debugger;
         return nodeStatusColours(d, this.rootData);
       })
       .style("stroke", (d) =>
@@ -594,6 +593,7 @@ export default class Visualization {
       .style("opacity", (d) => this.activeOrNonActiveOpacity(d, "0.5"))
       .style("stroke-width", (d) =>
         // !!this.activeNode && d.ancestors().includes(this.activeNode)
+        // TODO : memoize nodeStatus colours
         nodeStatusColours(d, this.rootData) === parentPositiveCol
           ? "40px"
           : "1px"
