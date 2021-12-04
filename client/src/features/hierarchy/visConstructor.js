@@ -488,12 +488,10 @@ export default class Visualization {
       .on("dblclick.zoom", null);
   }
 
-  sumHierarchyData() {
-    this.rootData.sum((d) => {
+  static sumHierarchyData(data) {
+    data.sum((d) => {
       // Return a binary interpretation of whether the habit was completed that day
-      const thisNode = this.rootData
-        .descendants()
-        .find((node) => node.data == d);
+      const thisNode = data.descendants().find((node) => node.data == d);
       let content = parseTreeValues(thisNode.data.content);
       if (content.status === "") return 0;
       if (content.status === "OOB") return 0;
@@ -501,11 +499,10 @@ export default class Visualization {
       return +statusValue;
     });
   }
-  accumulateNodeValues() {
-    while (this.rootData.descendants().some((node) => node.value > 1)) {
+  static accumulateNodeValues(data) {
+    while (data.descendants().some((node) => node.value > 1)) {
       // Convert node values to binary based on whether their descendant nodes are all completed
-      this.rootData.each((node, idx) => {
-        _p("node" + idx, node, "success");
+      data.each((node, idx) => {
         if (node.value > 0) {
           node.value = cumulativeValue(node);
         }
@@ -959,8 +956,8 @@ export default class Visualization {
       // Update the current day's rootData
       if (this.hasNextData()) this.rootData = this._nextRootData;
       this.setLayout();
-      this.sumHierarchyData();
-      this.accumulateNodeValues();
+      this.constructor.sumHierarchyData(this.rootData);
+      this.constructor.accumulateNodeValues(this.rootData);
       console.log("Formed new layout", this, "!");
 
       this.setZoomBehaviour();

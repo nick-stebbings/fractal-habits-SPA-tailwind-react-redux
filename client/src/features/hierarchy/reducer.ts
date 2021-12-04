@@ -47,9 +47,15 @@ export const hierarchySlice = createSlice({
     });
     builder.addCase("fetch_habit_trees/fulfilled", (state, action) => {
       if (!action?.payload) return state;
+
+      const accumulatedTreeJsons = action.payload.data?.map((jsonTree) => {
+        Visualization.sumHierarchyData.call(null, jsonTree);
+        Visualization.accumulateNodeValues.call(null, jsonTree);
+      });
+
       state.myRecords = {
         ...state.myRecords,
-        ...action.payload.data,
+        accumulatedTreeJsons,
       };
     });
   },
