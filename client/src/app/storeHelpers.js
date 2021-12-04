@@ -34,6 +34,7 @@ const mapCallbacks = {
   },
   habit_dates: (element) => {
     const { date, completed_status, habit_id } = element;
+    if (!completed_status) return;
 
     const daySpace = createInterval(0, 1, DateTime.fromSQL(date));
     return {

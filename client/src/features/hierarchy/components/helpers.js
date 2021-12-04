@@ -123,15 +123,21 @@ export const nodeStatusColours = (d, currentHierarchy) => {
     return noNodeCol;
   const cumulativeVal = cumulativeValue(d?.data || d);
   const status = parseTreeValues(d.data.content).status;
-
-  if (status == "false" && currentHierarchy.leaves().includes(d))
-    return negativeCol; // False leaf nodes are negative
+  console.log("d :>> ", d);
+  if (
+    currentHierarchy.leaves().includes(d) ||
+    d?.children?.every((d) => parseTreeValues(d.data.content).status === "OOB")
+  ) {
+    if (status == "true") return positiveCol;
+    if (status == "false") return negativeCol;
+  }
   if (status == "OOB") return noNodeCol; // Untracked (out of bounds) nodes are neutral
-  if (cumulativeVal === 0 && status === "true") return parentPositiveCol; // Node is complete but some of its descendants are not.
+
   switch (cumulativeVal) {
     case 1: // All descendants are positive
       return positiveCol;
     case 0: // Not all descendants are positive
+      if (status == "true") return parentPositiveCol; // Node is complete but some of its descendants are not.
       return negativeCol;
     default:
       return neutralCol;
