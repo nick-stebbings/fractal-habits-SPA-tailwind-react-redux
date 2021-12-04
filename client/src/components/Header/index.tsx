@@ -4,11 +4,16 @@ import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../../routes/routeInfo";
 
 // @ts-ignore
 import { useAppDispatch, useAppSelector } from "app/hooks";
+
 // @ts-ignore
 import { selectCurrentHabit } from "features/habit/selectors";
+
 // @ts-ignore
 import slice, { selectCurrentDateId, selectCurrentDatePositionIdx } from 'features/space/slice';
 const { decrementIdx, incrementIdx } = slice.actions;
+
+import { visActions } from "features/hierarchy/reducer";
+const {updateCurrentHierarchy} = visActions
 import { fetchHabitTreeREST,fetchHabitTreesREST } from "features/hierarchy/actions";
 
 // @ts-ignore
@@ -52,7 +57,7 @@ export const Header = ({isVis}) => {
   // console.log('render header');
   const handlePrevDate = (_:any) => {
     if (isVis) {
-      dispatch(fetchHabitTreeREST({ domainId: 1, dateId: currentDateId - 1 }))
+      dispatch(updateCurrentHierarchy({nextDateId: currentDateId - 1}))
 
       currentDatePositionIdx == 0 && 
     dispatch(fetchHabitTreesREST({ domainId: 1, dateId: currentDateId - 7 }));

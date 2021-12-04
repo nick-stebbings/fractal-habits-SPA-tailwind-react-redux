@@ -13,7 +13,10 @@ let clientRouteDict = {
     ).show_all(),
   show_all: ({ domainId, dateId }: any): Promise<any> =>
     clientRoutes(
-      `/habit_trees/weekly?domain_id=${domainId}&start_date_id=${dateId}`
+      `/habit_trees/weekly?domain_id=${domainId}&start_date_id=${Math.max.apply(
+        null,
+        [dateId, 1]
+      )}`
     ).show_all(),
 };
 
