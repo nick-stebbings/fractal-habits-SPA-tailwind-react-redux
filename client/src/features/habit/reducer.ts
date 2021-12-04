@@ -1,12 +1,7 @@
 import { DateTime, Duration } from "luxon";
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  Habit,
-  NewHabitPayload,
-  DeleteHabitPayload,
-  UpdateHabitPayload,
-} from "./types";
+import { Habit, NewHabitPayload, UpdateHabitPayload } from "./types";
 
 // @ts-ignore
 import { Dictionary } from "app/types";
@@ -40,7 +35,7 @@ export const habitSlice = createSlice({
       };
       state.current.timeframe = action.payload.habit.timeframe;
     },
-    deleteHabit(state, _: PayloadAction<DeleteHabitPayload>) {
+    deleteCurrentHabit(state, _: PayloadAction<any>) {
       delete state.current.meta;
     },
     updateHabit(state, action: PayloadAction<UpdateHabitPayload>) {

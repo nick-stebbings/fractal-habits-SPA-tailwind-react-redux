@@ -380,6 +380,7 @@ export default class Visualization {
       nodeContent.left,
       nodeContent.right
     );
+    console.log("newCurrent :>> ", newCurrent, nodeContent);
     store.dispatch(updateCurrentHabit(newCurrent));
     const s = store.getState();
     if (selectCurrentHabit(s)?.meta.id !== selectCurrentHabitDate(s)?.habitId) {

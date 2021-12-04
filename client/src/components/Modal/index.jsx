@@ -1,4 +1,5 @@
 import React from "react";
+import { useAppDispatch } from "app/hooks";
 
 import { selectCurrentDomain } from "features/domain/selectors";
 import { selectCurrentHabit } from "features/habit/selectors";
@@ -9,6 +10,8 @@ import { InfoBox } from "./InfoBox";
 import { useAppSelector } from "app/hooks";
 import { store } from "app/store";
 import { destroyHabitREST } from "features/habit/actions";
+import HabitSlice from "features/habit/reducer";
+const { deleteCurrentHabit } = HabitSlice.actions;
 
 const TITLES = {
   Confirm: "Message: You are about to...",
@@ -19,6 +22,7 @@ const TITLES = {
 };
 
 export const Modal = ({ type, toggle, resetConfirm }) => {
+  const dispatch = useAppDispatch();
   const currentDomain = useAppSelector(selectCurrentDomain);
   const currentHabit = useAppSelector(selectCurrentHabit);
   _p("modal type :>> " + type, type, "warning");
@@ -98,6 +102,8 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
                   const currentId = selectCurrentHabit(store.getState()).meta
                     .id;
                   store.dispatch(destroyHabitREST({ id: currentId }));
+                  store.dispatch(deleteCurrentHabit());
+                  closeModal();
                 }}
               />
             )}

@@ -18,10 +18,6 @@ export interface NewHabitPayload {
   habit: Habit;
 }
 
-export interface DeleteHabitPayload {
-  id: number;
-}
-
 export interface UpdateHabitPayload {
   id: number;
   habitPatch: Partial<Habit>;
