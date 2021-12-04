@@ -4,7 +4,10 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 import { getUIStatus } from "../features/ui/selectors";
 import { fetchDomainsREST } from "../features/domain/actions";
-import { fetchHabitTreeREST } from "../features/hierarchy/actions";
+import {
+  fetchHabitTreeREST,
+  fetchHabitTreesREST,
+} from "../features/hierarchy/actions";
 import { selectCurrentDateId } from "../features/space/slice";
 import { fetchHabitREST } from "../features/habit/actions";
 
@@ -19,6 +22,8 @@ export default function useFetch(isVisComponent: boolean) {
     dispatch(fetchHabitREST({ id: currentHabit?.meta?.id }));
   const loadTreeData = async () =>
     dispatch(fetchHabitTreeREST({ domainId: 1, dateId: currentDateId }));
+  const loadWeeklyTreeData = async () =>
+    dispatch(fetchHabitTreesREST({ domainId: 1, dateId: currentDateId - 7 }));
 
   const loadData = async function () {
     await loadDomains();
@@ -33,6 +38,7 @@ export default function useFetch(isVisComponent: boolean) {
     if (currentHabit?.meta.id == 0 || currentHabit?.meta?.name) return;
     loadNewCurrentHabit();
     isVisComponent && loadTreeData();
+    isVisComponent && loadWeeklyTreeData();
   }, [currentHabit?.meta?.id]);
 
   return { UIStatus };

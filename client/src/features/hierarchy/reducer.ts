@@ -40,6 +40,14 @@ export const hierarchySlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase("fetch_habit_tree/fulfilled", (state, action) => {
       if (!action?.payload) return state;
+
+      state.myRecords[action.meta.arg.dateId] = JSON.stringify(
+        action.payload.data
+      );
+      state.current.json = JSON.stringify(action.payload.data);
+    });
+    builder.addCase("fetch_habit_trees/fulfilled", (state, action) => {
+      if (!action?.payload) return state;
       debugger;
       state.myRecords[action.meta.arg.dateId] = JSON.stringify(
         action.payload.data
