@@ -16,6 +16,9 @@ export const selectLastWeekSpaces = (state: RootState) => state?.space.lastWeek;
 
 export const selectCurrentSpace = (state: RootState) => state?.space.current;
 
+export const selectCurrentDatePositionIdx = (state: RootState) =>
+  state?.space.currentIdx;
+
 export const selectCurrentDateId = (state: RootState) => {
   let baseDate = DateTime.fromISO("2021-12-03").startOf("day"); // Hard coded for the demo app. There is no date model but there is in the API until it is phased out.
   let dateDiff = DateTime.local()

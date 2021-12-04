@@ -27,7 +27,10 @@ export default function useFetch(isVisComponent: boolean) {
 
   const loadData = async function () {
     await loadDomains();
-    isVisComponent && (await loadTreeData());
+    if (isVisComponent) {
+      await loadTreeData();
+      loadWeeklyTreeData();
+    }
   };
 
   useEffect(() => {
@@ -38,7 +41,6 @@ export default function useFetch(isVisComponent: boolean) {
     if (currentHabit?.meta.id == 0 || currentHabit?.meta?.name) return;
     loadNewCurrentHabit();
     isVisComponent && loadTreeData();
-    isVisComponent && loadWeeklyTreeData();
   }, [currentHabit?.meta?.id]);
 
   return { UIStatus };
