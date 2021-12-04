@@ -1,3 +1,4 @@
+import { hierarchy } from "d3";
 import { Hierarchy } from "./types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -47,15 +48,23 @@ export const hierarchySlice = createSlice({
     });
     builder.addCase("fetch_habit_trees/fulfilled", (state, action) => {
       if (!action?.payload) return state;
+      const { data: treeJsons } = action.payload;
+      const dateIds = Object.keys(treeJsons);
 
-      const accumulatedTreeJsons = action.payload.data?.map((jsonTree) => {
-        Visualization.sumHierarchyData.call(null, jsonTree);
-        Visualization.accumulateNodeValues.call(null, jsonTree);
+      dateIds.map((dateId) => {
+        try {
+          const jsonTree = hierarchy(JSON.parse(treeJsons[dateId]));
+
+          Visualization.sumHierarchyData.call(null, jsonTree);
+          Visualization.accumulateNodeValues.call(null, jsonTree);
+        } catch (error) {
+          console.error("Failed accumulating weekly tree jsons: ", error);
+        }
       });
 
       state.myRecords = {
         ...state.myRecords,
-        accumulatedTreeJsons,
+        ...treeJsons,
       };
     });
   },
