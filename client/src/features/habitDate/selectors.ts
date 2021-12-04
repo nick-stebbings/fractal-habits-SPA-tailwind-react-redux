@@ -41,14 +41,11 @@ export const selectIsCompletedDate = (
       const hierarchyDataForDateId = hierarchyData[dateId];
       const currentHabitHierarchyNode =
         hierarchyDataForDateId &&
-        hierarchy(hierarchyDataForDateId).find(
+        hierarchy(JSON.parse(hierarchyDataForDateId)).find(
           (n: any) => n.data.name == currentHabit.meta.name
         );
-      console.log(
-        "hierarchyDataForDateId :>> ",
-        dateId,
-        hierarchyDataForDateId
-      );
+      if (!hierarchyDataForDateId) return "OOB";
+
       const currentHabitNodeDataForDate =
         currentHabitHierarchyNode?.data?.content;
       if (!!currentHabitNodeDataForDate) {
