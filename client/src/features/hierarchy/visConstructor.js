@@ -179,6 +179,7 @@ export default class Visualization {
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
+        this.zoomBase().selectAll(".active-circle").remove();
 
         const targ = event.target;
         if (targ.tagName == "circle") {
@@ -259,7 +260,7 @@ export default class Visualization {
           content: node.data,
         };
         // if (deadNode(event)) return this.reset();
-        this.eventHandlers.handleStatusChange.call(this, node);
+        // this.eventHandlers.handleStatusChange.call(this, node);
 
         console.log("NODE TOGGLE :>> ");
       },
@@ -357,12 +358,12 @@ export default class Visualization {
 
   setActiveNode(clickedNodeContent, event = null) {
     this.activeNode = this.findNodeByContent(clickedNodeContent);
+    // this.activeNode.isNew = true;
 
-    if (event) {
-      const currentActiveG = document.querySelector(".the-node.active");
-      if (currentActiveG) currentActiveG.classList.toggle("active");
-      event.target.closest(".the-node").classList.toggle("active");
-    }
+    const currentActiveG = document.querySelector(".the-node.active");
+    if (currentActiveG) currentActiveG.classList.toggle("active");
+    event && event.target.closest(".the-node").classList.toggle("active");
+
     return this.activeNode;
   }
   findNodeByContent(node) {
@@ -596,7 +597,7 @@ export default class Visualization {
           ? positiveCol
           : noNodeCol
       )
-      .style("opacity", (d) => this.activeOrNonActiveOpacity(d, "0.5"))
+      .style("opacity", (d) => this.activeOrNonActiveOpacity(d, "1"))
       .style("stroke-width", (d) =>
         // !!this.activeNode && d.ancestors().includes(this.activeNode)
         // TODO : memoize nodeStatus colours
@@ -845,12 +846,11 @@ export default class Visualization {
   activateNodeAnimation() {
     // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
     // Credit: Andrew Reid
-    this.zoomBase().selectAll(".active-circle").remove();
 
     const gCircle = this.zoomBase().selectAll(
       "g.the-node.solid.active g.node-subgroup"
     );
-    gCircle.on("mouseover", this.eventHandlers.handleHover);
+    console.log("gCircle :>> ", gCircle);
 
     const pulseScale = scaleLinear()
       .range(["#fff", "#5568d2", "#3349c1"])
@@ -955,8 +955,14 @@ export default class Visualization {
       );
     }
 
-    if (this.firstRender() || this.hasNewHierarchyData()) {
+    if (
+      this.firstRender() ||
+      this.hasNewHierarchyData() ||
+      this.activeNode.isNew
+    ) {
       if (this.noCanvas()) return;
+      !this.activeNode && this.setActiveNode(this.rootData.data);
+
       // First render OR New hierarchy needs to be rendered
       // Update the current day's rootData
       if (this.hasNextData()) this.rootData = this._nextRootData;
@@ -972,7 +978,6 @@ export default class Visualization {
       console.log("Formed new layout", this, "!");
 
       this.setZoomBehaviour();
-      this.setActiveNode(this.rootData.data.content);
       this.clearCanvas();
 
       this.setNodeAndLinkGroups();
@@ -993,7 +998,12 @@ export default class Visualization {
       // console.log("Added legend :>> ");
       this.addLegend();
     }
-    this.activeNode && this.activateNodeAnimation();
+
+    console.log("this.activeNode :>> ", this.activeNode);
+    if (this.activeNode) {
+      this.zoomBase().selectAll(".active-circle").remove();
+      this.activateNodeAnimation();
+    }
   }
 }
 
