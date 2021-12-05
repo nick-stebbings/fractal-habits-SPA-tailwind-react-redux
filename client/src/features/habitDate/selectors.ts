@@ -2,8 +2,6 @@
 import { RootState } from "app/store";
 import { createSelector } from "@reduxjs/toolkit";
 // @ts-ignore
-import { hierarchy } from "d3-hierarchy";
-// @ts-ignore
 import { TimeFrame } from "app/types";
 // @ts-ignore
 import { Habit } from "app/features/habit/types";
@@ -19,11 +17,6 @@ export const selectStoredHabitDates = (state: RootState) => {
 export const selectCurrentHabitDate = (state: RootState) => {
   return state?.habitDate?.current;
 };
-
-export const selectCurrentHabitDates = (state: RootState) => {
-  return state?.habitDate?.myRecords.filter((record: Habit) => {});
-};
-
 export const selectAccumulatedStatusForDate = (
   fromDateUnixTs: number,
   dateId: number

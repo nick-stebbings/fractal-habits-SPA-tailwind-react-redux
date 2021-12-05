@@ -73,6 +73,7 @@ export const CalendarWidget = ({
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
   const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords);
+  const currentStoredHabitDates = useAppSelector(selectStoredHabitDates);
   return (
     <div
       className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-8"
