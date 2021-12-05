@@ -72,8 +72,8 @@ export const CalendarWidget = ({
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
-  const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords);
-  const currentStoredHabitDates = useAppSelector(selectStoredHabitDates);
+  const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords); // Triggers re-render on new memoised hierarchies
+  useAppSelector(selectStoredHabitDates); // Triggers re-render on habit date update
   return (
     <div
       className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-8"
