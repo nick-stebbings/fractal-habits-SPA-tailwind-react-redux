@@ -6,6 +6,8 @@ import {
   noNodeCol,
 } from "app/constants";
 
+import { hierarchy } from "d3";
+
 // General helpers
 
 export const isTouchDevice = () => {
@@ -35,6 +37,20 @@ export const getTransform = (node, xScale) => {
   var tx = -bx;
   var ty = -by;
   return { translate: [tx, ty], scale: xScale };
+};
+
+export const updateVisRootData = (visObject, currentHierarchy) => {
+  // Check if the hierarchy in the store is a new one (a new tree needs rendering)
+  const compareString = JSON.stringify(currentHierarchy.data);
+
+  if (
+    visObject?._svgId &&
+    JSON.stringify(visObject.rootData.data) !== compareString
+  ) {
+    visObject._nextRootData = hierarchy(currentHierarchy.data);
+    visObject.render();
+    _p("Rendered from component & updated ", {}, "!");
+  }
 };
 
 // Non-vis DOM manipulation

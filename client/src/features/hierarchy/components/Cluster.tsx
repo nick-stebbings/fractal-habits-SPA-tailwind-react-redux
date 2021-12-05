@@ -13,6 +13,7 @@ import Vis from "../visConstructor";
 import { visActions } from "../reducer";
 const { createVis } = visActions;
 import { selectCurrentHierarchy } from "../selectors";
+import { updateVisRootData } from "./helpers";
 
 export const Cluster: React.FC<VisProps> = ({
   canvasHeight,
@@ -37,26 +38,15 @@ export const Cluster: React.FC<VisProps> = ({
   }, []);
 
     useEffect(() => {
-    if (currentHierarchy.name == "") {
-      return;
-    } else {
-      // Check if the hierarchy in the store is a new one (a new tree needs rendering)
-      const newHier = hierarchy(currentHierarchy)
-      const compareString = JSON.stringify(newHier.data)
-      if (currentCluster?._svgId && JSON.stringify(currentCluster.rootData.data) !== compareString) {
-        currentCluster._nextRootData = newHier
-        currentCluster.render()
-        _p("Rendered from component & updated ", {}, '!' )
-      }
-    }
-  }, [JSON.stringify(currentHierarchy)])
+    currentHierarchy.name !== "" && updateVisRootData(currentCluster, currentHierarchy)
+  }, [JSON.stringify(currentHierarchy.data)])
 
   useEffect(() => {
     if (currentHierarchy.name == "") return;
     if (currentRequestState === "SUCCESS" && !currentCluster._svgId) {
       currentCluster = new Vis(
             `div${divId}`,
-            hierarchy(currentHierarchy),
+            currentHierarchy,
             canvasHeight,
             canvasWidth,
             margin,

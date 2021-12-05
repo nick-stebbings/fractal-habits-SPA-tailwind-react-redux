@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 // @ts-ignore
 import { useAppSelector, useAppDispatch } from "app/hooks";
 // @ts-ignore
-import { hierarchy, select } from "d3";
+import { select } from "d3";
 // @ts-ignore
 import { selectCurrentTree } from "features/hierarchy/selectors";
 // @ts-ignore
@@ -13,6 +13,7 @@ import Vis from "../visConstructor";
 import { visActions } from "../reducer";
 const { createVis } = visActions;
 import { selectCurrentHierarchy } from "../selectors";
+import { updateVisRootData } from "./helpers";
 
 export const HabitTree: React.FC<VisProps> = ({
   canvasHeight,
@@ -37,19 +38,7 @@ export const HabitTree: React.FC<VisProps> = ({
   }, []);
 
     useEffect(() => {
-    if (currentHierarchy.name == "") {
-      return;
-    } else {
-      // Check if the hierarchy in the store is a new one (a new tree needs rendering)
-      const newHier = currentHierarchy
-      const compareString = JSON.stringify(newHier.data)
-      
-      if (currentHabitTree?._svgId && (JSON.stringify(currentHabitTree.rootData.data) !== compareString)) {
-        currentHabitTree._nextRootData = hierarchy(newHier.data)
-        currentHabitTree.render()
-        _p("Rendered from component & updated ", {}, '!' )
-      }
-    }
+    currentHierarchy.name !== "" && updateVisRootData(currentHabitTree, currentHierarchy)
   }, [JSON.stringify(currentHierarchy.data)])
 
   useEffect(() => {

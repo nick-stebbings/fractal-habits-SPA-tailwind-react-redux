@@ -499,6 +499,7 @@ export default class Visualization {
       // Return a binary interpretation of whether the habit was completed that day
       const thisNode = data.descendants().find((node) => node.data == d);
       let content = parseTreeValues(thisNode.data.content);
+
       if (content.status === "") return 0;
       if (content.status === "OOB") return 0;
       const statusValue = JSON.parse(content.status);
@@ -972,7 +973,9 @@ export default class Visualization {
         this.clearCanvas();
         return;
       }
-
+      if (!this.rootData.data.content) {
+        this.rootData = this.rootData.data;
+      }
       this.constructor.sumHierarchyData(this.rootData);
       this.constructor.accumulateNodeValues(this.rootData);
       console.log("Formed new layout", this, "!");
