@@ -54,7 +54,7 @@ export const hierarchySlice = createSlice({
       Visualization.sumHierarchyData.call(null, newJsonTree);
       Visualization.accumulateNodeValues.call(null, newJsonTree);
 
-      // state.myRecords[action.meta.arg.dateId] = newJsonTree;
+      state.myRecords[action.meta.arg.dateId] = newJsonTree;
       state.current.hier = newJsonTree;
     });
 
