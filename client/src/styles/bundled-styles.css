@@ -2888,7 +2888,7 @@ div.mask-wrapper > header {
 }
 @media (min-width: 640px) {
   div.mask-wrapper > header {
-    height: 3rem;
+    height: 4rem;
   }
 }
 @media (min-width: 1024px) {

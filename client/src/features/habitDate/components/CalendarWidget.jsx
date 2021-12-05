@@ -82,7 +82,9 @@ export const CalendarWidget = ({
       <div className="habit-description-label gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col w-full overflow-none lg:items-center bg-gray-100 border-4 pb-12 md:pb-0">
         <div className="flex justify-end flex-col relative">
           <h2 className="mt-4 underline">Description</h2>
-          <span className="">{currentHabit.meta.description}</span>
+          <span className="min-h-16 mr-1/3">
+            {currentHabit.meta.description}
+          </span>
           <h2 className="flex mt-1 underline">Initiated On</h2>
           <span>{stringifyDate(currentHabit.timeframe.fromDate)}</span>
           <i
