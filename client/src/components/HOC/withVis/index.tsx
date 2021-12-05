@@ -4,10 +4,10 @@ import useFetch from '../../../hooks/useFetch'
 import "../../../assets/styles/pages/d3vis.scss";
 
 const margin = {
-  top: 100,
+  top: 200,
   right: 0,
   bottom: 0,
-  left: -100,
+  left: 100,
 };
 
 const d3SetupCanvas = function () {
@@ -19,7 +19,6 @@ const d3SetupCanvas = function () {
 };
 
 export function withVis<T> (C : ComponentType<T>) : React.FC {
-  const debounceInterval = 350
   const divId = 1;
   useFetch(true)
   

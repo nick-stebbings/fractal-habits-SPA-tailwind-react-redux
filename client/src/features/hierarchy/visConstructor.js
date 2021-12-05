@@ -35,8 +35,7 @@ const { updateHabitDateForNode } = HabitDateSlice.actions;
 
 import {
   getTransform,
-  showHabitLabel,
-  setHabitLabel,
+  radialPoint,
   expand,
   collapse,
   collapseAroundAndUnder,
@@ -59,15 +58,11 @@ import {
   parentPositiveCol,
 } from "app/constants";
 
-function radialPoint(x, y) {
-  return [(y = +y) * Math.cos((x -= Math.PI / 2)), y * Math.sin(x)];
-}
-
 const BASE_SCALE = 1;
 const FOCUS_MODE_SCALE = 1;
 const LABEL_SCALE = 1.5;
 const BUTTON_SCALE = 2;
-const XS_NODE_RADIUS = 80;
+const XS_NODE_RADIUS = 60;
 const LG_NODE_RADIUS = 50;
 const XS_LEVELS_HIGH = 3;
 const LG_LEVELS_HIGH = 3;
@@ -199,7 +194,6 @@ export default class Visualization {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
-          setHabitLabel(node.data);
           // console.log("event,node :>> ", event, node);
           this.setActiveNode(node.data, event);
 
@@ -437,15 +431,18 @@ export default class Visualization {
     }
   }
   setdXdY() {
+    console.log(this._viewConfig.canvasWidth);
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh -
-      +(this.type == "cluster") * 1000;
+      +(this.type == "cluster") * (this._viewConfig.canvasWidth / 3) - // Adjust for cluster vertical spacing on different screens
+      +(this._viewConfig.isSmallScreen() && this.type == "cluster") * 100;
     this._viewConfig.dy =
-      this._viewConfig.canvasHeight / this._viewConfig.levelsWide;
+      this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
+      +(this.type == "cluster") * 0.1;
 
     //adjust for taller aspect ratio
-    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 3 : 0.5;
-    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 1 : 1.5;
+    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 0.5;
+    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 1.25 : 1.5;
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
@@ -482,8 +479,10 @@ export default class Visualization {
     this._viewConfig.viewportH =
       this._viewConfig.canvasHeight * this._viewConfig.levelsHigh;
 
-    this._viewConfig.viewportX = 0;
-    this._viewConfig.viewportY = 0;
+    this._viewConfig.viewportX =
+      this.type == "tree" ? this._viewConfig.canvasWidth / 6 : 0;
+    this._viewConfig.viewportY =
+      (-(this.type == "tree" ? 150 : 1) * this._viewConfig.levelsHigh) / 4; // Adjust for initial y translation on different vis
 
     this._viewConfig.defaultView = `${this._viewConfig.viewportX} ${this._viewConfig.viewportY} ${this._viewConfig.viewportW} ${this._viewConfig.viewportH}`;
   }

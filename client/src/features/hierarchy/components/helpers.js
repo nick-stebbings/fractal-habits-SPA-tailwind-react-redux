@@ -28,6 +28,10 @@ export const debounce = function (func, delay) {
   };
 };
 
+export const radialPoint = (x, y) => {
+  return [(y = +y) * Math.cos((x -= Math.PI / 2)), y * Math.sin(x)];
+};
+
 export const getTransform = (node, xScale) => {
   if (typeof node === "undefined") return;
   var x = node.__data__ ? node.__data__.x : node.x;
@@ -51,18 +55,6 @@ export const updateVisRootData = (visObject, currentHierarchy) => {
     visObject.render();
     _p("Rendered from component & updated ", {}, "!");
   }
-};
-
-// Non-vis DOM manipulation
-
-export const showHabitLabel = () =>
-  (document.querySelector(".mask-wrapper").style.height = "5rem");
-
-export const setHabitLabel = (data) => {
-  document.getElementById("current-habit").nextElementSibling.textContent =
-    data?.name;
-  document.getElementById("current-habit-sm").nextElementSibling.textContent =
-    data?.name;
 };
 
 // Node Status helpers
