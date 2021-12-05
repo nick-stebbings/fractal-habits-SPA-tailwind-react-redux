@@ -318,6 +318,17 @@ export default class Visualization {
         }
       },
     };
+
+    this.expand = function () {
+      expand(this.rootData);
+      this._nextRootData = this.rootData;
+      this.render();
+    };
+    this.collapse = function () {
+      collapse(this.rootData);
+      this._nextRootData = this.rootData;
+      this.render();
+    };
   }
 
   zoomBase() {
@@ -409,12 +420,6 @@ export default class Visualization {
     document.querySelector(".the-node.active") &&
       document.querySelector(".the-node.active").classList.remove("active");
     this._canvas.call(this.zoomer.transform, zoomIdentity);
-  }
-  expand() {
-    expand(this.rootData);
-  }
-  collapse() {
-    collapse(this.rootData);
   }
 
   setLevelsHighAndWide() {

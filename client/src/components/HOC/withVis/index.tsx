@@ -28,19 +28,36 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
     return (
       <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={'1'} {...hocProps} render={(currentVis) => {
         return (<>
-      <button
+      {/* <button
         type="button"
         id="reset-tree"
+        className="vis-button"
         onClick={() => currentVis.expand()}
       >
         <span>Reset Tree</span>
-      </button>
+      </button> */}
       <button
-        type="button"
-        id="collapse-tree"
-        onClick={() => currentVis.collapse()}
+            type="button"
+            id="collapse-tree"
+            className="vis-button"
+            onClick={(e) => {
+              const {target: { classList, textContent }} = e
+              classList.toggle('active');
+              console.log('textContent :>> ', textContent);
+              try {
+              textContent == "Collapse"
+                ? currentVis.collapse()
+                : currentVis.expand();
+
+              e.target.textContent = textContent.includes("Collapse")
+                ? "Expand"
+                : "Collapse"; 
+              } catch (error) {
+                console.error("Could not mutate tree: ", error);
+              }
+            }}
       >
-        <span>Collapse</span>
+        <span>{currentVis?.rootData && (currentVis.rootData._children ? "Expand" : "Collapse")}</span>
       </button>
       </>
       )}} />)

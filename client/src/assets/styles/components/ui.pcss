@@ -4,7 +4,8 @@
       @apply border-4 border-balance-sshades-sat;
     }
     .outline-none {
-      overflow: hidden; outline: none;
+      overflow: hidden;
+      outline: none;
     }
     .outline-shadow {
       @apply rounded-full;
@@ -17,7 +18,8 @@ thead tr {
   @apply hidden w-full flex items-center;
 }
 
-thead, tbody {
+thead,
+tbody {
   @apply w-full;
 }
 
@@ -79,7 +81,7 @@ label.reqd.not-added::before {
 }
 
 label.reqd.not-added::after {
-  content: '    - Please fill this in correctly!';
+  content: "    - Please fill this in correctly!";
   @apply text-balance-buttonbg-close font-bold;
 }
 
@@ -135,24 +137,24 @@ main#append-habit .button-container.selected {
   @apply bg-balance-buttonbg-digbluelighter hover:bg-balance-buttonbg-digblue text-white font-bold border-balance-sshades-gray border-2;
 }
 
-#vis button {
+.vis-button {
   z-index: 101;
   transition: right 0.2s ease-in;
-  @apply w-48 text-lg text-right -right-36 active:outline-light focus:outline-none focus:outline-shadow fixed border-2 p-3 pl-4 pr-8 m-1 rounded-full shadow-md text-gray-100 bg-gray-700 uppercase;
+  @apply w-48 text-lg text-right -right-36 active:outline-light focus:outline-none focus:outline-light fixed border-2 p-3 pl-4 pr-8 m-1 rounded-full shadow-md text-gray-100 bg-gray-700 uppercase;
 }
 
-#vis button span {
+.vis-button span {
   @apply ml-4;
 }
 
-#vis button:hover {
+.vis-button:hover {
   right: -2rem;
 }
 
-#vis button::before {
+.vis-button::before {
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
-  content: "\f78c";
+  content: "\f31e";
   left: 1rem;
   position: absolute;
 }
@@ -161,12 +163,12 @@ main#append-habit .button-container.selected {
   @apply bottom-14 lg:bottom-auto lg:top-36;
 }
 
-#vis button#reset-tree::before {
+.vis-button#reset-tree::before {
   content: "\f065";
 }
 
-#vis button.active::before {
-  content: "\f31e";
+.vis-button.active::before {
+  content: "\f78c";
 }
 
 #collapse-tree {
@@ -183,7 +185,8 @@ main#append-habit .button-container.selected {
   user-select: none;
 }
 
-input[type="text"], input[type="email"],
+input[type="text"],
+input[type="email"],
 .sm-selector-container select.domain-selector,
 input[type="date"] {
   @apply focus:ring-balance-sshades-brighten focus:border-balance-sshades-brighten border-2 text-sm lg:text-xl text-gray-600 border-gray-300 rounded-md;
@@ -207,23 +210,36 @@ input[type="date"] {
     @apply px-0 ml-3;
   }
 
-  footer ul, footer ul li {
+  footer ul,
+  footer ul li {
     @apply w-full;
   }
-  
+
   footer ul li:first-of-type li {
     @apply justify-end px-0;
   }
 
-  thead tr, tbody tr {
+  thead tr,
+  tbody tr {
     display: inline-table;
   }
 
-  tr > *:first-of-type {width: 30%; padding-right: 2rem;}
-  tr > *:nth-of-type(2) {width: 20%}
-  tr > *:nth-of-type(3) {width: 15%;}
-  tr > *:nth-of-type(4) {width: 18%;}
-  tr > *:nth-of-type(5) {width: 17%}
+  tr > *:first-of-type {
+    width: 30%;
+    padding-right: 2rem;
+  }
+  tr > *:nth-of-type(2) {
+    width: 20%;
+  }
+  tr > *:nth-of-type(3) {
+    width: 15%;
+  }
+  tr > *:nth-of-type(4) {
+    width: 18%;
+  }
+  tr > *:nth-of-type(5) {
+    width: 17%;
+  }
 }
 
 @media (min-width: 1024px) {
