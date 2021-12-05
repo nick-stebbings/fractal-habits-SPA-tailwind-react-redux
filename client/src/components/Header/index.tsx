@@ -63,10 +63,12 @@ export const Header = ({isVis}) => {
     if (isVis) {
       dispatch(updateCurrentHierarchy({nextDateId: currentDateId - 1}))
       const newDateId = Math.max.apply(null, [1, currentDateId - 7]) // Account for minimum date Id
-
-      currentDatePositionIdx == 0 && !isMemoised(newDateId) &&
-        dispatch(fetchHabitTreesREST({ domainId: 1, dateId: newDateId }));
-    }
+if ( !isMemoised(newDateId)) {
+  currentDatePositionIdx < 0 && updateCurrentHierarchy({nextDateId: -1}) // Account for boundary of possible stored habit tree jsons 
+  currentDatePositionIdx == 0 &&
+  dispatch(fetchHabitTreesREST({ domainId: 1, dateId: newDateId }));
+}
+}
     dispatch(decrementIdx())
 }
   const handleNextDate = (_: any) => {

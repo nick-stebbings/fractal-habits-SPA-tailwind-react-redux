@@ -42,10 +42,10 @@ export const HabitTree: React.FC<VisProps> = ({
     } else {
       // Check if the hierarchy in the store is a new one (a new tree needs rendering)
       const newHier = currentHierarchy
-      console.log('me :>> ', newHier);
       const compareString = JSON.stringify(newHier.data)
-      if (currentHabitTree?._svgId && JSON.stringify(currentHabitTree.rootData.data) !== compareString) {
-        currentHabitTree._nextRootData = newHier
+      
+      if (currentHabitTree?._svgId && (JSON.stringify(currentHabitTree.rootData.data) !== compareString)) {
+        currentHabitTree._nextRootData = hierarchy(newHier.data)
         currentHabitTree.render()
         _p("Rendered from component & updated ", {}, '!' )
       }

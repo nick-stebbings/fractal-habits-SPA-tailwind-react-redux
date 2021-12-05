@@ -956,6 +956,12 @@ export default class Visualization {
       // Update the current day's rootData
       if (this.hasNextData()) this.rootData = this._nextRootData;
       this.setLayout();
+      const isBlankData = this.rootData?.data?.content == "";
+      if (isBlankData) {
+        this.clearCanvas();
+        return;
+      }
+
       this.constructor.sumHierarchyData(this.rootData);
       this.constructor.accumulateNodeValues(this.rootData);
       console.log("Formed new layout", this, "!");

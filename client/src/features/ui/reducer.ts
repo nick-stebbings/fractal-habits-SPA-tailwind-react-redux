@@ -29,7 +29,7 @@ export const isErrorAction = (action: AnyAction) => {
 
 export const isLoadingAction = (action: AnyAction) => {
   return action.type.endsWith("/pending");
-  // return !action.type.endsWith("createVis") && !isDataAction(action);
+  // return !action.type.endsWithierarchyDataForDateIdion(action);
 };
 
 const initialState: Dictionary<boolean | string> = {

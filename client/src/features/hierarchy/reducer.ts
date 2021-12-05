@@ -11,7 +11,7 @@ export const initialState: Dictionary<
 > = {
   current: {
     id: 0,
-    json: JSON.stringify({ name: "", children: "" }),
+    hier: { x: 0, y: 0, data: { name: "", children: "" } },
   },
   treeVis: {},
   radialVis: {},
@@ -33,7 +33,16 @@ export const hierarchySlice = createSlice({
     updateCurrentHierarchy(state, action: PayloadAction<any>) {
       const { nextDateId } = action.payload;
       if (state.myRecords[nextDateId]) {
-        state.current.json = state.myRecords[nextDateId];
+        state.current.hier = state.myRecords[nextDateId];
+      } else {
+        state.current = {
+          id: 0,
+          hier: {
+            name: "OOB",
+            content: "",
+            data: { content: "", children: "" },
+          },
+        };
       }
       return state;
     },
@@ -45,10 +54,10 @@ export const hierarchySlice = createSlice({
       Visualization.sumHierarchyData.call(null, newJsonTree);
       Visualization.accumulateNodeValues.call(null, newJsonTree);
 
-      state.myRecords[action.meta.arg.dateId] = newJsonTree;
-      console.log("state.myRecords :>> ", { ...state.myRecords });
-      state.current.json = newJsonTree;
+      // state.myRecords[action.meta.arg.dateId] = newJsonTree;
+      state.current.hier = newJsonTree;
     });
+
     builder.addCase("fetch_habit_trees/fulfilled", (state, action) => {
       if (!action?.payload) return state;
       const { data: treeJsons } = action.payload;
@@ -57,7 +66,6 @@ export const hierarchySlice = createSlice({
       const newTreeJsons = dateIds.map((dateId) => {
         try {
           const jsonTree = hierarchy(JSON.parse(treeJsons[dateId]));
-          console.log("jsonTree :>> ", jsonTree);
           Visualization.sumHierarchyData.call(null, jsonTree);
           Visualization.accumulateNodeValues.call(null, jsonTree);
           return jsonTree;
@@ -65,11 +73,8 @@ export const hierarchySlice = createSlice({
           console.error("Failed accumulating weekly tree jsons: ", error);
         }
       });
-      const newRecords = _.zip(dateIds, newTreeJsons);
-
       state.myRecords = {
-        ...state.myRecords,
-        ...newRecords,
+        ..._.merge(state.myRecords, Object.assign({}, newTreeJsons)),
       };
     });
   },

@@ -36,7 +36,6 @@ export const selectRelativeDateId = (fromDateTimestampUnix: number) =>
       let dateDiff = DateTime.fromMillis(fromDateTimestampUnix)
         .diff(DateTime.fromMillis(currentSpace.timeframe.fromDate), ["day"])
         .toObject().days;
-
       return dateDiff + dateIdNow + 1 + -DB_DATE_ID_OFFSET;
     }
   );

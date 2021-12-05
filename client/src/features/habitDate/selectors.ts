@@ -38,21 +38,18 @@ export const selectAccumulatedStatusForDate = (
         );
 
       const hierarchyDataForDateId = hierarchyData[dateId];
-      const currentHabitHierarchyNode = console.log(
-        "hierarchyDataForDateId :>> ",
-        hierarchyDataForDateId
-      );
-      !!hierarchyDataForDateId &&
+      const currentHabitHierarchyNode =
+        !!hierarchyDataForDateId &&
         hierarchyDataForDateId.find(
           (n: any) => n.data.name == currentHabit.meta.name
         );
       if (!hierarchyDataForDateId) return "OOB";
-      if (!dateIsCompleted && dateId == 1) {
-      }
+
+      let currentHabitStatus;
       const currentHabitNodeDataForDate =
         currentHabitHierarchyNode?.data?.content;
       if (!!currentHabitNodeDataForDate) {
-        const currentHabitStatus = parseTreeValues(
+        currentHabitStatus = parseTreeValues(
           currentHabitNodeDataForDate
         )!.status;
         if (currentHabitStatus == "OOB") return "OOB";
@@ -67,9 +64,11 @@ export const selectAccumulatedStatusForDate = (
               parseTreeValues(childNode.data.content)!.status
             )
         );
-      return dateIsCompleted && hasDescendantsIncomplete
+      const completedInTreeOrInStore =
+        currentHabitStatus == "true" || dateIsCompleted;
+      return completedInTreeOrInStore && hasDescendantsIncomplete
         ? "parentCompleted"
-        : dateIsCompleted;
+        : completedInTreeOrInStore;
     }
   );
 };

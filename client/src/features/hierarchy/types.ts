@@ -1,6 +1,6 @@
 export interface Hierarchy {
   id: number;
-  json: string;
+  hier: object;
 }
 export interface VisProps {
   canvasHeight: number;
