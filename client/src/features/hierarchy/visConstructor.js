@@ -208,7 +208,7 @@ export default class Visualization {
           this.rootData.each((node) => {
             if (nodesToCollapse.includes(node.data.content)) collapse(node);
           });
-          expand(node.parent);
+          expand(node?.parent ? node.parent : node);
           this.render();
         }
       },

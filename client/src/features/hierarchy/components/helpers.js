@@ -175,7 +175,6 @@ export function collapse(d) {
 }
 
 export const cousins = (node, root) => {
-  console.log(node, root);
   return root.descendants().filter((n) => n.depth == node.depth && n !== node);
 };
 
