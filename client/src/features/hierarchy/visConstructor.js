@@ -332,6 +332,7 @@ export default class Visualization {
       collapse(this.rootData);
       this._nextRootData = this.rootData;
       this.render();
+      this.reset({ justTranslation: true });
     };
   }
 
@@ -360,6 +361,8 @@ export default class Visualization {
   }
 
   setActiveNode(clickedNodeContent, event = null) {
+    this.activeNode?.isNewActive && delete this.activeNode.isNewActive;
+
     this.activeNode = this.findNodeByContent(clickedNodeContent);
     this.activeNode && (this.activeNode.isNewActive = true);
 
@@ -415,14 +418,17 @@ export default class Visualization {
     select(".canvas").selectAll("*").remove();
   }
 
-  reset() {
+  reset({ justTranslation }) {
     this.scale = BASE_SCALE;
     this.zoomBase().attr("viewBox", this._viewConfig.defaultView);
-    this.expand();
     this._zoomConfig.previousRenderZoom = {};
-    this.activeNode = null;
-    document.querySelector(".the-node.active") &&
-      document.querySelector(".the-node.active").classList.remove("active");
+    this.activeNode.isNew = null;
+    this.activeNode = this.rootData;
+    if (!justTranslation) {
+      this.expand();
+      document.querySelector(".the-node.active") &&
+        document.querySelector(".the-node.active").classList.remove("active");
+    }
     this._canvas.call(this.zoomer.transform, zoomIdentity);
   }
 
@@ -590,7 +596,14 @@ export default class Visualization {
   setNodeAndLinkEnterSelections() {
     const nodes = this._gNode.selectAll("g.node").data(
       this.rootData.descendants().filter((d) => {
-        return !outOfBoundsNode(d, this.rootData);
+        const outOfBounds = outOfBoundsNode(d, this.rootData);
+        // Set new active node when this one is out of bounds
+        if (outOfBounds && this.activeNode?.data.name == d.data.name) {
+          this.activeNode = this.rootData;
+          this.rootData.isNewActive = true;
+        }
+
+        return !outOfBounds;
       })
     ); // Remove habits that weren't being tracked then);
 
