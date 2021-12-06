@@ -522,7 +522,7 @@ export default class Visualization {
       return +statusValue;
     });
   }
-  static accumulateNodeValuesaccumulateNodeValues(data) {
+  static accumulateNodeValues(data) {
     if (!data?.descendants) return;
     while (data.descendants().some((node) => node.value > 1)) {
       // Convert node values to binary based on whether their descendant nodes are all completed
