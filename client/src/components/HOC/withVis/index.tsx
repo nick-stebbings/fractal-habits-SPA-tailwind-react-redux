@@ -1,9 +1,7 @@
 import React, { ComponentType, } from 'react'
 
-import { selectCurrentHierarchyRecords } from "features/hierarchy/selectors";
 import useFetch from '../../../hooks/useFetch'
 import "../../../assets/styles/pages/d3vis.scss";
-import { useAppSelector } from 'app/hooks';
 
 const margin = {
   top: 200,
@@ -22,8 +20,7 @@ const d3SetupCanvas = function () {
 
 export function withVis<T> (C : ComponentType<T>) : React.FC {
   const divId = 1;
-  const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords)
-  !!currentHierarchyRecords && (Object.keys(currentHierarchyRecords).length == 0 )&& useFetch(true)
+  useFetch(true)
   
   const NewC: React.FC = (hocProps: T) => {
     const { canvasHeight, canvasWidth } = d3SetupCanvas()

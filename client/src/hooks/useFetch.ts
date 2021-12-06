@@ -2,6 +2,7 @@ import { selectCurrentHabit } from "./../features/habit/selectors";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
+import { selectCurrentHierarchyRecords } from "features/hierarchy/selectors";
 import { getUIStatus } from "../features/ui/selectors";
 import { fetchDomainsREST } from "../features/domain/actions";
 import {
@@ -16,6 +17,7 @@ export default function useFetch(isVisComponent: boolean) {
   const UIStatus = useAppSelector(getUIStatus);
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentDateId = useAppSelector(selectCurrentDateId);
+  const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords);
 
   const loadDomains = () => dispatch(fetchDomainsREST());
   const loadNewCurrentHabit = () =>
@@ -34,6 +36,11 @@ export default function useFetch(isVisComponent: boolean) {
   };
 
   useEffect(() => {
+    if (
+      currentHierarchyRecords &&
+      Object.keys(currentHierarchyRecords).length !== 0
+    )
+      return;
     loadData();
   }, []);
 
