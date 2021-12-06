@@ -198,17 +198,19 @@ export default class Visualization {
 
           this.activateNodeAnimation();
 
-          const nodesToCollapse = nodesForCollapse
-            .call(this, node, {
-              cousinCollapse: false,
-              auntCollapse: true,
-            })
-            .map((n) => n?.data?.content);
-          this.rootData.each((node) => {
-            if (nodesToCollapse.includes(node.data.content)) collapse(node);
-          });
-          expand(node?.parent ? node.parent : node);
-          this.render();
+          if (!this.type == "radial") {
+            const nodesToCollapse = nodesForCollapse
+              .call(this, node, {
+                cousinCollapse: false,
+                auntCollapse: true,
+              })
+              .map((n) => n?.data?.content);
+            this.rootData.each((node) => {
+              if (nodesToCollapse.includes(node.data.content)) collapse(node);
+            });
+            expand(node?.parent ? node.parent : node);
+            this.render();
+          }
         }
       },
       handleStatusChange: function (node) {
@@ -445,7 +447,6 @@ export default class Visualization {
     }
   }
   setdXdY() {
-    console.log(this._viewConfig.canvasWidth);
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh -
       +(this.type == "cluster") * (this._viewConfig.canvasWidth / 3) - // Adjust for cluster vertical spacing on different screens
@@ -468,13 +469,6 @@ export default class Visualization {
       let t = { ...e.transform };
       let scale = t.k;
 
-      // const viewbox = this.currentViewBox();
-      // Limit translate within bounds
-      // t.x = t.x < viewbox[0] ? viewbox[0] : t.x;
-      // t.x = t.x > viewbox[2] ? viewbox[2] : t.x;
-      // t.y = t.y < viewbox[1] ? viewbox[1] : t.y;
-      // t.y = t.y > viewbox[3] ? viewbox[3] : t.y;
-      // if (t.k === 1) t.x = t.y = 0;
       t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
       t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
       select(".canvas")
@@ -767,12 +761,6 @@ export default class Visualization {
       .attr("d", "M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z")
       .attr("fill", "#e06a58")
       .on("click", this.eventHandlers.handleDeleteNode.bind(this));
-    // this._gButton
-    //   .append("text")
-    //   .attr("x", 15)
-    //   .attr("y", this.isDemo ? 25 : 30)
-    //   .text((d) => "DELETE")
-    //   .on("click", (e, n) => {});
     if (!this.isDemo) {
       this._gButton
         .append("rect")

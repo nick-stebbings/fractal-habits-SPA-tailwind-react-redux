@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 // @ts-ignore
 import { useAppSelector, useAppDispatch } from "app/hooks";
 // @ts-ignore
-import { hierarchy, select } from "d3";
+import { select } from "d3";
 // @ts-ignore
 import { selectCurrentRadial } from "features/hierarchy/selectors";
 // @ts-ignore
@@ -11,6 +11,7 @@ import { getRequestStatus } from "features/ui/selectors";
 import {VisProps} from '../types';
 import Vis from "../visConstructor";
 import { visActions } from "../reducer";
+import { updateVisRootData } from "./helpers";
 const { createVis } = visActions;
 import { selectCurrentHierarchy } from "../selectors";
 
@@ -36,27 +37,18 @@ export const RadialTree: React.FC<VisProps> = ({
         .attr("style", "pointer-events: all")
   }, []);
 
+
     useEffect(() => {
-    if (currentHierarchy.name == "") {
-      return;
-    } else {
-      // Check if the hierarchy in the store is a new one (a new tree needs rendering)
-      const newHier = hierarchy(currentHierarchy)
-      const compareString = JSON.stringify(newHier.data)
-      if (currentRadial?._svgId && JSON.stringify(currentRadial.rootData.data) !== compareString) {
-        currentRadial._nextRootData = newHier
-        currentRadial.render()
-        _p("Rendered from component & updated ", {}, '!' )
-      }
-    }
-  }, [JSON.stringify(currentHierarchy)])
+    currentHierarchy.name !== "" && updateVisRootData(currentRadial, currentHierarchy)
+  }, [JSON.stringify(currentHierarchy.data)])
+
 
   useEffect(() => {
     if (currentHierarchy.name == "") return;
     if (currentRequestState === "SUCCESS" && !currentRadial._svgId) {
       currentRadial = new Vis(
             `div${divId}`,
-            hierarchy(currentHierarchy),
+            currentHierarchy,
             canvasHeight,
             canvasWidth,
             margin,
