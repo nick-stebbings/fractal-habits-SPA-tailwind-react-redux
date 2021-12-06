@@ -38,12 +38,13 @@ export const HabitTree: React.FC<VisProps> = ({
   }, []);
 
     useEffect(() => {
-    currentHierarchy.name !== "" && updateVisRootData(currentHabitTree, currentHierarchy)
+    currentHierarchy?.data.name !== "" && updateVisRootData(currentHabitTree, currentHierarchy)
   }, [JSON.stringify(currentHierarchy.data)])
 
   useEffect(() => {
-    if (currentHierarchy.name == "") return;
-    if (currentRequestState === "SUCCESS" && !(currentHabitTree._svgId)) {
+    console.log(currentHierarchy?.data.name, 'currentRequestState === "SUCCESS" && !(currentHabitTree._svgId) :>> ', (currentRequestState === "SUCCESS" || currentRequestState === "IDLE")  && !(currentHabitTree._svgId));
+    if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
+    if ((currentRequestState === "SUCCESS" || currentRequestState === "IDLE") && !(currentHabitTree._svgId)) {
       currentHabitTree = new Vis(
             `div${divId}`,
             currentHierarchy,
@@ -64,7 +65,7 @@ export const HabitTree: React.FC<VisProps> = ({
       currentHabitTree.render()
       _p("Rendered from component", {}, '!' )
     }
-  }, [currentHierarchy.name]);
+  }, [currentHierarchy?.data.name]);
 
   return (
       <>{render(currentHabitTree)}</>

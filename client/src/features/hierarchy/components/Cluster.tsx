@@ -42,8 +42,9 @@ export const Cluster: React.FC<VisProps> = ({
   }, [JSON.stringify(currentHierarchy.data)])
 
   useEffect(() => {
-    if (currentHierarchy.name == "") return;
-    if (currentRequestState === "SUCCESS" && !currentCluster._svgId) {
+    if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
+    console.log('currentRequestState === "SUCCESS" && !(currentHabitTree._svgId) :>> ', (currentRequestState === "SUCCESS")  && !(currentCluster._svgId));
+    if ((currentRequestState === "SUCCESS") && !currentCluster._svgId) {
       currentCluster = new Vis(
             `div${divId}`,
             currentHierarchy,
@@ -64,7 +65,7 @@ export const Cluster: React.FC<VisProps> = ({
       currentCluster.render()
       _p("Rendered from component", {}, '!' )
     }
-  }, [currentHierarchy.name]);
+  }, [currentHierarchy?.data.name]);
 
   return (
       <>{render(currentCluster)}</>
