@@ -42,7 +42,6 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
             onClick={(e) => {
               const {target: { classList, textContent }} = e
               classList.toggle('active');
-              console.log('textContent :>> ', textContent);
               try {
               textContent == "Collapse"
                 ? currentVis.collapse()

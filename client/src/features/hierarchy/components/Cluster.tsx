@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 // @ts-ignore
 import { useAppSelector, useAppDispatch } from "app/hooks";
 // @ts-ignore
-import { hierarchy, select } from "d3";
+import { select } from "d3";
 // @ts-ignore
 import { selectCurrentCluster } from "features/hierarchy/selectors";
 // @ts-ignore
@@ -37,8 +37,8 @@ export const Cluster: React.FC<VisProps> = ({
         .attr("style", "pointer-events: all")
   }, []);
 
-    useEffect(() => {
-    currentHierarchy.name !== "" && updateVisRootData(currentCluster, currentHierarchy)
+  useEffect(() => {
+    currentHierarchy?.data.name && currentHierarchy.data.name !== "" && updateVisRootData(currentCluster, currentHierarchy)
   }, [JSON.stringify(currentHierarchy.data)])
 
   useEffect(() => {

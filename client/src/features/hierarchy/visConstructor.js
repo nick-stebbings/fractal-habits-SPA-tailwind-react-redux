@@ -179,7 +179,7 @@ export default class Visualization {
         const targ = event.target;
         if (targ.tagName == "circle") {
           if (targ.closest(".the-node").classList.contains("active"))
-            return this.reset();
+            return this.reset({ justTranslation: false });
           if (deadNode(event)) {
             //P: There is no habit node for this habit. To track a habit for this day:
             // - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
@@ -361,6 +361,7 @@ export default class Visualization {
   }
 
   setActiveNode(clickedNodeContent, event = null) {
+    // debugger;
     this.activeNode?.isNewActive && delete this.activeNode.isNewActive;
 
     this.activeNode = this.findNodeByContent(clickedNodeContent);
@@ -509,6 +510,7 @@ export default class Visualization {
   }
 
   static sumHierarchyData(data) {
+    if (!data?.sum) return;
     data.sum((d) => {
       // Return a binary interpretation of whether the habit was completed that day
       const thisNode = data.descendants().find((node) => node.data == d);
@@ -520,7 +522,8 @@ export default class Visualization {
       return +statusValue;
     });
   }
-  static accumulateNodeValues(data) {
+  static accumulateNodeValuesaccumulateNodeValues(data) {
+    if (!data?.descendants) return;
     while (data.descendants().some((node) => node.value > 1)) {
       // Convert node values to binary based on whether their descendant nodes are all completed
       data.each((node, idx) => {
@@ -531,6 +534,7 @@ export default class Visualization {
     }
   }
   activeOrNonActiveOpacity(d, dimmedOpacity) {
+    console.log("this.activeNode?.data.name :>> ", this.activeNode?.data.name);
     if (
       !this.activeNode ||
       (!!this.activeNode &&
@@ -580,7 +584,12 @@ export default class Visualization {
         break;
     }
     this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
-    this.layout(this.rootData);
+    try {
+      this.layout(this.rootData);
+    } catch (error) {
+      _p("Failed layout data", this.rootData, "!");
+      console.error(error);
+    }
   }
   setNodeAndLinkGroups() {
     const transformation = `translate(${0}, ${this.type == "radial" ? 0 : 0})`;
@@ -599,8 +608,7 @@ export default class Visualization {
         const outOfBounds = outOfBoundsNode(d, this.rootData);
         // Set new active node when this one is out of bounds
         if (outOfBounds && this.activeNode?.data.name == d.data.name) {
-          this.activeNode = this.rootData;
-          this.rootData.isNewActive = true;
+          this.setActiveNode(this.rootData);
         }
 
         return !outOfBounds;
@@ -986,10 +994,9 @@ export default class Visualization {
     if (
       this.firstRender() ||
       this.hasNewHierarchyData() ||
-      this.activeNode.isNewActive
+      this.activeNode?.isNewActive
     ) {
       if (this.noCanvas()) return;
-      !this.activeNode && this.setActiveNode(this.rootData.data);
 
       // First render OR New hierarchy needs to be rendered
       // Update the current day's rootData
@@ -1003,10 +1010,15 @@ export default class Visualization {
       if (!this.rootData.data.content) {
         this.rootData = this.rootData.data;
       }
-      this.constructor.sumHierarchyData(this.rootData);
-      this.constructor.accumulateNodeValues(this.rootData);
+      try {
+        this.constructor.sumHierarchyData(this.rootData);
+        this.constructor.accumulateNodeValues(this.rootData);
+      } catch (error) {
+        return;
+      }
       console.log("Formed new layout", this, "!");
 
+      !this.activeNode && this.setActiveNode(this.rootData.data);
       this.setZoomBehaviour();
       this.clearCanvas();
 
@@ -1031,24 +1043,22 @@ export default class Visualization {
 
     console.log("this.activeNode :>> ", this.activeNode);
     if (this.activeNode) {
-      this.zoomBase().selectAll(".active-circle").remove();
+      this.activeNode?.isNew &&
+        this.zoomBase().selectAll(".active-circle").remove();
       this.activateNodeAnimation();
     }
   }
 }
 
-// const makePatchOrPutRequest = function (isDemo, currentStatus) {
-//   const requestBody = {
-//     habit_id: HabitStore.current().id,
-//     date_id: DateStore.current().id,
-//     completed_status: oppositeStatus(currentStatus),
-//   };
-//   return HabitDateStore.runUpdate(
-//     isDemo,
-//     requestBody,
-//     DomainStore.current().id
-//   );
-// };
+export const accumulateTree = (json) => {
+  try {
+    Visualization.sumHierarchyData.call(null, json);
+    Visualization.accumulateNodeValues.call(null, json);
+  } catch (error) {
+    console.error("Could not manipulate tree: ", error);
+  }
+};
+
 // enteringNodes
 //   .append("g")
 //   .attr("transform", "translate(" + "-20" + "," + "55" + ") scale( 2.5 )")

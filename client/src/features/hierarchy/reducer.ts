@@ -4,14 +4,14 @@ import { Hierarchy } from "./types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { Dictionary } from "app/types";
-import Visualization from "./visConstructor";
+import Visualization, { accumulateTree } from "./visConstructor";
 
 export const initialState: Dictionary<
   Hierarchy | Dictionary<typeof Visualization>
 > = {
   current: {
     id: 0,
-    hier: { x: 0, y: 0, data: { name: "", children: "" } },
+    hier: { x: 0, y: 0, data: { name: "", children: "", content: "" } },
   },
   treeVis: {},
   radialVis: {},
@@ -51,8 +51,7 @@ export const hierarchySlice = createSlice({
     builder.addCase("fetch_habit_tree/fulfilled", (state, action) => {
       if (!action?.payload) return state;
       const newJsonTree = hierarchy(action.payload.data);
-      Visualization.sumHierarchyData.call(null, newJsonTree);
-      Visualization.accumulateNodeValues.call(null, newJsonTree);
+      accumulateTree(newJsonTree);
 
       state.myRecords[action.meta.arg.dateId] = newJsonTree;
       state.current.hier = newJsonTree;
@@ -64,14 +63,8 @@ export const hierarchySlice = createSlice({
       const dateIds = Object.keys(treeJsons);
 
       const newTreeJsons = dateIds.map((dateId) => {
-        try {
-          const jsonTree = hierarchy(JSON.parse(treeJsons[dateId]));
-          Visualization.sumHierarchyData.call(null, jsonTree);
-          Visualization.accumulateNodeValues.call(null, jsonTree);
-          return jsonTree;
-        } catch (error) {
-          console.error("Failed accumulating weekly tree jsons: ", error);
-        }
+        const jsonTree = hierarchy(JSON.parse(treeJsons[dateId]));
+        accumulateTree(jsonTree);
       });
       state.myRecords = {
         ..._.merge(state.myRecords, Object.assign({}, newTreeJsons)),
