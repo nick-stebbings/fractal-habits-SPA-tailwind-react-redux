@@ -59,7 +59,8 @@ export const Header = ({isVis}) => {
   const isMemoised = (dateId: number) =>
     selectHasStoredTreeForDateId(dateId)(store.getState())
 
-  const handlePrevDate = (_:any) => {
+  const handlePrevDate = (_: any) => {
+    _p("DECREMENT DATE", '', 'warning' )
     if (isVis) {
       dispatch(updateCurrentHierarchy({nextDateId: currentDateId - 1}))
       const newDateId = Math.max.apply(null, [1, currentDateId - 7]) // Account for minimum date Id

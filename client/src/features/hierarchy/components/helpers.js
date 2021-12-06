@@ -6,7 +6,7 @@ import {
   noNodeCol,
 } from "app/constants";
 
-import { hierarchy } from "d3";
+import { select, hierarchy } from "d3";
 
 // General helpers
 
@@ -43,13 +43,23 @@ export const getTransform = (node, xScale) => {
   return { translate: [tx, ty], scale: xScale };
 };
 
+export const appendSvg = (divId) => {
+  select(`#div${divId}`).empty() &&
+    select(`#vis`)
+      .append("svg")
+      .attr("id", `div${divId}`)
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("style", "pointer-events: all");
+};
+
 export const updateVisRootData = (visObject, currentHierarchy) => {
   // Check if the hierarchy in the store is a new one (a new tree needs rendering)
   const compareString = JSON.stringify(currentHierarchy.data);
-
   if (
     visObject?._svgId &&
-    JSON.stringify(visObject.rootData.data) !== compareString
+    (JSON.stringify(visObject.rootData.data) !== compareString ||
+      visObject.firstRender())
   ) {
     visObject._nextRootData = hierarchy(currentHierarchy.data);
     visObject.render();

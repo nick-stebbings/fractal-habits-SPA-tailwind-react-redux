@@ -8,7 +8,7 @@ interface indexProps {
 }
 
 export default function App ({isVisComponent, children}: indexProps) {
-  // console.log('render app :>> ');
+  console.log('render app :>> ');
   return (
       <>
         <Header isVis={isVisComponent} />

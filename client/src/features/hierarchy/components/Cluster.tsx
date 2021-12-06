@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
+
 // @ts-ignore
 import { useAppSelector, useAppDispatch } from "app/hooks";
-// @ts-ignore
-import { select } from "d3";
 // @ts-ignore
 import { selectCurrentCluster } from "features/hierarchy/selectors";
 // @ts-ignore
@@ -13,7 +12,7 @@ import Vis from "../visConstructor";
 import { visActions } from "../reducer";
 const { createVis } = visActions;
 import { selectCurrentHierarchy } from "../selectors";
-import { updateVisRootData } from "./helpers";
+import { appendSvg, updateVisRootData } from "./helpers";
 
 export const Cluster: React.FC<VisProps> = ({
   canvasHeight,
@@ -23,28 +22,22 @@ export const Cluster: React.FC<VisProps> = ({
   render,
 }) => {
   const dispatch = useAppDispatch();
+
   let currentCluster = useAppSelector(selectCurrentCluster);
   const currentRequestState = useAppSelector(getRequestStatus);
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
 
   useEffect(() => {
-    select(`#div${divId}`).empty() &&
-      select(`#vis`)
-        .append<SVGGElement>("svg")
-        .attr("id", `div${divId}`)
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .attr("style", "pointer-events: all")
+    appendSvg(divId)
   }, []);
-
-  useEffect(() => {
+  
+  useEffect(() => {    
     currentHierarchy.data.name !== "" && updateVisRootData(currentCluster, currentHierarchy)
-  }, [JSON.stringify(currentHierarchy.data)])
+  }, [currentHierarchy?.data.name])
 
   useEffect(() => {
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
-    console.log('currentRequestState === "SUCCESS" && !(currentHabitTree._svgId) :>> ', (currentRequestState === "SUCCESS")  && !(currentCluster._svgId));
-    if ((currentRequestState === "SUCCESS") && !currentCluster._svgId) {
+    if ((currentRequestState === "IDLE") && !currentCluster._svgId) {
       currentCluster = new Vis(
             `div${divId}`,
             currentHierarchy,
@@ -62,8 +55,6 @@ export const Cluster: React.FC<VisProps> = ({
         )
       );
       _p("Instantiated vis object :>> ", currentCluster, "info");
-      currentCluster.render()
-      _p("Rendered from component", {}, '!' )
     }
   }, [currentHierarchy?.data.name]);
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 export const MenuListCard = ({
   title,
@@ -9,6 +9,10 @@ export const MenuListCard = ({
   isEnabled,
 }) => {
   const isDemo = false;
+  let history = useHistory();
+  function handleClick() {
+    history.push(urlString);
+  }
   return (
     <div
       className={
@@ -27,7 +31,7 @@ export const MenuListCard = ({
         </div>
       </div>
       <div className="flex flex-col items-center" style={{ flexBasis: "75%" }}>
-        <button className="menu-card-button">
+        <button className="menu-card-button" onClick={handleClick}>
           <Link to={isDemo ? `${urlString}?demo=true` : urlString}>
             Let's Go
           </Link>

@@ -1,11 +1,8 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes as Switch,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import Home from "../pages/Home";
+import { LastLocationProvider } from "react-router-last-location";
 import HabitTree from "../pages/HabitTree";
 import RadialTree from "../pages/RadialTree";
 import Cluster from "../pages/Cluster";
@@ -13,20 +10,24 @@ import Cluster from "../pages/Cluster";
 export const Routes = () => {
   return (
     <Router>
-      <Switch>
-        <Route path="/" element={<HabitTree />} />
-        <Route path="/vis/habit-tree" element={<HabitTree />} />
-        <Route path="/vis/cluster" element={<Cluster />} />
-        <Route path="/vis/radial-tree" element={<RadialTree />} />
-        <Route
-          path="*"
-          element={
+      <LastLocationProvider>
+        <Switch>
+          <Route path="/vis/habit-tree">
+            <HabitTree />
+          </Route>
+          <Route path="/vis/cluster">
+            <Cluster />
+          </Route>
+          <Route path="/vis/radial-tree">
+            <RadialTree />
+          </Route>
+          <Route path="*">
             <main style={{ padding: "1rem" }}>
               <p>404</p>
             </main>
-          }
-        />
-      </Switch>
+          </Route>
+        </Switch>
+      </LastLocationProvider>
     </Router>
   );
 };

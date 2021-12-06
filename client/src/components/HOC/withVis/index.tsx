@@ -1,6 +1,12 @@
 import React, { ComponentType, } from 'react'
 
+import { useLocation } from 'react-router-dom';
+
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+
+
 import useFetch from '../../../hooks/useFetch'
+import { useLastLocation } from 'react-router-last-location';
 import "../../../assets/styles/pages/d3vis.scss";
 
 const margin = {
@@ -19,14 +25,21 @@ const d3SetupCanvas = function () {
 };
 
 export function withVis<T> (C : ComponentType<T>) : React.FC {
-  const divId = 1;
   useFetch(true)
+  let divId = 1;
   
-  const NewC: React.FC = (hocProps: T) => {
+  const withVisC: React.FC = (hocProps: T) => {
+    const currentPath = useLocation().pathname
+    const lastPath = useLastLocation()?.pathname
+
     const { canvasHeight, canvasWidth } = d3SetupCanvas()
     return (
-      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={'1'} {...hocProps} render={(currentVis) => {
-        console.log('currentVis :>> ', currentVis);
+      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={1} {...hocProps} render={(currentVis) => {
+        if (!!lastPath && currentVis.clearFirstRenderFlag && currentPath!==lastPath){// && (lastPath !== currentPath)) {
+          console.log('currentVis :>> ', currentVis._hasRendered);
+          currentVis.clearFirstRenderFlag();
+        }
+        console.log('returned C :>> ',);
         return (<>
       {/* <button
         type="button"
@@ -61,5 +74,5 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
       </>
       )}} />)
     }
-  return React.memo(NewC)
+  return (withVisC)
 }

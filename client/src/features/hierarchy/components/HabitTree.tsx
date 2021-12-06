@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
+
 // @ts-ignore
 import { useAppSelector, useAppDispatch } from "app/hooks";
-// @ts-ignore
-import { select } from "d3";
 // @ts-ignore
 import { selectCurrentTree } from "features/hierarchy/selectors";
 // @ts-ignore
@@ -13,7 +12,7 @@ import Vis from "../visConstructor";
 import { visActions } from "../reducer";
 const { createVis } = visActions;
 import { selectCurrentHierarchy } from "../selectors";
-import { updateVisRootData } from "./helpers";
+import { updateVisRootData, appendSvg } from "./helpers";
 
 export const HabitTree: React.FC<VisProps> = ({
   canvasHeight,
@@ -28,23 +27,17 @@ export const HabitTree: React.FC<VisProps> = ({
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
 
   useEffect(() => {
-    select(`#div${divId}`).empty() &&
-      select(`#vis`)
-        .append<SVGGElement>("svg")
-        .attr("id", `div${divId}`)
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .attr("style", "pointer-events: all")
+    appendSvg(divId)
   }, []);
 
     useEffect(() => {
     currentHierarchy?.data.name !== "" && updateVisRootData(currentHabitTree, currentHierarchy)
-  }, [JSON.stringify(currentHierarchy.data)])
+  }, [currentHierarchy?.data.name])
 
   useEffect(() => {
     console.log(currentHierarchy?.data.name, 'currentRequestState === "SUCCESS" && !(currentHabitTree._svgId) :>> ', (currentRequestState === "SUCCESS" || currentRequestState === "IDLE")  && !(currentHabitTree._svgId));
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
-    if ((currentRequestState === "SUCCESS" || currentRequestState === "IDLE") && !(currentHabitTree._svgId)) {
+    if ((currentRequestState === "IDLE") && !(currentHabitTree._svgId)) {
       currentHabitTree = new Vis(
             `div${divId}`,
             currentHierarchy,
@@ -62,11 +55,9 @@ export const HabitTree: React.FC<VisProps> = ({
         )
       );
       _p("Instantiated vis object :>> ", currentHabitTree, "info");
-      currentHabitTree.render()
-      _p("Rendered from component", {}, '!' )
     }
   }, [currentHierarchy?.data.name]);
-
+  
   return (
       <>{render(currentHabitTree)}</>
   );

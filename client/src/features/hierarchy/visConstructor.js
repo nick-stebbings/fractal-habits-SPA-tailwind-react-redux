@@ -345,6 +345,10 @@ export default class Visualization {
     return typeof this?._hasRendered == "undefined";
   }
 
+  clearFirstRenderFlag() {
+    delete this._hasRendered;
+  }
+
   isNotALeaf(node) {
     !this.rootData.leaves().includes(node) || node?._children;
   }
@@ -526,7 +530,6 @@ export default class Visualization {
     }
   }
   activeOrNonActiveOpacity(d, dimmedOpacity) {
-    console.log("this.activeNode?.data.name :>> ", this.activeNode?.data.name);
     if (
       !this.activeNode ||
       (!!this.activeNode &&
@@ -985,7 +988,7 @@ export default class Visualization {
     //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
     //     typeof this?._canvas == "undefined"
     // );
-    if (this.firstRender()) {
+    if (this.firstRender() && this.noCanvas()) {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true);
@@ -1034,7 +1037,7 @@ export default class Visualization {
       this.setNodeAndLinkEnterSelections();
       this.setCircleAndLabelGroups();
       this.setButtonGroups();
-      console.log("Appended and set groups... :>>");
+      // console.log("Appended and set groups... :>>");
 
       this.appendCirclesAndLabels();
       this.appendLabels();

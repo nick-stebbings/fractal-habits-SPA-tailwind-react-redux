@@ -2,8 +2,6 @@ import React, { useEffect } from "react";
 // @ts-ignore
 import { useAppSelector, useAppDispatch } from "app/hooks";
 // @ts-ignore
-import { select } from "d3";
-// @ts-ignore
 import { selectCurrentRadial } from "features/hierarchy/selectors";
 // @ts-ignore
 import { getRequestStatus } from "features/ui/selectors";
@@ -11,7 +9,7 @@ import { getRequestStatus } from "features/ui/selectors";
 import {VisProps} from '../types';
 import Vis from "../visConstructor";
 import { visActions } from "../reducer";
-import { updateVisRootData } from "./helpers";
+import { appendSvg, updateVisRootData } from "./helpers";
 const { createVis } = visActions;
 import { selectCurrentHierarchy } from "../selectors";
 
@@ -23,24 +21,18 @@ export const RadialTree: React.FC<VisProps> = ({
   render,
 }) => {
   const dispatch = useAppDispatch();
+
   let currentRadial = useAppSelector(selectCurrentRadial);
   const currentRequestState = useAppSelector(getRequestStatus);
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
 
   useEffect(() => {
-    select(`#div${divId}`).empty() &&
-      select(`#vis`)
-        .append<SVGGElement>("svg")
-        .attr("id", `div${divId}`)
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .attr("style", "pointer-events: all")
+    appendSvg(divId)
   }, []);
-
 
     useEffect(() => {
     currentHierarchy.name !== "" && updateVisRootData(currentRadial, currentHierarchy)
-  }, [JSON.stringify(currentHierarchy.data)])
+  }, [currentHierarchy.name])
 
 
   useEffect(() => {
@@ -63,8 +55,6 @@ export const RadialTree: React.FC<VisProps> = ({
         )
       );
       _p("Instantiated vis object :>> ", currentRadial, "info");
-      currentRadial.render()
-      _p("Rendered from component", {}, '!' )
     }
   }, [currentHierarchy.name]);
 
