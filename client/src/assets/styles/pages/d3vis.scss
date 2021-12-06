@@ -2,29 +2,32 @@ g.nodes {
   cursor: pointer;
   pointer-events: all;
 }
-.controlsSvg {
-  width: 500px;
-  right: 0;
+
+.legend-svg .cell:first-child circle::after {
+  position: absolute;
+  font-family: "Font Awesome 5 Free";
+  content: "";
+  width: 3rem;
+  height: 3rem;
+  left: 0;
+  top: 0;
 }
 
-.legendSvg,
-.controlsSvg {
+.legend-svg .cell:last-child circle {
+  stroke: #edd837;
+  stroke-width: 8px;
+}
+
+.legend-svg .cell,
+.controls-svg {
+  position: relative;
   pointer-events: none;
 }
 
-.legendSvg {
-  left: 0.25rem;
-  transition: bottom 0.3s ease-in;
-  bottom: -9.75rem;
-  z-index: 100;
-  @apply h-72 w-72;
-  text {
-    font-size: 0.5rem;
-  }
-}
-
-.the-node.active circle {
-  // stroke: #5568d2;
+.controls-svg {
+  background-color: #1a140e;
+  stroke: gray;
+  color: #f8f8f8;
 }
 
 svg path.link {
@@ -46,8 +49,8 @@ g.tooltip text,
   stroke-width: 1px;
 }
 
-body[class^="scroll"] .legendSvg,
-body[class^="scroll"] .controlsSvg {
+body[class^="scroll"] .legend-svg,
+body[class^="scroll"] .controls-svg {
   opacity: 0;
   visibility: none;
   transition: opacity 0.2s ease-out;

@@ -140,7 +140,6 @@ export default class Visualization {
     this.eventHandlers = {
       handlePrependNode: function (event, node) {
         let isRoot = node.parent == undefined;
-        // debugger
         store.dispatch(toggleConfirm({ type: "Prepend" }));
       },
       handleAppendNode: function (event, node) {
@@ -361,7 +360,6 @@ export default class Visualization {
   }
 
   setActiveNode(clickedNodeContent, event = null) {
-    // debugger;
     this.activeNode?.isNewActive && delete this.activeNode.isNewActive;
 
     this.activeNode = this.findNodeByContent(clickedNodeContent);
@@ -749,6 +747,18 @@ export default class Visualization {
         }`;
       })
       .attr("transform", this.type == "radial" ? "scale(0.75)" : "");
+
+    this._enteringNodes
+      .append("g")
+      .attr("transform", "translate(" + "-20" + "," + "55" + ") scale( 2.5 )")
+      .append("path")
+      .attr("class", "expand-arrow")
+      .attr("d", (d) => {
+        return d._children
+          ? "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
+          : null;
+      })
+      .style("fill", "#3D3229");
   }
   appendButtons() {
     const delBtnG = this._gButton.append("g");
@@ -826,26 +836,44 @@ export default class Visualization {
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this));
   }
 
-  addLegend() {
-    const ordinal = scaleOrdinal()
-      .domain([
-        "Completed",
-        "Not Yet Tracked",
-        "Incomplete",
-        "No Record for Day",
-      ])
-      .range([positiveCol, neutralCol, negativeCol, noNodeCol]);
+  bindLegendEventHandler() {
+    let infoCell = document.querySelector(".legend-svg .cell:first-child");
+    console.log("infoCell :>> ", infoCell);
+    infoCell.addEventListener("click", () => {
+      debugger;
+      let controlsSvg = document.querySelector(".controls-svg");
+      controlsSvg.classList.toggle("hidden");
+    });
+  }
 
-    const legendSvg = select("svg.legendSvg");
-    const controlsSvg = select("svg.controlsSvg");
+  addLegend() {
+    const labels = [
+      "",
+      "Completed",
+      "Not Yet Tracked",
+      "Incomplete",
+      "Incomplete Subtree",
+    ];
+    const legendScale = this._viewConfig.isSmallScreen()
+      ? BASE_SCALE / 2
+      : BASE_SCALE;
+    const ordinal = scaleOrdinal()
+      .domain(labels)
+      .range([noNodeCol, positiveCol, neutralCol, negativeCol, positiveCol]);
+
+    const legendSvg = select("svg.legend-svg");
+    const controlsSvg = select("svg.controls-svg");
     const gText = controlsSvg
       .append("g")
       .attr("class", "controls")
-      .attr("transform", "translate(280, 40) scale(0.7)");
+      .attr("transform", `translate(${40}, ${38})scale(${legendScale})`);
     const gLegend = legendSvg
       .append("g")
       .attr("class", "legend")
-      .attr("transform", "translate(20, 30) scale(2)");
+      .attr(
+        "transform",
+        `translate(5, ${120 * legendScale}) scale(${legendScale})`
+      );
 
     // Borrowing the habit label for the legend
     if (isTouchDevice()) {
@@ -860,23 +888,20 @@ export default class Visualization {
       gText.append("text").text("Swipe Left ---> Next Day").attr("y", 5);
       gText.append("text").text("Swipe Right ---> Last Day").attr("y", -10);
     } else {
-      gText.append("text").text("L/Click ---> Select Habit & Focus");
-      gText.append("text").attr("y", 25).text("R/Click -> Tick Off Habit");
-      gText
-        .append("text")
-        .text("Zoom On Habit -> Select Family & Centre")
-        .attr("y", -25);
+      gText.append("text").text("L/Click ---> Mark Complete");
+      gText.append("text").attr("y", 25).text("R/Click -> Focus");
+      gText.append("text").text("Scroll Up -> Zoom").attr("y", -25);
     }
     const colorLegend = legendColor()
       .orient("horizontal")
-      .labels(["Completed", "Not Recorded", "Incomplete", "", ""])
+      .labels(labels)
       .orient("vertical")
       .shape("circle")
       .shapeRadius(15)
       .shapePadding(-5)
       .scale(ordinal);
-    // console.log("gLegend :>> ", gLegend);
     gLegend.call(colorLegend);
+    // TODO: Wire up controls svg displaying on event
   }
 
   activateNodeAnimation() {
@@ -886,7 +911,6 @@ export default class Visualization {
     const gCircle = this.zoomBase().selectAll(
       "g.the-node.solid.active g.node-subgroup"
     );
-    console.log("gCircle :>> ", gCircle);
 
     const pulseScale = scaleLinear()
       .range(["#fff", "#5568d2", "#3349c1"])
@@ -1008,14 +1032,10 @@ export default class Visualization {
         return;
       }
       if (!this.rootData.data.content) {
+        debugger;
         this.rootData = this.rootData.data;
       }
-      try {
-        this.constructor.sumHierarchyData(this.rootData);
-        this.constructor.accumulateNodeValues(this.rootData);
-      } catch (error) {
-        return;
-      }
+      accumulateTree(this.rootData);
       console.log("Formed new layout", this, "!");
 
       !this.activeNode && this.setActiveNode(this.rootData.data);
@@ -1036,9 +1056,10 @@ export default class Visualization {
       this._hasRendered = true;
     }
 
-    if (select("svg .legend").empty() && select("svg .controls").empty()) {
-      // console.log("Added legend :>> ");
+    if (!select("svg.legend-svg").empty() && select("svg .legend").empty()) {
+      console.log("Added legend :>> ");
       this.addLegend();
+      this.bindLegendEventHandler();
     }
 
     console.log("this.activeNode :>> ", this.activeNode);
@@ -1050,23 +1071,11 @@ export default class Visualization {
   }
 }
 
-export const accumulateTree = (json) => {
+export function accumulateTree(json) {
   try {
     Visualization.sumHierarchyData.call(null, json);
     Visualization.accumulateNodeValues.call(null, json);
   } catch (error) {
     console.error("Could not manipulate tree: ", error);
   }
-};
-
-// enteringNodes
-//   .append("g")
-//   .attr("transform", "translate(" + "-20" + "," + "55" + ") scale( 2.5 )")
-//   .append("path")
-//   .attr("class", "expand-arrow")
-//   .attr("d", (d) => {
-//     return d._children
-//       ? "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
-//       : null;
-//   })
-//   .style("fill", "red");
+}

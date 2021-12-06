@@ -38,7 +38,7 @@ export const Cluster: React.FC<VisProps> = ({
   }, []);
 
   useEffect(() => {
-    currentHierarchy?.data.name && currentHierarchy.data.name !== "" && updateVisRootData(currentCluster, currentHierarchy)
+    currentHierarchy.data.name !== "" && updateVisRootData(currentCluster, currentHierarchy)
   }, [JSON.stringify(currentHierarchy.data)])
 
   useEffect(() => {
