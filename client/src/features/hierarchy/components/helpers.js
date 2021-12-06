@@ -180,26 +180,25 @@ export const cousins = (node, root) =>
 export const greatAunts = (node, root) =>
   root.children.filter((n) => !node.ancestors().includes(n));
 
-export const collapseAroundAndUnder = function (
+export const nodesForCollapse = function (
   node,
-  cousinCollapse = true,
-  auntCollapse = true
+  { cousinCollapse = true, auntCollapse = true }
 ) {
   let minExpandedDepth = node.depth + 3;
   // For collapsing the nodes 'two levels lower' than selected
   let descendantsToCollapse = node
     .descendants()
     .filter((n) => n.depth >= minExpandedDepth);
-
   // For collapsing cousin nodes (saving width)
   let nodeCousins = [];
   if (cousinCollapse) {
-    nodeCousins = cousins(node, rootData);
+    nodeCousins = cousins(node, this.rootData);
   }
   // For collapsing cousin nodes (saving width)
   let aunts = [];
-  if (node.depth > 1 && auntCollapse && rootData.children) {
-    aunts = greatAunts(node, rootData);
+  if (node.depth > 1 && auntCollapse && this.rootData.children) {
+    aunts = greatAunts(node, this.rootData);
   }
-  descendantsToCollapse.concat(nodeCousins).concat(aunts).forEach(collapse);
+  console.log("desce :>> ", nodeCousins, aunts);
+  descendantsToCollapse.concat(nodeCousins).concat(aunts);
 };

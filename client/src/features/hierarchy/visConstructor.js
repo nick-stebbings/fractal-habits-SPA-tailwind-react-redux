@@ -38,7 +38,7 @@ import {
   radialPoint,
   expand,
   collapse,
-  collapseAroundAndUnder,
+  nodesForCollapse,
   deadNode,
   oppositeStatus,
   contentEqual,
@@ -199,8 +199,13 @@ export default class Visualization {
 
           this.activateNodeAnimation();
 
-          expand(node);
-          collapseAroundAndUnder(node, false, false);
+          this.expand(node);
+          const nodesToCollapse = nodesForCollapse.call(this, node, {
+            cousinCollapse: true,
+            auntCollapse: true,
+          });
+          debugger;
+          this.render();
         }
       },
       handleStatusChange: function (node) {
@@ -352,7 +357,7 @@ export default class Visualization {
 
   setActiveNode(clickedNodeContent, event = null) {
     this.activeNode = this.findNodeByContent(clickedNodeContent);
-    // this.activeNode.isNew = true;
+    this.activeNode.isNew = true;
 
     const currentActiveG = document.querySelector(".the-node.active");
     if (currentActiveG) currentActiveG.classList.toggle("active");
@@ -516,9 +521,18 @@ export default class Visualization {
     }
   }
   activeOrNonActiveOpacity(d, dimmedOpacity) {
+    console.log("d :>> ", this.rootData.leaves());
     if (
       !this.activeNode ||
-      (this.activeNode && d.ancestors().includes(this.activeNode))
+      (!!this.activeNode &&
+        d?.parent?.children
+          .concat(d?.children)
+          .concat(
+            this.rootData
+              .leaves()
+              .filter((l) => d?.parent?.descendants().includes(l))
+          )
+          .includes(this.activeNode))
     )
       return "1";
     return !this.previousRenderZoom ? "1" : dimmedOpacity;
@@ -597,7 +611,7 @@ export default class Visualization {
           ? positiveCol
           : noNodeCol
       )
-      .style("opacity", (d) => this.activeOrNonActiveOpacity(d, "1"))
+      .style("opacity", (d) => this.activeOrNonActiveOpacity(d, "0.5"))
       .style("stroke-width", (d) =>
         // !!this.activeNode && d.ancestors().includes(this.activeNode)
         // TODO : memoize nodeStatus colours
