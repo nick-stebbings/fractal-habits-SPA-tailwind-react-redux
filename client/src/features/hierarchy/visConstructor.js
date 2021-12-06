@@ -199,12 +199,16 @@ export default class Visualization {
 
           this.activateNodeAnimation();
 
-          this.expand(node);
-          const nodesToCollapse = nodesForCollapse.call(this, node, {
-            cousinCollapse: true,
-            auntCollapse: true,
+          const nodesToCollapse = nodesForCollapse
+            .call(this, node, {
+              cousinCollapse: false,
+              auntCollapse: true,
+            })
+            .map((n) => n?.data?.content);
+          this.rootData.each((node) => {
+            if (nodesToCollapse.includes(node.data.content)) collapse(node);
           });
-          debugger;
+          expand(node.parent);
           this.render();
         }
       },
@@ -357,7 +361,7 @@ export default class Visualization {
 
   setActiveNode(clickedNodeContent, event = null) {
     this.activeNode = this.findNodeByContent(clickedNodeContent);
-    this.activeNode.isNew = true;
+    this.activeNode && (this.activeNode.isNewActive = true);
 
     const currentActiveG = document.querySelector(".the-node.active");
     if (currentActiveG) currentActiveG.classList.toggle("active");
@@ -521,21 +525,18 @@ export default class Visualization {
     }
   }
   activeOrNonActiveOpacity(d, dimmedOpacity) {
-    console.log("d :>> ", this.rootData.leaves());
     if (
       !this.activeNode ||
       (!!this.activeNode &&
-        d?.parent?.children
+        [d]
+          .concat(d?.parent?.children)
+          .concat(d?.parent?._children)
           .concat(d?.children)
-          .concat(
-            this.rootData
-              .leaves()
-              .filter((l) => d?.parent?.descendants().includes(l))
-          )
+          .concat(d?._children)
           .includes(this.activeNode))
     )
       return "1";
-    return !this.previousRenderZoom ? "1" : dimmedOpacity;
+    return dimmedOpacity;
   }
 
   getLinkPathGenerator() {
@@ -972,7 +973,7 @@ export default class Visualization {
     if (
       this.firstRender() ||
       this.hasNewHierarchyData() ||
-      this.activeNode.isNew
+      this.activeNode.isNewActive
     ) {
       if (this.noCanvas()) return;
       !this.activeNode && this.setActiveNode(this.rootData.data);

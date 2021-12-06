@@ -174,17 +174,19 @@ export function collapse(d) {
   }
 }
 
-export const cousins = (node, root) =>
-  root.descendants().filter((n) => n.depth == node.depth && n !== node);
+export const cousins = (node, root) => {
+  console.log(node, root);
+  return root.descendants().filter((n) => n.depth == node.depth && n !== node);
+};
 
 export const greatAunts = (node, root) =>
-  root.children.filter((n) => !node.ancestors().includes(n));
+  root.descendants().filter((n) => !n.ancestors().includes(node?.parent));
 
 export const nodesForCollapse = function (
   node,
   { cousinCollapse = true, auntCollapse = true }
 ) {
-  let minExpandedDepth = node.depth + 3;
+  let minExpandedDepth = node.depth + 2;
   // For collapsing the nodes 'two levels lower' than selected
   let descendantsToCollapse = node
     .descendants()
@@ -197,8 +199,9 @@ export const nodesForCollapse = function (
   // For collapsing cousin nodes (saving width)
   let aunts = [];
   if (node.depth > 1 && auntCollapse && this.rootData.children) {
-    aunts = greatAunts(node, this.rootData);
+    aunts = greatAunts(node, this.rootData).filter(
+      (n) => !node.ancestors().includes(n)
+    );
   }
-  console.log("desce :>> ", nodeCousins, aunts);
-  descendantsToCollapse.concat(nodeCousins).concat(aunts);
+  return descendantsToCollapse.concat(nodeCousins).concat(aunts);
 };
