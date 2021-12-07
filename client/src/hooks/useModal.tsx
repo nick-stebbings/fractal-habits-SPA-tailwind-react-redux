@@ -15,6 +15,7 @@ export const openModal = function ({ open = true }) {
   const modal = modalOverlay.querySelector("#modal");
   const modalCl = modal?.classList;
   if (!modalCl) return;
+  debugger;
   if (open) {
     modalOverlay?.classList.remove("hidden");
     // [...document.querySelectorAll('div[id^="tippy"]')].forEach((tooltip) => {

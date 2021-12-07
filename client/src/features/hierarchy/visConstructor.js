@@ -280,6 +280,17 @@ export default class Visualization {
 
         console.log("NODE TOGGLE :>> ");
       },
+      handleMouseEnter: function ({ target: d }) {
+        this.currentTooltip = select(d).selectAll("g.tooltip");
+        this.currentTooltip.transition().duration(450).style("opacity", "1");
+
+        this.currentButton = select(d).selectAll("g.habit-label-dash-button");
+        this.currentButton
+          .transition()
+          .delay(200)
+          .duration(850)
+          .style("opacity", "1");
+      },
       handleMouseLeave: function (e) {
         const g = select(e.target);
         g.select(".tooltip").transition().duration(50).style("opacity", "0");
@@ -310,28 +321,6 @@ export default class Visualization {
           )
         ) {
           return;
-        }
-        if (!this.currentTooltip) {
-          this.zoomBase().select("g.tooltip").transition();
-          this.currentTooltip = this.zoomBase()
-            .selectAll("g.tooltip")
-            .filter((t) => {
-              return d == t;
-            });
-          this.currentTooltip.transition().duration(450).style("opacity", "1");
-        }
-        if (!this.currentButton) {
-          this.zoomBase().select("g.habit-label-dash-button").transition();
-          this.currentButton = this.zoomBase()
-            .selectAll("g.habit-label-dash-button")
-            .filter((t) => {
-              return d == t;
-            });
-          this.currentButton
-            .transition()
-            .delay(200)
-            .duration(850)
-            .style("opacity", "1");
         }
       },
     };
@@ -852,7 +841,8 @@ export default class Visualization {
           );
         this.eventHandlers.handleNodeToggle.call(this, e, d);
       })
-      .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this));
+      .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
+      .on("mouseenter", this.eventHandlers.handleMouseEnter.bind(this));
   }
 
   bindLegendEventHandler() {
@@ -954,7 +944,7 @@ export default class Visualization {
       .selectAll("circle")
       .data(pulseData)
       .enter()
-      .append("circle")
+      .insert("circle", ".habit-label-dash-button")
       .attr("r", function (d) {
         return d;
       })
