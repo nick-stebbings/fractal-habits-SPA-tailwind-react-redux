@@ -1,4 +1,4 @@
-import React, { ComponentType, useEffect } from "react";
+import React, { useEffect } from "react";
 // @ts-ignore
 import { useAppSelector } from "app/hooks";
 import uiSlice from "features/ui/reducer";
@@ -15,7 +15,6 @@ export const openModal = function ({ open = true }) {
   const modal = modalOverlay.querySelector("#modal");
   const modalCl = modal?.classList;
   if (!modalCl) return;
-  debugger;
   if (open) {
     modalOverlay?.classList.remove("hidden");
     // [...document.querySelectorAll('div[id^="tippy"]')].forEach((tooltip) => {
@@ -48,8 +47,9 @@ export function useModal() {
   const confirmStatus = useAppSelector(getConfirmStatus);
 
   useEffect(() => {
+    console.log('opened modal');
     openModal({ open: !!confirmStatus });
-  }, []);
+  }, [confirmStatus]);
 
   switch (true) {
     case type == "ERROR":
