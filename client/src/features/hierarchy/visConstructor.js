@@ -982,19 +982,20 @@ export default class Visualization {
   render() {
     console.log("Rendering vis... :>>", this?._canvas);
     // _p("zoomconfig", this._zoomConfig, "info");
-    // this._canvas = select(document.querySelectorAll(".canvas")[0]);
-    // console.log(
-    //   "need new canvas? :>> ",
-    //   typeof document.querySelectorAll(".canvas")[0] == "undefined" ||
-    //     typeof this?._canvas == "undefined"
-    // );
-    if (this.firstRender() && this.noCanvas()) {
+    console.log("need new canvas? :>> ", this.noCanvas());
+    if (this.noCanvas() || this.firstRender()) {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true);
+      console.log(
+        "Configured canvas... :>>",
+        this._canvas,
+        "First render?",
+        this.firstRender()
+      );
+    }
 
-      console.log("Configured canvas... :>>", this._canvas);
-
+    if (this.firstRender()) {
       this.setNodeRadius();
       this.setLevelsHighAndWide();
       this.calibrateViewPortAttrs();
@@ -1017,13 +1018,15 @@ export default class Visualization {
       // Update the current day's rootData
       if (this.hasNextData()) this.rootData = this._nextRootData;
       this.setLayout();
+
+      //Render cleared canvas for OOB dates
       const isBlankData = this.rootData?.data?.content == "";
       if (isBlankData) {
+        console.log("Rendered blank :>> ");
         this.clearCanvas();
         return;
       }
       if (!this.rootData.data.content) {
-        debugger;
         this.rootData = this.rootData.data;
       }
       accumulateTree(this.rootData);
@@ -1032,13 +1035,14 @@ export default class Visualization {
       !this.activeNode && this.setActiveNode(this.rootData.data);
       this.setZoomBehaviour();
       this.clearCanvas();
+      console.log("cleared canvas :>> ");
 
       this.setNodeAndLinkGroups();
       this.setNodeAndLinkEnterSelections();
       this.setCircleAndLabelGroups();
       this.setButtonGroups();
       // console.log("Appended and set groups... :>>");
-
+      console.log(this);
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
@@ -1048,12 +1052,12 @@ export default class Visualization {
     }
 
     if (!select("svg.legend-svg").empty() && select("svg .legend").empty()) {
-      console.log("Added legend :>> ");
+      // console.log("Added legend :>> ");
       this.addLegend();
       this.bindLegendEventHandler();
     }
 
-    console.log("this.activeNode :>> ", this.activeNode);
+    // console.log("this.activeNode :>> ", this.activeNode);
     if (this.activeNode) {
       this.activeNode?.isNew &&
         this.zoomBase().selectAll(".active-circle").remove();

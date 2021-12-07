@@ -36,8 +36,8 @@ export const RadialTree: React.FC<VisProps> = ({
 
 
   useEffect(() => {
-    if (currentHierarchy.name == "") return;
-    if (currentRequestState === "SUCCESS" && !currentRadial._svgId) {
+    if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
+    if (currentRequestState === "IDLE" && !currentRadial._svgId) {
       currentRadial = new Vis(
             `div${divId}`,
             currentHierarchy,

@@ -36,8 +36,9 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
     return (
       <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={1} {...hocProps} render={(currentVis) => {
         if (!!lastPath && currentVis.clearFirstRenderFlag && currentPath!==lastPath){// && (lastPath !== currentPath)) {
-          console.log('currentVis :>> ', currentVis._hasRendered);
           currentVis.clearFirstRenderFlag();
+          console.log('currentVis._hasRendered :>> ', currentVis._hasRendered);
+          currentVis.render()
         }
         console.log('returned C :>> ',);
         return (<>

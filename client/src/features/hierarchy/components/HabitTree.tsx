@@ -22,6 +22,7 @@ export const HabitTree: React.FC<VisProps> = ({
   render,
 }) => {
   const dispatch = useAppDispatch();
+  
   let currentHabitTree = useAppSelector(selectCurrentTree);
   const currentRequestState = useAppSelector(getRequestStatus);
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
@@ -35,7 +36,6 @@ export const HabitTree: React.FC<VisProps> = ({
   }, [currentHierarchy?.data.name])
 
   useEffect(() => {
-    console.log(currentHierarchy?.data.name, 'currentRequestState === "SUCCESS" && !(currentHabitTree._svgId) :>> ', (currentRequestState === "SUCCESS" || currentRequestState === "IDLE")  && !(currentHabitTree._svgId));
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
     if ((currentRequestState === "IDLE") && !(currentHabitTree._svgId)) {
       currentHabitTree = new Vis(
