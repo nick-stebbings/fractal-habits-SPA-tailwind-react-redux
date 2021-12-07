@@ -13,7 +13,7 @@ import {
   easePolyOut,
 } from "d3";
 import { legendColor } from "d3-svg-legend";
-// import Hammer from "hammerjs";
+import Hammer from "hammerjs";
 
 import { store } from "app/store";
 import { selectCurrentNodeByMptt } from "features/node/selectors";
@@ -98,7 +98,7 @@ export default class Visualization {
           return this.type == "cluster"
             ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius -
                 this._zoomConfig.previousRenderZoom?.node?.y +
-                this._viewConfig.viewportW / 2
+                this._viewConfig.viewportW / 4
             : this._viewConfig.viewportW / 2 -
                 (this.type == "radial"
                   ? radialTranslate[0]
@@ -458,11 +458,11 @@ export default class Visualization {
   }
   setdXdY() {
     this._viewConfig.dx =
-      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for cluster vertical spacing on different screens
-      +(this._viewConfig.isSmallScreen() && this.type == "cluster") * 10;
+      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh + // Adjust for cluster vertical spacing on different screens
+      +(this.type == "cluster") * (this._viewConfig.isSmallScreen() ? 40 : 500);
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
-      +(this.type == "cluster") * 0.1;
+      +(this.type == "cluster") * 0.2;
 
     //adjust for taller aspect ratio
     this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 0.5;
@@ -843,6 +843,23 @@ export default class Visualization {
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
       .on("mouseenter", this.eventHandlers.handleMouseEnter.bind(this));
+
+    // Mobile device events
+    selection._groups[0].forEach((node) => {
+      const manager = new Hammer.Manager(node);
+      // Create a recognizer
+      const singleTap = new Hammer.Tap({ event: "singletap" });
+      const doubleTap = new Hammer.Tap({
+        event: "doubletap",
+        taps: 2,
+        interval: 700,
+      });
+      manager.add([doubleTap, singleTap]);
+      manager.get("singletap").requireFailure("doubletap");
+      manager.on("doubletap", (ev) => {
+        this.eventHandlers.handleNodeFocus.call(this, ev, node.__data__);
+      });
+    });
   }
 
   bindLegendEventHandler() {
