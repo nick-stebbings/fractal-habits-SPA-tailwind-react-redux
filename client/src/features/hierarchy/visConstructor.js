@@ -11,7 +11,6 @@ import {
   cluster,
   easeCubic,
   easePolyOut,
-  hierarchy,
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 // import Hammer from "hammerjs";
@@ -91,16 +90,23 @@ export default class Visualization {
           // there was a previous zoom/translate to a node
           typeof this._zoomConfig.previousRenderZoom?.node?.x !== "undefined"
         ) {
+          const radialTranslate = radialPoint(
+            this._zoomConfig.previousRenderZoom?.node?.x,
+            this._zoomConfig.previousRenderZoom?.node?.y
+          );
           // then add the node's coordinates
           return this.type == "cluster"
             ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius -
                 this._zoomConfig.previousRenderZoom?.node?.y
             : this._viewConfig.viewportW / 2 -
-                this._zoomConfig.previousRenderZoom?.node?.x;
+                (this.type == "radial"
+                  ? radialTranslate[0]
+                  : this._zoomConfig.previousRenderZoom?.node?.x);
         } else {
           // Initial translation settings
           return this.type == "cluster"
-            ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius
+            ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius +
+                this._viewConfig.canvasWidth / 2
             : this._viewConfig.viewportW / 2;
         }
       },
@@ -109,12 +115,18 @@ export default class Visualization {
           // there was a previous zoom/translate to a node
           typeof this._zoomConfig.previousRenderZoom?.node?.y !== "undefined"
         ) {
+          const radialTranslate = radialPoint(
+            this._zoomConfig.previousRenderZoom?.node?.x,
+            this._zoomConfig.previousRenderZoom?.node?.y
+          );
           // then add the node's coordinates
           return this.type == "cluster"
             ? this._viewConfig.levelsHigh * this._viewConfig.nodeRadius -
                 this._zoomConfig.previousRenderZoom?.node?.x +
                 this._viewConfig.viewportH / 2
-            : -this._zoomConfig.previousRenderZoom?.node?.y +
+            : -(this.type == "radial"
+                ? radialTranslate[1]
+                : this._zoomConfig.previousRenderZoom?.node?.x) +
                 (+(this.type == "radial") * this._viewConfig.viewportH) / 2;
         } else {
           // Initial translation settings
@@ -173,7 +185,6 @@ export default class Visualization {
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
-        this.zoomBase().selectAll(".active-circle").remove();
 
         const targ = event.target;
         if (targ.tagName == "circle") {
@@ -209,7 +220,6 @@ export default class Visualization {
               if (nodesToCollapse.includes(node.data.content)) collapse(node);
             });
             expand(node?.parent ? node.parent : node);
-            this.render();
           }
         }
       },
@@ -375,6 +385,7 @@ export default class Visualization {
     if (currentActiveG) currentActiveG.classList.toggle("active");
     event && event.target.closest(".the-node").classList.toggle("active");
 
+    this.render();
     return this.activeNode;
   }
   findNodeByContent(node) {
@@ -419,6 +430,10 @@ export default class Visualization {
     }
   }
 
+  removeCanvas() {
+    select(".canvas")?.remove();
+  }
+
   clearCanvas() {
     select(".canvas").selectAll("*").remove();
   }
@@ -452,9 +467,8 @@ export default class Visualization {
   }
   setdXdY() {
     this._viewConfig.dx =
-      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh -
-      +(this.type == "cluster") * (this._viewConfig.canvasWidth / 3) - // Adjust for cluster vertical spacing on different screens
-      +(this._viewConfig.isSmallScreen() && this.type == "cluster") * 100;
+      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for cluster vertical spacing on different screens
+      +(this._viewConfig.isSmallScreen() && this.type == "cluster") * 10;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
       +(this.type == "cluster") * 0.1;
@@ -481,7 +495,7 @@ export default class Visualization {
         .ease(easePolyOut)
         .duration(2500);
     };
-    this.zoomer = zoom().scaleExtent([1, 5]).on("zoom", zooms.bind(this));
+    this.zoomer = zoom().scaleExtent([0.5, 5]).on("zoom", zooms.bind(this));
     this.zoomBase().call(this.zoomer);
   }
 
@@ -494,7 +508,9 @@ export default class Visualization {
     this._viewConfig.viewportX =
       this.type == "tree" ? this._viewConfig.canvasWidth / 6 : 0;
     this._viewConfig.viewportY =
-      (-(this.type == "tree" ? 150 : 1) * this._viewConfig.levelsHigh) / 4; // Adjust for initial y translation on different vis
+      (-(this.type == "tree" ? 150 : -this._viewConfig.canvasHeight / 2) *
+        this._viewConfig.levelsHigh) /
+      4; // Adjust for initial y translation on different vis
 
     this._viewConfig.defaultView = `${this._viewConfig.viewportX} ${this._viewConfig.viewportY} ${this._viewConfig.viewportW} ${this._viewConfig.viewportH}`;
   }
@@ -541,6 +557,7 @@ export default class Visualization {
           .includes(this.activeNode))
     )
       return "1";
+
     return dimmedOpacity;
   }
 
@@ -575,7 +592,11 @@ export default class Visualization {
         );
         break;
       case "radial":
-        this.layout = cluster().size(360, this._viewConfig.canvasWidth / 1.5);
+        this.layout = tree()
+          .size(360, this._viewConfig.canvasWidth / 2)
+          .separation(function (a, b) {
+            return (a.parent == b.parent ? 0.2 : 10) / a.depth;
+          });
         break;
     }
     this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
@@ -587,7 +608,7 @@ export default class Visualization {
     }
   }
   setNodeAndLinkGroups() {
-    const transformation = `translate(${0}, ${this.type == "radial" ? 0 : 0})`;
+    const transformation = `translate(${0}, ${0})`;
     this._gLink = this._canvas
       .append("g")
       .classed("links", true)
@@ -628,7 +649,9 @@ export default class Visualization {
           ? positiveCol
           : noNodeCol
       )
-      .style("opacity", (d) => this.activeOrNonActiveOpacity(d, "0.5"))
+      .style("opacity", (d) =>
+        this.type == "tree" ? this.activeOrNonActiveOpacity(d, "0.5") : 1
+      )
       .style("stroke-width", (d) =>
         // !!this.activeNode && d.ancestors().includes(this.activeNode)
         // TODO : memoize nodeStatus colours
@@ -698,9 +721,6 @@ export default class Visualization {
   appendCirclesAndLabels() {
     this._gCircle
       .append("circle")
-      .attr("transform", (d) =>
-        this.type == "radial" ? `rotate(${d.x}, 0, 0)` : ``
-      )
       .attr("r", this._viewConfig.nodeRadius)
       .on("mouseenter", this.eventHandlers.handleHover.bind(this));
   }
@@ -714,7 +734,7 @@ export default class Visualization {
 
     this._gTooltip
       .append("rect")
-      .attr("width", this.type == "radial" ? 120 : 275)
+      .attr("width", this.type == "radial" ? 130 : 275)
       .attr("height", 100)
       .attr("x", -6)
       .attr("y", -10)
@@ -821,7 +841,13 @@ export default class Visualization {
       })
       .on("contextmenu", (e, d) => {
         this.eventHandlers.handleNodeFocus.call(this, e, d);
-        this.eventHandlers.handleNodeZoom.call(this, e, d, this.type == "tree");
+        this.type != "radial" &&
+          this.eventHandlers.handleNodeZoom.call(
+            this,
+            e,
+            d,
+            this.type == "tree"
+          );
         this.eventHandlers.handleNodeToggle.call(this, e, d);
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this));
@@ -982,8 +1008,10 @@ export default class Visualization {
   render() {
     console.log("Rendering vis... :>>", this?._canvas);
     // _p("zoomconfig", this._zoomConfig, "info");
-    console.log("need new canvas? :>> ", this.noCanvas());
-    if (this.noCanvas() || this.firstRender()) {
+    if (!this.noCanvas()) {
+      this._hasRendered = true;
+      // this.removeCanvas();
+    } else {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true);
@@ -994,7 +1022,6 @@ export default class Visualization {
         this.firstRender()
       );
     }
-
     if (this.firstRender()) {
       this.setNodeRadius();
       this.setLevelsHighAndWide();
@@ -1027,22 +1054,21 @@ export default class Visualization {
         return;
       }
       if (!this.rootData.data.content) {
+        debugger;
         this.rootData = this.rootData.data;
       }
       accumulateTree(this.rootData);
       console.log("Formed new layout", this, "!");
 
-      !this.activeNode && this.setActiveNode(this.rootData.data);
       this.setZoomBehaviour();
       this.clearCanvas();
-      console.log("cleared canvas :>> ");
+      console.log("Cleared canvas :>> ");
 
       this.setNodeAndLinkGroups();
       this.setNodeAndLinkEnterSelections();
       this.setCircleAndLabelGroups();
       this.setButtonGroups();
       // console.log("Appended and set groups... :>>");
-      console.log(this);
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
@@ -1050,6 +1076,7 @@ export default class Visualization {
 
       this._hasRendered = true;
     }
+    _p("this._hasRendered :>> ", { has: this._hasRendered }, "!");
 
     if (!select("svg.legend-svg").empty() && select("svg .legend").empty()) {
       // console.log("Added legend :>> ");
@@ -1057,8 +1084,8 @@ export default class Visualization {
       this.bindLegendEventHandler();
     }
 
-    // console.log("this.activeNode :>> ", this.activeNode);
-    if (this.activeNode) {
+    console.log("this.activeNode :>> ", this.activeNode);
+    if (!!this.activeNode) {
       this.activeNode?.isNew &&
         this.zoomBase().selectAll(".active-circle").remove();
       this.activateNodeAnimation();

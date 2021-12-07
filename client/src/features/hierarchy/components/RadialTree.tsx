@@ -32,7 +32,7 @@ export const RadialTree: React.FC<VisProps> = ({
 
     useEffect(() => {
     currentHierarchy.name !== "" && updateVisRootData(currentRadial, currentHierarchy)
-  }, [currentHierarchy.name])
+  }, [currentHierarchy?.id])
 
 
   useEffect(() => {
