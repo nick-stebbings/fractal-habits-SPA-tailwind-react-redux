@@ -158,7 +158,7 @@ export default class Visualization {
       handleAppendNode: function () {
         store.dispatch(toggleConfirm({ type: "Append" }));
       },
-      handleDeleteNode: function (event, node) {
+      handleDeleteNode: function (_, node) {
         this.setCurrentHabit(node);
         store.dispatch(toggleConfirm({ type: "Delete" }));
       },
@@ -835,7 +835,10 @@ export default class Visualization {
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
       .on("mouseenter", this.eventHandlers.handleMouseEnter.bind(this));
+
+    //----------------------
     // Mobile device events
+    //----------------------
     selection._groups[0].forEach((node) => {
       const manager = new Hammer.Manager(node);
       // Create a recognizer
@@ -849,15 +852,13 @@ export default class Visualization {
       manager.get("singletap").requireFailure("doubletap");
       manager.on("singletap", (ev) => {
         ev.preventDefault();
-        const content = ev.target.__data__.data.content;
-        let parentNodeGroup = _.find(
-          this._enteringNodes._groups[0],
-          (n) => n?.__data__?.data?.content == content
-        );
         switch (ev.target.tagName) {
           // Delete
           case "path":
-            this.eventHandlers.handleDeleteNode.call(this);
+            this.eventHandlers.handleDeleteNode.call(
+              this,
+              ev.target.__data__.data
+            );
             break;
           // Append or prepend
           case "rect":
@@ -867,6 +868,12 @@ export default class Visualization {
               : this.eventHandlers.handlePrependNode.call(this);
             break;
           default:
+            const content = ev.target.__data__.data.content;
+            let parentNodeGroup = _.find(
+              this._enteringNodes._groups[0],
+              (n) => n?.__data__?.data?.content == content
+            );
+
             ev.target = parentNodeGroup;
             this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
             break;

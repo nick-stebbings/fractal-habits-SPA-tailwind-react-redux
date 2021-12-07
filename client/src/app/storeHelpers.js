@@ -102,7 +102,7 @@ export function crudReducer(
 
     case destroy.fulfilled().type:
       const newMyRecords = [...state.myRecords].filter(
-        (r) => r.meta.id !== +payload.config.url.split`/`.reverse()[0]
+        (r) => r?.meta?.id !== +payload.config.url.split`/`.reverse()[0]
       );
       return {
         myRecords: newMyRecords,
