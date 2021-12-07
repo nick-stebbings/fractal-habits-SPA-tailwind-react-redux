@@ -97,7 +97,8 @@ export default class Visualization {
           // then add the node's coordinates
           return this.type == "cluster"
             ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius -
-                this._zoomConfig.previousRenderZoom?.node?.y
+                this._zoomConfig.previousRenderZoom?.node?.y +
+                this._viewConfig.viewportW / 2
             : this._viewConfig.viewportW / 2 -
                 (this.type == "radial"
                   ? radialTranslate[0]
@@ -209,13 +210,14 @@ export default class Visualization {
 
           this.activateNodeAnimation();
 
-          if (!this.type == "radial") {
+          if (!(this.type == "radial")) {
             const nodesToCollapse = nodesForCollapse
               .call(this, node, {
                 cousinCollapse: false,
                 auntCollapse: true,
               })
               .map((n) => n?.data?.content);
+            console.log("nodesToCollapse :>> ", nodesToCollapse);
             this.rootData.each((node) => {
               if (nodesToCollapse.includes(node.data.content)) collapse(node);
             });
@@ -593,9 +595,9 @@ export default class Visualization {
         break;
       case "radial":
         this.layout = tree()
-          .size(360, this._viewConfig.canvasWidth / 2)
+          .size(360, this._viewConfig.canvasWidth / 3)
           .separation(function (a, b) {
-            return (a.parent == b.parent ? 0.2 : 10) / a.depth;
+            return (a.parent == b.parent ? 0.2 : 14) / a.depth;
           });
         break;
     }
