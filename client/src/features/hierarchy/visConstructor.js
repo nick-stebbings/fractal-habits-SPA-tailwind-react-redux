@@ -14,6 +14,7 @@ import {
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 import Hammer from "hammerjs";
+import _ from "lodash";
 
 import { store } from "app/store";
 import { selectCurrentNodeByMptt } from "features/node/selectors";
@@ -189,8 +190,8 @@ export default class Visualization {
 
         const targ = event.target;
         if (targ.tagName == "circle") {
-          if (targ.closest(".the-node").classList.contains("active"))
-            return this.reset({ justTranslation: false });
+          // if (targ.closest(".the-node").classList.contains("active"))
+          //   return this.reset({ justTranslation: false });
           if (deadNode(event)) {
             //P: There is no habit node for this habit. To track a habit for this day:
             // - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
@@ -283,7 +284,7 @@ export default class Visualization {
       handleMouseEnter: function ({ target: d }) {
         this.currentTooltip = select(d).selectAll("g.tooltip");
         this.currentTooltip.transition().duration(450).style("opacity", "1");
-
+        console.log("d :>> ", d);
         this.currentButton = select(d).selectAll("g.habit-label-dash-button");
         this.currentButton
           .transition()
@@ -843,7 +844,7 @@ export default class Visualization {
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
       .on("mouseenter", this.eventHandlers.handleMouseEnter.bind(this));
-
+    console.log(" selection._groups[0] :>> ", selection._groups[0]);
     // Mobile device events
     selection._groups[0].forEach((node) => {
       const manager = new Hammer.Manager(node);
@@ -856,7 +857,18 @@ export default class Visualization {
       });
       manager.add([doubleTap, singleTap]);
       manager.get("singletap").requireFailure("doubletap");
+      manager.on("singletap", (ev) => {
+        ev.preventDefault();
+        const content = ev.target.__data__.data.content;
+        let parentNodeGroup = _.find(
+          this._enteringNodes._groups[0],
+          (n) => n?.__data__?.data?.content == content
+        );
+        ev.target = parentNodeGroup;
+        this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
+      });
       manager.on("doubletap", (ev) => {
+        ev.preventDefault();
         this.eventHandlers.handleNodeFocus.call(this, ev, node.__data__);
       });
     });
