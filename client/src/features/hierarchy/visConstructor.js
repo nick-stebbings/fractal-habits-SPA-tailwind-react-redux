@@ -152,11 +152,10 @@ export default class Visualization {
     };
 
     this.eventHandlers = {
-      handlePrependNode: function (event, node) {
-        let isRoot = node.parent == undefined;
+      handlePrependNode: function () {
         store.dispatch(toggleConfirm({ type: "Prepend" }));
       },
-      handleAppendNode: function (event, node) {
+      handleAppendNode: function () {
         store.dispatch(toggleConfirm({ type: "Append" }));
       },
       handleDeleteNode: function (event, node) {
@@ -190,9 +189,8 @@ export default class Visualization {
 
         const targ = event.target;
         if (targ.tagName == "circle") {
-          // if (targ.closest(".the-node").classList.contains("active"))
-          //   return this.reset({ justTranslation: false });
           if (deadNode(event)) {
+            console.log("dead :>> ");
             //P: There is no habit node for this habit. To track a habit for this day:
             // - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
             // - We need a visual representation of the node. When a node with this state is toggled, it has a nonPersisted habitDate in the store, set to COMPLETE (a red dot).
@@ -206,12 +204,10 @@ export default class Visualization {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
-          // console.log("event,node :>> ", event, node);
           this.setActiveNode(node.data, event);
-
           this.activateNodeAnimation();
 
-          if (!(this.type == "radial")) {
+          if (this.type == "tree") {
             const nodesToCollapse = nodesForCollapse
               .call(this, node, {
                 cousinCollapse: false,
@@ -266,6 +262,7 @@ export default class Visualization {
       handleNodeToggle: function (event, node) {
         event.preventDefault();
         if (node.children) {
+          if (deadNode(event)) console.log(event, node);
           // return;
           // Non-leaf nodes have auto-generated cumulative status
           // (Only leaves can toggle)
@@ -276,15 +273,11 @@ export default class Visualization {
           node,
           content: node.data,
         };
-        // if (deadNode(event)) return this.reset();
         // this.eventHandlers.handleStatusChange.call(this, node);
-
-        console.log("NODE TOGGLE :>> ");
       },
       handleMouseEnter: function ({ target: d }) {
         this.currentTooltip = select(d).selectAll("g.tooltip");
         this.currentTooltip.transition().duration(450).style("opacity", "1");
-        console.log("d :>> ", d);
         this.currentButton = select(d).selectAll("g.habit-label-dash-button");
         this.currentButton
           .transition()
@@ -375,7 +368,7 @@ export default class Visualization {
 
     const currentActiveG = document.querySelector(".the-node.active");
     if (currentActiveG) currentActiveG.classList.toggle("active");
-    event && event.target.closest(".the-node").classList.toggle("active");
+    event && event.target?.closest(".the-node")?.classList?.toggle("active");
 
     this.render();
     return this.activeNode;
@@ -809,9 +802,7 @@ export default class Visualization {
         .attr("style", (d) => (d.parent ? "opacity: 0" : "opacity: 1"))
         .attr("x", 12)
         .attr("y", -30)
-        // .attr("x", 15)
-        // .attr("y", -45)
-        .text((d) => "PREPEND")
+        .text("PREPEND")
         .on("click", (e, n) => {
           this.eventHandlers.handlePrependNode.call(this, e, n);
         });
@@ -844,7 +835,6 @@ export default class Visualization {
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
       .on("mouseenter", this.eventHandlers.handleMouseEnter.bind(this));
-    console.log(" selection._groups[0] :>> ", selection._groups[0]);
     // Mobile device events
     selection._groups[0].forEach((node) => {
       const manager = new Hammer.Manager(node);
@@ -864,8 +854,23 @@ export default class Visualization {
           this._enteringNodes._groups[0],
           (n) => n?.__data__?.data?.content == content
         );
-        ev.target = parentNodeGroup;
-        this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
+        switch (ev.target.tagName) {
+          // Delete
+          case "path":
+            this.eventHandlers.handleDeleteNode.call(this);
+            break;
+          // Append or prepend
+          case "rect":
+          case "text":
+            ev.target.textContent == "APPEND "
+              ? this.eventHandlers.handleAppendNode.call(this)
+              : this.eventHandlers.handlePrependNode.call(this);
+            break;
+          default:
+            ev.target = parentNodeGroup;
+            this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
+            break;
+        }
       });
       manager.on("doubletap", (ev) => {
         ev.preventDefault();
