@@ -61,14 +61,16 @@ export const hierarchySlice = createSlice({
       if (!action?.payload) return state;
       const { data: treeJsons } = action.payload;
       const dateIds = Object.keys(treeJsons);
+      const newRecords = {};
 
       const newTreeJsons = dateIds.map((dateId) => {
         const jsonTree = hierarchy(JSON.parse(treeJsons[dateId]));
         accumulateTree(jsonTree);
+        newRecords[dateId] = jsonTree;
         return jsonTree;
       });
       state.myRecords = {
-        ..._.merge(state.myRecords, Object.assign({}, newTreeJsons)),
+        ..._.merge(state.myRecords, newRecords),
       };
     });
   },
