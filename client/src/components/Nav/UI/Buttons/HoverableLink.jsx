@@ -2,6 +2,10 @@ import React from "react";
 
 import { MenuList } from "../../MenuList";
 
+const LINK_IDS = ["nav-visualise", "nav-habits"];
+const oppositeLink = (idx) =>
+  document.querySelector("li.hoverable #" + LINK_IDS[1 - idx]);
+
 export const HoverableLink = ({
   id,
   classString,
@@ -9,9 +13,28 @@ export const HoverableLink = ({
   listItems,
   showMegaMenu,
   hideMegaMenu,
+  isOpen,
+  setIsOpen,
 }) => {
+  const handleOpen = (e, idx) => {
+    // Toggle active classes
+    console.log("e.currentTarget :>> ", e.currentTarget);
+    e.currentTarget.classList.toggle("active");
+    oppositeLink(idx)?.parentNode.classList.remove("active");
+    document.querySelector("#current-habit-label")?.classList.add("inactive");
+    document.querySelector("#current-habit-label")?.classList.remove("active");
+
+    showMegaMenu(idx);
+    setIsOpen(true);
+  };
+  const handleClose = () => {
+    hideMegaMenu();
+    setIsOpen(false);
+  };
+
   const handleClick = (e) => {
     const { id } = e.target;
+    const idx = LINK_IDS.indexOf(id);
     if (
       document.body.classList.contains("scroll-down") ||
       document.body.classList.contains("scroll-up")
@@ -19,22 +42,20 @@ export const HoverableLink = ({
       // Allow finding the top of the page again using active nav list item
       document.body.scroll(0, 0);
     }
-    const links = ["nav-visualise", "nav-habits"];
-    const idx = links.indexOf(id);
-    const oppositeLink = document.querySelector(
-      "li.hoverable #" + links[1 - idx]
-    );
-    e.target.parentNode.classList.toggle("active");
-    oppositeLink?.parentNode.classList.remove("active");
-    document.querySelector("#current-habit-label")?.classList.add("inactive");
-    document.querySelector("#current-habit-label")?.classList.remove("active");
-    // const switchingTab = id;
-    // console.log("id :>> ", oppositeLink?.parentNode.classList);
-    // console.log("id :>> ", navItem?.classList);
 
-    document.querySelector(".mask-wrapper").style.height === "5rem"
-      ? showMegaMenu(idx)
-      : hideMegaMenu();
+    const currentOpenId = document.querySelector(".hoverable.active");
+    if (!!currentOpenId) {
+      currentOpenId.classList.toggle("active");
+      console.log(
+        "currentOpenId.children[0] == oppositeLink(idx) :>> ",
+        currentOpenId.children[0] == oppositeLink(idx)
+      );
+      // if (currentOpenId.children[0] == oppositeLink(idx)) {
+      //   handleClose();
+      //   setIsOpen(false);
+      // }
+    }
+    isOpen ? handleClose() : handleOpen(e, idx);
   };
 
   const isDemo = false;

@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAppSelector } from "app/hooks";
-// import { pendingCalendarRefresh } from '../../../../assets/scripts/controller';
 
 import { selectCurrentHabit } from "features/habit/selectors";
 import { HoverableLink } from "./UI/Buttons/HoverableLink";
@@ -19,6 +18,8 @@ export const DropdownNav = function ({ routes, showMegaMenu, hideMegaMenu }) {
 
   const currentHabit = useAppSelector(selectCurrentHabit);
   const isDemo = false;
+
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <nav className="nav">
       <div
@@ -41,6 +42,8 @@ export const DropdownNav = function ({ routes, showMegaMenu, hideMegaMenu }) {
               listItems={routes[index].subpaths}
               hideMegaMenu={hideMegaMenu}
               showMegaMenu={showMegaMenu}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
             />
           ))}
         </ul>
