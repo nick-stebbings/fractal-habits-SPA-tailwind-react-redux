@@ -77,7 +77,6 @@ export const outOfBoundsNode = (d, rootData) => {
 };
 
 export const habitDatePersisted = (node) => {
-  console.log("node :>> ", node);
   return (
     node?.data?.content && parseTreeValues(node.data.content).status !== ""
   );

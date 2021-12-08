@@ -13,7 +13,7 @@ const margin = {
   top: 200,
   right: 0,
   bottom: 0,
-  left: 100,
+  left: 0,
 };
 
 const d3SetupCanvas = function () {

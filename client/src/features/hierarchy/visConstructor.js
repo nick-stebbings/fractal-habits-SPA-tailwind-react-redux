@@ -108,7 +108,7 @@ export default class Visualization {
           // Initial translation settings
           return this.type == "cluster"
             ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius +
-                this._viewConfig.canvasWidth / 2
+                this._viewConfig.canvasWidth / 8
             : this._viewConfig.viewportW / 2;
         }
       },
@@ -866,6 +866,7 @@ export default class Visualization {
         const node = ev.target.__data__.data;
         this.setCurrentHabit(node);
         this.setCurrentNode(node);
+
         switch (ev.target.tagName) {
           // Delete
           case "path":
@@ -885,10 +886,8 @@ export default class Visualization {
           default:
             let parentNodeGroup = _.find(
               this._enteringNodes._groups[0],
-              this._enteringNodes._groups[0],
               (n) => n?.__data__?.data?.content == node.content
             );
-
             ev.target = parentNodeGroup;
             this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
             break;
@@ -896,7 +895,10 @@ export default class Visualization {
       });
       manager.on("doubletap", (ev) => {
         ev.preventDefault();
+        const node = ev.target.__data__.data;
+        console.log("double tapped :>> ");
         this.eventHandlers.handleNodeFocus.call(this, ev, node.__data__);
+        this.eventHandlers.handleNodeZoom.call(this, ev, node.__data__);
       });
     });
   }
@@ -1132,7 +1134,6 @@ export default class Visualization {
       this.bindLegendEventHandler();
     }
 
-    console.log("this.activeNode :>> ", this.activeNode);
     if (!!this.activeNode) {
       this.activeNode?.isNew &&
         this.zoomBase().selectAll(".active-circle").remove();
