@@ -114,10 +114,22 @@ export function crudReducer(
 }
 
 export function createCrudActionCreators(actionTypes, callBacks) {
-  const create = createAsyncThunk(actionTypes[0], callBacks[0]);
+  const create = createAsyncThunk(actionTypes[0], async (input, thunkAPI) => {
+    return callBacks[0](input).then((response) => {
+      thunkAPI.fulfillWithValue(response);
+    });
+  });
   const fetchAll = createAsyncThunk(actionTypes[1], callBacks[1]);
   const update = createAsyncThunk(actionTypes[2], callBacks[2]);
-  const destroy = createAsyncThunk(actionTypes[3], callBacks[3]);
+  const destroy = createAsyncThunk(actionTypes[3], async (input, thunkAPI) => {
+    return callBacks[3](input).then((response) => {
+      console.log("response :>> ", response);
+      debugger;
+      return [201, 204, 200].includes(response.status)
+        ? thunkAPI.fulfillWithValue(response)
+        : thunkAPI.rejectWithValue(response);
+    });
+  });
   const fetch = createAsyncThunk(actionTypes[4], callBacks[4]);
   return [create, fetchAll, update, destroy, fetch];
 }

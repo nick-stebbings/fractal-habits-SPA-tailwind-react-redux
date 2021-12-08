@@ -47,7 +47,6 @@ export function useModal() {
   const confirmStatus = useAppSelector(getConfirmStatus);
 
   useEffect(() => {
-    console.log('opened modal');
     openModal({ open: !!confirmStatus });
   }, [confirmStatus]);
 

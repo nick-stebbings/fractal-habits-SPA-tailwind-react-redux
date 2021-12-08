@@ -10,24 +10,6 @@ import { select, hierarchy } from "d3";
 
 // General helpers
 
-export const isTouchDevice = () => {
-  return (
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0 ||
-    navigator.msMaxTouchPoints > 0
-  );
-};
-
-export const debounce = function (func, delay) {
-  let timeout;
-  return (...args) => {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => func.apply(null, args), delay);
-  };
-};
-
 export const radialPoint = (x, y) => {
   return [(y = +y) * Math.cos((x -= Math.PI / 2)), y * Math.sin(x)];
 };
@@ -94,8 +76,12 @@ export const outOfBoundsNode = (d, rootData) => {
   return nodeStatusColours(d, rootData) == noNodeCol;
 };
 
-export const habitDatePersisted = (node) =>
-  node?.data?.content && parseTreeValues(node.data.content).status !== "";
+export const habitDatePersisted = (node) => {
+  console.log("node :>> ", node);
+  return (
+    node?.data?.content && parseTreeValues(node.data.content).status !== ""
+  );
+};
 
 export const cumulativeValue = (node) => {
   const content = parseTreeValues(node.content).status;

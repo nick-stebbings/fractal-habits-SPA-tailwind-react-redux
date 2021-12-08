@@ -1,4 +1,27 @@
+import Hammer from "hammerjs";
+import { isTouchDevice } from "app/helpers";
+
+const addSwipeGestures = function () {
+  const swipeBase = document.querySelector("#vis");
+  const manager = new Hammer.Manager(swipeBase);
+  const Swipe = new Hammer.Swipe();
+  const nextDate = document.querySelector(".fa-chevron-circle-right");
+  const prevDate = document.querySelector(".fa-chevron-circle-left");
+
+  manager.add(Swipe);
+  manager.on("swipe", (e) => {
+    if (Math.abs(e.deltaX) > 500) {
+      console.log("prevDate :>> ", prevDate);
+      const dispEvent = new Event("click");
+      e.deltaX > 0
+        ? prevDate.dispatchEvent(dispEvent)
+        : nextDate.dispatchEvent(dispEvent);
+    }
+  });
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+  isTouchDevice() && addSwipeGestures();
   // ResponsiveNav groups
   const navGroupsList = document
     .querySelector("ul.nav-groups")

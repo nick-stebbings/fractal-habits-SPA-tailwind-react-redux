@@ -45,10 +45,10 @@ import {
   nodeStatusColours,
   parseTreeValues,
   cumulativeValue,
-  isTouchDevice,
   habitDatePersisted,
   outOfBoundsNode,
 } from "./components/helpers";
+import { isTouchDevice } from "app/helpers";
 
 import {
   positiveCol,
@@ -161,6 +161,7 @@ export default class Visualization {
       handleDeleteNode: function (_, node) {
         this.setCurrentHabit(node);
         store.dispatch(toggleConfirm({ type: "Delete" }));
+        this.render();
       },
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;
@@ -384,16 +385,26 @@ export default class Visualization {
     return found;
   }
   setCurrentNode(node) {
-    const nodeContent = parseTreeValues(node.data.content);
+    const nodeContent = node?.data
+      ? parseTreeValues(node?.data.content)
+      : parseTreeValues(node.content);
+
     let newCurrent = selectCurrentNodeByMptt(
       store.getState(),
       nodeContent.left,
       nodeContent.right
     );
+    if (!newCurrent) {
+      window.FlashMessage.warning("Couldn't select node");
+      return;
+    }
     store.dispatch(updateCurrentNode(newCurrent));
   }
   setCurrentHabit(node) {
-    const nodeContent = parseTreeValues(node.data.content);
+    const nodeContent = node?.data
+      ? parseTreeValues(node?.data.content)
+      : parseTreeValues(node.content);
+
     let newCurrent = selectCurrentHabitByMptt(
       store.getState(),
       nodeContent.left,
@@ -852,26 +863,30 @@ export default class Visualization {
       manager.get("singletap").requireFailure("doubletap");
       manager.on("singletap", (ev) => {
         ev.preventDefault();
+        const node = ev.target.__data__.data;
+        this.setCurrentHabit(node);
+        this.setCurrentNode(node);
         switch (ev.target.tagName) {
           // Delete
           case "path":
             this.eventHandlers.handleDeleteNode.call(
               this,
+              ev,
               ev.target.__data__.data
             );
             break;
           // Append or prepend
           case "rect":
           case "text":
-            ev.target.textContent == "APPEND "
+            ev.target.textContent == "APPEND"
               ? this.eventHandlers.handleAppendNode.call(this)
               : this.eventHandlers.handlePrependNode.call(this);
             break;
           default:
-            const content = ev.target.__data__.data.content;
             let parentNodeGroup = _.find(
               this._enteringNodes._groups[0],
-              (n) => n?.__data__?.data?.content == content
+              this._enteringNodes._groups[0],
+              (n) => n?.__data__?.data?.content == node.content
             );
 
             ev.target = parentNodeGroup;
