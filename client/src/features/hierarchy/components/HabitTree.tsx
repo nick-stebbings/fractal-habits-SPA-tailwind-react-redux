@@ -20,9 +20,10 @@ export const HabitTree: React.FC<VisProps> = ({
   margin,
   divId,
   render,
+  routeChanged
 }) => {
   const dispatch = useAppDispatch();
-  
+  console.log('routeChanged :>> ', routeChanged);
   let currentHabitTree = useAppSelector(selectCurrentTree);
   const currentRequestState = useAppSelector(getRequestStatus);
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
@@ -31,9 +32,12 @@ export const HabitTree: React.FC<VisProps> = ({
     appendSvg(divId)
   }, []);
 
-    useEffect(() => {
-    currentHierarchy?.data.name !== "" && updateVisRootData(currentHabitTree, currentHierarchy)
-  }, [currentHierarchy?.id])
+  useEffect(() => {
+    if (!currentHabitTree || currentHierarchy?.data.name == "") return
+    
+    updateVisRootData(currentHabitTree, currentHierarchy, routeChanged);
+
+  }, [routeChanged])
 
   useEffect(() => {
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
@@ -57,7 +61,7 @@ export const HabitTree: React.FC<VisProps> = ({
       _p("Instantiated vis object :>> ", currentHabitTree, "info");
     }
   }, [currentHierarchy?.data.name]);
-  
+  _p("renderedd from component", '', '!' )
   return (
       <>{render(currentHabitTree)}</>
   );

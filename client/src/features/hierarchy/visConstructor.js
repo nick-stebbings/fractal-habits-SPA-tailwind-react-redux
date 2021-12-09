@@ -349,7 +349,10 @@ export default class Visualization {
     !this.rootData.leaves().includes(node) || node?._children;
   }
   noCanvas() {
-    return typeof this?._canvas == "undefined";
+    return (
+      typeof this?._canvas == "undefined" ||
+      document.querySelectorAll(".canvas")?.length == 0
+    );
   }
   hasNextData() {
     return !!this?._nextRootData;
@@ -905,7 +908,6 @@ export default class Visualization {
 
   bindLegendEventHandler() {
     let infoCell = document.querySelector(".legend-svg .cell:first-child");
-    console.log("infoCell :>> ", infoCell);
     infoCell.addEventListener("click", () => {
       debugger;
       let controlsSvg = document.querySelector(".controls-svg");
@@ -1058,19 +1060,10 @@ export default class Visualization {
   render() {
     console.log("Rendering vis... :>>", this?._canvas);
     // _p("zoomconfig", this._zoomConfig, "info");
-    if (!this.noCanvas()) {
-      this._hasRendered = true;
-      // this.removeCanvas();
-    } else {
+    if (this.noCanvas()) {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true);
-      console.log(
-        "Configured canvas... :>>",
-        this._canvas,
-        "First render?",
-        this.firstRender()
-      );
     }
     if (this.firstRender()) {
       this.setNodeRadius();
@@ -1082,6 +1075,8 @@ export default class Visualization {
         "transform",
         `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
       );
+    } else {
+      this._hasRendered = true;
     }
 
     if (
@@ -1089,12 +1084,12 @@ export default class Visualization {
       this.hasNewHierarchyData() ||
       this.activeNode?.isNewActive
     ) {
-      if (this.noCanvas()) return;
-
       // First render OR New hierarchy needs to be rendered
+
       // Update the current day's rootData
       if (this.hasNextData()) this.rootData = this._nextRootData;
-      this.setLayout();
+
+      if (this.noCanvas()) return;
 
       //Render cleared canvas for OOB dates
       const isBlankData = this.rootData?.data?.content == "";
@@ -1103,6 +1098,9 @@ export default class Visualization {
         this.clearCanvas();
         return;
       }
+
+      this.setLayout();
+
       if (!this.rootData.data.content) {
         debugger;
         this.rootData = this.rootData.data;

@@ -35,17 +35,30 @@ export const appendSvg = (divId) => {
       .attr("style", "pointer-events: all");
 };
 
-export const updateVisRootData = (visObject, currentHierarchy) => {
+export const updateVisRootData = (
+  visObject,
+  currentHierarchy,
+  routeChanged
+) => {
   // Check if the hierarchy in the store is a new one (a new tree needs rendering)
   const compareString = JSON.stringify(currentHierarchy.data);
-  if (
-    visObject?._svgId &&
-    (JSON.stringify(visObject.rootData.data) !== compareString ||
-      visObject.firstRender())
-  ) {
+  const visExists = visObject?._svgId;
+  const newData =
+    visExists && JSON.stringify(visObject.rootData.data) !== compareString;
+
+  if (visExists && (newData || visObject.firstRender() || routeChanged)) {
     visObject._nextRootData = hierarchy(currentHierarchy.data);
+
+    // Account for second page load of an already instantiated vis
+    if (routeChanged) {
+      visObject._nextRootData.routeChanged = true;
+      // delete visObject._canvas;
+      visObject.clearFirstRenderFlag();
+    }
+
     visObject.render();
     _p("Rendered from component & updated ", {}, "!");
+    return visObject;
   }
 };
 

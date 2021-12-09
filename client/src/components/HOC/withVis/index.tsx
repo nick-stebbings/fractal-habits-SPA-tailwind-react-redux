@@ -1,11 +1,7 @@
 import React, { ComponentType, } from 'react'
 
-import { useLocation } from 'react-router-dom';
-
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-
-
 import useFetch from '../../../hooks/useFetch'
+import { useLocation } from 'react-router-dom';
 import { useLastLocation } from 'react-router-last-location';
 import "../../../assets/styles/pages/d3vis.scss";
 
@@ -26,30 +22,20 @@ const d3SetupCanvas = function () {
 
 export function withVis<T> (C : ComponentType<T>) : React.FC {
   useFetch(true)
-  let divId = 1;
+  // let divId = 1;
   
   const withVisC: React.FC = (hocProps: T) => {
     const currentPath = useLocation().pathname
     const lastPath = useLastLocation()?.pathname
+    const routeChanged = !!lastPath && (currentPath !== lastPath);
+    console.log('currentPath, lastPath :>> ', currentPath, lastPath);
 
     const { canvasHeight, canvasWidth } = d3SetupCanvas()
+  
     return (
-      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={1} {...hocProps} render={(currentVis) => {
-        if (!!lastPath && currentVis.clearFirstRenderFlag && currentPath!==lastPath){// && (lastPath !== currentPath)) {
-          currentVis.clearFirstRenderFlag();
-          console.log('currentVis._hasRendered :>> ', currentVis._hasRendered);
-          currentVis.render()
-        }
+      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={1} {...hocProps} routeChanged={routeChanged} render={(currentVis) => {
         console.log('returned C :>> ',);
         return (<>
-      {/* <button
-        type="button"
-        id="reset-tree"
-        className="vis-button"
-        onClick={() => currentVis.expand()}
-      >
-        <span>Reset Tree</span>
-      </button> */}
       <button
             type="button"
             id="collapse-tree"

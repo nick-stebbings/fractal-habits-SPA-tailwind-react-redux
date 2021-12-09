@@ -99,7 +99,11 @@ export const CalendarWidget = ({
         </div>
         <i className="fa-solid fa-circle-info" />
         <Link to={`habits/list?currentHabit=${"HabitStore.current()?.id"}`}>
-          <span className={"absolute top-2  right-3 sm:right-4"}>
+          <span
+            className={
+              "absolute text-gray-200 pointer-events-none top-2  right-3 sm:right-4"
+            }
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-10 h-10"
@@ -117,8 +121,11 @@ export const CalendarWidget = ({
           </span>
         </Link>
         <Link to={`habits/new?currentHabit=${"currentid"}`}>
-          <span className={"absolute top-12  right-3 sm:right-4"}>
-            {" "}
+          <span
+            className={
+              "absolute text-gray-200 pointer-events-none top-12  right-3 sm:right-4"
+            }
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-10 h-10"

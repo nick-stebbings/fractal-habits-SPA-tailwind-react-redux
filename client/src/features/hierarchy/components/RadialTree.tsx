@@ -19,6 +19,7 @@ export const RadialTree: React.FC<VisProps> = ({
   margin,
   divId,
   render,
+  routeChanged
 }) => {
   const dispatch = useAppDispatch();
 
@@ -30,10 +31,12 @@ export const RadialTree: React.FC<VisProps> = ({
     appendSvg(divId)
   }, []);
 
-    useEffect(() => {
-    currentHierarchy.name !== "" && updateVisRootData(currentRadial, currentHierarchy)
-  }, [currentHierarchy?.id])
+  useEffect(() => {
+    if (!currentRadial || currentHierarchy?.data.name == "") return
+    
+    updateVisRootData(currentRadial, currentHierarchy, routeChanged);
 
+  }, [routeChanged])
 
   useEffect(() => {
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;

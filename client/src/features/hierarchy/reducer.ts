@@ -30,6 +30,13 @@ export const hierarchySlice = createSlice({
       const { vis, label } = action.payload;
       if (typeof state[label]?.id == "undefined") state[label] = vis;
     },
+    updateVis(
+      state,
+      action: PayloadAction<Dictionary<string | typeof Visualization>>
+    ) {
+      const { vis, label } = action.payload;
+      if (typeof state[label]?.id == "undefined") state[label] = vis;
+    },
     updateCurrentHierarchy(state, action: PayloadAction<any>) {
       const { nextDateId } = action.payload;
       if (state.myRecords[nextDateId]) {

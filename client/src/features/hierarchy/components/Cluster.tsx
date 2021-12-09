@@ -20,9 +20,10 @@ export const Cluster: React.FC<VisProps> = ({
   margin,
   divId,
   render,
+  routeChanged
 }) => {
   const dispatch = useAppDispatch();
-
+console.log('routeChanged :>> ', routeChanged);
   let currentCluster = useAppSelector(selectCurrentCluster);
   const currentRequestState = useAppSelector(getRequestStatus);
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);
@@ -31,9 +32,12 @@ export const Cluster: React.FC<VisProps> = ({
     appendSvg(divId)
   }, []);
   
-  useEffect(() => {    
-    currentHierarchy.data.name !== "" && updateVisRootData(currentCluster, currentHierarchy)
-  }, [currentHierarchy?.data.name])
+  useEffect(() => {
+    if (!currentCluster || currentHierarchy?.data.name == "") return
+    
+    updateVisRootData(currentCluster, currentHierarchy, routeChanged);
+
+  }, [routeChanged])
 
   useEffect(() => {
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
@@ -58,6 +62,7 @@ export const Cluster: React.FC<VisProps> = ({
     }
   }, [currentHierarchy?.data.name]);
 
+  _p("renderedd from component", '', '!' )
   return (
       <>{render(currentCluster)}</>
   );

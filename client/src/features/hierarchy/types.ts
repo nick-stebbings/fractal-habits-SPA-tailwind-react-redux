@@ -8,4 +8,5 @@ export interface VisProps {
   divId: number;
   margin?: any; //(_:any):void
   render: any; //(_:any):void
+  routeChanged: boolean;
 }

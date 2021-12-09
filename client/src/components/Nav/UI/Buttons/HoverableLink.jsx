@@ -18,7 +18,7 @@ export const HoverableLink = ({
 }) => {
   const handleOpen = (e, idx) => {
     // Toggle active classes
-    console.log("e.currentTarget :>> ", e.currentTarget);
+    // console.log("e.currentTarget :>> ", e.currentTarget);
     e.currentTarget.classList.toggle("active");
     oppositeLink(idx)?.parentNode.classList.remove("active");
     document.querySelector("#current-habit-label")?.classList.add("inactive");
@@ -46,10 +46,6 @@ export const HoverableLink = ({
     const currentOpenId = document.querySelector(".hoverable.active");
     if (!!currentOpenId) {
       currentOpenId.classList.toggle("active");
-      console.log(
-        "currentOpenId.children[0] == oppositeLink(idx) :>> ",
-        currentOpenId.children[0] == oppositeLink(idx)
-      );
       // if (currentOpenId.children[0] == oppositeLink(idx)) {
       //   handleClose();
       //   setIsOpen(false);
