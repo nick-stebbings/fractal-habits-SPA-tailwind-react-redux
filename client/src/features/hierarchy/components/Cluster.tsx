@@ -23,7 +23,6 @@ export const Cluster: React.FC<VisProps> = ({
   routeChanged
 }) => {
   const dispatch = useAppDispatch();
-console.log('routeChanged :>> ', routeChanged);
   let currentCluster = useAppSelector(selectCurrentCluster);
   const currentRequestState = useAppSelector(getRequestStatus);
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);

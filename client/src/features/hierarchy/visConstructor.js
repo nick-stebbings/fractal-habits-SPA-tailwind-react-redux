@@ -623,7 +623,7 @@ export default class Visualization {
         const outOfBounds = outOfBoundsNode(d, this.rootData);
         // Set new active node when this one is out of bounds
         if (outOfBounds && this.activeNode?.data.name == d.data.name) {
-          this.setActiveNode(this.rootData);
+          // this.setActiveNode(this.rootData);
         }
 
         return !outOfBounds;
@@ -1059,12 +1059,12 @@ export default class Visualization {
 
   render() {
     console.log("Rendering vis... :>>", this?._canvas);
-    // _p("zoomconfig", this._zoomConfig, "info");
     if (this.noCanvas()) {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true);
     }
+
     if (this.firstRender()) {
       this.setNodeRadius();
       this.setLevelsHighAndWide();
@@ -1088,6 +1088,7 @@ export default class Visualization {
 
       // Update the current day's rootData
       if (this.hasNextData()) this.rootData = this._nextRootData;
+      // if (!this.activeNode) console.log(this.rootData.data.content);
 
       if (this.noCanvas()) return;
 

@@ -23,7 +23,6 @@ export const HabitTree: React.FC<VisProps> = ({
   routeChanged
 }) => {
   const dispatch = useAppDispatch();
-  console.log('routeChanged :>> ', routeChanged);
   let currentHabitTree = useAppSelector(selectCurrentTree);
   const currentRequestState = useAppSelector(getRequestStatus);
   const currentHierarchy = useAppSelector(selectCurrentHierarchy);

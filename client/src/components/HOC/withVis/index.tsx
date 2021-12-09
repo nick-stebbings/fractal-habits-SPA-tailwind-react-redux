@@ -28,7 +28,6 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
     const currentPath = useLocation().pathname
     const lastPath = useLastLocation()?.pathname
     const routeChanged = !!lastPath && (currentPath !== lastPath);
-    console.log('currentPath, lastPath :>> ', currentPath, lastPath);
 
     const { canvasHeight, canvasWidth } = d3SetupCanvas()
   
