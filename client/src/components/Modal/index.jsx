@@ -19,7 +19,7 @@ const { deleteCurrentNode } = NodeSlice.actions;
 
 const TITLES = {
   Confirm: "Message: You are about to...",
-  Prepend: "Create a new root habit for the life domain",
+  Prepend: "Create a new parent habit under the life domain",
   Append: "Create a new child habit under the life domain",
   Error: "There has been an error!",
   Delete: "You are about to...",

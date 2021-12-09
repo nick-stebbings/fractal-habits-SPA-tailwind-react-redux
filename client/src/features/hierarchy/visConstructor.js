@@ -48,7 +48,7 @@ import {
   habitDatePersisted,
   outOfBoundsNode,
 } from "./components/helpers";
-import { isTouchDevice } from "app/helpers";
+import { isTouchDevice, debounce } from "app/helpers";
 
 import {
   positiveCol,
@@ -58,14 +58,14 @@ import {
   parentPositiveCol,
 } from "app/constants";
 
-const BASE_SCALE = 1;
-const FOCUS_MODE_SCALE = 1;
+const BASE_SCALE = 1.5;
+const FOCUS_MODE_SCALE = 1.5;
 const LABEL_SCALE = 1.5;
-const BUTTON_SCALE = 2;
+const BUTTON_SCALE = 2.2;
 const XS_NODE_RADIUS = 60;
 const LG_NODE_RADIUS = 50;
-const XS_LEVELS_HIGH = 3;
-const LG_LEVELS_HIGH = 3;
+const XS_LEVELS_HIGH = 6;
+const LG_LEVELS_HIGH = 6;
 const XS_LEVELS_WIDE = 3;
 const LG_LEVELS_WIDE = 3;
 const DEFAULT_MARGIN = {
@@ -74,6 +74,53 @@ const DEFAULT_MARGIN = {
   bottom: 0,
   left: 0,
 };
+const INITIAL_X_TRANSLATE = (groupWidth, scale, type, canvasWidth) => {
+  return scale * (type == "tree" ? (canvasWidth + groupWidth) / 2 : 0);
+};
+const INITIAL_Y_TRANSLATE = (groupHeight, scale, type, canvasHeight) => {
+  return (
+    scale *
+    (type == "cluster" || type == "radial"
+      ? (canvasHeight + groupHeight) / 2
+      : 150)
+  );
+};
+
+const radialTranslation = (zoomConfig) => {
+  const [x, y] = radialPoint(
+    zoomConfig.previousRenderZoom?.node?.x,
+    zoomConfig.previousRenderZoom?.node?.y
+  );
+  return { x, y };
+};
+
+const newXTranslate = (type, viewConfig, zoomConfig) => {
+  switch (type) {
+    case "cluster":
+      return -(
+        zoomConfig.previousRenderZoom?.node?.y +
+        viewConfig.viewportW / 2
+      );
+    case "radial":
+      return -radialTranslation(zoomConfig).x;
+    case "tree":
+      console.log("object X :>> ", zoomConfig.previousRenderZoom?.node?.x);
+      return -zoomConfig.previousRenderZoom?.node?.x;
+  }
+};
+
+const newYTranslate = (type, viewConfig, zoomConfig) => {
+  switch (type) {
+    case "cluster":
+      return zoomConfig.previousRenderZoom?.node?.x + viewConfig.viewportH / 2;
+    case "radial":
+      return -radialTranslation(zoomConfig).y;
+    case "tree":
+      console.log("object Y :>> ", zoomConfig.previousRenderZoom?.node?.y);
+      return -zoomConfig.previousRenderZoom?.node?.y;
+  }
+};
+
 export default class Visualization {
   constructor(svgId, inputTree, canvasHeight, canvasWidth, margin, type) {
     this.type = type;
@@ -86,57 +133,33 @@ export default class Visualization {
       margin: margin || DEFAULT_MARGIN,
       canvasHeight,
       canvasWidth,
-      defaultCanvasTranslateX: () => {
-        if (
-          // there was a previous zoom/translate to a node
-          typeof this._zoomConfig.previousRenderZoom?.node?.x !== "undefined"
-        ) {
-          const radialTranslate = radialPoint(
-            this._zoomConfig.previousRenderZoom?.node?.x,
-            this._zoomConfig.previousRenderZoom?.node?.y
-          );
-          // then add the node's coordinates
-          return this.type == "cluster"
-            ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius -
-                this._zoomConfig.previousRenderZoom?.node?.y +
-                this._viewConfig.viewportW / 4
-            : this._viewConfig.viewportW / 2 -
-                (this.type == "radial"
-                  ? radialTranslate[0]
-                  : this._zoomConfig.previousRenderZoom?.node?.x);
-        } else {
-          // Initial translation settings
-          return this.type == "cluster"
-            ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius +
-                this._viewConfig.canvasWidth / 8
-            : this._viewConfig.viewportW / 2;
-        }
+      defaultCanvasTranslateX: (scale) => {
+        const initialX = INITIAL_X_TRANSLATE(
+          this._canvas?._groups[0][0]?.getBoundingClientRect().width,
+          scale || this._viewConfig.scale,
+          this.type,
+          this._viewConfig.canvasWidth
+        );
+        console.log("initialX :>> ", initialX);
+        return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
+          "undefined"
+          ? initialX +
+              newXTranslate(this.type, this._viewConfig, this._zoomConfig)
+          : initialX;
       },
-      defaultCanvasTranslateY: () => {
-        if (
-          // there was a previous zoom/translate to a node
-          typeof this._zoomConfig.previousRenderZoom?.node?.y !== "undefined"
-        ) {
-          const radialTranslate = radialPoint(
-            this._zoomConfig.previousRenderZoom?.node?.x,
-            this._zoomConfig.previousRenderZoom?.node?.y
-          );
-          // then add the node's coordinates
-          return this.type == "cluster"
-            ? this._viewConfig.levelsHigh * this._viewConfig.nodeRadius -
-                this._zoomConfig.previousRenderZoom?.node?.x +
-                this._viewConfig.viewportH / 2
-            : -(this.type == "radial"
-                ? radialTranslate[1]
-                : this._zoomConfig.previousRenderZoom?.node?.x) +
-                (+(this.type == "radial") * this._viewConfig.viewportH) / 2;
-        } else {
-          // Initial translation settings
-          return this.type == "cluster" || this.type == "radial"
-            ? -this._viewConfig.levelsHigh * this._viewConfig.nodeRadius +
-                this._viewConfig.viewportH / 2
-            : 0;
-        }
+      defaultCanvasTranslateY: (scale) => {
+        const initialY = INITIAL_Y_TRANSLATE(
+          this._canvas?._groups[0][0]?.getBoundingClientRect().height,
+          scale || this._viewConfig.scale,
+          this.type,
+          this._viewConfig.canvasHeight
+        );
+        console.log("initialY :>> ", initialY);
+        return typeof this._zoomConfig.previousRenderZoom?.node?.y !==
+          "undefined"
+          ? initialY +
+              newYTranslate(this.type, this._viewConfig, this._zoomConfig)
+          : initialY;
       },
       isSmallScreen: function () {
         return this.canvasWidth < 768;
@@ -180,9 +203,11 @@ export default class Visualization {
           .duration(this.isDemo ? 0 : 550)
           .attr(
             "transform",
-            `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
-              this._zoomConfig.globalZoomScale
-            })`
+            `translate(${this._viewConfig.defaultCanvasTranslateX(
+              this._viewConfig.clickScale
+            )},${this._viewConfig.defaultCanvasTranslateY(
+              this._viewConfig.clickScale
+            )}), scale(${this._zoomConfig.globalZoomScale})`
           );
       },
       handleNodeFocus: function (event, node) {
@@ -486,8 +511,8 @@ export default class Visualization {
       let t = { ...e.transform };
       let scale = t.k;
 
-      t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
-      t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
+      t.x = -t.x + this._viewConfig.defaultCanvasTranslateX();
+      t.y = -t.y + this._viewConfig.defaultCanvasTranslateY();
       select(".canvas")
         .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
         .transition()
@@ -504,12 +529,8 @@ export default class Visualization {
     this._viewConfig.viewportH =
       this._viewConfig.canvasHeight * this._viewConfig.levelsHigh;
 
-    this._viewConfig.viewportX =
-      this.type == "tree" ? this._viewConfig.canvasWidth / 6 : 0;
-    this._viewConfig.viewportY =
-      (-(this.type == "tree" ? 150 : -this._viewConfig.canvasHeight / 2) *
-        this._viewConfig.levelsHigh) /
-      4; // Adjust for initial y translation on different vis
+    this._viewConfig.viewportX = 0;
+    this._viewConfig.viewportY = 0;
 
     this._viewConfig.defaultView = `${this._viewConfig.viewportX} ${this._viewConfig.viewportY} ${this._viewConfig.viewportW} ${this._viewConfig.viewportH}`;
   }
@@ -826,6 +847,8 @@ export default class Visualization {
   bindEventHandlers(selection) {
     selection
       .on("click", (e, d) => {
+        console.log("e.target.tagName :>> ", e.currentTarget.tagName);
+        if (e.target.tagName !== "circle") return;
         this.eventHandlers.handleNodeZoom.call(this, e, d, false);
         this.eventHandlers.handleNodeFocus.call(this, e, d);
       })
@@ -848,7 +871,10 @@ export default class Visualization {
         this.eventHandlers.handleNodeToggle.call(this, e, d);
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
-      .on("mouseenter", this.eventHandlers.handleMouseEnter.bind(this));
+      .on(
+        "mouseenter",
+        debounce(this.eventHandlers.handleMouseEnter.bind(this), 450)
+      );
 
     //----------------------
     // Mobile device events
@@ -882,6 +908,7 @@ export default class Visualization {
           // Append or prepend
           case "rect":
           case "text":
+            ev.currentTarget.classList.toggle("hidden");
             ev.target.textContent == "APPEND"
               ? this.eventHandlers.handleAppendNode.call(this)
               : this.eventHandlers.handlePrependNode.call(this);
@@ -1071,10 +1098,6 @@ export default class Visualization {
       this.calibrateViewPortAttrs();
       this.calibrateViewBox();
       this.setdXdY();
-      this._canvas.attr(
-        "transform",
-        `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
-      );
     } else {
       this._hasRendered = true;
     }
@@ -1123,6 +1146,11 @@ export default class Visualization {
       this.appendButtons();
       console.log("Appended SVG elements... :>>");
 
+      this._canvas.attr(
+        "transform",
+        `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
+      );
+
       this._hasRendered = true;
     }
     _p("this._hasRendered :>> ", { has: this._hasRendered }, "!");
@@ -1136,7 +1164,7 @@ export default class Visualization {
     if (!!this.activeNode) {
       this.activeNode?.isNew &&
         this.zoomBase().selectAll(".active-circle").remove();
-      this.activateNodeAnimation();
+      debounce(this.activateNodeAnimation, 400)();
     }
   }
 }

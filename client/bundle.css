@@ -4238,8 +4238,8 @@ span.logo svg path:focus,
 }
 @media only screen and (min-width: 1920px) {
   div.mask-wrapper {
-    -webkit-mask: no-repeat 15px -20px url(../../images/fib-mask-1900-420-rot.svg);
-    mask: no-repeat 15px -20px url(../../images/fib-mask-1900-420-rot.svg);
+    -webkit-mask: no-repeat 15px -20px url(../../images/fib-mask-1900-420.svg);
+    mask: no-repeat 15px -20px url(../../images/fib-mask-1900-420.svg);
   }
   #subnav .nav-links {
     padding-left: 0;
@@ -4808,8 +4808,8 @@ span.logo svg path:focus,
 }
 @media only screen and (min-width: 1920px) {
   div.mask-wrapper {
-    -webkit-mask: no-repeat 15px -20px url(../../images/fib-mask-1900-420-rot.svg);
-    mask: no-repeat 15px -20px url(../../images/fib-mask-1900-420-rot.svg);
+    -webkit-mask: no-repeat 15px -20px url(../../images/fib-mask-1900-420.svg);
+    mask: no-repeat 15px -20px url(../../images/fib-mask-1900-420.svg);
   }
   #subnav .nav-links {
     padding-left: 0;
