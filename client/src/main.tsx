@@ -30,7 +30,7 @@ import { Provider } from "react-redux";
 import { Routes } from "./routes/Routes";
 
 // Import our CSS
-import "./styles/styles.css";
+// import "./styles/styles.css";
 import "./styles/bundle.css";
 // import "./assets/styles/app-base.pcss";
 // import "./assets/styles/app-utils.pcss";
