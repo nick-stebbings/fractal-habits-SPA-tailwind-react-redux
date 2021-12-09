@@ -1,8 +1,5 @@
-// const { fontFamily } = require("tailwindcss/defaultTheme");
-
 module.exports = {
-  // mode: "jit",
-  // purge: ["**/*.html", "**/*.scss", "**/*.pcss", "**/*.jsx", "**/*.js"],
+  purge: ["**/*.html", "**/*.scss", "**/*.pcss", "**/*.jsx", "**/*.js"],
   theme: {
     colors: {
       gray: {
