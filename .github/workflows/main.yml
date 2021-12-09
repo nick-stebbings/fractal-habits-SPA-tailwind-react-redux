@@ -35,8 +35,8 @@ jobs:
         id: docker_build_front
         uses: docker/build-push-action@v2
         with:
-          context: ./client/src
-          file: ../Dockerfile
+          context: ./client
+          file: Dockerfile
           push: true
           tags: nickstebb/hht-frontend-redux:latest
 
