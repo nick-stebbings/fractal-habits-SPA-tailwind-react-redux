@@ -21,6 +21,9 @@ export const Routes = () => {
           <Route path="/vis/radial-tree">
             <RadialTree />
           </Route>
+          <Route path="/">
+            <HabitTree />
+          </Route>
           <Route path="*">
             <main style={{ padding: "1rem" }}>
               <p>404</p>
