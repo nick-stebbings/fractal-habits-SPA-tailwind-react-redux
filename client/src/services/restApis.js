@@ -1,5 +1,5 @@
-const BASE_URL = "http://localhost:9292"; //
-// const BASE_URL = "https://api.habfract.life";
+// const BASE_URL = "http://localhost:9292"; //
+const BASE_URL = "https://api.habfract.life";
 
 import axios from "axios";
 import { handleErrorType } from "app/helpers";
