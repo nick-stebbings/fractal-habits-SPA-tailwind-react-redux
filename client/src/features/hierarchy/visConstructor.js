@@ -57,9 +57,10 @@ import {
   neutralCol,
   parentPositiveCol,
 } from "app/constants";
+import { RedirectWithoutLastLocation } from "react-router-last-location";
 
 const BASE_SCALE = 1.5;
-const FOCUS_MODE_SCALE = 1.5;
+const FOCUS_MODE_SCALE = 3;
 const LABEL_SCALE = 1.5;
 const BUTTON_SCALE = 2.2;
 const XS_NODE_RADIUS = 60;
@@ -74,18 +75,30 @@ const DEFAULT_MARGIN = {
   bottom: 0,
   left: 0,
 };
-const INITIAL_X_TRANSLATE = (groupWidth, scale, type, canvasWidth) => {
-  return scale * (type == "tree" ? (canvasWidth + groupWidth) / 2 : 0);
-};
-const INITIAL_Y_TRANSLATE = (groupHeight, scale, type, canvasHeight) => {
+const INITIAL_X_TRANSLATE = (
+  groupWidth,
+  scale,
+  type,
+  { canvasWidth, levelsWide }
+) => {
   return (
-    scale *
-    (type == "cluster" || type == "radial"
-      ? (canvasHeight + groupHeight) / 2
-      : 150)
+    (levelsWide * (type == "tree" ? canvasWidth / 2 : 0) + groupWidth / 2) /
+    scale
   );
 };
-
+const INITIAL_Y_TRANSLATE = (
+  groupHeight,
+  scale,
+  type,
+  { canvasHeight, levelsHigh }
+) => {
+  return (
+    (levelsHigh *
+      (type == "cluster" || type == "radial" ? canvasHeight / 2 : 150) +
+      groupHeight / 2) /
+    scale
+  );
+};
 const radialTranslation = (zoomConfig) => {
   const [x, y] = radialPoint(
     zoomConfig.previousRenderZoom?.node?.x,
@@ -99,7 +112,7 @@ const newXTranslate = (type, viewConfig, zoomConfig) => {
     case "cluster":
       return -(
         zoomConfig.previousRenderZoom?.node?.y +
-        viewConfig.viewportW / 2
+        viewConfig.viewportH / 2
       );
     case "radial":
       return -radialTranslation(zoomConfig).x;
@@ -138,7 +151,7 @@ export default class Visualization {
           this._canvas?._groups[0][0]?.getBoundingClientRect().width,
           scale || this._viewConfig.scale,
           this.type,
-          this._viewConfig.canvasWidth
+          this._viewConfig
         );
         console.log("initialX :>> ", initialX);
         return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
@@ -152,7 +165,7 @@ export default class Visualization {
           this._canvas?._groups[0][0]?.getBoundingClientRect().height,
           scale || this._viewConfig.scale,
           this.type,
-          this._viewConfig.canvasHeight
+          this._viewConfig
         );
         console.log("initialY :>> ", initialY);
         return typeof this._zoomConfig.previousRenderZoom?.node?.y !==
@@ -167,7 +180,7 @@ export default class Visualization {
     };
 
     this._zoomConfig = {
-      globalZoom: 1,
+      focusMode: false,
       previousRenderZoom: {},
       zoomedInView: function () {
         return Object.keys(this.previousRenderZoom).length !== 0;
@@ -188,7 +201,9 @@ export default class Visualization {
       },
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;
+        this._zoomConfig.focusMode = true;
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
+        this.setZoomBehaviour();
         const parentNode = { ...node.parent };
         // Set for cross render transformation memory
         this._zoomConfig.previousRenderZoom = {
@@ -197,18 +212,6 @@ export default class Visualization {
           content: node.data,
           scale: this._zoomConfig.globalZoomScale,
         };
-        select(".canvas")
-          .transition()
-          .ease(easePolyOut)
-          .duration(this.isDemo ? 0 : 550)
-          .attr(
-            "transform",
-            `translate(${this._viewConfig.defaultCanvasTranslateX(
-              this._viewConfig.clickScale
-            )},${this._viewConfig.defaultCanvasTranslateY(
-              this._viewConfig.clickScale
-            )}), scale(${this._zoomConfig.globalZoomScale})`
-          );
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
@@ -468,12 +471,12 @@ export default class Visualization {
     this._zoomConfig.previousRenderZoom = {};
     this.activeNode.isNew = null;
     this.activeNode = this.rootData;
+    this.expand();
     if (!justTranslation) {
-      this.expand();
       document.querySelector(".the-node.active") &&
         document.querySelector(".the-node.active").classList.remove("active");
     }
-    this._canvas.call(this.zoomer.transform, zoomIdentity);
+    this.zoomBase().call(this.zoomer.transform, zoomIdentity);
   }
 
   setLevelsHighAndWide() {
@@ -506,21 +509,32 @@ export default class Visualization {
       (this._viewConfig.isSmallScreen() ? XS_NODE_RADIUS : LG_NODE_RADIUS) *
       this._viewConfig.scale;
   }
-  setZoomBehaviour() {
+  setZoomBehaviour(reset = false) {
     const zooms = function (e) {
       let t = { ...e.transform };
-      let scale = t.k;
+      let scale;
+      if (this._zoomConfig.focusMode) {
+        t = { ...zoomIdentity };
+        t.k = BASE_SCALE;
+        this.setZoomBehaviour(true);
+        this._zoomConfig.focusMode = false;
+        console.log("zoom object reset :>> ");
+      } else {
+        this._zoomConfig.globalZoom = scale;
+      }
+      scale = t.k;
 
-      t.x = -t.x + this._viewConfig.defaultCanvasTranslateX();
-      t.y = -t.y + this._viewConfig.defaultCanvasTranslateY();
-      select(".canvas")
-        .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
-        .transition()
-        .ease(easePolyOut)
-        .duration(2500);
+      t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
+      t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
+      select(".canvas").attr(
+        "transform",
+        `translate(${t.x},${t.y}), scale(${scale})`
+      );
     };
     this.zoomer = zoom().scaleExtent([0.5, 5]).on("zoom", zooms.bind(this));
-    this.zoomBase().call(this.zoomer);
+    reset
+      ? this.zoomBase().call(this.zoomer, zoomIdentity)
+      : this.zoomBase().call(this.zoomer);
   }
 
   calibrateViewPortAttrs() {
