@@ -246,6 +246,7 @@ li.hoverable {
 
 #subnav .nav-links > li.hoverable:hover .habit-description-label {
   display: none;
+  min-height: 9rem;
 }
 
 #subnav .nav-links > li.hoverable:hover {

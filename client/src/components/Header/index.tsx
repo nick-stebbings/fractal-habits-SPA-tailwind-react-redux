@@ -5,6 +5,7 @@ import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../../routes/routeInfo";
 import { store } from "app/store";
 // @ts-ignore
 import { useAppDispatch, useAppSelector } from "app/hooks";
+import { debounce } from "app/helpers";
 
 // @ts-ignore
 import { selectCurrentHabit } from "features/habit/selectors";
@@ -91,7 +92,7 @@ if ( !isMemoised(newDateId)) {
           : "mask-wrapper bg-balance-pshades-dark"
       }
     >
-      <CalendarWidget handlePrev={handlePrevDate} handleNext={handleNextDate} hideMegaMenu={hideMegaMenu} showMegaMenu={showMegaMenu} />
+      <CalendarWidget handlePrev={debounce(handlePrevDate, 100)} handleNext={debounce(handleNextDate, 100)} hideMegaMenu={hideMegaMenu} showMegaMenu={showMegaMenu} />
       <header className={isDemo ? "bg-gray-600" : "bg-balance-pshades-dark"}>
         <div id="responsive-nav">
           <Link to="/">
@@ -156,14 +157,14 @@ if ( !isMemoised(newDateId)) {
                         id="prev-date-selector"
                         className="fa fa-chevron-circle-left pt-2 pr-2"
                         aria-hidden="true"
-                        onClick={handlePrevDate}
+                        onClick={debounce(handlePrevDate, 50)}
                       />
                       <DateSelector />
                       <i
                         id="next-date-selector"
                         className="fa fa-chevron-circle-right pt-2"
                         aria-hidden="true"
-                        onClick={handleNextDate}
+                        onClick={debounce(handleNextDate, 50)}
                       />
                     </span>
                   </div>

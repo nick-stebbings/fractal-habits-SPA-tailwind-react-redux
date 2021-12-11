@@ -11,6 +11,7 @@ import {
   cluster,
   easeCubic,
   easePolyOut,
+  zoomTransform,
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 import Hammer from "hammerjs";
@@ -82,7 +83,9 @@ const INITIAL_X_TRANSLATE = (
   { canvasWidth, levelsWide }
 ) => {
   return (
-    (levelsWide * (type == "tree" ? canvasWidth / 2 : 0) + groupWidth / 2) /
+    (levelsWide *
+      (type == "tree" || type == "radial" ? canvasWidth / 2 : canvasWidth / 3) -
+      groupWidth / 2) /
     scale
   );
 };
@@ -94,8 +97,7 @@ const INITIAL_Y_TRANSLATE = (
 ) => {
   return (
     (levelsHigh *
-      (type == "cluster" || type == "radial" ? canvasHeight / 2 : 150) +
-      groupHeight / 2) /
+      (type == "cluster" || type == "radial" ? canvasHeight / 2 : 150)) /
     scale
   );
 };
@@ -110,14 +112,10 @@ const radialTranslation = (zoomConfig) => {
 const newXTranslate = (type, viewConfig, zoomConfig) => {
   switch (type) {
     case "cluster":
-      return -(
-        zoomConfig.previousRenderZoom?.node?.y +
-        viewConfig.viewportH / 2
-      );
+      return -zoomConfig.previousRenderZoom?.node?.y;
     case "radial":
       return -radialTranslation(zoomConfig).x;
     case "tree":
-      console.log("object X :>> ", zoomConfig.previousRenderZoom?.node?.x);
       return -zoomConfig.previousRenderZoom?.node?.x;
   }
 };
@@ -125,11 +123,10 @@ const newXTranslate = (type, viewConfig, zoomConfig) => {
 const newYTranslate = (type, viewConfig, zoomConfig) => {
   switch (type) {
     case "cluster":
-      return zoomConfig.previousRenderZoom?.node?.x + viewConfig.viewportH / 2;
+      return -zoomConfig.previousRenderZoom?.node?.x;
     case "radial":
       return -radialTranslation(zoomConfig).y;
     case "tree":
-      console.log("object Y :>> ", zoomConfig.previousRenderZoom?.node?.y);
       return -zoomConfig.previousRenderZoom?.node?.y;
   }
 };
@@ -201,17 +198,32 @@ export default class Visualization {
       },
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;
-        this._zoomConfig.focusMode = true;
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
-        this.setZoomBehaviour();
+        this._zoomConfig.focusMode = true;
+
         const parentNode = { ...node.parent };
         // Set for cross render transformation memory
         this._zoomConfig.previousRenderZoom = {
           event: event,
           node: forParent ? parentNode : node,
-          content: node.data,
           scale: this._zoomConfig.globalZoomScale,
         };
+        console.table(this._zoomConfig.previousRenderZoom);
+        console.log("this.zoomBase :>> ", this.zoomBase());
+        console.log(
+          "transform :>> ",
+          zoomTransform(this.zoomBase()._groups[0])
+        );
+        select(".canvas")
+          .transition()
+          .ease(easePolyOut)
+          .duration(this.isDemo ? 0 : 5)
+          .attr(
+            "transform",
+            `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
+              this._zoomConfig.globalZoomScale
+            })`
+          );
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
@@ -509,32 +521,37 @@ export default class Visualization {
       (this._viewConfig.isSmallScreen() ? XS_NODE_RADIUS : LG_NODE_RADIUS) *
       this._viewConfig.scale;
   }
-  setZoomBehaviour(reset = false) {
+  setZoomBehaviour() {
     const zooms = function (e) {
       let t = { ...e.transform };
-      let scale;
-      if (this._zoomConfig.focusMode) {
-        t = { ...zoomIdentity };
-        t.k = BASE_SCALE;
-        this.setZoomBehaviour(true);
-        this._zoomConfig.focusMode = false;
-        console.log("zoom object reset :>> ");
-      } else {
-        this._zoomConfig.globalZoom = scale;
-      }
-      scale = t.k;
+      let scale = t.k;
 
-      t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
-      t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
-      select(".canvas").attr(
-        "transform",
-        `translate(${t.x},${t.y}), scale(${scale})`
-      );
+      if (this._zoomConfig.focusMode) {
+        let newTransform = t;
+        newTransform.k = this._zoomConfig.globalZoomScale;
+        newTransform.x =
+          t.x + this._viewConfig.defaultCanvasTranslateX(3) * newTransform.k;
+        newTransform.y =
+          t.y + this._viewConfig.defaultCanvasTranslateY(3) * newTransform.k;
+        scale = newTransform.k;
+        this._zoomConfig.focusMode = false;
+        this.zoomBase().call(this.zoomer.transform, newTransform);
+      } else {
+        scale = t.k;
+        t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
+        t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
+      }
+
+      this._canvas
+        .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
+        .transition()
+        .ease(easePolyOut)
+        .duration(500);
+      this._zoomConfig.focusMode = false;
     };
+
     this.zoomer = zoom().scaleExtent([0.5, 5]).on("zoom", zooms.bind(this));
-    reset
-      ? this.zoomBase().call(this.zoomer, zoomIdentity)
-      : this.zoomBase().call(this.zoomer);
+    this.zoomBase().call(this.zoomer);
   }
 
   calibrateViewPortAttrs() {
@@ -863,7 +880,6 @@ export default class Visualization {
       .on("click", (e, d) => {
         console.log("e.target.tagName :>> ", e.currentTarget.tagName);
         if (e.target.tagName !== "circle") return;
-        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
         this.eventHandlers.handleNodeFocus.call(this, e, d);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
@@ -1112,6 +1128,7 @@ export default class Visualization {
       this.calibrateViewPortAttrs();
       this.calibrateViewBox();
       this.setdXdY();
+      this.setZoomBehaviour();
     } else {
       this._hasRendered = true;
     }
@@ -1146,7 +1163,6 @@ export default class Visualization {
       accumulateTree(this.rootData);
       console.log("Formed new layout", this, "!");
 
-      this.setZoomBehaviour();
       this.clearCanvas();
       console.log("Cleared canvas :>> ");
 
