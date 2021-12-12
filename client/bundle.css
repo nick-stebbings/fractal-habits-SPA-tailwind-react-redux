@@ -776,7 +776,7 @@ nav .menu-card p {
   text-align: center;
 }
 .resp-nav-link {
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 2rem;
 }
@@ -7220,6 +7220,9 @@ html {
   .sm\:right-4 {
     right: 1rem;
   }
+  .sm\:right-8 {
+    right: 2rem;
+  }
   .sm\:left-24 {
     left: 6rem;
   }
@@ -7884,7 +7887,7 @@ nav .menu-card p {
   font-size: 1rem;
 }
 .resp-nav-link {
-  font-size: 1.5rem;
+  font-size: 1rem;
   line-height: 2rem;
   font-weight: 600;
 }
@@ -7997,7 +8000,7 @@ main.wrapper {
 }
 #hamburger-wrapper input:checked ~ nav {
   margin-right: 1rem;
-  transform: translate(-134%);
+  transform: translate(-128%);
   transition: transform 0.7s ease-in;
   -webkit-transition: transform 0.7s;
   -webkit-transition: -webkit-transform 0.2s;
@@ -8767,7 +8770,7 @@ input[type="date"] {
 }
 @media (min-width: 640px) {
   .mask-wrapper .wide-nav {
-    top: 6rem;
+    top: 7rem;
     flex-direction: row;
     flex-wrap: wrap;
   }

@@ -43,10 +43,12 @@ export const CalendarWidget = ({
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "1.5rem";
     document.querySelector(".date-card-wrapper").style.maxWidth =
-      window.innerWidth < 480 ? "83%" : "81%";
+      window.innerWidth < 480 ? "80%" : "81%";
     document.querySelector(".date-card-wrapper").style.justifyContent =
       window.innerWidth > 480 ? "center" : "flex-end";
     document.querySelector(".habit-description-label").style.left = "-3em";
+    document.querySelector(".habit-description-label").style.width =
+      window.innerWidth > 480 ? "100%" : "100%";
     document.querySelector(".cal-date-nav-r").style.display = "initial";
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =
       "0px";
@@ -61,6 +63,8 @@ export const CalendarWidget = ({
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "0rem";
     document.querySelector(".habit-description-label").style.left = "0rem";
+    document.querySelector(".habit-description-label").style.width =
+      window.innerWidth > 480 ? "104%" : "100%";
     document.querySelector(".date-card-wrapper").style.maxWidth = "100%";
     document.querySelector(".date-card-wrapper").style.justifyContent =
       "flex-end";
@@ -84,7 +88,7 @@ export const CalendarWidget = ({
       className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-8"
       onClick={toggleSlide}
     >
-      <div className="habit-description-label lg:opacity-0 gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col w-full overflow-none lg:items-center bg-gray-100 border-4 pb-12 md:pb-0">
+      <div className="habit-description-label lg:opacity-0 gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col overflow-none lg:items-center bg-gray-100 border-4 pb-12 md:pb-0">
         <div className="flex justify-start flex-col relative">
           <h2 className="mt-4 underline">Description</h2>
           <span className="min-h-16 mr-1/3">
@@ -93,11 +97,11 @@ export const CalendarWidget = ({
           <h2 className="flex mt-1 underline">Initiated On</h2>
           <span>{stringifyDate(currentHabit.timeframe.fromDate)}</span>
           <i
-            className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-2 absolute -left-1 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
+            className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-1 absolute left-0 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
             onClick={handlePrev}
           />
           <i
-            className="cal-date-nav h-16 w-16 cal-date-nav-r fa fa-chevron-circle-right text-3xl ml-2 absolute right-2 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
+            className="cal-date-nav h-16 w-16 cal-date-nav-r fa fa-chevron-circle-right text-3xl ml-2 absolute right-2 sm:right-8 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
             onClick={handleNext}
             style={{ display: "none" }}
           />

@@ -996,7 +996,7 @@ export default class Visualization {
     const gLegend = legendSvg
       .append("g")
       .attr("class", "legend")
-      .attr("transform", `translate(5, ${20}) scale(${legendScale})`);
+      .attr("transform", `translate(5, ${45}) scale(${legendScale})`);
 
     // Borrowing the habit label for the legend
     if (isTouchDevice()) {
