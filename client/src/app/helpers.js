@@ -31,6 +31,13 @@ export const isTouchDevice = () => {
     navigator.msMaxTouchPoints > 0
   );
 };
+export const isSmallScreen = () => {
+  return document.body.getBoundingClientRect().width < 768;
+};
+
+export const isSuperSmallScreen = () => {
+  return document.body.getBoundingClientRect().width < 340;
+};
 
 export const debounce = function (func, delay) {
   let timeout;

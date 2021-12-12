@@ -17,8 +17,8 @@ export const MenuListCard = ({
     <div
       className={
         isEnabled
-          ? "enabled menu-card rounded-2xl flex flex-col justify-between h-full text-black bg-gray-100 shadow-xl"
-          : "disabled menu-card rounded-2xl flex flex-col justify-between h-full text-black bg-gray-100 shadow-xl"
+          ? "enabled menu-card rounded-2xl flex flex-col justify-start h-full text-black bg-gray-100 shadow-xl"
+          : "disabled menu-card rounded-2xl flex flex-col justify-start h-full text-black bg-gray-100 shadow-xl"
       }
     >
       <div className="overlay flex items-center justify-center">

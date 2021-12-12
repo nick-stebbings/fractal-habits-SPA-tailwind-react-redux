@@ -42,8 +42,11 @@ export const CalendarWidget = ({
     document.querySelector(
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "1.5rem";
+    // document.querySelector(".date-card:last-child").style.zIndex = "0";
     document.querySelector(".date-card-wrapper").style.maxWidth =
-      window.innerWidth < 480 ? "80%" : "81%";
+      window.innerWidth < 480 ? "85%" : "80%";
+    document.querySelector(".date-card-wrapper").style.padding =
+      window.innerWidth < 480 ? "2rem 0.5rem" : "0 2rem";
     document.querySelector(".date-card-wrapper").style.justifyContent =
       window.innerWidth > 480 ? "center" : "flex-end";
     document.querySelector(".habit-description-label").style.left = "-3em";
@@ -62,10 +65,12 @@ export const CalendarWidget = ({
     document.querySelector(
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "0rem";
-    document.querySelector(".habit-description-label").style.left = "0rem";
+    document.querySelector(".date-card-wrapper").style.padding = "0 0.5rem";
+    document.querySelector(".habit-description-label").style.left = "2rem";
     document.querySelector(".habit-description-label").style.width =
-      window.innerWidth > 480 ? "104%" : "100%";
-    document.querySelector(".date-card-wrapper").style.maxWidth = "100%";
+      window.innerWidth > 480 ? "96%" : "90%";
+    // document.querySelector(".date-card:last-child").style.zIndex = "1";
+    document.querySelector(".date-card-wrapper").style.maxWidth = "98%";
     document.querySelector(".date-card-wrapper").style.justifyContent =
       "flex-end";
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =

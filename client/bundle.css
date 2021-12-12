@@ -4583,13 +4583,13 @@ li.hoverable
   .menu-card
   .menu-card-button {
   position: absolute;
-  bottom: 0px;
+  bottom: 2rem;
   margin: 3rem 0.5rem 0.5rem;
   border-radius: 9999px;
   border-width: 2px;
   --tw-bg-opacity: 1;
   background-color: rgba(56, 56, 56, var(--tw-bg-opacity));
-  padding: 0.75rem;
+  padding: 0rem;
   text-transform: uppercase;
   --tw-text-opacity: 1;
   color: rgba(240, 240, 240, var(--tw-text-opacity));
@@ -7698,9 +7698,14 @@ section > h2:first-of-type {
   .nav-label-primary > span,
   .user-nav-label span label,
   .responsive-nav-group > h2,
-  .responsive-nav-group > a {
-    font-size: 1.25rem;
+  .responsive-nav-group > a,
+  .resp-nav-link {
+    font-size: 1.15rem;
     line-height: 1.75rem;
+  }
+
+  .responsive-nav-link {
+    font-size: 2.75rem;
   }
 }
 .responsive-nav-group > h2 {

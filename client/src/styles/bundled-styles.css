@@ -3128,13 +3128,13 @@ li.hoverable
   background-color: rgba(56, 56, 56, var(--tw-bg-opacity));
   border-radius: 9999px;
   border-width: 2px;
-  bottom: 0;
+  bottom: 2rem;
   box-shadow: 0 0 transparent, 0 0 transparent, var(--tw-shadow);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 transparent),
     var(--tw-ring-shadow, 0 0 transparent), var(--tw-shadow);
   color: rgba(240, 240, 240, var(--tw-text-opacity));
   margin: 3rem 0.5rem 0.5rem;
-  padding: 0.75rem;
+  padding: 0rem;
   position: absolute;
   text-transform: uppercase;
 }
