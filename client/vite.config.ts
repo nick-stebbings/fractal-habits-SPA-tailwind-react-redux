@@ -10,7 +10,7 @@ import alias from "@rollup/plugin-alias";
 export default defineConfig({
   plugins: [
     reactRefresh(),
-    // scss(),
+    scss(),
     reactSvgPlugin({
       // Default behavior when importing `.svg` files, possible options are: 'url' and `component`
       defaultExport: "url",

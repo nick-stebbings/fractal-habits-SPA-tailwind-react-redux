@@ -22,6 +22,15 @@ export const selectCurrentNodeByMptt = (
   lft: number,
   rgt: number
 ): Node => {
+  console.log(
+    "state.node?.myRecords :>> ",
+    lft,
+    rgt,
+    state.node?.myRecords,
+    state.node?.myRecords.filter(
+      (n: Node) => n.lft === +lft && n.rgt === +rgt
+    )[0]
+  );
   return state.node?.myRecords.filter(
     (n: Node) => n.lft === +lft && n.rgt === +rgt
   )[0];

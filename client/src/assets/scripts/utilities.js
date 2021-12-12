@@ -49,7 +49,6 @@ const handleAndRethrow = function (err) {
   if (!err.response) {
     window.FlashMessage.error("Network Error: API is unavailable");
   } else {
-    console.error(err.response.status);
     // window.FlashMessage.info(`${err.response.status} code returned`);
   }
   throw err;

@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DateTime } from "luxon";
 import { createInterval } from "../features/space/utils";
+import { initialState as defaultHabit } from "../features/habit/reducer";
 
 export function isCrud(action, create, fetch, update, destroy, fetchOne) {
   return [create, fetch, update, destroy, fetchOne]
@@ -74,7 +75,6 @@ export function crudReducer(
     case update.fulfilled().type:
       state = {
         ...state,
-        myRecords: [...state.myRecords].concat(mapCallbacks["habits"](parsed)),
       };
     // FETCH ONE ALSO
     case fetchOne?.fulfilled().type:
@@ -82,6 +82,9 @@ export function crudReducer(
         ? {
             ...state,
             current: mapCallbacks["habits"](parsed),
+            myRecords: [...state.myRecords].concat(
+              mapCallbacks["habits"](parsed)
+            ),
           }
         : {
             ...state,
@@ -104,9 +107,13 @@ export function crudReducer(
       const newMyRecords = [...state.myRecords].filter(
         (r) => r?.meta?.id !== +payload.config.url.split`/`.reverse()[0]
       );
+      console.log(
+        "Object.assign(newMyRecords[0], { meta: { id: 0 } }) :>> ",
+        Object.assign(newMyRecords[0], { meta: { id: 0 } })
+      );
       return {
         myRecords: newMyRecords,
-        current: newMyRecords[0] || {},
+        current: defaultHabit,
       };
     default:
       return state;
@@ -115,17 +122,17 @@ export function crudReducer(
 
 export function createCrudActionCreators(actionTypes, callBacks) {
   const create = createAsyncThunk(actionTypes[0], async (input, thunkAPI) => {
-    return callBacks[0](input).then((response) => {
-      thunkAPI.fulfillWithValue(response);
+    return callBacks[0](input).catch((response) => {
+      return [201].includes(response.status)
+        ? thunkAPI.fulfillWithValue(response)
+        : thunkAPI.rejectWithValue(response);
     });
   });
   const fetchAll = createAsyncThunk(actionTypes[1], callBacks[1]);
   const update = createAsyncThunk(actionTypes[2], callBacks[2]);
   const destroy = createAsyncThunk(actionTypes[3], async (input, thunkAPI) => {
-    return callBacks[3](input).then((response) => {
-      console.log("response :>> ", response);
-      debugger;
-      return [201, 204, 200].includes(response.status)
+    return callBacks[3](input).catch((response) => {
+      return [204].includes(response.status)
         ? thunkAPI.fulfillWithValue(response)
         : thunkAPI.rejectWithValue(response);
     });

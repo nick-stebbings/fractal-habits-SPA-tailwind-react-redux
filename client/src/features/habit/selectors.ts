@@ -18,6 +18,14 @@ export const selectCurrentHabitByMptt = (
   lft: number,
   rgt: number
 ): Habit => {
+  console.log(
+    "object :>> ",
+    selectStoredHabits(state),
+    selectStoredHabits(state).filter(
+      (h: Habit) =>
+        h.meta.habitNodeId === selectCurrentNodeByMptt(state, lft, rgt)?.id
+    )[0]
+  );
   return selectStoredHabits(state).filter(
     (h: Habit) =>
       h.meta.habitNodeId === selectCurrentNodeByMptt(state, lft, rgt)?.id

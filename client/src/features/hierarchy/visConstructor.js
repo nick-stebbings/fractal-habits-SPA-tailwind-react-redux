@@ -201,6 +201,7 @@ export default class Visualization {
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
         this._zoomConfig.focusMode = true;
 
+        console.log("NODE ZOOM :>> ");
         const parentNode = { ...node.parent };
         // Set for cross render transformation memory
         this._zoomConfig.previousRenderZoom = {
@@ -208,12 +209,6 @@ export default class Visualization {
           node: forParent ? parentNode : node,
           scale: this._zoomConfig.globalZoomScale,
         };
-        console.table(this._zoomConfig.previousRenderZoom);
-        console.log("this.zoomBase :>> ", this.zoomBase());
-        console.log(
-          "transform :>> ",
-          zoomTransform(this.zoomBase()._groups[0])
-        );
         select(".canvas")
           .transition()
           .ease(easePolyOut)
@@ -227,11 +222,11 @@ export default class Visualization {
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
+        console.log("NODE FOCUS :>> ");
 
         const targ = event.target;
         if (targ.tagName == "circle") {
           if (deadNode(event)) {
-            console.log("dead :>> ");
             //P: There is no habit node for this habit. To track a habit for this day:
             // - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
             // - We need a visual representation of the node. When a node with this state is toggled, it has a nonPersisted habitDate in the store, set to COMPLETE (a red dot).
@@ -451,7 +446,6 @@ export default class Visualization {
       nodeContent.left,
       nodeContent.right
     );
-    console.log("newCurrent :>> ", newCurrent);
     if (!newCurrent) {
       window.FlashMessage.warning("Couldn't select habit");
       return;
@@ -512,7 +506,7 @@ export default class Visualization {
       +(this.type == "cluster") * 0.2;
 
     //adjust for taller aspect ratio
-    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 0.5;
+    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 4.5;
     this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 2.5;
   }
   setNodeRadius() {
@@ -604,6 +598,7 @@ export default class Visualization {
           .concat(d?.parent?._children)
           .concat(d?.children)
           .concat(d?._children)
+          .concat(d?.parent)
           .includes(this.activeNode))
     )
       return "1";
@@ -881,7 +876,6 @@ export default class Visualization {
   bindEventHandlers(selection) {
     selection
       .on("click", (e, d) => {
-        console.log("e.target.tagName :>> ", e.currentTarget.tagName);
         if (e.target.tagName !== "circle") return;
         this.eventHandlers.handleNodeFocus.call(this, e, d);
       })
@@ -919,7 +913,7 @@ export default class Visualization {
       const doubleTap = new Hammer.Tap({
         event: "doubletap",
         taps: 2,
-        interval: 700,
+        interval: 1000,
       });
       manager.add([doubleTap, singleTap]);
       doubleTap.recognizeWith(singleTap);
@@ -960,20 +954,21 @@ export default class Visualization {
           }
         }, 500)
       );
-      manager.on("doubletap", (ev) => {
-        ev.preventDefault();
-        const node = ev.target.__data__.data;
-        console.log("double tapped :>> ");
-        this.eventHandlers.handleNodeFocus.call(this, ev, node.__data__);
-        this.eventHandlers.handleNodeZoom.call(this, ev, node.__data__);
-      });
+      manager.on(
+        "doubletap",
+        debounce((ev) => {
+          ev.preventDefault();
+          const node = ev.target.__data__.data;
+          this.eventHandlers.handleNodeFocus.call(this, ev, node.__data__);
+          this.eventHandlers.handleNodeZoom.call(this, ev, node.__data__);
+        }, 500)
+      );
     });
   }
 
   bindLegendEventHandler() {
     let infoCell = document.querySelector(".legend-svg .cell:first-child");
     infoCell.addEventListener("click", () => {
-      debugger;
       let controlsSvg = document.querySelector(".controls-svg");
       controlsSvg.classList.toggle("hidden");
     });
@@ -1040,7 +1035,7 @@ export default class Visualization {
   }
 
   activateNodeAnimation() {
-    _p("animated node", this.activeNode, "!");
+    // _p("animated node", this.activeNode, "!");
     // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
     // Credit: Andrew Reid
     const gCircle = this._canvas?.selectAll(
@@ -1177,6 +1172,7 @@ export default class Visualization {
         this?.isNewActiveNode &&
           this.zoomBase().selectAll(".active-circle").remove();
       } else {
+        // Set a default active node
         this.isNewActiveNode = true;
         let newActive = this.rootData.find((n) => {
           return !n.data.content.match(/OOB/);
