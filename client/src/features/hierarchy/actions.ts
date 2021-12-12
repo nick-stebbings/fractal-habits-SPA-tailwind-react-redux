@@ -34,7 +34,7 @@ let clientRouteDict = {
   destroy: () => {},
   show_one: async ({ domainId, dateId }: any, thunkAPI: any) =>
     fetchRoute({ domainId, dateId }).then((response: any) => {
-      thunkAPI.dispatch(fetchNodesREST()); // Populate Nodes TODO: limit this
+      //thunkAPI.dispatch(fetchNodesREST()); // Populate Nodes TODO: limit this
       return thunkAPI.fulfillWithValue(response);
     }),
 };

@@ -924,8 +924,6 @@ export default class Visualization {
         debounce((ev) => {
           ev.preventDefault();
           const node = ev.target.__data__.data;
-          this.setCurrentHabit(node);
-          this.setCurrentNode(node);
 
           switch (ev.target.tagName) {
             // Delete

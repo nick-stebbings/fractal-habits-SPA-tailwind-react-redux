@@ -61,12 +61,12 @@ export function crudReducer(
   destroy,
   fetchOne = {}
 ) {
-  const { payload, type } = action;
+  const { payload, type, meta } = action;
   const model = modelNameFromActionString(type);
   const parsed =
     payload?.data && typeof payload.data == "string"
       ? JSON.parse(payload.data)
-      : payload.data;
+      : meta.arg; // For when the payload was intercepted catching 201
   let mapped;
 
   switch (type) {
@@ -75,6 +75,7 @@ export function crudReducer(
     case update.fulfilled().type:
       state = {
         ...state,
+        current: defaultHabit,
       };
     // FETCH ONE ALSO
     case fetchOne?.fulfilled().type:
@@ -106,10 +107,6 @@ export function crudReducer(
     case destroy.fulfilled().type:
       const newMyRecords = [...state.myRecords].filter(
         (r) => r?.meta?.id !== +payload.config.url.split`/`.reverse()[0]
-      );
-      console.log(
-        "Object.assign(newMyRecords[0], { meta: { id: 0 } }) :>> ",
-        Object.assign(newMyRecords[0], { meta: { id: 0 } })
       );
       return {
         myRecords: newMyRecords,

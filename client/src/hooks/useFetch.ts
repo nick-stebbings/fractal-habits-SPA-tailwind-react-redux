@@ -11,6 +11,7 @@ import {
 } from "../features/hierarchy/actions";
 import { selectCurrentDateId } from "../features/space/slice";
 import { fetchHabitREST } from "../features/habit/actions";
+import { fetchNodesREST } from "../features/node/actions";
 
 export default function useFetch(isVisComponent: boolean) {
   const dispatch = useAppDispatch();
@@ -22,6 +23,7 @@ export default function useFetch(isVisComponent: boolean) {
   const loadDomains = () => dispatch(fetchDomainsREST());
   const loadNewCurrentHabit = () =>
     dispatch(fetchHabitREST({ id: currentHabit?.meta?.id }));
+  const loadNodeData = async () => dispatch(fetchNodesREST());
   const loadTreeData = async () =>
     dispatch(fetchHabitTreeREST({ domainId: 1, dateId: currentDateId }));
   const loadWeeklyTreeData = async () =>
@@ -29,6 +31,7 @@ export default function useFetch(isVisComponent: boolean) {
 
   const loadData = async function () {
     await loadDomains();
+    await loadNodeData();
     if (isVisComponent) {
       await loadTreeData();
       loadWeeklyTreeData();
