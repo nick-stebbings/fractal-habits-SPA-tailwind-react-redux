@@ -246,7 +246,6 @@ export default class Visualization {
             this.setCurrentNode(node);
           }
           this.setActiveNode(node.data, event);
-          this.activateNodeAnimation();
 
           if (this.type == "tree") {
             const nodesToCollapse = nodesForCollapse
@@ -1039,9 +1038,9 @@ export default class Visualization {
   }
 
   activateNodeAnimation() {
+    _p("animated node", this.activeNode, "!");
     // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
     // Credit: Andrew Reid
-
     const gCircle = this.zoomBase()?.selectAll(
       "g.the-node.solid.active g.node-subgroup"
     );
@@ -1200,9 +1199,10 @@ export default class Visualization {
     }
 
     if (!!this.activeNode) {
+      this.setZoomBehaviour();
       this.activeNode?.isNew &&
         this.zoomBase().selectAll(".active-circle").remove();
-      debounce(this.activateNodeAnimation, 400)();
+      debounce(this.activateNodeAnimation.bind(this), 400)();
     }
   }
 }
