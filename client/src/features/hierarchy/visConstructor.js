@@ -302,7 +302,7 @@ export default class Visualization {
       handleNodeToggle: function (event, node) {
         event.preventDefault();
         if (node.children) {
-          if (deadNode(event)) console.log(event, node);
+          if (deadNode(event)) console.log("dead");
           // return;
           // Non-leaf nodes have auto-generated cumulative status
           // (Only leaves can toggle)
@@ -404,10 +404,9 @@ export default class Visualization {
   }
 
   setActiveNode(clickedNodeContent, event = null) {
-    this.activeNode?.isNewActive && delete this.activeNode.isNewActive;
+    this?.isNewActiveNode && delete this.isNewActiveNode;
 
     this.activeNode = this.findNodeByContent(clickedNodeContent);
-    this.activeNode && (this.activeNode.isNewActive = true);
 
     const currentActiveG = document.querySelector(".the-node.active");
     if (currentActiveG) currentActiveG.classList.toggle("active");
@@ -452,6 +451,7 @@ export default class Visualization {
       nodeContent.left,
       nodeContent.right
     );
+    console.log("newCurrent :>> ", newCurrent);
     if (!newCurrent) {
       window.FlashMessage.warning("Couldn't select habit");
       return;
@@ -674,7 +674,9 @@ export default class Visualization {
         const outOfBounds = outOfBoundsNode(d, this.rootData);
         // Set new active node when this one is out of bounds
         if (outOfBounds && this.activeNode?.data.name == d.data.name) {
-          // this.setActiveNode(this.rootData);
+          this.setActiveNode(this.rootData);
+          this.rootData.isNew = true;
+          this.render();
         }
 
         return !outOfBounds;
@@ -1041,9 +1043,10 @@ export default class Visualization {
     _p("animated node", this.activeNode, "!");
     // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
     // Credit: Andrew Reid
-    const gCircle = this.zoomBase()?.selectAll(
+    const gCircle = this._canvas?.selectAll(
       "g.the-node.solid.active g.node-subgroup"
     );
+    console.log("gCircle :>> ", gCircle);
 
     const pulseScale = scaleLinear()
       .range(["#fff", "#5568d2", "#3349c1"])
@@ -1059,12 +1062,7 @@ export default class Visualization {
     const pulseCircles = gCircle
       .insert("g", ".habit-label-dash-button")
       .classed("active-circle", true)
-      .attr("stroke-opacity", (d) => {
-        return this.activeNode &&
-          d.data.content === this.activeNode.data.content
-          ? "0.8"
-          : "0";
-      })
+      .attr("stroke-opacity", "0.8")
       .selectAll("circle")
       .data(pulseData)
       .enter()
@@ -1143,7 +1141,7 @@ export default class Visualization {
     if (
       this.firstRender() ||
       this.hasNewHierarchyData() ||
-      this.activeNode?.isNewActive
+      this.isNewActiveNode
     ) {
       // First render OR New hierarchy needs to be rendered
 
@@ -1163,10 +1161,6 @@ export default class Visualization {
 
       this.setLayout();
 
-      if (!this.rootData.data.content) {
-        debugger;
-        this.rootData = this.rootData.data;
-      }
       accumulateTree(this.rootData);
       console.log("Formed new layout", this, "!");
 
@@ -1178,6 +1172,21 @@ export default class Visualization {
       this.setCircleAndLabelGroups();
       this.setButtonGroups();
       // console.log("Appended and set groups... :>>");
+
+      if (!!this.activeNode) {
+        this?.isNewActiveNode &&
+          this.zoomBase().selectAll(".active-circle").remove();
+      } else {
+        this.isNewActiveNode = true;
+        let newActive = this.rootData.find((n) => {
+          return !n.data.content.match(/OOB/);
+        });
+        this.setCurrentHabit(newActive);
+        this.setCurrentNode(newActive);
+        this.setActiveNode(newActive?.data);
+      }
+      debounce(this.activateNodeAnimation.bind(this), 400)();
+
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
@@ -1190,19 +1199,11 @@ export default class Visualization {
 
       this._hasRendered = true;
     }
-    _p("this._hasRendered :>> ", { has: this._hasRendered }, "!");
 
     if (!select("svg.legend-svg").empty() && select("svg .legend").empty()) {
       // console.log("Added legend :>> ");
       this.addLegend();
       this.bindLegendEventHandler();
-    }
-
-    if (!!this.activeNode) {
-      this.setZoomBehaviour();
-      this.activeNode?.isNew &&
-        this.zoomBase().selectAll(".active-circle").remove();
-      debounce(this.activateNodeAnimation.bind(this), 400)();
     }
   }
 }

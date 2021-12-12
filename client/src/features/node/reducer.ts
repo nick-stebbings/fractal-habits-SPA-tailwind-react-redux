@@ -12,6 +12,7 @@ export const initialState: Dictionary<Dictionary<Node | Node[]>> = {
     rgt: 2,
     parentId: 0,
   },
+  myRecords: [],
 };
 
 export const nodeSlice = createSlice({
