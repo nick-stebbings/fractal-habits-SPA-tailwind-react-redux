@@ -33,7 +33,7 @@ export const DateCard = ({ date, completedStatus, isToday }) => {
         borderColor: isToday ? "#e3922f" : "#fefefe",
         boxSizing: "initial",
         borderWidth: "3px",
-        maxWidth: "125px",
+        maxWidth: "60px",
       }}
     >
       <span className="font-std block uppercase">{weekday || <br />}</span>

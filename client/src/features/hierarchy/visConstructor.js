@@ -981,8 +981,8 @@ export default class Visualization {
       "Incomplete Subtree",
     ];
     const legendScale = this._viewConfig.isSmallScreen()
-      ? BASE_SCALE / 2
-      : BASE_SCALE;
+      ? BASE_SCALE / 3
+      : BASE_SCALE / 2;
     const ordinal = scaleOrdinal()
       .domain(labels)
       .range([noNodeCol, positiveCol, neutralCol, negativeCol, positiveCol]);
@@ -996,10 +996,7 @@ export default class Visualization {
     const gLegend = legendSvg
       .append("g")
       .attr("class", "legend")
-      .attr(
-        "transform",
-        `translate(5, ${120 * legendScale}) scale(${legendScale})`
-      );
+      .attr("transform", `translate(5, ${20}) scale(${legendScale})`);
 
     // Borrowing the habit label for the legend
     if (isTouchDevice()) {

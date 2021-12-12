@@ -80,15 +80,6 @@ body[class^="scroll"] .mask-wrapper {
   mask: block;
 }
 
-@media (min-width: 640px) {
-  .sm-selector-container .date-today {
-    transform: translateY(-0.22rem);
-  }
-  .mask-wrapper .wide-nav {
-    top: 7rem;
-  }
-}
-
 #subnav {
   @apply -mt-11 lg:block fixed hidden w-full;
 }
@@ -227,8 +218,8 @@ li.hoverable {
 }
 
 .calendar-widget {
-  right: calc(100% - 4rem);
-  transition: 0.15s right cubic-bezier();
+  right: calc(100% - 3.25rem);
+  transition: right 0.15s ease-in;
 }
 
 /* Fixed Nav Links in top-left */
@@ -246,7 +237,16 @@ li.hoverable {
 
 #subnav .nav-links > li.hoverable:hover .habit-description-label {
   display: none;
-  min-height: 9rem;
+}
+
+i.cal-date-nav {
+  top: 8.5rem;
+  @apply text-3xl md:text-7xl;
+}
+
+.habit-description-label,
+.habit-description-label div:first-child {
+  min-height: 6rem;
 }
 
 #subnav .nav-links > li.hoverable:hover {
@@ -321,7 +321,29 @@ span.logo svg path,
   @apply border-balance-sshades-brighten border-2;
 }
 
-@media (min-width: 1024px) {
+@media only screen and (min-width: 640px) {
+  .sm-selector-container .date-today {
+    transform: translateY(-0.22rem);
+  }
+  .mask-wrapper .wide-nav {
+    top: 7rem;
+  }
+
+  .calendar-widget {
+    right: calc(100% - 4rem);
+  }
+
+  .habit-description-label,
+  .habit-description-label div:first-child {
+    min-height: 13rem;
+  }
+
+  i.cal-date-nav {
+    top: 15rem;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
   div.mask-wrapper {
     @apply relative z-40 overflow-hidden;
     mask: no-repeat 10px -20px url("../../images/fib-mask-1900-420.svg");
@@ -342,7 +364,7 @@ span.logo svg path,
   }
 }
 
-@media (min-width: 1340px) {
+@media only screen and (min-width: 1340px) {
   nav > div > .nav-label-primary:last-of-type {
     left: 20rem;
     width: 17.6rem;

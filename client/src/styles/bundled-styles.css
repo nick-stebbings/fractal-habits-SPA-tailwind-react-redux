@@ -234,13 +234,14 @@ html {
     max-width: 640px;
   }
 }
+@media only screen and (min-width: 400px) {
+  .calendar-widget .date-card-wrapper {
+    max-width: 100%;
+  }
+}
 @media (min-width: 768px) {
   .container {
     max-width: 768px;
-  }
-
-  .date-card-wrapper {
-    max-width: "78%";
   }
 }
 @media (min-width: 1024px) {
@@ -1416,6 +1417,9 @@ input[type="text"] {
 }
 .right-0 {
   right: 0;
+}
+.right-1 {
+  right: 0.25rem;
 }
 .right-3 {
   right: 0.75rem;

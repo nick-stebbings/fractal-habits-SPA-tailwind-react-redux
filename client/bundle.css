@@ -516,9 +516,6 @@ html {
   .container {
     max-width: 768px;
   }
-  .date-card-wrapper {
-    max-width: "78%";
-  }
 }
 .form-input {
   -webkit-appearance: none;
@@ -1443,6 +1440,9 @@ input[type="text"] {
 }
 .right-0 {
   right: 0;
+}
+.right-1 {
+  right: 0.25rem;
 }
 .right-3 {
   right: 0.75rem;
@@ -4107,8 +4107,8 @@ li.hoverable
   display: none;
 }
 .calendar-widget {
-  right: calc(100% - 4rem);
-  transition: 0.15s right cubic-bezier();
+  right: calc(100% - 3.25rem);
+  transition: right 0.25s ease-in;
 }
 #subnav .nav-links > li.hoverable,
 #subnav .nav-container > div {
@@ -4676,10 +4676,6 @@ li.hoverable
 .mega-menu {
   display: none;
 }
-.calendar-widget {
-  right: calc(100% - 4rem);
-  transition: 0.15s right cubic-bezier();
-}
 #subnav .nav-links > li.hoverable,
 #subnav .nav-container > div {
   z-index: 20;
@@ -5212,6 +5208,9 @@ html {
 }
 .right-3 {
   right: 0.75rem;
+}
+.right-2 {
+  right: 0.5rem;
 }
 .right-4 {
   right: 1rem;
@@ -8056,12 +8055,14 @@ div.sm-selector-container .domain-selector {
 .cta-header {
   text-transform: uppercase;
 }
+@media only screen and (min-width: 400px) {
+  .calendar-widget .date-card-wrapper {
+    max-width: 100%;
+  }
+}
 @media only screen and (min-width: 768px) {
   main.wrapper > .cloud-man-vector {
     grid-column: 2 / span 3;
-  }
-  .date-card-wrapper {
-    max-width: "78%";
   }
 }
 @media (min-width: 1024px) {

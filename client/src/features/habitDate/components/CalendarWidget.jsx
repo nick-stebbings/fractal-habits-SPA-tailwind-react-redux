@@ -43,7 +43,9 @@ export const CalendarWidget = ({
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "1.5rem";
     document.querySelector(".date-card-wrapper").style.maxWidth =
-      window.innerWidth < 480 ? "83%" : "78%";
+      window.innerWidth < 480 ? "83%" : "81%";
+    document.querySelector(".date-card-wrapper").style.justifyContent =
+      window.innerWidth > 480 ? "center" : "flex-end";
     document.querySelector(".habit-description-label").style.left = "-3em";
     document.querySelector(".cal-date-nav-r").style.display = "initial";
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =
@@ -52,13 +54,16 @@ export const CalendarWidget = ({
   };
   const slideOut = (e) => {
     if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
-    e.currentTarget.style.right = "calc(100% - 4rem)";
+    e.currentTarget.style.right =
+      window.innerWidth < 480 ? "calc(100% - 3.25rem)" : "calc(100% - 4rem)";
     document.querySelector(".mask-wrapper").style.height = "initial";
     document.querySelector(
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "0rem";
     document.querySelector(".habit-description-label").style.left = "0rem";
-    document.querySelector(".date-card-wrapper").style.maxWidth = "97%";
+    document.querySelector(".date-card-wrapper").style.maxWidth = "100%";
+    document.querySelector(".date-card-wrapper").style.justifyContent =
+      "flex-end";
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =
       "3px";
     document.querySelector(".cal-date-nav-r").style.display = "none";
@@ -80,7 +85,7 @@ export const CalendarWidget = ({
       onClick={toggleSlide}
     >
       <div className="habit-description-label lg:opacity-0 gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col w-full overflow-none lg:items-center bg-gray-100 border-4 pb-12 md:pb-0">
-        <div className="flex justify-end flex-col relative">
+        <div className="flex justify-start flex-col relative">
           <h2 className="mt-4 underline">Description</h2>
           <span className="min-h-16 mr-1/3">
             {currentHabit.meta.description}
@@ -88,11 +93,11 @@ export const CalendarWidget = ({
           <h2 className="flex mt-1 underline">Initiated On</h2>
           <span>{stringifyDate(currentHabit.timeframe.fromDate)}</span>
           <i
-            className="cal-date-nav fa fa-chevron-circle-left text-3xl ml-2 absolute -bottom-16 -left-1 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
+            className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-2 absolute -left-1 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
             onClick={handlePrev}
           />
           <i
-            className="cal-date-nav cal-date-nav-r fa fa-chevron-circle-right text-3xl ml-2 absolute -bottom-16 right-4 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
+            className="cal-date-nav h-16 w-16 cal-date-nav-r fa fa-chevron-circle-right text-3xl ml-2 absolute right-2 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
             onClick={handleNext}
             style={{ display: "none" }}
           />
@@ -101,7 +106,7 @@ export const CalendarWidget = ({
         <Link to={`habits/list?currentHabit=${"HabitStore.current()?.id"}`}>
           <span
             className={
-              "absolute text-gray-200 pointer-events-none top-2  right-3 sm:right-4"
+              "absolute text-gray-200 pointer-events-none top-2 right-1 sm:right-4"
             }
           >
             <svg
@@ -123,7 +128,7 @@ export const CalendarWidget = ({
         <Link to={`habits/new?currentHabit=${"currentid"}`}>
           <span
             className={
-              "absolute text-gray-200 pointer-events-none top-12  right-3 sm:right-4"
+              "absolute text-gray-200 pointer-events-none top-12  right-1 sm:right-4"
             }
           >
             <svg
@@ -142,7 +147,7 @@ export const CalendarWidget = ({
             </svg>
           </span>
         </Link>
-        <span className={"lg:hidden absolute top-24 right-3 sm:right-4"}>
+        <span className={"lg:hidden absolute top-24 right-1 sm:right-4"}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="text-balance-sshades-desat cursor-pointer w-10 h-10"
@@ -164,7 +169,7 @@ export const CalendarWidget = ({
         </span>
       </div>
       <div
-        className="date-card-wrapper rounded-3xl flex-end -mt-14 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent pt-4 md:pt-1 lg:pt-0 md:ml-6"
+        className="date-card-wrapper rounded-3xl flex-end -mt-14 border-1 flex justify-end md:justify-center w-full gap-1 lg:gap-2 bg-transparent pt-4 md:pt-1 lg:pt-0 md:ml-6"
         onMouseEnter={(e) => {
           showMegaMenu();
           window.innerWidth < 1024 &&

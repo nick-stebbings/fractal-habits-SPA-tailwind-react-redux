@@ -32,7 +32,7 @@ main.wrapper {
 }
 
 #hamburger-wrapper input:checked ~ nav {
-  margin-right: 1rem;
+  margin-right: 0.1rem;
   transform: translateX(-134%);
   transition: transform 0.7s ease-in;
   -webkit-transition: transform 700ms;
@@ -78,15 +78,21 @@ div.sm-selector-container .domain-selector {
   @apply uppercase;
 }
 
+@media only screen and (min-width: 400px) {
+  .calendar-widget .date-card-wrapper {
+    max-width: 100%;
+  }
+}
+
 @media only screen and (min-width: 768px) {
   main.wrapper > .cloud-man-vector {
     grid-column: 2 / span 3;
-  }
-  .date-card-wrapper {
-    max-width: "78%";
-  }
+
   .date-card {
     min-width: "12rem";
+  }
+  .date-card:last-child {
+    justify-content: end;
   }
 }
 
