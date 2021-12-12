@@ -58,7 +58,6 @@ import {
   neutralCol,
   parentPositiveCol,
 } from "app/constants";
-import { RedirectWithoutLastLocation } from "react-router-last-location";
 
 const BASE_SCALE = 1.5;
 const FOCUS_MODE_SCALE = 3;
@@ -943,6 +942,7 @@ export default class Visualization {
               break;
             // Append or prepend
             case "rect":
+              if (ev.target.parentNode.classList.contains("tooltip")) return; // Stop label from triggering
             case "text":
               ev.target.textContent == "APPEND"
                 ? this.eventHandlers.handleAppendNode.call(this)
