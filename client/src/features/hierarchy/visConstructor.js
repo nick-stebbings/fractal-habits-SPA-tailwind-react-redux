@@ -49,7 +49,7 @@ import {
   habitDatePersisted,
   outOfBoundsNode,
 } from "./components/helpers";
-import { isTouchDevice, debounce } from "app/helpers";
+import { isTouchDevice, debounce, handleErrorType } from "app/helpers";
 
 import {
   positiveCol,
@@ -431,23 +431,24 @@ export default class Visualization {
       nodeContent.right
     );
     if (!newCurrent) {
-      window.FlashMessage.warning("Couldn't select node");
+      handleErrorType("Couldn't select node");
       return;
     }
     store.dispatch(updateCurrentNode(newCurrent));
   }
   setCurrentHabit(node) {
-    const nodeContent = node?.data
-      ? parseTreeValues(node?.data.content)
-      : parseTreeValues(node.content);
-
-    let newCurrent = selectCurrentHabitByMptt(
-      store.getState(),
-      nodeContent.left,
-      nodeContent.right
-    );
-    if (!newCurrent) {
-      window.FlashMessage.warning("Couldn't select habit");
+    let newCurrent;
+    try {
+      const nodeContent = node?.data
+        ? parseTreeValues(node?.data.content)
+        : parseTreeValues(node.content);
+      newCurrent = selectCurrentHabitByMptt(
+        store.getState(),
+        nodeContent.left,
+        nodeContent.right
+      );
+    } catch (err) {
+      handleErrorType("Couldn't select habit: " + err);
       return;
     }
     store.dispatch(updateCurrentHabit(newCurrent));
@@ -1177,9 +1178,13 @@ export default class Visualization {
         let newActive = this.rootData.find((n) => {
           return !n.data.content.match(/OOB/);
         });
-        this.setCurrentHabit(newActive);
-        this.setCurrentNode(newActive);
-        this.setActiveNode(newActive?.data);
+        try {
+          this.setCurrentHabit(newActive);
+          this.setCurrentNode(newActive);
+          this.setActiveNode(newActive?.data);
+        } catch (err) {
+          handleErrorType("No active habits for this date");
+        }
       }
       debounce(this.activateNodeAnimation.bind(this), 400)();
 

@@ -22,6 +22,9 @@ window._p = function customLog(message, objs, color='black') {
   console.log(`%c${message}`, `color:${color}`)
   typeof objs == 'object' && console.table(objs);
 }
+import { debounce } from "app/helpers";
+window.FlashMessage.warning = debounce(window.FlashMessage.warning.bind(window), 700)
+
 
 import React from "react";
 import { render } from "react-dom";

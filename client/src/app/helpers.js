@@ -7,7 +7,7 @@ export const handleErrorType = function (err, type = "warning") {
     : err;
   const opts = {
     interactive: true,
-    timeout: 4000,
+    timeout: 2000,
   };
   switch (type) {
     case "info":
@@ -20,7 +20,6 @@ export const handleErrorType = function (err, type = "warning") {
       window.FlashMessage.error(response, opts);
       break;
   }
-  throw err;
 };
 
 export const isTouchDevice = () => {
