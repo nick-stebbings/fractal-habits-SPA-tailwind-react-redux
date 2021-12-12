@@ -1405,6 +1405,12 @@ input[type="text"] {
 .relative {
   position: relative;
 }
+.inset-1 {
+  bottom: 0.25rem;
+  left: 0.25rem;
+  right: 0.25rem;
+  top: 0.25rem;
+}
 .inset-4 {
   bottom: 1rem;
   left: 1rem;
@@ -1563,6 +1569,9 @@ input[type="text"] {
 .-mt-4 {
   margin-top: -1rem;
 }
+.-mt-13 {
+  margin-top: -3.25rem;
+}
 .-mt-14 {
   margin-top: -3.5rem;
 }
@@ -1571,6 +1580,9 @@ input[type="text"] {
 }
 .mr-1 {
   margin-right: 0.25rem;
+}
+.-mr-1.5 {
+  margin-right: -0.375rem;
 }
 .mr-2 {
   margin-right: 0.5rem;
@@ -7207,6 +7219,12 @@ html {
     right: 3rem;
     bottom: 3rem;
     left: 3rem;
+  }
+  .md\:inset-2 {
+    top: 0.5rem;
+    right: 0.5rem;
+    bottom: 1rem;
+    left: 0.5rem;
   }
   .sm\:inset-1\/4 {
     top: 25%;

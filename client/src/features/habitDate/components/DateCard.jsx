@@ -30,7 +30,7 @@ export const DateCard = ({ date, completedStatus, isToday }) => {
   const [weekday, month, monthday] = date.split(/\W+/);
   return (
     <div
-      className="date-card bg-gray-50 rounded-3xl flex flex-col items-center justify-start flex-grow md:gap-1 p-1 md:p-2 pt-8 -mt-2.5"
+      className="date-card bg-gray-50 rounded-3xl flex flex-col items-center justify-start flex-grow md:gap-1 p-1 md:p-3 md:pt-8 -mt-2.5"
       style={{
         borderColor: isToday ? "#e3922f" : "#fefefe",
         boxSizing: "initial",
@@ -47,8 +47,8 @@ export const DateCard = ({ date, completedStatus, isToday }) => {
       <span className="block">{month}</span>
       <svg className="w-8 h-8 md:w-10 md:h-10 mt-1" viewBox="0 0 48 48">
         <g
-          transform={`translate(12, 14) scale(${
-            isSmallScreen() ? "0.75" : "1"
+          transform={`translate(14, 14) scale(${
+            isSmallScreen() ? "0.8" : "1"
           })`}
         >
           <circle

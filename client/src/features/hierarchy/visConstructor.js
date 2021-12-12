@@ -62,10 +62,11 @@ import { RedirectWithoutLastLocation } from "react-router-last-location";
 
 const BASE_SCALE = 1.5;
 const FOCUS_MODE_SCALE = 3;
-const LABEL_SCALE = 1.5;
-const BUTTON_SCALE = 2.2;
-const XS_NODE_RADIUS = 60;
-const LG_NODE_RADIUS = 50;
+const XS_LABEL_SCALE = 1.2;
+const LG_LABEL_SCALE = 2.5;
+const BUTTON_SCALE = 3.2;
+const XS_NODE_RADIUS = 40;
+const LG_NODE_RADIUS = 80;
 const XS_LEVELS_HIGH = 6;
 const LG_LEVELS_HIGH = 6;
 const XS_LEVELS_WIDE = 3;
@@ -514,7 +515,7 @@ export default class Visualization {
 
     //adjust for taller aspect ratio
     this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 0.5;
-    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 1.25 : 1.5;
+    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 2.5;
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
@@ -752,7 +753,9 @@ export default class Visualization {
         "transform",
         `translate(${this._viewConfig.nodeRadius / 10}, ${
           this._viewConfig.nodeRadius
-        }), scale(${LABEL_SCALE})`
+        }), scale(${
+          this._viewConfig.isSmallScreen() ? XS_LABEL_SCALE : LG_LABEL_SCALE
+        })`
       )
       .attr("opacity", (d) => this.activeOrNonActiveOpacity(d, "0"));
   }
@@ -919,40 +922,43 @@ export default class Visualization {
         interval: 700,
       });
       manager.add([doubleTap, singleTap]);
-      manager.get("singletap").requireFailure("doubletap");
-      manager.on("singletap", (ev) => {
-        ev.preventDefault();
-        const node = ev.target.__data__.data;
-        this.setCurrentHabit(node);
-        this.setCurrentNode(node);
+      doubleTap.recognizeWith(singleTap);
+      singleTap.requireFailure(doubleTap);
+      manager.on(
+        "singletap",
+        debounce((ev) => {
+          ev.preventDefault();
+          const node = ev.target.__data__.data;
+          this.setCurrentHabit(node);
+          this.setCurrentNode(node);
 
-        switch (ev.target.tagName) {
-          // Delete
-          case "path":
-            this.eventHandlers.handleDeleteNode.call(
-              this,
-              ev,
-              ev.target.__data__.data
-            );
-            break;
-          // Append or prepend
-          case "rect":
-          case "text":
-            ev.currentTarget.classList.toggle("hidden");
-            ev.target.textContent == "APPEND"
-              ? this.eventHandlers.handleAppendNode.call(this)
-              : this.eventHandlers.handlePrependNode.call(this);
-            break;
-          default:
-            let parentNodeGroup = _.find(
-              this._enteringNodes._groups[0],
-              (n) => n?.__data__?.data?.content == node.content
-            );
-            ev.target = parentNodeGroup;
-            this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
-            break;
-        }
-      });
+          switch (ev.target.tagName) {
+            // Delete
+            case "path":
+              this.eventHandlers.handleDeleteNode.call(
+                this,
+                ev,
+                ev.target.__data__.data
+              );
+              break;
+            // Append or prepend
+            case "rect":
+            case "text":
+              ev.target.textContent == "APPEND"
+                ? this.eventHandlers.handleAppendNode.call(this)
+                : this.eventHandlers.handlePrependNode.call(this);
+              break;
+            default:
+              let parentNodeGroup = _.find(
+                this._enteringNodes._groups[0],
+                (n) => n?.__data__?.data?.content == node.content
+              );
+              ev.target = parentNodeGroup;
+              this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
+              break;
+          }
+        }, 500)
+      );
       manager.on("doubletap", (ev) => {
         ev.preventDefault();
         const node = ev.target.__data__.data;
@@ -1036,7 +1042,7 @@ export default class Visualization {
     // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
     // Credit: Andrew Reid
 
-    const gCircle = this.zoomBase().selectAll(
+    const gCircle = this.zoomBase()?.selectAll(
       "g.the-node.solid.active g.node-subgroup"
     );
 

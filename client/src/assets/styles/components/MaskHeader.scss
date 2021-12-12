@@ -111,7 +111,7 @@ body[class^="scroll"] .mask-wrapper {
 li.hoverable {
   height: 8vh;
   max-height: 75px;
-  @apply flex items-center;
+  @apply flex items-center cursor-pointer;
 
   a {
     cursor: pointer;
@@ -264,11 +264,11 @@ i.cal-date-nav {
   content: url("../../images/icons/slash.svg");
   position: absolute;
   z-index: 40;
-  left: 62px;
+  left: 60px;
   top: -10px;
   width: 4px;
   height: 4px;
-  transform: rotate(39deg) scale(0.6);
+  transform: rotate(40deg) scale(0.6);
   transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
@@ -364,6 +364,11 @@ span.logo svg path,
       @apply fixed top-10 max-w-7xl overflow-auto;
     }
     height: 5rem;
+  }
+
+  .habit-description-label,
+  .habit-description-label div:first-child {
+    padding-left: 15%;
   }
 }
 

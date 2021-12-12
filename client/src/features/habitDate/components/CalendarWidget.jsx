@@ -65,7 +65,7 @@ export const CalendarWidget = ({
     document.querySelector(
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "0rem";
-    document.querySelector(".date-card-wrapper").style.padding = "0 0.5rem";
+    document.querySelector(".date-card-wrapper").style.padding = "2rem 0.5rem";
     document.querySelector(".habit-description-label").style.left = "2rem";
     document.querySelector(".habit-description-label").style.width =
       window.innerWidth > 480 ? "96%" : "90%";
@@ -178,7 +178,7 @@ export const CalendarWidget = ({
         </span>
       </div>
       <div
-        className="date-card-wrapper rounded-3xl flex-end -mt-14 border-1 flex justify-end md:justify-center w-full gap-1 lg:gap-2 bg-transparent pt-4 md:pt-1 lg:pt-0 md:ml-6"
+        className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end md:justify-center w-full gap-1 lg:gap-2 bg-transparent pt-8 md:pt-1 lg:pt-0 md:ml-6"
         onMouseEnter={(e) => {
           showMegaMenu();
           window.innerWidth < 1024 &&

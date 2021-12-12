@@ -21,6 +21,7 @@ export const HoverableLink = ({
     // console.log("e.currentTarget :>> ", e.currentTarget);
     e.currentTarget.classList.toggle("active");
     oppositeLink(idx)?.parentNode.classList.remove("active");
+    document.querySelector(".habit-description-label").style.opacity = "0";
     document.querySelector("#current-habit-label")?.classList.add("inactive");
     document.querySelector("#current-habit-label")?.classList.remove("active");
 

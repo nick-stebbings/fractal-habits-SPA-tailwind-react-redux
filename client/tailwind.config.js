@@ -1,6 +1,10 @@
 module.exports = {
   purge: ["**/*.html", "**/*.scss", "**/*.pcss", "**/*.jsx", "**/*.js"],
   theme: {
+    screens: {
+      lg: "1025px",
+    },
+
     colors: {
       gray: {
         50: "#F0F0F0",

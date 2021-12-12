@@ -13,8 +13,8 @@ export const SubmitButton = ({
       name={name}
       className={
         classString
-          ? `${classString} button-container submit-button`
-          : "button-container submit-button"
+          ? `${classString} cursor-pointer button-container submit-button`
+          : "cursor-pointer button-container submit-button"
       }
     >
       <button

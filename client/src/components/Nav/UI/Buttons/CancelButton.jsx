@@ -9,7 +9,7 @@ export const CancelButton = ({
   handleClose,
 }) => {
   return (
-    <div className="button-container cancel-button">
+    <div className="cursor-pointer button-container cancel-button">
       <button
         id={id}
         type="reset"
