@@ -66,17 +66,19 @@ export function crudReducer(
   const parsed =
     payload?.data && typeof payload.data == "string"
       ? JSON.parse(payload.data)
-      : meta.arg; // For when the payload was intercepted catching 201
+      : payload.data;
   let mapped;
 
   switch (type) {
     // CREATE AND UPDATE SHARE A RESPONSE TYPE
     case create.fulfilled().type:
     case update.fulfilled().type:
+      console.log("action :>> ", action);
       state = {
         ...state,
-        current: defaultHabit,
+        current: { ...state.current, meta: parsed },
       };
+      return state;
     // FETCH ONE ALSO
     case fetchOne?.fulfilled().type:
       return model == "habit"
@@ -119,11 +121,10 @@ export function crudReducer(
 
 export function createCrudActionCreators(actionTypes, callBacks) {
   const create = createAsyncThunk(actionTypes[0], async (input, thunkAPI) => {
-    return callBacks[0](input).catch((response) => {
-      return [201].includes(response.status)
-        ? thunkAPI.fulfillWithValue(response)
-        : thunkAPI.rejectWithValue(response);
-    });
+    const response = await callBacks[0](input);
+    return [201].includes(response.status)
+      ? thunkAPI.fulfillWithValue(response)
+      : thunkAPI.rejectWithValue(response);
   });
   const fetchAll = createAsyncThunk(actionTypes[1], callBacks[1]);
   const update = createAsyncThunk(actionTypes[2], callBacks[2]);

@@ -5,6 +5,7 @@ export const handleErrorType = function (err, type = "warning") {
   const response = err?.status
     ? err.data.message || API_RESPONSE_CODE_FLASH_MESSAGES[Number(err.status)] // Allow server side validation message first
     : err;
+  console.log("err :>> ", err);
   const opts = {
     interactive: true,
     timeout: 2000,
@@ -20,6 +21,7 @@ export const handleErrorType = function (err, type = "warning") {
       window.FlashMessage.error(response, opts);
       break;
   }
+  return err;
 };
 
 export const isTouchDevice = () => {

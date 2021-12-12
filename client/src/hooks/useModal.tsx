@@ -48,7 +48,7 @@ export function useModal() {
 
   useEffect(() => {
     openModal({ open: !!confirmStatus });
-  }, [confirmStatus]);
+  }, [confirmStatus, type]);
 
   switch (true) {
     case type == "ERROR":
