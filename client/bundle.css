@@ -325,6 +325,9 @@ html {
 .top-28 {
   top: 7rem;
 }
+.right-1 {
+  right: 0.25rem;
+}
 .right-3 {
   right: 0.75rem;
 }
@@ -496,6 +499,9 @@ html {
 }
 .-mt-2\.5 {
   margin-top: -0.625rem;
+}
+.-mt-13 {
+  margin-top: -3.25rem;
 }
 .mr-1 {
   margin-right: 0.25rem;
@@ -2306,6 +2312,9 @@ html {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 @media (min-width: 640px) {
+  .sm\:w-32 {
+    width: 8rem;
+  }
   .sm\:inset-12 {
     top: 3rem;
     right: 3rem;
@@ -3102,6 +3111,9 @@ div.sm-selector-container .domain-selector {
   div.sm-selector-container .domain-selector {
     width: 50%;
   }
+  .habit-description-label {
+    width: 100%;
+  }
 }
 div.sm-selector-container .domain-selector {
   max-width: 85%;
@@ -3146,6 +3158,10 @@ div.sm-selector-container .domain-selector {
 }
 .cta-header {
   text-transform: uppercase;
+}
+
+.date-card-wrapper {
+  padding: 2rem 0.5rem;
 }
 
 @media only screen and (min-width: 400px) {
@@ -3932,6 +3948,7 @@ input[type="date"] {
   --tw-text-opacity: 1;
   color: rgba(26, 20, 14, var(--tw-text-opacity));
 }
+
 @media (min-width: 640px) {
   .nav-label-primary {
     flex-direction: column;

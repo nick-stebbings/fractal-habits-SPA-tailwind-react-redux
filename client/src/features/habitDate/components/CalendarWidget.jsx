@@ -36,22 +36,26 @@ export const CalendarWidget = ({
   const [mobileFullyVisible, setMobileFullyVisible] = useState(true);
   const slideIn = (e) => {
     if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
-    e.currentTarget.style.right = "-3rem";
+    e.currentTarget.style.right = 0;
+
     document.querySelector(".mask-wrapper").style.height = "21rem";
     document.getElementById("hamburger").checked = false;
     document.querySelector(
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "1.5rem";
     // document.querySelector(".date-card:last-child").style.zIndex = "0";
+
     document.querySelector(".date-card-wrapper").style.maxWidth =
       window.innerWidth < 480 ? "85%" : "80%";
-    document.querySelector(".date-card-wrapper").style.padding =
-      window.innerWidth < 480 ? "2rem 0.5rem" : "0 2rem";
-    document.querySelector(".date-card-wrapper").style.justifyContent =
-      window.innerWidth > 480 ? "center" : "flex-end";
-    document.querySelector(".habit-description-label").style.left = "-3em";
+    // document.querySelector(".date-card-wrapper").style.padding =
+    //   window.innerWidth < 480 ? "0rem 0.5rem" : "0 2rem";
+    // document.querySelector(".date-card-wrapper").style.justifyContent =
+    //   window.innerWidth > 480 ? "center" : "flex-end";
+
+    document.querySelector(".habit-description-label").style.left = "0em";
     document.querySelector(".habit-description-label").style.width =
       window.innerWidth > 480 ? "100%" : "100%";
+
     document.querySelector(".cal-date-nav-r").style.display = "initial";
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =
       "0px";
@@ -61,18 +65,22 @@ export const CalendarWidget = ({
     if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
     e.currentTarget.style.right =
       window.innerWidth < 480 ? "calc(100% - 3.25rem)" : "calc(100% - 4rem)";
+
     document.querySelector(".mask-wrapper").style.height = "initial";
     document.querySelector(
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "0rem";
-    document.querySelector(".date-card-wrapper").style.padding = "2rem 0.5rem";
+    // document.querySelector(".date-card-wrapper").style.padding = "2rem 0.5rem";
+    // document.querySelector(".date-card-wrapper").style.justifyContent =
+    //   "flex-end";
+
+    document.querySelector(".date-card-wrapper").style.maxWidth = "100%";
+
     document.querySelector(".habit-description-label").style.left = "2rem";
     document.querySelector(".habit-description-label").style.width =
       window.innerWidth > 480 ? "96%" : "90%";
-    // document.querySelector(".date-card:last-child").style.zIndex = "1";
-    document.querySelector(".date-card-wrapper").style.maxWidth = "98%";
-    document.querySelector(".date-card-wrapper").style.justifyContent =
-      "flex-end";
+    // document.querySelector(".date-card:last-child").style.zIndex = "0";
+
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =
       "3px";
     document.querySelector(".cal-date-nav-r").style.display = "none";
@@ -91,6 +99,7 @@ export const CalendarWidget = ({
   return (
     <div
       className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-8"
+      style={{ maxWidth: "100vw" }}
       onClick={toggleSlide}
     >
       <div className="habit-description-label lg:opacity-0 gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col overflow-none lg:items-center bg-gray-100 border-4 pb-12 md:pb-0">
@@ -178,7 +187,7 @@ export const CalendarWidget = ({
         </span>
       </div>
       <div
-        className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end md:justify-center w-full gap-1 lg:gap-2 bg-transparent pt-8 md:pt-1 lg:pt-0 md:ml-6"
+        className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end md:justify-center w-full gap-1 lg:gap-2 bg-transparent"
         onMouseEnter={(e) => {
           showMegaMenu();
           window.innerWidth < 1024 &&

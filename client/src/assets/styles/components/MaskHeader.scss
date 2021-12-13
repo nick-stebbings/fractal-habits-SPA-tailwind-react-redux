@@ -34,7 +34,7 @@ nav span {
   cursor: pointer;
 }
 
-#vis button:hover,
+#vis + div button:hover,
 .logo-link:hover {
   @apply text-balance-sshades-brighten;
 }
@@ -337,12 +337,15 @@ span.logo svg path,
   .habit-description-label,
   .habit-description-label div:first-child {
     min-height: 13rem;
-    width: 104%;
     padding-left: 8%;
   }
 
   i.cal-date-nav {
     top: 15rem;
+  }
+
+  #vis + div {
+    width: 4rem;
   }
 }
 

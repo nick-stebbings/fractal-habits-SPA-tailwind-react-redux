@@ -994,7 +994,7 @@ export default class Visualization {
     const gText = controlsSvg
       .append("g")
       .attr("class", "controls")
-      .attr("transform", `translate(${40}, ${38})scale(${legendScale})`);
+      .attr("transform", `translate(${40}, ${45})scale(${legendScale})`);
     const gLegend = legendSvg
       .append("g")
       .attr("class", "legend")
@@ -1006,28 +1006,28 @@ export default class Visualization {
       );
 
     // Borrowing the habit label for the legend
-    if (isTouchDevice()) {
-      gText
-        .append("text")
-        .text("Single Tap -> Select Habit & Focus")
-        .attr("y", -45);
-      gText
-        .append("text")
-        .text("Double Tap -> Select Family/Tick Off Habit")
-        .attr("y", 30);
-      gText.append("text").text("Swipe Left ---> Next Day").attr("y", 5);
-      gText.append("text").text("Swipe Right ---> Last Day").attr("y", -10);
-    } else {
-      gText.append("text").text("L/Click ---> Mark Complete");
-      gText.append("text").attr("y", 25).text("R/Click -> Focus");
-      gText.append("text").text("Scroll Up -> Zoom").attr("y", -25);
-    }
+    // if (isTouchDevice()) {
+    //   gText
+    //     .append("text")
+    //     .text("Single Tap -> Select Habit & Focus")
+    //     .attr("y", -45);
+    //   gText
+    //     .append("text")
+    //     .text("Double Tap -> Select Family/Tick Off Habit")
+    //     .attr("y", 30);
+    //   gText.append("text").text("Swipe Left ---> Next Day").attr("y", 5);
+    //   gText.append("text").text("Swipe Right ---> Last Day").attr("y", -10);
+    // } else {
+    //   gText.append("text").text("L/Click ---> Mark Complete");
+    //   gText.append("text").attr("y", 25).text("R/Click -> Focus");
+    //   gText.append("text").text("Scroll Up -> Zoom").attr("y", -25);
+    // }
     const colorLegend = legendColor()
       .orient("horizontal")
       .labels(labels)
       .orient("vertical")
       .shape("circle")
-      .shapeRadius(15)
+      .shapeRadius(14)
       .shapePadding(-5)
       .scale(ordinal);
     gLegend.call(colorLegend);
