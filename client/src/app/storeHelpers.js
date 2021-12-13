@@ -112,7 +112,7 @@ export function crudReducer(
       );
       return {
         myRecords: newMyRecords,
-        current: defaultHabit,
+        current: newMyRecords[0],
       };
     default:
       return state;
@@ -126,14 +126,25 @@ export function createCrudActionCreators(actionTypes, callBacks) {
       ? thunkAPI.fulfillWithValue(response)
       : thunkAPI.rejectWithValue(response);
   });
-  const fetchAll = createAsyncThunk(actionTypes[1], callBacks[1]);
+  const fetchAll = createAsyncThunk(
+    actionTypes[1],
+    // actionTypes[1].match(/habit_dates/)
+    //   ? async function (_, thunkAPI) {
+    //       debugger;
+    //       // Allow 404s for habit_dates
+    //       const response = await callBacks[1]();
+    //       return [200, 404].includes(response?.status)
+    //         ? thunkAPI.fulfillWithValue(response)
+    //         : thunkAPI.rejectWithValue(response);
+    //     }
+    callBacks[1]
+  );
   const update = createAsyncThunk(actionTypes[2], callBacks[2]);
   const destroy = createAsyncThunk(actionTypes[3], async (input, thunkAPI) => {
-    return callBacks[3](input).catch((response) => {
-      return [204].includes(response.status)
-        ? thunkAPI.fulfillWithValue(response)
-        : thunkAPI.rejectWithValue(response);
-    });
+    const response = await callBacks[3](input);
+    return [204].includes(response.status)
+      ? thunkAPI.fulfillWithValue(response)
+      : thunkAPI.rejectWithValue(response);
   });
   const fetch = createAsyncThunk(actionTypes[4], callBacks[4]);
   return [create, fetchAll, update, destroy, fetch];

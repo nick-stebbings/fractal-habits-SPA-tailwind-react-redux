@@ -11,7 +11,7 @@ export const API_RESPONSE_CODE_FLASH_MESSAGES = {
   500: "Something went wrong on the server.",
   204: "The item was deleted successfully.",
   400: "Bad Request: There may have been something wrong with your input.",
-  404: "Resource could not be found.",
+  404: "No records available for this date.",
   422: "Unprocessable entity: There may have been something wrong with your input.",
   499: "This is a demo app, and you can only add the 5 domains given to you. Please choose from the the pill buttons (to the lower left)",
 };

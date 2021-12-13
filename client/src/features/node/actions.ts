@@ -16,7 +16,13 @@ export const actionStrings = [
   FETCH_NODE,
 ];
 let clientRouteDict = clientRoutes(BASE_PATH);
-const thunkCallBacks = Object.values(clientRouteDict);
+const thunkCallBacks = [
+  clientRouteDict.create,
+  clientRouteDict.show_all,
+  clientRouteDict.update,
+  clientRouteDict.destroy,
+  clientRouteDict.show_one,
+];
 
 export const actionCreators = createCrudActionCreators(
   actionStrings,

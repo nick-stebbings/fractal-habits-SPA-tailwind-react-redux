@@ -41,7 +41,13 @@ clientRouteDict.show_all = async (_: any, thunkAPI: any) =>
     }
     return thunkAPI.fulfillWithValue(response);
   });
-const thunkCallBacks = Object.values(clientRouteDict);
+const thunkCallBacks = [
+  clientRouteDict.create,
+  clientRouteDict.show_all,
+  clientRouteDict.update,
+  clientRouteDict.destroy,
+  clientRouteDict.show_one,
+];
 export const actionCreators = createCrudActionCreators(
   actionStrings,
   thunkCallBacks

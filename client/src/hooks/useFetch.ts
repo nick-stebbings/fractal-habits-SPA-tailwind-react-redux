@@ -49,7 +49,6 @@ export default function useFetch(isVisComponent: boolean) {
 
   useEffect(() => {
     loadNodeData();
-    console.log("newcurrent :>> ");
     if (currentHabit?.meta.id == 0 || currentHabit?.meta?.name) return;
     loadNewCurrentHabit();
     isVisComponent && loadTreeData();

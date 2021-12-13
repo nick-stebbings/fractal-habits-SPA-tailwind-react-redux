@@ -1,11 +1,9 @@
 import { API_RESPONSE_CODE_FLASH_MESSAGES } from "app/constants";
 
 export const handleErrorType = function (err, type = "warning") {
-  if (err?.status == 200) return err; // Not an error
   const response = err?.status
     ? err.data.message || API_RESPONSE_CODE_FLASH_MESSAGES[Number(err.status)] // Allow server side validation message first
     : err;
-  console.log("err :>> ", err);
   const opts = {
     interactive: true,
     timeout: 2000,

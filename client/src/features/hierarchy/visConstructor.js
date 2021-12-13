@@ -1040,7 +1040,6 @@ export default class Visualization {
     const gCircle = this._canvas?.selectAll(
       "g.the-node.solid.active g.node-subgroup"
     );
-    console.log("gCircle :>> ", gCircle);
 
     const pulseScale = scaleLinear()
       .range(["#fff", "#5568d2", "#3349c1"])

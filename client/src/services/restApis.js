@@ -9,8 +9,9 @@ axios.defaults.headers.common.Accept = "application/json;charset=utf-8";
 axios.defaults.headers.common["Content-Type"] =
   "application/json;charset=utf-8";
 axios.interceptors.response.use((res) => {
+  if (res?.status == 200) return res; // Not an error
   return handleErrorType(res);
-});
+}, handleErrorType);
 
 // Indicates whether or not cross-site Access-Control requests
 // should be made using credentials
