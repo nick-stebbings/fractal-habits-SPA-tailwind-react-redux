@@ -48,8 +48,8 @@ export default function useFetch(isVisComponent: boolean) {
   }, []);
 
   useEffect(() => {
-    loadNodeData();
     if (currentHabit?.meta.id == 0 || currentHabit?.meta?.name) return;
+    loadNodeData();
     loadNewCurrentHabit();
     isVisComponent && loadTreeData();
   }, [currentHabit?.meta?.id]);

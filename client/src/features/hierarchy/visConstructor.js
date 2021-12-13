@@ -150,7 +150,7 @@ export default class Visualization {
           this.type,
           this._viewConfig
         );
-        console.log("initialX :>> ", initialX);
+        // console.log("initialX :>> ", initialX);
         return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
           "undefined"
           ? initialX +
@@ -164,7 +164,7 @@ export default class Visualization {
           this.type,
           this._viewConfig
         );
-        console.log("initialY :>> ", initialY);
+        // console.log("initialY :>> ", initialY);
         return typeof this._zoomConfig.previousRenderZoom?.node?.y !==
           "undefined"
           ? initialY +
@@ -193,6 +193,7 @@ export default class Visualization {
       },
       handleDeleteNode: function (_, node) {
         this.setCurrentHabit(node);
+        this.setCurrentNode(node);
         store.dispatch(toggleConfirm({ type: "Delete" }));
         this.render();
       },
@@ -249,7 +250,7 @@ export default class Visualization {
                 auntCollapse: true,
               })
               .map((n) => n?.data?.content);
-            console.log("nodesToCollapse :>> ", nodesToCollapse);
+            // console.log("nodesToCollapse :>> ", nodesToCollapse);
             this.rootData.each((node) => {
               if (nodesToCollapse.includes(node.data.content)) collapse(node);
             });
@@ -457,7 +458,7 @@ export default class Visualization {
       store.dispatch(
         fetchHabitDatesREST({
           id: newCurrent?.meta.id,
-          periodLength: 3, // TODO change this back to 7
+          periodLength: 7, // TODO change this back to 7
         })
       );
     }

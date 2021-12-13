@@ -28,8 +28,7 @@ export const isErrorAction = (action: AnyAction) => {
 };
 
 export const isLoadingAction = (action: AnyAction) => {
-  return action.type.endsWith("/pending");
-  // return !action.type.endsWithierarchyDataForDateIdion(action);
+  return action.type.endsWith("/pending") && !action.type.match(/habit_date/);
 };
 
 const initialState: Dictionary<boolean | string> = {

@@ -73,7 +73,6 @@ export function crudReducer(
     // CREATE AND UPDATE SHARE A RESPONSE TYPE
     case create.fulfilled().type:
     case update.fulfilled().type:
-      console.log("action :>> ", action);
       state = {
         ...state,
         current: { ...state.current, meta: parsed },
@@ -112,7 +111,10 @@ export function crudReducer(
       );
       return {
         myRecords: newMyRecords,
-        current: newMyRecords[0],
+        current: {
+          ...state.current,
+          meta: { id: newMyRecords[0]?.meta?.id, name: "" },
+        },
       };
     default:
       return state;
@@ -128,16 +130,16 @@ export function createCrudActionCreators(actionTypes, callBacks) {
   });
   const fetchAll = createAsyncThunk(
     actionTypes[1],
-    // actionTypes[1].match(/habit_dates/)
-    //   ? async function (_, thunkAPI) {
-    //       debugger;
-    //       // Allow 404s for habit_dates
-    //       const response = await callBacks[1]();
-    //       return [200, 404].includes(response?.status)
-    //         ? thunkAPI.fulfillWithValue(response)
-    //         : thunkAPI.rejectWithValue(response);
-    //     }
-    callBacks[1]
+    actionTypes[1].match(/habit_dates/)
+      ? async function (input, thunkAPI) {
+          // Allow 404s for habit_dates
+          const response = await callBacks[1](input);
+          console.log("response from create async:>> ", response);
+          return [200, 404].includes(response?.status)
+            ? thunkAPI.fulfillWithValue(response)
+            : thunkAPI.rejectWithValue(response);
+        }
+      : callBacks[1]
   );
   const update = createAsyncThunk(actionTypes[2], callBacks[2]);
   const destroy = createAsyncThunk(actionTypes[3], async (input, thunkAPI) => {
