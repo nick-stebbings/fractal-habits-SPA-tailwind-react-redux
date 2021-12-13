@@ -4,7 +4,7 @@ export const parentPositiveCol = "#edd837";
 export const noNodeCol = "#888";
 export const neutralCol = "#DADECD";
 
-export const DB_DATE_ID_OFFSET = 21; // Accounts for the starting ID of the date relation in the DB, which is not stored locally.
+export const DB_DATE_ID_OFFSET = import.meta.env.PROD ? 21 : 19; // Accounts for the starting ID of the date relation in the DB, which is not stored locally.
 
 export const API_RESPONSE_CODE_FLASH_MESSAGES = {
   201: "The item was created successfully.",

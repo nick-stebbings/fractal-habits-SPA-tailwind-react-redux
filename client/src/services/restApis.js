@@ -1,5 +1,6 @@
-// const BASE_URL = "http://localhost:9292"; //
-const BASE_URL = "https://api.habfract.life";
+const BASE_URL = import.meta.env.PROD
+  ? "https://api.habfract.life"
+  : "http://localhost:9292";
 
 import axios from "axios";
 import { handleErrorType } from "app/helpers";
