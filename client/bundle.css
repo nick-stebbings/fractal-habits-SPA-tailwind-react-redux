@@ -3099,7 +3099,7 @@ main.wrapper {
 #hamburger-wrapper input:checked + nav {
   margin-right: 1rem;
   display: block;
-  transform: translate(-134%);
+  transform: translate(-137%);
   transition: transform 0.7s ease-in;
   -webkit-transition: transform 0.7s;
   -webkit-transition: -webkit-transform 0.2s;
@@ -3163,6 +3163,7 @@ div.sm-selector-container .domain-selector {
 
 .date-card-wrapper {
   padding: 2rem 0;
+  margin-right: -0.5rem;
 }
 
 @media only screen and (min-width: 400px) {

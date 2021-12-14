@@ -76,20 +76,23 @@ const DEFAULT_MARGIN = {
   bottom: 0,
   left: 0,
 };
-const INITIAL_X_TRANSLATE = (
+const getInitialXTranslate = (
   groupWidth,
   scale,
   type,
   { canvasWidth, levelsWide }
 ) => {
+  console.log("object :>> ", this?.rootData?.height + 1);
   return (
     (levelsWide *
-      (type == "tree" || type == "radial" ? canvasWidth / 2 : canvasWidth / 3) -
+      (type == "tree" || type == "radial"
+        ? canvasWidth / 2
+        : canvasWidth / (this?.rootData?.height + 1 || 4)) -
       groupWidth / 2) /
     scale
   );
 };
-const INITIAL_Y_TRANSLATE = (
+const getInitialYTranslate = (
   groupHeight,
   scale,
   type,
@@ -144,7 +147,8 @@ export default class Visualization {
       canvasHeight,
       canvasWidth,
       defaultCanvasTranslateX: (scale) => {
-        const initialX = INITIAL_X_TRANSLATE(
+        const initialX = getInitialXTranslate.call(
+          this,
           this._canvas?._groups[0][0]?.getBoundingClientRect().width,
           scale || this._viewConfig.scale,
           this.type,
@@ -158,7 +162,8 @@ export default class Visualization {
           : initialX;
       },
       defaultCanvasTranslateY: (scale) => {
-        const initialY = INITIAL_Y_TRANSLATE(
+        const initialY = getInitialYTranslate.call(
+          this,
           this._canvas?._groups[0][0]?.getBoundingClientRect().height,
           scale || this._viewConfig.scale,
           this.type,
@@ -502,7 +507,7 @@ export default class Visualization {
   setdXdY() {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh + // Adjust for cluster vertical spacing on different screens
-      +(this.type == "cluster") * (this._viewConfig.isSmallScreen() ? 40 : 500);
+      +(this.type == "cluster") * (this._viewConfig.isSmallScreen() ? 40 : 200);
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
       +(this.type == "cluster") * 0.2;

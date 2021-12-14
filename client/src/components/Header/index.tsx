@@ -48,7 +48,7 @@ const hideMegaMenu = () => {
   [...document.querySelectorAll(".mega-menu")].forEach((menu) => {
     menu.style.display = "none";
   });
-  document.querySelector(".habit-description-label").style.opacity = "0";
+  // document.querySelector(".habit-description-label").style.opacity = "0";
   document.querySelector(".mask-wrapper").style.zIndex = "10";
 };
 

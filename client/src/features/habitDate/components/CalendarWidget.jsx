@@ -42,6 +42,8 @@ export const CalendarWidget = ({
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "1.5rem";
 
+    document.querySelector(".mask-wrapper").style.height = "21rem";
+    document.querySelector(".date-card-wrapper").style.opacity = "1";
     document.querySelector(".date-card-wrapper").style.justifyContent =
       window.innerWidth > 480 ? "center" : "flex-end";
     document.querySelector(".habit-description-label").style.left = "initial";
@@ -53,6 +55,7 @@ export const CalendarWidget = ({
     e.currentTarget.style.right =
       window.innerWidth < 480 ? "calc(100% - 3.25rem)" : "calc(100% - 4rem)";
 
+    document.querySelector(".mask-wrapper").style.height = "initial";
     document.querySelector(
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "0rem";
@@ -68,8 +71,8 @@ export const CalendarWidget = ({
     if (
       !isMobile ||
       e.target.classList.contains("cal-date-nav") ||
-      e.target.classList.contains(".fa") ||
-      !!e.target.closest(".date-card")
+      e.target.classList.contains(".fa")
+      // || !!e.target.closest(".date-card")
     )
       return;
     mobileFullyVisible ? slideIntoView(e) : slideOutOfView(e);
@@ -96,7 +99,7 @@ export const CalendarWidget = ({
           <h2 className="flex mt-1 underline">Initiated On</h2>
           <span>{stringifyDate(currentHabit.timeframe.fromDate)}</span>
           <i
-            className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-1 absolute left-0 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
+            className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-1 absolute -left-1 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
             onClick={handlePrev}
           />
           <i
