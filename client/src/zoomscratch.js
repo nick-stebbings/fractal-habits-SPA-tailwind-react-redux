@@ -11,7 +11,6 @@ import {
   cluster,
   easeCubic,
   easePolyOut,
-  zoomTransform,
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 import Hammer from "hammerjs";
@@ -46,10 +45,10 @@ import {
   nodeStatusColours,
   parseTreeValues,
   cumulativeValue,
+  isTouchDevice,
   habitDatePersisted,
   outOfBoundsNode,
 } from "./components/helpers";
-import { isTouchDevice, debounce, handleErrorType } from "app/helpers";
 
 import {
   positiveCol,
@@ -59,15 +58,14 @@ import {
   parentPositiveCol,
 } from "app/constants";
 
-const BASE_SCALE = 1.5;
-const FOCUS_MODE_SCALE = 3;
-const XS_LABEL_SCALE = 1.2;
-const LG_LABEL_SCALE = 2.5;
-const BUTTON_SCALE = 3.2;
-const XS_NODE_RADIUS = 40;
-const LG_NODE_RADIUS = 80;
-const XS_LEVELS_HIGH = 6;
-const LG_LEVELS_HIGH = 6;
+const BASE_SCALE = 1;
+const FOCUS_MODE_SCALE = 1;
+const LABEL_SCALE = 1.5;
+const BUTTON_SCALE = 2;
+const XS_NODE_RADIUS = 60;
+const LG_NODE_RADIUS = 50;
+const XS_LEVELS_HIGH = 3;
+const LG_LEVELS_HIGH = 3;
 const XS_LEVELS_WIDE = 3;
 const LG_LEVELS_WIDE = 3;
 const DEFAULT_MARGIN = {
@@ -76,64 +74,6 @@ const DEFAULT_MARGIN = {
   bottom: 0,
   left: 0,
 };
-const getInitialXTranslate = (
-  groupWidth,
-  scale,
-  type,
-  { canvasWidth, levelsWide }
-) => {
-  console.log("object :>> ", this?.rootData?.height + 1);
-  return (
-    (levelsWide *
-      (type == "tree" || type == "radial"
-        ? canvasWidth / 2
-        : canvasWidth / (this?.rootData?.height + 1 || 4)) -
-      groupWidth / 2) /
-    scale
-  );
-};
-const getInitialYTranslate = (
-  groupHeight,
-  scale,
-  type,
-  { canvasHeight, levelsHigh }
-) => {
-  return (
-    (levelsHigh *
-      (type == "cluster" || type == "radial" ? canvasHeight / 2 : 150)) /
-    scale
-  );
-};
-const radialTranslation = (zoomConfig) => {
-  const [x, y] = radialPoint(
-    zoomConfig.previousRenderZoom?.node?.x,
-    zoomConfig.previousRenderZoom?.node?.y
-  );
-  return { x, y };
-};
-
-const newXTranslate = (type, viewConfig, zoomConfig) => {
-  switch (type) {
-    case "cluster":
-      return -zoomConfig.previousRenderZoom?.node?.y;
-    case "radial":
-      return -radialTranslation(zoomConfig).x;
-    case "tree":
-      return -zoomConfig.previousRenderZoom?.node?.x;
-  }
-};
-
-const newYTranslate = (type, viewConfig, zoomConfig) => {
-  switch (type) {
-    case "cluster":
-      return -zoomConfig.previousRenderZoom?.node?.x;
-    case "radial":
-      return -radialTranslation(zoomConfig).y;
-    case "tree":
-      return -zoomConfig.previousRenderZoom?.node?.y;
-  }
-};
-
 export default class Visualization {
   constructor(svgId, inputTree, canvasHeight, canvasWidth, margin, type) {
     this.type = type;
@@ -146,35 +86,57 @@ export default class Visualization {
       margin: margin || DEFAULT_MARGIN,
       canvasHeight,
       canvasWidth,
-      defaultCanvasTranslateX: (scale) => {
-        const initialX = getInitialXTranslate.call(
-          this,
-          this._canvas?._groups[0][0]?.getBoundingClientRect().width,
-          scale || this._viewConfig.scale,
-          this.type,
-          this._viewConfig
-        );
-        // console.log("initialX :>> ", initialX);
-        return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
-          "undefined"
-          ? initialX +
-              newXTranslate(this.type, this._viewConfig, this._zoomConfig)
-          : initialX;
+      defaultCanvasTranslateX: () => {
+        if (
+          // there was a previous zoom/translate to a node
+          typeof this._zoomConfig.previousRenderZoom?.node?.x !== "undefined"
+        ) {
+          const radialTranslate = radialPoint(
+            this._zoomConfig.previousRenderZoom?.node?.x,
+            this._zoomConfig.previousRenderZoom?.node?.y
+          );
+          // then add the node's coordinates
+          return this.type == "cluster"
+            ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius -
+                this._zoomConfig.previousRenderZoom?.node?.y +
+                this._viewConfig.viewportW / 4
+            : this._viewConfig.viewportW / 2 -
+                (this.type == "radial"
+                  ? radialTranslate[0]
+                  : this._zoomConfig.previousRenderZoom?.node?.x);
+        } else {
+          // Initial translation settings
+          return this.type == "cluster"
+            ? this._viewConfig.levelsWide * this._viewConfig.nodeRadius +
+                this._viewConfig.canvasWidth / 2
+            : this._viewConfig.viewportW / 2;
+        }
       },
-      defaultCanvasTranslateY: (scale) => {
-        const initialY = getInitialYTranslate.call(
-          this,
-          this._canvas?._groups[0][0]?.getBoundingClientRect().height,
-          scale || this._viewConfig.scale,
-          this.type,
-          this._viewConfig
-        );
-        // console.log("initialY :>> ", initialY);
-        return typeof this._zoomConfig.previousRenderZoom?.node?.y !==
-          "undefined"
-          ? initialY +
-              newYTranslate(this.type, this._viewConfig, this._zoomConfig)
-          : initialY;
+      defaultCanvasTranslateY: () => {
+        if (
+          // there was a previous zoom/translate to a node
+          typeof this._zoomConfig.previousRenderZoom?.node?.y !== "undefined"
+        ) {
+          const radialTranslate = radialPoint(
+            this._zoomConfig.previousRenderZoom?.node?.x,
+            this._zoomConfig.previousRenderZoom?.node?.y
+          );
+          // then add the node's coordinates
+          return this.type == "cluster"
+            ? this._viewConfig.levelsHigh * this._viewConfig.nodeRadius -
+                this._zoomConfig.previousRenderZoom?.node?.x +
+                this._viewConfig.viewportH / 2
+            : -(this.type == "radial"
+                ? radialTranslate[1]
+                : this._zoomConfig.previousRenderZoom?.node?.x) +
+                (+(this.type == "radial") * this._viewConfig.viewportH) / 2;
+        } else {
+          // Initial translation settings
+          return this.type == "cluster" || this.type == "radial"
+            ? -this._viewConfig.levelsHigh * this._viewConfig.nodeRadius +
+                this._viewConfig.viewportH / 2
+            : 0;
+        }
       },
       isSmallScreen: function () {
         return this.canvasWidth < 768;
@@ -182,7 +144,7 @@ export default class Visualization {
     };
 
     this._zoomConfig = {
-      focusMode: false,
+      globalZoom: 1,
       previousRenderZoom: {},
       zoomedInView: function () {
         return Object.keys(this.previousRenderZoom).length !== 0;
@@ -190,35 +152,32 @@ export default class Visualization {
     };
 
     this.eventHandlers = {
-      handlePrependNode: function () {
+      handlePrependNode: function (event, node) {
+        let isRoot = node.parent == undefined;
         store.dispatch(toggleConfirm({ type: "Prepend" }));
       },
-      handleAppendNode: function () {
+      handleAppendNode: function (event, node) {
         store.dispatch(toggleConfirm({ type: "Append" }));
       },
-      handleDeleteNode: function (_, node) {
+      handleDeleteNode: function (event, node) {
         this.setCurrentHabit(node);
-        this.setCurrentNode(node);
         store.dispatch(toggleConfirm({ type: "Delete" }));
-        this.render();
       },
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
-        this._zoomConfig.focusMode = true;
-
-        console.log("NODE ZOOM :>> ");
         const parentNode = { ...node.parent };
         // Set for cross render transformation memory
         this._zoomConfig.previousRenderZoom = {
           event: event,
           node: forParent ? parentNode : node,
+          content: node.data,
           scale: this._zoomConfig.globalZoomScale,
         };
         select(".canvas")
           .transition()
           .ease(easePolyOut)
-          .duration(this.isDemo ? 0 : 5)
+          .duration(this.isDemo ? 0 : 550)
           .attr(
             "transform",
             `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
@@ -228,10 +187,11 @@ export default class Visualization {
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
-        console.log("NODE FOCUS :>> ");
 
         const targ = event.target;
         if (targ.tagName == "circle") {
+          // if (targ.closest(".the-node").classList.contains("active"))
+          //   return this.reset({ justTranslation: false });
           if (deadNode(event)) {
             //P: There is no habit node for this habit. To track a habit for this day:
             // - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
@@ -246,16 +206,19 @@ export default class Visualization {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
+          // console.log("event,node :>> ", event, node);
           this.setActiveNode(node.data, event);
 
-          if (this.type == "tree") {
+          this.activateNodeAnimation();
+
+          if (!(this.type == "radial")) {
             const nodesToCollapse = nodesForCollapse
               .call(this, node, {
                 cousinCollapse: false,
                 auntCollapse: true,
               })
               .map((n) => n?.data?.content);
-            // console.log("nodesToCollapse :>> ", nodesToCollapse);
+            console.log("nodesToCollapse :>> ", nodesToCollapse);
             this.rootData.each((node) => {
               if (nodesToCollapse.includes(node.data.content)) collapse(node);
             });
@@ -303,7 +266,6 @@ export default class Visualization {
       handleNodeToggle: function (event, node) {
         event.preventDefault();
         if (node.children) {
-          if (deadNode(event)) console.log("dead");
           // return;
           // Non-leaf nodes have auto-generated cumulative status
           // (Only leaves can toggle)
@@ -314,11 +276,15 @@ export default class Visualization {
           node,
           content: node.data,
         };
+        // if (deadNode(event)) return this.reset();
         // this.eventHandlers.handleStatusChange.call(this, node);
+
+        console.log("NODE TOGGLE :>> ");
       },
       handleMouseEnter: function ({ target: d }) {
         this.currentTooltip = select(d).selectAll("g.tooltip");
         this.currentTooltip.transition().duration(450).style("opacity", "1");
+        console.log("d :>> ", d);
         this.currentButton = select(d).selectAll("g.habit-label-dash-button");
         this.currentButton
           .transition()
@@ -369,6 +335,7 @@ export default class Visualization {
       collapse(this.rootData);
       this._nextRootData = this.rootData;
       this.render();
+      this.reset({ justTranslation: true });
     };
   }
 
@@ -388,10 +355,7 @@ export default class Visualization {
     !this.rootData.leaves().includes(node) || node?._children;
   }
   noCanvas() {
-    return (
-      typeof this?._canvas == "undefined" ||
-      document.querySelectorAll(".canvas")?.length == 0
-    );
+    return typeof this?._canvas == "undefined";
   }
   hasNextData() {
     return !!this?._nextRootData;
@@ -404,13 +368,14 @@ export default class Visualization {
   }
 
   setActiveNode(clickedNodeContent, event = null) {
-    this?.isNewActiveNode && delete this.isNewActiveNode;
+    this.activeNode?.isNewActive && delete this.activeNode.isNewActive;
 
     this.activeNode = this.findNodeByContent(clickedNodeContent);
+    this.activeNode && (this.activeNode.isNewActive = true);
 
     const currentActiveG = document.querySelector(".the-node.active");
     if (currentActiveG) currentActiveG.classList.toggle("active");
-    event && event.target?.closest(".the-node")?.classList?.toggle("active");
+    event && event.target.closest(".the-node").classList.toggle("active");
 
     this.render();
     return this.activeNode;
@@ -426,34 +391,23 @@ export default class Visualization {
     return found;
   }
   setCurrentNode(node) {
-    const nodeContent = node?.data
-      ? parseTreeValues(node?.data.content)
-      : parseTreeValues(node.content);
-
+    const nodeContent = parseTreeValues(node.data.content);
     let newCurrent = selectCurrentNodeByMptt(
       store.getState(),
       nodeContent.left,
       nodeContent.right
     );
-    if (!newCurrent) {
-      handleErrorType("Couldn't select node");
-      return;
-    }
     store.dispatch(updateCurrentNode(newCurrent));
   }
   setCurrentHabit(node) {
-    let newCurrent;
-    try {
-      const nodeContent = node?.data
-        ? parseTreeValues(node?.data.content)
-        : parseTreeValues(node.content);
-      newCurrent = selectCurrentHabitByMptt(
-        store.getState(),
-        nodeContent.left,
-        nodeContent.right
-      );
-    } catch (err) {
-      handleErrorType("Couldn't select habit: " + err);
+    const nodeContent = parseTreeValues(node.data.content);
+    let newCurrent = selectCurrentHabitByMptt(
+      store.getState(),
+      nodeContent.left,
+      nodeContent.right
+    );
+    if (!newCurrent) {
+      window.FlashMessage.warning("Couldn't select habit");
       return;
     }
     store.dispatch(updateCurrentHabit(newCurrent));
@@ -462,7 +416,7 @@ export default class Visualization {
       store.dispatch(
         fetchHabitDatesREST({
           id: newCurrent?.meta.id,
-          periodLength: 7,
+          periodLength: 3, // TODO change this back to 7
         })
       );
     }
@@ -482,12 +436,12 @@ export default class Visualization {
     this._zoomConfig.previousRenderZoom = {};
     this.activeNode.isNew = null;
     this.activeNode = this.rootData;
-    this.expand();
     if (!justTranslation) {
+      this.expand();
       document.querySelector(".the-node.active") &&
         document.querySelector(".the-node.active").classList.remove("active");
     }
-    this.zoomBase().call(this.zoomer.transform, zoomIdentity);
+    this._canvas.call(this.zoomer.transform, zoomIdentity);
   }
 
   setLevelsHighAndWide() {
@@ -506,14 +460,14 @@ export default class Visualization {
   setdXdY() {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh + // Adjust for cluster vertical spacing on different screens
-      +(this.type == "cluster") * (this._viewConfig.isSmallScreen() ? 40 : 200);
+      +(this.type == "cluster") * (this._viewConfig.isSmallScreen() ? 40 : 500);
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
       +(this.type == "cluster") * 0.2;
 
     //adjust for taller aspect ratio
-    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 4.5;
-    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 2.5;
+    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 0.5;
+    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 1.25 : 1.5;
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
@@ -525,30 +479,14 @@ export default class Visualization {
       let t = { ...e.transform };
       let scale = t.k;
 
-      if (this._zoomConfig.focusMode) {
-        let newTransform = t;
-        newTransform.k = this._zoomConfig.globalZoomScale;
-        newTransform.x =
-          t.x + this._viewConfig.defaultCanvasTranslateX(3) * newTransform.k;
-        newTransform.y =
-          t.y + this._viewConfig.defaultCanvasTranslateY(3) * newTransform.k;
-        scale = newTransform.k;
-        this._zoomConfig.focusMode = false;
-        this.zoomBase().call(this.zoomer.transform, newTransform);
-      } else {
-        scale = t.k;
-        t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
-        t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
-      }
-
-      this._canvas
+      t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
+      t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
+      select(".canvas")
         .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
         .transition()
         .ease(easePolyOut)
-        .duration(500);
-      this._zoomConfig.focusMode = false;
+        .duration(2500);
     };
-
     this.zoomer = zoom().scaleExtent([0.5, 5]).on("zoom", zooms.bind(this));
     this.zoomBase().call(this.zoomer);
   }
@@ -559,8 +497,12 @@ export default class Visualization {
     this._viewConfig.viewportH =
       this._viewConfig.canvasHeight * this._viewConfig.levelsHigh;
 
-    this._viewConfig.viewportX = 0;
-    this._viewConfig.viewportY = 0;
+    this._viewConfig.viewportX =
+      this.type == "tree" ? this._viewConfig.canvasWidth / 6 : 0;
+    this._viewConfig.viewportY =
+      (-(this.type == "tree" ? 150 : -this._viewConfig.canvasHeight / 2) *
+        this._viewConfig.levelsHigh) /
+      4; // Adjust for initial y translation on different vis
 
     this._viewConfig.defaultView = `${this._viewConfig.viewportX} ${this._viewConfig.viewportY} ${this._viewConfig.viewportW} ${this._viewConfig.viewportH}`;
   }
@@ -596,8 +538,6 @@ export default class Visualization {
     }
   }
   activeOrNonActiveOpacity(d, dimmedOpacity) {
-    console.log("this.activeNode :>> ", d, this.activeNode);
-    console.log("ddd :>> ", [d].includes(this.activeNode));
     if (
       !this.activeNode ||
       (!!this.activeNode &&
@@ -606,9 +546,7 @@ export default class Visualization {
           .concat(d?.parent?._children)
           .concat(d?.children)
           .concat(d?._children)
-          .concat(d?.parent)
-          .map((d) => d?.data?.content)
-          .includes(this.activeNode.data.content))
+          .includes(this.activeNode))
     )
       return "1";
 
@@ -679,8 +617,6 @@ export default class Visualization {
         // Set new active node when this one is out of bounds
         if (outOfBounds && this.activeNode?.data.name == d.data.name) {
           this.setActiveNode(this.rootData);
-          this.rootData.isNew = true;
-          this.render();
         }
 
         return !outOfBounds;
@@ -757,9 +693,7 @@ export default class Visualization {
         "transform",
         `translate(${this._viewConfig.nodeRadius / 10}, ${
           this._viewConfig.nodeRadius
-        }), scale(${
-          this._viewConfig.isSmallScreen() ? XS_LABEL_SCALE : LG_LABEL_SCALE
-        })`
+        }), scale(${LABEL_SCALE})`
       )
       .attr("opacity", (d) => this.activeOrNonActiveOpacity(d, "0"));
   }
@@ -825,25 +759,15 @@ export default class Visualization {
 
     this._enteringNodes
       .append("g")
-      .attr(
-        "transform",
-        "translate(" +
-          "-35" +
-          "," +
-          (this.type == "cluster" ? 35 : -35) +
-          ") scale( " +
-          this._viewConfig.scale * 3 +
-          ") rotate(" +
-          (this.type == "cluster" ? 270 : 0) +
-          ")"
-      )
+      .attr("transform", "translate(" + "-20" + "," + "55" + ") scale( 2.5 )")
       .append("path")
       .attr("class", "expand-arrow")
       .attr("d", (d) => {
         return d._children
           ? "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
           : null;
-      });
+      })
+      .style("fill", "#3D3229");
   }
   appendButtons() {
     const delBtnG = this._gButton.append("g");
@@ -885,7 +809,9 @@ export default class Visualization {
         .attr("style", (d) => (d.parent ? "opacity: 0" : "opacity: 1"))
         .attr("x", 12)
         .attr("y", -30)
-        .text("PREPEND")
+        // .attr("x", 15)
+        // .attr("y", -45)
+        .text((d) => "PREPEND")
         .on("click", (e, n) => {
           this.eventHandlers.handlePrependNode.call(this, e, n);
         });
@@ -895,7 +821,7 @@ export default class Visualization {
   bindEventHandlers(selection) {
     selection
       .on("click", (e, d) => {
-        if (e.target.tagName !== "circle") return;
+        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
         this.eventHandlers.handleNodeFocus.call(this, e, d);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
@@ -917,14 +843,9 @@ export default class Visualization {
         this.eventHandlers.handleNodeToggle.call(this, e, d);
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
-      .on(
-        "mouseenter",
-        debounce(this.eventHandlers.handleMouseEnter.bind(this), 450)
-      );
-
-    //----------------------
+      .on("mouseenter", this.eventHandlers.handleMouseEnter.bind(this));
+    console.log(" selection._groups[0] :>> ", selection._groups[0]);
     // Mobile device events
-    //----------------------
     selection._groups[0].forEach((node) => {
       const manager = new Hammer.Manager(node);
       // Create a recognizer
@@ -932,60 +853,32 @@ export default class Visualization {
       const doubleTap = new Hammer.Tap({
         event: "doubletap",
         taps: 2,
-        interval: 1000,
+        interval: 700,
       });
       manager.add([doubleTap, singleTap]);
-      doubleTap.recognizeWith(singleTap);
-      singleTap.requireFailure(doubleTap);
-      manager.on(
-        "singletap",
-        debounce((ev) => {
-          ev.preventDefault();
-          const node = ev.target.__data__.data;
-
-          switch (ev.target.tagName) {
-            // Delete
-            case "path":
-              this.eventHandlers.handleDeleteNode.call(
-                this,
-                ev,
-                ev.target.__data__.data
-              );
-              break;
-            // Append or prepend
-            case "rect":
-              if (ev.target.parentNode.classList.contains("tooltip")) return; // Stop label from triggering
-            case "text":
-              ev.target.textContent == "APPEND"
-                ? this.eventHandlers.handleAppendNode.call(this)
-                : this.eventHandlers.handlePrependNode.call(this);
-              break;
-            default:
-              let parentNodeGroup = _.find(
-                this._enteringNodes._groups[0],
-                (n) => n?.__data__?.data?.content == node.content
-              );
-              ev.target = parentNodeGroup;
-              this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
-              break;
-          }
-        }, 500)
-      );
-      manager.on(
-        "doubletap",
-        debounce((ev) => {
-          ev.preventDefault();
-          const node = ev.target.__data__.data;
-          this.eventHandlers.handleNodeFocus.call(this, ev, node.__data__);
-          this.eventHandlers.handleNodeZoom.call(this, ev, node.__data__);
-        }, 500)
-      );
+      manager.get("singletap").requireFailure("doubletap");
+      manager.on("singletap", (ev) => {
+        ev.preventDefault();
+        const content = ev.target.__data__.data.content;
+        let parentNodeGroup = _.find(
+          this._enteringNodes._groups[0],
+          (n) => n?.__data__?.data?.content == content
+        );
+        ev.target = parentNodeGroup;
+        this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
+      });
+      manager.on("doubletap", (ev) => {
+        ev.preventDefault();
+        this.eventHandlers.handleNodeFocus.call(this, ev, node.__data__);
+      });
     });
   }
 
   bindLegendEventHandler() {
     let infoCell = document.querySelector(".legend-svg .cell:first-child");
+    console.log("infoCell :>> ", infoCell);
     infoCell.addEventListener("click", () => {
+      debugger;
       let controlsSvg = document.querySelector(".controls-svg");
       controlsSvg.classList.toggle("hidden");
     });
@@ -1000,8 +893,8 @@ export default class Visualization {
       "Incomplete Subtree",
     ];
     const legendScale = this._viewConfig.isSmallScreen()
-      ? BASE_SCALE / 3
-      : BASE_SCALE / 2;
+      ? BASE_SCALE / 2
+      : BASE_SCALE;
     const ordinal = scaleOrdinal()
       .domain(labels)
       .range([noNodeCol, positiveCol, neutralCol, negativeCol, positiveCol]);
@@ -1011,40 +904,38 @@ export default class Visualization {
     const gText = controlsSvg
       .append("g")
       .attr("class", "controls")
-      .attr("transform", `translate(${40}, ${45})scale(${legendScale})`);
+      .attr("transform", `translate(${40}, ${38})scale(${legendScale})`);
     const gLegend = legendSvg
       .append("g")
       .attr("class", "legend")
       .attr(
         "transform",
-        `translate(5, ${
-          this._viewConfig.isSmallScreen() ? 45 : 10
-        }) scale(${legendScale})`
+        `translate(5, ${120 * legendScale}) scale(${legendScale})`
       );
 
     // Borrowing the habit label for the legend
-    // if (isTouchDevice()) {
-    //   gText
-    //     .append("text")
-    //     .text("Single Tap -> Select Habit & Focus")
-    //     .attr("y", -45);
-    //   gText
-    //     .append("text")
-    //     .text("Double Tap -> Select Family/Tick Off Habit")
-    //     .attr("y", 30);
-    //   gText.append("text").text("Swipe Left ---> Next Day").attr("y", 5);
-    //   gText.append("text").text("Swipe Right ---> Last Day").attr("y", -10);
-    // } else {
-    //   gText.append("text").text("L/Click ---> Mark Complete");
-    //   gText.append("text").attr("y", 25).text("R/Click -> Focus");
-    //   gText.append("text").text("Scroll Up -> Zoom").attr("y", -25);
-    // }
+    if (isTouchDevice()) {
+      gText
+        .append("text")
+        .text("Single Tap -> Select Habit & Focus")
+        .attr("y", -45);
+      gText
+        .append("text")
+        .text("Double Tap -> Select Family/Tick Off Habit")
+        .attr("y", 30);
+      gText.append("text").text("Swipe Left ---> Next Day").attr("y", 5);
+      gText.append("text").text("Swipe Right ---> Last Day").attr("y", -10);
+    } else {
+      gText.append("text").text("L/Click ---> Mark Complete");
+      gText.append("text").attr("y", 25).text("R/Click -> Focus");
+      gText.append("text").text("Scroll Up -> Zoom").attr("y", -25);
+    }
     const colorLegend = legendColor()
       .orient("horizontal")
       .labels(labels)
       .orient("vertical")
       .shape("circle")
-      .shapeRadius(14)
+      .shapeRadius(15)
       .shapePadding(-5)
       .scale(ordinal);
     gLegend.call(colorLegend);
@@ -1052,10 +943,10 @@ export default class Visualization {
   }
 
   activateNodeAnimation() {
-    // _p("animated node", this.activeNode, "!");
     // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
     // Credit: Andrew Reid
-    const gCircle = this._canvas?.selectAll(
+
+    const gCircle = this.zoomBase().selectAll(
       "g.the-node.solid.active g.node-subgroup"
     );
 
@@ -1073,7 +964,12 @@ export default class Visualization {
     const pulseCircles = gCircle
       .insert("g", ".habit-label-dash-button")
       .classed("active-circle", true)
-      .attr("stroke-opacity", "0.8")
+      .attr("stroke-opacity", (d) => {
+        return this.activeNode &&
+          d.data.content === this.activeNode.data.content
+          ? "0.8"
+          : "0";
+      })
       .selectAll("circle")
       .data(pulseData)
       .enter()
@@ -1132,35 +1028,44 @@ export default class Visualization {
 
   render() {
     console.log("Rendering vis... :>>", this?._canvas);
-    if (this.noCanvas()) {
+    // _p("zoomconfig", this._zoomConfig, "info");
+    if (!this.noCanvas()) {
+      this._hasRendered = true;
+      // this.removeCanvas();
+    } else {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true);
+      console.log(
+        "Configured canvas... :>>",
+        this._canvas,
+        "First render?",
+        this.firstRender()
+      );
     }
-
     if (this.firstRender()) {
       this.setNodeRadius();
       this.setLevelsHighAndWide();
       this.calibrateViewPortAttrs();
       this.calibrateViewBox();
       this.setdXdY();
-      this.setZoomBehaviour();
-    } else {
-      this._hasRendered = true;
+      this._canvas.attr(
+        "transform",
+        `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
+      );
     }
 
     if (
       this.firstRender() ||
       this.hasNewHierarchyData() ||
-      this.isNewActiveNode
+      this.activeNode?.isNewActive
     ) {
-      // First render OR New hierarchy needs to be rendered
+      if (this.noCanvas()) return;
 
+      // First render OR New hierarchy needs to be rendered
       // Update the current day's rootData
       if (this.hasNextData()) this.rootData = this._nextRootData;
-      // if (!this.activeNode) console.log(this.rootData.data.content);
-
-      if (this.noCanvas()) return;
+      this.setLayout();
 
       //Render cleared canvas for OOB dates
       const isBlankData = this.rootData?.data?.content == "";
@@ -1169,12 +1074,14 @@ export default class Visualization {
         this.clearCanvas();
         return;
       }
-
-      this.setLayout();
-
+      if (!this.rootData.data.content) {
+        debugger;
+        this.rootData = this.rootData.data;
+      }
       accumulateTree(this.rootData);
       console.log("Formed new layout", this, "!");
 
+      this.setZoomBehaviour();
       this.clearCanvas();
       console.log("Cleared canvas :>> ");
 
@@ -1183,43 +1090,26 @@ export default class Visualization {
       this.setCircleAndLabelGroups();
       this.setButtonGroups();
       // console.log("Appended and set groups... :>>");
-
-      if (!!this.activeNode) {
-        this?.isNewActiveNode &&
-          this.zoomBase().selectAll(".active-circle").remove();
-      } else {
-        // Set a default active node
-        this.isNewActiveNode = true;
-        let newActive = this.rootData.find((n) => {
-          return !n.data.content.match(/OOB/);
-        });
-        try {
-          this.setCurrentHabit(newActive);
-          this.setCurrentNode(newActive);
-          this.setActiveNode(newActive?.data);
-        } catch (err) {
-          handleErrorType("No active habits for this date");
-        }
-      }
-      debounce(this.activateNodeAnimation.bind(this), 400)();
-
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
       console.log("Appended SVG elements... :>>");
 
-      this._canvas.attr(
-        "transform",
-        `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
-      );
-
       this._hasRendered = true;
     }
+    _p("this._hasRendered :>> ", { has: this._hasRendered }, "!");
 
     if (!select("svg.legend-svg").empty() && select("svg .legend").empty()) {
       // console.log("Added legend :>> ");
       this.addLegend();
       this.bindLegendEventHandler();
+    }
+
+    console.log("this.activeNode :>> ", this.activeNode);
+    if (!!this.activeNode) {
+      this.activeNode?.isNew &&
+        this.zoomBase().selectAll(".active-circle").remove();
+      this.activateNodeAnimation();
     }
   }
 }
