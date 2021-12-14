@@ -176,11 +176,11 @@ export const CalendarWidget = ({
       </div>
       <div
         className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent"
-        onMouseEnter={(e) => {
-          showMegaMenu();
-        }}
-        onMouseLeave={(e) => {
-          hideMegaMenu();
+        onMouseLeave={async (e) => {
+          const tO = setTimeout(() => {
+            hideMegaMenu();
+          }, 1000);
+          console.log("tO :>> ", tO);
         }}
       >
         {currentWeek &&

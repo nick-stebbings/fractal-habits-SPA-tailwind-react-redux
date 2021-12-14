@@ -60,10 +60,6 @@ export const spaceSlice = createSlice({
   initialState,
   reducers: {
     decrementIdx(state) {
-      if (state.currentRelativeIdx == -29) {
-        debugger;
-        console.log("state.currentRelativeIdx :>> ", state.currentRelativeIdx);
-      }
       let newIdx = state.currentIdx - 1;
       // is new idx < 0, > 6?
       // THEN make last week current week,

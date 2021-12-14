@@ -24,8 +24,6 @@ export const HoverableLink = ({
     if (window.innerWidth > 1024) {
       document.querySelector(".habit-description-label").style.opacity = "0";
     }
-    document.querySelector("#current-habit-label")?.classList.add("inactive");
-    document.querySelector("#current-habit-label")?.classList.remove("active");
 
     showMegaMenu(idx);
     setIsOpen(true);

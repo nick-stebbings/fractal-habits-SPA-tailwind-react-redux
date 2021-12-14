@@ -361,12 +361,18 @@ export default class Visualization {
     };
 
     this.expand = function () {
-      expand(this.rootData);
+      const firstNode = this.rootData.find(
+        (n) => !n?.data?.content.match(/OOB/)
+      );
+      expand(firstNode);
       this._nextRootData = this.rootData;
       this.render();
     };
     this.collapse = function () {
-      collapse(this.rootData);
+      const firstNode = this.rootData.find(
+        (n) => !n?.data?.content.match(/OOB/)
+      );
+      collapse(firstNode);
       this._nextRootData = this.rootData;
       this.render();
     };
@@ -506,7 +512,7 @@ export default class Visualization {
   setdXdY() {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh + // Adjust for cluster vertical spacing on different screens
-      +(this.type == "cluster") * (this._viewConfig.isSmallScreen() ? 40 : 200);
+      +(this.type == "cluster") * (this._viewConfig.isSmallScreen() ? 40 : 50);
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
       +(this.type == "cluster") * 0.2;
@@ -826,13 +832,13 @@ export default class Visualization {
       .attr(
         "transform",
         "translate(" +
-          "-35" +
+          (this.type == "radial" ? (this.type == "radial" ? 33 : 20) : -35) +
           "," +
-          (this.type == "cluster" ? 35 : -35) +
+          (this.type != "cluster" ? -35 : 35) +
           ") scale( " +
           this._viewConfig.scale * 3 +
           ") rotate(" +
-          (this.type == "cluster" ? 270 : 0) +
+          (this.type == "cluster" ? 270 : this.type == "radial" ? 180 : 0) +
           ")"
       )
       .append("path")

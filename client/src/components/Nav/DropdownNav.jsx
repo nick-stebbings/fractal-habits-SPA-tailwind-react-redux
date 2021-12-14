@@ -9,7 +9,6 @@ export const DropdownNav = function ({ routes, showMegaMenu, hideMegaMenu }) {
   const handleLabelClick = (e) => {
     const menuVisible =
       document.querySelector(".mask-wrapper").style.height === "5rem";
-    e.currentTarget.classList.toggle("active");
     [...document.querySelectorAll(".nav li.hoverable")].forEach((navItem) => {
       navItem.classList.remove("active");
     });
