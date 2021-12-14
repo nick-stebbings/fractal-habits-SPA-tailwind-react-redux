@@ -12,6 +12,7 @@ import {
   easeCubic,
   easePolyOut,
   zoomTransform,
+  ascending,
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 import Hammer from "hammerjs";
@@ -82,7 +83,6 @@ const getInitialXTranslate = (
   type,
   { canvasWidth, levelsWide }
 ) => {
-  console.log("object :>> ", this?.rootData?.height + 1);
   return (
     (levelsWide *
       (type == "tree" || type == "radial"
@@ -511,15 +511,20 @@ export default class Visualization {
   }
   setdXdY() {
     this._viewConfig.dx =
-      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh + // Adjust for cluster vertical spacing on different screens
-      +(this.type == "cluster") * (this._viewConfig.isSmallScreen() ? 40 : 50);
+      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for cluster vertical spacing on different screens
+      +(this.type == "cluster") *
+        (this._viewConfig.isSmallScreen() ? -40 : 100);
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
-      +(this.type == "cluster") * 0.2;
+      +(this.type == "cluster") * 80;
 
     //adjust for taller aspect ratio
-    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 4.5;
-    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 2.5;
+    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 2.5;
+    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 2 : 2.5;
+    if (this.type == "radial") {
+      this._viewConfig.dx *= BASE_SCALE * 1.5;
+      this._viewConfig.dy *= BASE_SCALE;
+    }
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
@@ -631,33 +636,31 @@ export default class Visualization {
           .y((d) => d.x);
       case "radial":
         return linkRadial()
-          .angle((d) => d.x)
+          .angle((d) => d.x / 8)
           .radius((d) => d.y);
     }
   }
   setLayout() {
     switch (this.type) {
       case "tree":
-        this.layout = tree().size(
-          this._viewConfig.canvasWidth,
-          this._viewConfig.canvasHeight
-        );
+        this.layout = tree()
+          .size(this._viewConfig.canvasWidth, this._viewConfig.canvasHeight)
+          .separation((a, b) => (a.parent == b.parent ? 3.5 : 1) / a.depth);
+        this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
         break;
       case "cluster":
         this.layout = cluster().size(
           this._viewConfig.canvasWidth,
           this._viewConfig.canvasHeight
         );
+        this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
         break;
       case "radial":
-        this.layout = tree()
-          .size(360, this._viewConfig.canvasWidth / 3)
-          .separation(function (a, b) {
-            return (a.parent == b.parent ? 0.2 : 14) / a.depth;
-          });
+        this.layout = cluster().size([180, this.canvasHeight * 2]);
+        this.layout.nodeSize([500, 500]);
         break;
     }
-    this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
+
     try {
       this.layout(this.rootData);
     } catch (error) {
@@ -721,7 +724,9 @@ export default class Visualization {
       )
       .attr("transform", (d) => {
         if (this.type == "radial")
-          return "translate(" + radialPoint(d.x, d.y) + ")";
+          return `rotate(${((d.x / 8) * 180) / Math.PI - 90}) translate(${
+            d.y
+          },0)`;
         return this.type == "cluster"
           ? `translate(${d.y},${d.x})`
           : `translate(${d.x},${d.y})`;
@@ -742,10 +747,11 @@ export default class Visualization {
       .enter()
       .append("path")
       .classed("link", true)
+      .attr("stroke-width", "3")
       .attr("stroke-opacity", (d) =>
         !this.activeNode ||
         (this.activeNode && this.activeNode.descendants().includes(d.source))
-          ? 0.55
+          ? 0.5
           : 0.3
       )
       .attr("d", this.getLinkPathGenerator());
@@ -773,9 +779,19 @@ export default class Visualization {
       .classed("habit-label-dash-button", true)
       .attr(
         "transform",
-        `translate(${(-BUTTON_SCALE / 2) * this._viewConfig.nodeRadius}, ${
-          -1.5 * this._viewConfig.nodeRadius
-        }), scale(${BUTTON_SCALE})`
+        (d) =>
+          `translate(${
+            (-BUTTON_SCALE /
+              (this.type == "radial" ? this._viewConfig.nodeRadius : 2)) *
+            this._viewConfig.nodeRadius
+          }, ${
+            this.type == "radial"
+              ? this._viewConfig.nodeRadius * d.depth
+              : -1.5 * this._viewConfig.nodeRadius
+          }), scale(${BUTTON_SCALE})` +
+          (this.type == "radial"
+            ? `, rotate(${180 - ((d.x / 8) * 180) / Math.PI - 90})`
+            : "")
       )
       .attr("style", "opacity: 0");
   }
@@ -813,7 +829,13 @@ export default class Visualization {
           words[3] || ""
         }`;
       })
-      .attr("transform", this.type == "radial" ? "scale(0.75)" : "");
+      .attr("transform", (d) =>
+        this.type == "radial"
+          ? `scale(0.75), translate(${
+              d.x >= Math.PI ? "130, 100" : "0,0"
+            }), rotate(${d.x >= Math.PI ? 180 : 0})`
+          : ""
+      );
     this._gTooltip
       .append("text")
       .attr("x", 5)
@@ -825,7 +847,13 @@ export default class Visualization {
           allWords.length > 7 ? "..." : ""
         }`;
       })
-      .attr("transform", this.type == "radial" ? "scale(0.75)" : "");
+      .attr("transform", (d) =>
+        this.type == "radial"
+          ? `scale(0.75), translate(${
+              d.x >= Math.PI ? "130, 100" : "0,0"
+            }), rotate(${d.x >= Math.PI ? 180 : 0})`
+          : ""
+      );
 
     this._enteringNodes
       .append("g")
