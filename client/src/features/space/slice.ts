@@ -60,6 +60,10 @@ export const spaceSlice = createSlice({
   initialState,
   reducers: {
     decrementIdx(state) {
+      if (state.currentRelativeIdx == -29) {
+        debugger;
+        console.log("state.currentRelativeIdx :>> ", state.currentRelativeIdx);
+      }
       let newIdx = state.currentIdx - 1;
       // is new idx < 0, > 6?
       // THEN make last week current week,
@@ -67,9 +71,9 @@ export const spaceSlice = createSlice({
       // make current week next week
       if (newIdx % 7 < 0) {
         // Move each week of spaces forwards
-        state.nextWeek = state.thisWeek;
-        state.thisWeek = state.lastWeek;
-        state.lastWeek = weekOfDaySpaces(state.currentRelativeIdx - 7);
+        state.nextWeek = [...state.thisWeek];
+        state.thisWeek = [...state.lastWeek];
+        state.lastWeek = weekOfDaySpaces(state.currentRelativeIdx - 6);
 
         // Update indices
         state.currentRelativeIdx -= 1;
@@ -86,12 +90,13 @@ export const spaceSlice = createSlice({
       let newIdx = state.currentIdx + 1;
       if (newIdx % 7 == 0) {
         // Move each week of spaces backwards
-        state.lastWeek = state.thisWeek;
-        state.thisWeek = state.nextWeek;
-
+        state.lastWeek = [...state.thisWeek];
+        state.thisWeek = [...state.nextWeek];
         // Update indices
         state.currentRelativeIdx += 1;
         state.currentIdx = 0;
+        // Create next week from the following day
+        state.nextWeek = weekOfDaySpaces(state.currentRelativeIdx + 15);
         // Update position in current week
         state.current = state.thisWeek[state.currentIdx];
       } else {

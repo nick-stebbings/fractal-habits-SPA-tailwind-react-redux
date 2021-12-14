@@ -69,8 +69,8 @@ export const Header = ({isVis}) => {
 
     if ( !isMemoised(newDateId)) {
       currentDatePositionIdx < 0 && updateCurrentHierarchy({nextDateId: -1}) // Account for boundary of possible stored habit tree jsons 
-      currentDatePositionIdx == 2 && // Fetch the previous week when we are close to the start of the current week
-      dispatch(fetchHabitTreesREST({ domainId: 1, dateId: newDateId - 2 }));
+      currentDatePositionIdx == 3 && // Fetch the previous week when we are close to the start of the current week
+      dispatch(fetchHabitTreesREST({ domainId: 1, dateId: newDateId - 3 }));
     }
 }
     dispatch(decrementIdx())
