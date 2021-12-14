@@ -17,7 +17,7 @@ let MENU_ROUTES = [
         description:
           "A hierarchical tree showing relationships. Add habits above (prepend) or under (append) an existing habit",
         component: HabitTree,
-        icon: "anicon",
+        icon: "tree",
       },
       "/vis/cluster": {
         status: "enabled",
@@ -25,7 +25,7 @@ let MENU_ROUTES = [
         description:
           "Fractal pyramid of habits. Navigate all the way up to the sky or drill down into the minutiae.",
         component: Cluster,
-        icon: "anicon",
+        icon: "cluster",
       },
       "/vis/radial-tree": {
         status: "enabled",
@@ -33,7 +33,7 @@ let MENU_ROUTES = [
         description:
           "A pretty hierarchical tree diagram where your habits branch off from the centre of a circle.",
         component: RadialTree,
-        icon: "anicon",
+        icon: "radial",
       },
     },
   },

@@ -177,13 +177,9 @@ export const CalendarWidget = ({
         className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent"
         onMouseEnter={(e) => {
           showMegaMenu();
-          window.innerWidth < 1024 &&
-            (document.querySelector(".date-card-wrapper").style.opacity = 1);
         }}
         onMouseLeave={(e) => {
           hideMegaMenu();
-          window.innerWidth < 1024 &&
-            (document.querySelector(".date-card-wrapper").style.opacity = 0);
         }}
       >
         {currentWeek &&
@@ -192,6 +188,7 @@ export const CalendarWidget = ({
             const relativeDateId = useAppSelector(
               selectRelativeDateId(fromDate)
             );
+            console.log(" DATE ID:>> ", relativeDateId);
             return (
               <DateCard
                 key={fromDate}

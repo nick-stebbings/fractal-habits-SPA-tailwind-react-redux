@@ -1,5 +1,8 @@
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
+import tree from "/images/icons/tree.svg";
+import radial from "/images/icons/tree.svg";
+import cluster from "/images/icons/tree.svg";
 
 export const MenuListCard = ({
   title,
@@ -13,6 +16,17 @@ export const MenuListCard = ({
   function handleClick() {
     history.push(urlString);
   }
+  const getIcon = (str) => {
+    switch (str) {
+      case "tree":
+        return tree;
+      case "radial":
+        return radial;
+      case "cluster":
+        return cluster;
+    }
+  };
+
   return (
     <div
       className={
@@ -27,7 +41,7 @@ export const MenuListCard = ({
       <div className="flex items-center justify-center">
         <h3 className="flex px-2 mb-2">{title}</h3>
         <div className="text-balance-pshades-dark w-18 h-18 flex items-center justify-center">
-          <img src={icon}></img>
+          <img src={getIcon(icon)}></img>
         </div>
       </div>
       <div className="flex flex-col items-center" style={{ flexBasis: "75%" }}>
