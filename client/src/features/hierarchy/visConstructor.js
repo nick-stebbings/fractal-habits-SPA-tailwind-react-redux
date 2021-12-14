@@ -458,7 +458,7 @@ export default class Visualization {
       store.dispatch(
         fetchHabitDatesREST({
           id: newCurrent?.meta.id,
-          periodLength: 7, // TODO change this back to 7
+          periodLength: 7,
         })
       );
     }

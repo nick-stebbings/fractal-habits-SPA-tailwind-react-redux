@@ -20,6 +20,8 @@ export const selectCurrentSpace = (state: RootState) => state?.space.current;
 export const selectCurrentDatePositionIdx = (state: RootState) =>
   state?.space.currentIdx;
 
+export const selectCurrentDate = (state: RootState) => state?.space.current;
+
 export const selectCurrentDateId = (state: RootState) => {
   let baseDate = DateTime.fromISO("2021-12-03").startOf("day"); // Hard coded for the demo app. There is no date model but there is in the API until it is phased out.
   let dateDiff = DateTime.local()
@@ -36,7 +38,7 @@ export const selectRelativeDateId = (fromDateTimestampUnix: number) =>
       let dateDiff = DateTime.fromMillis(fromDateTimestampUnix)
         .diff(DateTime.fromMillis(currentSpace.timeframe.fromDate), ["day"])
         .toObject().days;
-      return dateDiff + dateIdNow + 2 + -DB_DATE_ID_OFFSET;
+      return dateDiff + dateIdNow;
     }
   );
 
@@ -81,10 +83,6 @@ export const spaceSlice = createSlice({
       }
     },
     incrementIdx(state) {
-      const todaysDate = DateTime.now().startOf("day").ts;
-      let future = state.current.timeframe.fromDate == todaysDate;
-      // if (future) return state; // TODO reinstate
-
       let newIdx = state.currentIdx + 1;
       if (newIdx % 7 == 0) {
         // Move each week of spaces backwards

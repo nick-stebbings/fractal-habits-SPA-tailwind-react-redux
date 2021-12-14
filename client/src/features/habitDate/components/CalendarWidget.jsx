@@ -37,7 +37,6 @@ export const CalendarWidget = ({
   const slideIntoView = (e) => {
     e.currentTarget.style.right = 0;
 
-    document.querySelector(".mask-wrapper").style.height = "21rem";
     document.getElementById("hamburger").checked = false;
     document.querySelector(
       ".mask-wrapper .wide-nav"
@@ -54,7 +53,6 @@ export const CalendarWidget = ({
     e.currentTarget.style.right =
       window.innerWidth < 480 ? "calc(100% - 3.25rem)" : "calc(100% - 4rem)";
 
-    document.querySelector(".mask-wrapper").style.height = "initial";
     document.querySelector(
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "0rem";
@@ -188,7 +186,6 @@ export const CalendarWidget = ({
             const relativeDateId = useAppSelector(
               selectRelativeDateId(fromDate)
             );
-            console.log(" DATE ID:>> ", relativeDateId);
             return (
               <DateCard
                 key={fromDate}

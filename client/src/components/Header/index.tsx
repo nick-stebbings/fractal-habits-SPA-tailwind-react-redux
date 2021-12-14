@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../../routes/routeInfo";
 
+import { DateTime } from "luxon";
 import { store } from "app/store";
 // @ts-ignore
 import { useAppDispatch, useAppSelector } from "app/hooks";
@@ -10,7 +11,7 @@ import { debounce } from "app/helpers";
 // @ts-ignore
 import { selectCurrentHabit } from "features/habit/selectors";
 // @ts-ignore
-import slice, { selectCurrentDateId, selectCurrentDatePositionIdx } from 'features/space/slice';
+import slice, { selectCurrentDateId, selectCurrentDatePositionIdx, selectCurrentDate } from 'features/space/slice';
 const { decrementIdx, incrementIdx } = slice.actions;
 
 import { visActions } from "features/hierarchy/reducer";
@@ -53,6 +54,7 @@ const hideMegaMenu = () => {
 
 export const Header = ({isVis}) => {
   const dispatch = useAppDispatch()
+  const currentDate = useAppSelector(selectCurrentDate);
   const currentDateId = useAppSelector(selectCurrentDateId);
   const currentDatePositionIdx = useAppSelector(selectCurrentDatePositionIdx);
   const currentHabit = useAppSelector(selectCurrentHabit);
@@ -64,15 +66,20 @@ export const Header = ({isVis}) => {
     if (isVis) {
       dispatch(updateCurrentHierarchy({nextDateId: currentDateId - 1}))
       const newDateId = Math.max.apply(null, [1, currentDateId - 7]) // Account for minimum date Id
-if ( !isMemoised(newDateId)) {
-  currentDatePositionIdx < 0 && updateCurrentHierarchy({nextDateId: -1}) // Account for boundary of possible stored habit tree jsons 
-  currentDatePositionIdx == 0 &&
-  dispatch(fetchHabitTreesREST({ domainId: 1, dateId: newDateId }));
-}
+
+    if ( !isMemoised(newDateId)) {
+      currentDatePositionIdx < 0 && updateCurrentHierarchy({nextDateId: -1}) // Account for boundary of possible stored habit tree jsons 
+      currentDatePositionIdx == 2 && // Fetch the previous week when we are close to the start of the current week
+      dispatch(fetchHabitTreesREST({ domainId: 1, dateId: newDateId - 2 }));
+    }
 }
     dispatch(decrementIdx())
 }
   const handleNextDate = (_: any) => {
+
+    const todaysDate = DateTime.now().startOf("day").ts;
+    if (currentDate.timeframe.fromDate == todaysDate) return;
+    
     if (isVis) {
       if (isMemoised(currentDateId + 1)) {
         dispatch(updateCurrentHierarchy({nextDateId: currentDateId + 1}))

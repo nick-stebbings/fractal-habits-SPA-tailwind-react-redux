@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DateTime } from "luxon";
 import { createInterval } from "../features/space/utils";
-import { initialState as defaultHabit } from "../features/habit/reducer";
 
 export function isCrud(action, create, fetch, update, destroy, fetchOne) {
   return [create, fetch, update, destroy, fetchOne]
