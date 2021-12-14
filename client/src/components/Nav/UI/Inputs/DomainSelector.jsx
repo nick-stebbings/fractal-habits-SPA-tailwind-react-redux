@@ -13,7 +13,7 @@ export const DomainSelector = () => {
   return (
     <select
       className={
-        "select form-select domain-selector w-full lg:pt-2 pl-2 sm:h-10 h-6 py-0 md:p-2 mr-1 xl-mt-4 rounded-2xl"
+        "select form-select domain-selector w-full lg:pt-2 pl-2 sm:h-10 h-6 py-0 md:p-2 mr-1 xl-mt-4 rounded-2xl bg-white"
       }
       selectedindex={allDomains && allDomains.indexOf(currentDomain)}
       tabIndex={2}

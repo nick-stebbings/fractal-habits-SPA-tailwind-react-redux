@@ -35,7 +35,6 @@ export const CalendarWidget = ({
   ).matches;
   const [mobileFullyVisible, setMobileFullyVisible] = useState(true);
   const slideIntoView = (e) => {
-    if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
     e.currentTarget.style.right = 0;
 
     document.querySelector(".mask-wrapper").style.height = "21rem";
@@ -50,10 +49,8 @@ export const CalendarWidget = ({
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =
       "0px";
     document.querySelector(".cal-date-nav-r").style.display = "initial";
-    setMobileFullyVisible(true);
   };
   const slideOutOfView = (e) => {
-    if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
     e.currentTarget.style.right =
       window.innerWidth < 480 ? "calc(100% - 3.25rem)" : "calc(100% - 4rem)";
 
@@ -68,13 +65,19 @@ export const CalendarWidget = ({
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =
       "3px";
     document.querySelector(".cal-date-nav-r").style.display = "none";
-    setMobileFullyVisible(false);
   };
   const toggleSlide = (e) => {
-    if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
+    if (
+      !isMobile ||
+      e.target.classList.contains("cal-date-nav") ||
+      e.target.classList.contains(".fa") ||
+      !!e.target.closest(".date-card")
+    )
+      return;
     mobileFullyVisible ? slideIntoView(e) : slideOutOfView(e);
     setMobileFullyVisible(!mobileFullyVisible);
   };
+
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);

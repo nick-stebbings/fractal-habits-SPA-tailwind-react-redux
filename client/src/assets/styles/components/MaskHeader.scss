@@ -141,7 +141,7 @@ li.hoverable {
       }
 
       .inset {
-        @apply bg-balance-tershades-gray flex rounded-xl rounded-l-none w-3/4 gap-2 p-0 pr-2 pt-2 mb-28;
+        @apply bg-balance-tershades-gray flex rounded-xl rounded-l-none w-3/4 gap-2 p-0 pr-2 pt-2 mb-8;
 
         .menu-card.disabled {
           flex-grow: 1;
@@ -174,7 +174,7 @@ li.hoverable {
           }
 
           .menu-card-button {
-            @apply absolute bottom-8 border-2 mt-12 p-0 m-2 mb-16 rounded-full shadow-md text-gray-50 bg-gray-700 uppercase;
+            @apply absolute -bottom-2 border-2 mt-12 p-0 m-2 mb-16 rounded-full shadow-md text-gray-50 bg-gray-700 uppercase;
           }
 
           .menu-card-button:focus,
