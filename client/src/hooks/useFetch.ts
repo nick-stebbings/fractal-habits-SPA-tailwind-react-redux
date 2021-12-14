@@ -9,6 +9,8 @@ import {
   fetchHabitTreeREST,
   fetchHabitTreesREST,
 } from "../features/hierarchy/actions";
+import { visActions } from "../features/hierarchy/reducer";
+const { clearFutureCache } = visActions;
 import { selectCurrentDateId } from "../features/space/slice";
 import { fetchHabitREST } from "../features/habit/actions";
 import { fetchNodesREST } from "../features/node/actions";
@@ -28,6 +30,8 @@ export default function useFetch(isVisComponent: boolean) {
     dispatch(fetchHabitTreeREST({ domainId: 1, dateId: currentDateId }));
   const loadWeeklyTreeData = async () =>
     dispatch(fetchHabitTreesREST({ domainId: 1, dateId: currentDateId - 7 }));
+  const removeFutureRecords = async () =>
+    dispatch(clearFutureCache({ currentDateId }));
 
   const loadData = async function () {
     await loadDomains();
@@ -51,6 +55,15 @@ export default function useFetch(isVisComponent: boolean) {
     if (currentHabit?.meta.id == 0 || currentHabit?.meta?.name) return;
     loadNodeData();
     loadNewCurrentHabit();
+    if (
+      isVisComponent &&
+      (currentHabit?.meta.id !== 0 || currentHabit?.meta.id == 1) &&
+      !currentHabit?.meta?.name
+    ) {
+      // A new habit and node was created or one was deleted so refresh weekly hierarchies
+      loadWeeklyTreeData();
+      removeFutureRecords();
+    }
     isVisComponent && loadTreeData();
   }, [currentHabit?.meta?.id]);
 

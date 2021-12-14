@@ -37,6 +37,14 @@ export const hierarchySlice = createSlice({
       const { vis, label } = action.payload;
       if (typeof state[label]?.id == "undefined") state[label] = vis;
     },
+    clearFutureCache(state, action: PayloadAction<number>) {
+      const { currentDateId } = action.payload;
+      Object.keys(state.myRecords)
+        .filter((id) => id > currentDateId)
+        .forEach((id) => {
+          delete state.myRecords[id];
+        });
+    },
     updateCurrentHierarchy(state, action: PayloadAction<any>) {
       const { nextDateId } = action.payload;
       if (state.myRecords[nextDateId]) {

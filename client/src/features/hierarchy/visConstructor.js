@@ -596,8 +596,6 @@ export default class Visualization {
     }
   }
   activeOrNonActiveOpacity(d, dimmedOpacity) {
-    console.log("this.activeNode :>> ", d, this.activeNode);
-    console.log("ddd :>> ", [d].includes(this.activeNode));
     if (
       !this.activeNode ||
       (!!this.activeNode &&
@@ -607,8 +605,8 @@ export default class Visualization {
           .concat(d?.children)
           .concat(d?._children)
           .concat(d?.parent)
-          .map((d) => d?.data?.content)
-          .includes(this.activeNode.data.content))
+          .map((d) => d?.data?.content?.name)
+          .includes(this.activeNode.data.content.name))
     )
       return "1";
 
@@ -769,7 +767,7 @@ export default class Visualization {
       .classed("habit-label-dash-button", true)
       .attr(
         "transform",
-        `translate(${-2 * this._viewConfig.nodeRadius}, ${
+        `translate(${(-BUTTON_SCALE / 2) * this._viewConfig.nodeRadius}, ${
           -1.5 * this._viewConfig.nodeRadius
         }), scale(${BUTTON_SCALE})`
       )
