@@ -34,7 +34,7 @@ export const CalendarWidget = ({
     "only screen and (max-width: 1024px)"
   ).matches;
   const [mobileFullyVisible, setMobileFullyVisible] = useState(true);
-  const slideIn = (e) => {
+  const slideIntoView = (e) => {
     if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
     e.currentTarget.style.right = 0;
 
@@ -43,25 +43,16 @@ export const CalendarWidget = ({
     document.querySelector(
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "1.5rem";
-    // document.querySelector(".date-card:last-child").style.zIndex = "0";
 
-    document.querySelector(".date-card-wrapper").style.maxWidth =
-      window.innerWidth < 480 ? "85%" : "80%";
-    // document.querySelector(".date-card-wrapper").style.padding =
-    //   window.innerWidth < 480 ? "0rem 0.5rem" : "0 2rem";
-    // document.querySelector(".date-card-wrapper").style.justifyContent =
-    //   window.innerWidth > 480 ? "center" : "flex-end";
-
-    document.querySelector(".habit-description-label").style.left = "0em";
-    document.querySelector(".habit-description-label").style.width =
-      window.innerWidth > 480 ? "100%" : "100%";
-
-    document.querySelector(".cal-date-nav-r").style.display = "initial";
+    document.querySelector(".date-card-wrapper").style.justifyContent =
+      window.innerWidth > 480 ? "center" : "flex-end";
+    document.querySelector(".habit-description-label").style.left = "initial";
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =
       "0px";
+    document.querySelector(".cal-date-nav-r").style.display = "initial";
     setMobileFullyVisible(true);
   };
-  const slideOut = (e) => {
+  const slideOutOfView = (e) => {
     if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
     e.currentTarget.style.right =
       window.innerWidth < 480 ? "calc(100% - 3.25rem)" : "calc(100% - 4rem)";
@@ -70,17 +61,10 @@ export const CalendarWidget = ({
     document.querySelector(
       ".mask-wrapper .wide-nav"
     ).style.borderTopRightRadius = "0rem";
-    // document.querySelector(".date-card-wrapper").style.padding = "2rem 0.5rem";
-    // document.querySelector(".date-card-wrapper").style.justifyContent =
-    //   "flex-end";
 
-    document.querySelector(".date-card-wrapper").style.maxWidth = "100%";
-
-    document.querySelector(".habit-description-label").style.left = "2rem";
-    document.querySelector(".habit-description-label").style.width =
-      window.innerWidth > 480 ? "96%" : "90%";
-    // document.querySelector(".date-card:last-child").style.zIndex = "0";
-
+    document.querySelector(".date-card-wrapper").style.justifyContent =
+      "flex-end";
+    document.querySelector(".habit-description-label").style.left = "0";
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =
       "3px";
     document.querySelector(".cal-date-nav-r").style.display = "none";
@@ -88,7 +72,7 @@ export const CalendarWidget = ({
   };
   const toggleSlide = (e) => {
     if (!isMobile || e.target.classList.contains("cal-date-nav")) return;
-    mobileFullyVisible ? slideIn(e) : slideOut(e);
+    mobileFullyVisible ? slideIntoView(e) : slideOutOfView(e);
     setMobileFullyVisible(!mobileFullyVisible);
   };
   const currentHabit = useAppSelector(selectCurrentHabit);
@@ -187,7 +171,7 @@ export const CalendarWidget = ({
         </span>
       </div>
       <div
-        className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end md:justify-center w-full gap-1 lg:gap-2 bg-transparent"
+        className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent"
         onMouseEnter={(e) => {
           showMegaMenu();
           window.innerWidth < 1024 &&
