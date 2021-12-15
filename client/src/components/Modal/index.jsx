@@ -57,7 +57,7 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
           className={
             type == "Error" || confirmationDialog
               ? "h-72 inset-y-1/3 inset-x-10 sm:inset-1/4 rounded-2xl shadow-tershades-gray absolute flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
-              : "h-5/6 md:inset-2 inset-1 sm:inset-12 rounded-2xl shadow-tershades-gray absolute bottom-auto flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
+              : "h-full sm:h-5/6 sm:inset-2 inset-y-1 rounded-2xl shadow-tershades-gray absolute bottom-auto flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
           }
         >
           <div className="rounded-2xl flex flex-col items-center w-full">

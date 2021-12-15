@@ -23,7 +23,7 @@ import {
 } from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";
-import { isTouchDevice() } from "app/helpers";
+import { isTouchDevice } from "app/helpers";
 
 export const CalendarWidget = ({
   handlePrev,
