@@ -59,12 +59,18 @@ import {
   neutralCol,
   parentPositiveCol,
 } from "app/constants";
-
+function autoBox() {
+  document.body.appendChild(this);
+  const { x, y, width, height } = this.getBBox();
+  document.body.removeChild(this);
+  return [x, y, width, height];
+}
 const BASE_SCALE = 1.5;
 const FOCUS_MODE_SCALE = 3;
 const XS_LABEL_SCALE = 1.2;
 const LG_LABEL_SCALE = 2.5;
-const BUTTON_SCALE = 3.2;
+const XS_BUTTON_SCALE = 2;
+const LG_BUTTON_SCALE = 3.2;
 const XS_NODE_RADIUS = 40;
 const LG_NODE_RADIUS = 80;
 const XS_LEVELS_HIGH = 6;
@@ -77,33 +83,32 @@ const DEFAULT_MARGIN = {
   bottom: 0,
   left: 0,
 };
+
 const getInitialXTranslate = (
   groupWidth,
   scale,
   type,
-  { canvasWidth, levelsWide }
+  { canvasWidth, levelsWide, nodeRadius, viewportW, defaultView, isSmallScreen }
 ) => {
-  return (
-    (levelsWide *
-      (type == "tree" || type == "radial"
-        ? canvasWidth / 2
-        : canvasWidth / (this?.rootData?.height + 1 || 4)) -
-      groupWidth / 2) /
-    scale
-  );
+  const [x, y, w, h] = defaultView.split` `;
+  return w / levelsWide;
 };
+
 const getInitialYTranslate = (
   groupHeight,
   scale,
   type,
-  { canvasHeight, levelsHigh }
+  { canvasHeight, levelsHigh, defaultView, isSmallScreen }
 ) => {
-  return (
-    (levelsHigh *
-      (type == "cluster" || type == "radial" ? canvasHeight / 2 : 150)) /
-    scale
-  );
+  const [x, y, w, h] = defaultView.split` `;
+  switch (type) {
+    case "tree":
+      return 500;
+    default:
+      return (h / levelsHigh) * 2;
+  }
 };
+
 const radialTranslation = (zoomConfig) => {
   const [x, y] = radialPoint(
     zoomConfig.previousRenderZoom?.node?.x,
@@ -113,24 +118,35 @@ const radialTranslation = (zoomConfig) => {
 };
 
 const newXTranslate = (type, viewConfig, zoomConfig) => {
+  console.log(
+    "zoomConfig X :>> ",
+    zoomConfig.globalZoomScale,
+    viewConfig.scale
+  );
+  const scale = zoomConfig.globalZoomScale || viewConfig.scale;
+  // zoomConfig.globalZoomScale = null;
+  console.log("scale X  :>> ", scale);
   switch (type) {
     case "cluster":
-      return -zoomConfig.previousRenderZoom?.node?.y;
+      return -zoomConfig.previousRenderZoom?.node?.y * scale;
     case "radial":
-      return -radialTranslation(zoomConfig).x;
+      return -radialTranslation(zoomConfig).x * scale;
     case "tree":
-      return -zoomConfig.previousRenderZoom?.node?.x;
+      return -zoomConfig.previousRenderZoom?.node?.x * scale;
   }
 };
 
 const newYTranslate = (type, viewConfig, zoomConfig) => {
+  const scale = zoomConfig.globalZoomScale || viewConfig.scale;
+  // zoomConfig.globalZoomScale = null;
   switch (type) {
     case "cluster":
-      return -zoomConfig.previousRenderZoom?.node?.x;
+      return -zoomConfig.previousRenderZoom?.node?.x * scale;
     case "radial":
-      return -radialTranslation(zoomConfig).y;
+      return -radialTranslation(zoomConfig).y * scale;
     case "tree":
-      return -zoomConfig.previousRenderZoom?.node?.y;
+      console.log("object Y :>> ", -zoomConfig.previousRenderZoom?.node?.y);
+      return -zoomConfig.previousRenderZoom?.node?.y * scale;
   }
 };
 
@@ -146,6 +162,7 @@ export default class Visualization {
       margin: margin || DEFAULT_MARGIN,
       canvasHeight,
       canvasWidth,
+
       defaultCanvasTranslateX: (scale) => {
         const initialX = getInitialXTranslate.call(
           this,
@@ -154,7 +171,7 @@ export default class Visualization {
           this.type,
           this._viewConfig
         );
-        // console.log("initialX :>> ", initialX);
+        console.log("initialX :>> ", initialX);
         return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
           "undefined"
           ? initialX +
@@ -169,7 +186,7 @@ export default class Visualization {
           this.type,
           this._viewConfig
         );
-        // console.log("initialY :>> ", initialY);
+        console.log("initialY :>> ", initialY);
         return typeof this._zoomConfig.previousRenderZoom?.node?.y !==
           "undefined"
           ? initialY +
@@ -217,8 +234,8 @@ export default class Visualization {
         };
         select(".canvas")
           .transition()
-          .ease(easePolyOut)
-          .duration(this.isDemo ? 0 : 5)
+          .ease(easeCubic)
+          .duration(this.isDemo ? 200 : 1000)
           .attr(
             "transform",
             `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
@@ -331,7 +348,7 @@ export default class Visualization {
         g.select(".tooltip").transition().duration(50).style("opacity", "0");
         g.select(".habit-label-dash-button")
           .transition()
-          .delay(1000)
+          .delay(2000)
           .duration(150)
           .style("opacity", "0");
         setTimeout(() => {
@@ -339,7 +356,7 @@ export default class Visualization {
         }, 100);
         setTimeout(() => {
           this.currentTooltip = false;
-        }, 500);
+        }, 100);
       },
       handleHover: function (e, d) {
         // If it is an animated concentric circle, delegate to parent node
@@ -493,7 +510,7 @@ export default class Visualization {
       document.querySelector(".the-node.active") &&
         document.querySelector(".the-node.active").classList.remove("active");
     }
-    this.zoomBase().call(this.zoomer.transform, zoomIdentity);
+    // this.zoomBase().call(this.zoomer.transform, zoomIdentity);
   }
 
   setLevelsHighAndWide() {
@@ -535,28 +552,34 @@ export default class Visualization {
     const zooms = function (e) {
       let t = { ...e.transform };
       let scale = t.k;
-
-      if (this._zoomConfig.focusMode) {
-        let newTransform = t;
-        newTransform.k = this._zoomConfig.globalZoomScale;
-        newTransform.x =
-          t.x + this._viewConfig.defaultCanvasTranslateX(3) * newTransform.k;
-        newTransform.y =
-          t.y + this._viewConfig.defaultCanvasTranslateY(3) * newTransform.k;
-        scale = newTransform.k;
-        this._zoomConfig.focusMode = false;
-        this.zoomBase().call(this.zoomer.transform, newTransform);
-      } else {
-        scale = t.k;
-        t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
-        t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
-      }
-
-      this._canvas
+      t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
+      t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
+      select(".canvas")
         .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
         .transition()
         .ease(easePolyOut)
-        .duration(500);
+        .duration(2500);
+      // if (this._zoomConfig.focusMode) {
+      //   let newTransform = t;
+      //   newTransform.k = this._zoomConfig.globalZoomScale;
+      //   newTransform.x =
+      //     t.x + this._viewConfig.defaultCanvasTranslateX(3) * newTransform.k;
+      //   newTransform.y =
+      //     t.y + this._viewConfig.defaultCanvasTranslateY(3) * newTransform.k;
+      //   scale = newTransform.k;
+      //   this._zoomConfig.focusMode = false;
+      //   this.zoomBase().call(this.zoomer.transform, newTransform);
+      // } else {
+      //   scale = t.k;
+      //   t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
+      //   t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
+      // }
+
+      // this._canvas
+      //   .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
+      //   .transition()
+      //   .ease(easePolyOut)
+      //   .duration(500);
       this._zoomConfig.focusMode = false;
     };
 
@@ -657,7 +680,9 @@ export default class Visualization {
         break;
       case "radial":
         this.layout = cluster().size([180, this.canvasHeight * 2]);
-        this.layout.nodeSize([500, 500]);
+        this.layout.nodeSize(
+          this._viewConfig.isSmallScreen() ? [300, 300] : [500, 500]
+        );
         break;
     }
 
@@ -781,14 +806,15 @@ export default class Visualization {
         "transform",
         (d) =>
           `translate(${
-            (-BUTTON_SCALE /
-              (this.type == "radial" ? this._viewConfig.nodeRadius : 2)) *
+            (-3 / (this.type == "radial" ? this._viewConfig.nodeRadius : 2)) *
             this._viewConfig.nodeRadius
           }, ${
             this.type == "radial"
               ? this._viewConfig.nodeRadius * d.depth
               : -1.5 * this._viewConfig.nodeRadius
-          }), scale(${BUTTON_SCALE})` +
+          }), scale(${
+            this._viewConfig.isSmallScreen() ? XS_BUTTON_SCALE : LG_BUTTON_SCALE
+          })` +
           (this.type == "radial"
             ? `, rotate(${180 - ((d.x / 8) * 180) / Math.PI - 90})`
             : "")
@@ -928,14 +954,15 @@ export default class Visualization {
     selection
       .on("click", (e, d) => {
         if (e.target.tagName !== "circle") return;
+        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
         this.eventHandlers.handleNodeFocus.call(this, e, d);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
         passive: true,
       })
       .on("touchend", (e, d) => {
-        this.eventHandlers.handleNodeFocus.call(this, e, d);
-        this.eventHandlers.handleNodeToggle.call(this, e, d);
+        // this.eventHandlers.handleNodeFocus.call(this, e, d);
+        // this.eventHandlers.handleNodeToggle.call(this, e, d);
       })
       .on("contextmenu", (e, d) => {
         this.eventHandlers.handleNodeFocus.call(this, e, d);
