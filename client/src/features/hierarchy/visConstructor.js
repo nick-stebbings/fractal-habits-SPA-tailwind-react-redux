@@ -11,6 +11,7 @@ import {
   cluster,
   easeCubic,
   easePolyOut,
+  easeLinear,
   zoomTransform,
   ascending,
 } from "d3";
@@ -503,18 +504,14 @@ export default class Visualization {
   }
 
   resetForExpandedMenu({ justTranslation }) {
-    this.scale = BASE_SCALE;
-    console.log("[...this._viewConfig.defaultView] :>> ", [
-      this._viewConfig.defaultView.split` `,
-    ]);
     let newTranslate = this._viewConfig.defaultView.split` `;
     newTranslate[0] = newTranslate[2] / 2;
     newTranslate[1] = newTranslate[3] / 4;
     let newTranslateString = newTranslate.join(" ");
     this.zoomBase()
       .transition()
-      .duration(500)
-      .ease(easePolyOut)
+      .duration(200)
+      .ease(easeLinear)
       .attr("viewBox", newTranslateString);
     this._zoomConfig.previousRenderZoom = {};
     this.activeNode.isNew = null;
@@ -567,29 +564,30 @@ export default class Visualization {
       let t = { ...e.transform };
       let scale;
       let x, y;
-      console.log(
-        "t :>> ",
-        this._viewConfig.defaultCanvasTranslateX(BASE_SCALE) +
-          this._zoomConfig.previousRenderZoom?.node?.x,
-        this._viewConfig.defaultCanvasTranslateY(BASE_SCALE) +
-          this._zoomConfig.previousRenderZoom?.node?.y
-      );
       if (this._zoomConfig.focusMode) {
-        select(".canvas")
-          .transition()
-          .ease(easePolyOut)
-          .duration(5500)
-          .attr(
-            "transform",
-            `translate(${
-              this._viewConfig.defaultCanvasTranslateX(BASE_SCALE) -
-              this._zoomConfig.previousRenderZoom?.node?.x * FOCUS_MODE_SCALE
-            },${
-              this._viewConfig.defaultCanvasTranslateY(BASE_SCALE) -
-              this._zoomConfig.previousRenderZoom?.node?.y * FOCUS_MODE_SCALE
-            }), scale(${BASE_SCALE})`
-          );
+        // select(".canvas")
+        //   .transition()
+        //   .ease(easePolyOut)
+        //   .duration(5500)
+        //   .attr(
+        //     "transform",
+        //     `translate(${
+        //       this._viewConfig.defaultCanvasTranslateX(BASE_SCALE) -
+        //       this._zoomConfig.previousRenderZoom?.node?.x * FOCUS_MODE_SCALE
+        //     },${
+        //       this._viewConfig.defaultCanvasTranslateY(BASE_SCALE) -
+        //       this._zoomConfig.previousRenderZoom?.node?.y * FOCUS_MODE_SCALE
+        //     }), scale(${BASE_SCALE})`
+        //   );
+
+        setTimeout(() => {
+          this.resetForExpandedMenu({ justTranslation: true });
+        }, 20);
         this._zoomConfig.focusMode = false;
+        // this.zoomBase().call(
+        //   this.zoomer.transform,
+        //   Object.assign(zoomIdentity, {})
+        // );
         return;
         //   let newTransform = { ...t };
         //   newTransform.k = this._zoomConfig.globalZoomScale * t.k;
@@ -600,11 +598,6 @@ export default class Visualization {
 
         //   x = newTransform.x;
         //   y = newTransform.y;
-        //   this._zoomConfig.focusMode = false;
-        //   this.zoomBase().call(
-        //     this.zoomer.transform,
-        //     Object.assign(zoomIdentity, newTransform)
-        //   );
         //   return;
         //   // debugger;
       } else {

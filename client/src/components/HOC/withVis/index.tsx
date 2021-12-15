@@ -61,6 +61,7 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
             id="reset-tree"
             className="vis-button"
             onClick={(e) => {
+              console.log('e :>> ', e);
               // const {target} = e
               // target.parentNode.classList.toggle('active');
               try {

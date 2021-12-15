@@ -50,6 +50,7 @@ export const CalendarWidget = ({
     document.getElementById("current-habit-label-sm").style.borderBottomWidth =
       "0px";
     document.querySelector(".cal-date-nav-r").style.display = "initial";
+    document.getElementById("reset-tree").dispatchEvent(new Event("click"));
   };
   const slideOutOfView = (e) => {
     e.currentTarget.style.right =
