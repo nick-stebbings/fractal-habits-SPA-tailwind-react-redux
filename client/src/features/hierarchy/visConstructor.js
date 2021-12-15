@@ -502,9 +502,20 @@ export default class Visualization {
     select(".canvas").selectAll("*").remove();
   }
 
-  reset({ justTranslation }) {
+  resetForExpandedMenu({ justTranslation }) {
     this.scale = BASE_SCALE;
-    this.zoomBase().attr("viewBox", this._viewConfig.defaultView);
+    console.log("[...this._viewConfig.defaultView] :>> ", [
+      this._viewConfig.defaultView.split` `,
+    ]);
+    let newTranslate = this._viewConfig.defaultView.split` `;
+    newTranslate[0] = newTranslate[2] / 2;
+    newTranslate[1] = newTranslate[3] / 4;
+    let newTranslateString = newTranslate.join(" ");
+    this.zoomBase()
+      .transition()
+      .duration(500)
+      .ease(easePolyOut)
+      .attr("viewBox", newTranslateString);
     this._zoomConfig.previousRenderZoom = {};
     this.activeNode.isNew = null;
     this.activeNode = this.rootData;
@@ -539,8 +550,8 @@ export default class Visualization {
       +(this.type == "cluster") * 80;
 
     //adjust for taller aspect ratio
-    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 1.5;
-    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3 : 3.5;
+    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 4.5;
+    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 2.5;
     if (this.type == "radial") {
       this._viewConfig.dx *= BASE_SCALE * 1.5;
       this._viewConfig.dy *= BASE_SCALE;
@@ -1208,7 +1219,7 @@ export default class Visualization {
         })
         .duration(500);
 
-      // Reset pulseCircles where r == 0
+      // resetForExpandedMenu pulseCircles where r == 0
       pulseCircles
         .filter(function (d) {
           return d == 0;

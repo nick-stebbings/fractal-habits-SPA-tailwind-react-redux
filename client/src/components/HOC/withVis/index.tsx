@@ -56,6 +56,28 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
       >
         <span>{currentVis?.rootData && (currentVis.rootData._children ? "Expand" : "Collapse")}</span>
       </button>
+      <button
+            type="button"
+            id="reset-tree"
+            className="vis-button"
+            onClick={(e) => {
+              // const {target} = e
+              // target.parentNode.classList.toggle('active');
+              try {
+                currentVis.resetForExpandedMenu({justTranslation: true})
+              // target.textContent == "Collapse"
+              //   ? currentVis.collapse()
+              //   : currentVis.expand();
+              // target.textContent = target.textContent.includes("Collapse")
+                // ? "Expand"
+                // : "Collapse"; 
+              } catch (error) {
+                console.error("Could not mutate tree: ", error);
+              }
+            }}
+      >
+        <span>RESET</span>
+      </button>
       </>
       )}} />)
     }
