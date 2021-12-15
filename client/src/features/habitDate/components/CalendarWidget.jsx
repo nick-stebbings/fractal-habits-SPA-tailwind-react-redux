@@ -23,6 +23,7 @@ import {
 } from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";
+import { isTouchDevice } from "app/helpers";
 
 export const CalendarWidget = ({
   handlePrev,
@@ -30,9 +31,6 @@ export const CalendarWidget = ({
   hideMegaMenu,
   showMegaMenu,
 }) => {
-  const isMobile = window.matchMedia(
-    "only screen and (max-width: 1024px)"
-  ).matches;
   const [mobileFullyVisible, setMobileFullyVisible] = useState(true);
   const slideIntoView = (e) => {
     e.currentTarget.style.right = 0;
@@ -70,7 +68,7 @@ export const CalendarWidget = ({
   };
   const toggleSlide = (e) => {
     if (
-      !isMobile ||
+      !isTouchDevice ||
       e.target.classList.contains("cal-date-nav") ||
       e.target.classList.contains(".fa")
       // || !!e.target.closest(".date-card")
