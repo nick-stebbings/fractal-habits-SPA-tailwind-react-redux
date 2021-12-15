@@ -40,14 +40,13 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
             id="collapse-tree"
             className="vis-button"
             onClick={(e) => {
-              const {target: { classList, textContent }} = e
-              classList.toggle('active');
+              const {target} = e
+              target.parentNode.classList.toggle('active');
               try {
-              textContent == "Collapse"
+              target.textContent == "Collapse"
                 ? currentVis.collapse()
                 : currentVis.expand();
-
-              e.target.textContent = textContent.includes("Collapse")
+              target.textContent = target.textContent.includes("Collapse")
                 ? "Expand"
                 : "Collapse"; 
               } catch (error) {

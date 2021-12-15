@@ -66,7 +66,7 @@ function autoBox() {
   return [x, y, width, height];
 }
 const BASE_SCALE = 1.5;
-const FOCUS_MODE_SCALE = 3;
+const FOCUS_MODE_SCALE = 2;
 const XS_LABEL_SCALE = 1.2;
 const LG_LABEL_SCALE = 2.5;
 const XS_BUTTON_SCALE = 2;
@@ -118,14 +118,7 @@ const radialTranslation = (zoomConfig) => {
 };
 
 const newXTranslate = (type, viewConfig, zoomConfig) => {
-  console.log(
-    "zoomConfig X :>> ",
-    zoomConfig.globalZoomScale,
-    viewConfig.scale
-  );
   const scale = zoomConfig.globalZoomScale || viewConfig.scale;
-  // zoomConfig.globalZoomScale = null;
-  console.log("scale X  :>> ", scale);
   switch (type) {
     case "cluster":
       return -zoomConfig.previousRenderZoom?.node?.y * scale;
@@ -136,8 +129,8 @@ const newXTranslate = (type, viewConfig, zoomConfig) => {
   }
 };
 
-const newYTranslate = (type, viewConfig, zoomConfig) => {
-  const scale = zoomConfig.globalZoomScale || viewConfig.scale;
+const newYTranslate = (newScale, type, viewConfig, zoomConfig) => {
+  const scale = newScale || viewConfig.scale;
   // zoomConfig.globalZoomScale = null;
   switch (type) {
     case "cluster":
@@ -145,7 +138,6 @@ const newYTranslate = (type, viewConfig, zoomConfig) => {
     case "radial":
       return -radialTranslation(zoomConfig).y * scale;
     case "tree":
-      console.log("object Y :>> ", -zoomConfig.previousRenderZoom?.node?.y);
       return -zoomConfig.previousRenderZoom?.node?.y * scale;
   }
 };
@@ -158,7 +150,7 @@ export default class Visualization {
     this.rootData = inputTree;
     this._viewConfig = {
       scale: BASE_SCALE,
-      clickScale: FOCUS_MODE_SCALE,
+      clickScale: type == "radial" ? BASE_SCALE / 2 : FOCUS_MODE_SCALE,
       margin: margin || DEFAULT_MARGIN,
       canvasHeight,
       canvasWidth,
@@ -179,6 +171,10 @@ export default class Visualization {
           : initialX;
       },
       defaultCanvasTranslateY: (scale) => {
+        console.log(
+          "newY :>> ",
+          typeof this._zoomConfig.previousRenderZoom?.node?.y !== "undefined"
+        );
         const initialY = getInitialYTranslate.call(
           this,
           this._canvas?._groups[0][0]?.getBoundingClientRect().height,
@@ -190,7 +186,12 @@ export default class Visualization {
         return typeof this._zoomConfig.previousRenderZoom?.node?.y !==
           "undefined"
           ? initialY +
-              newYTranslate(this.type, this._viewConfig, this._zoomConfig)
+              newYTranslate(
+                scale,
+                this.type,
+                this._viewConfig,
+                this._zoomConfig
+              )
           : initialY;
       },
       isSmallScreen: function () {
@@ -234,13 +235,15 @@ export default class Visualization {
         };
         select(".canvas")
           .transition()
-          .ease(easeCubic)
-          .duration(this.isDemo ? 200 : 1000)
+          .ease(easePolyOut)
+          .duration(this.isDemo ? 200 : 1)
           .attr(
             "transform",
-            `translate(${this._viewConfig.defaultCanvasTranslateX()},${this._viewConfig.defaultCanvasTranslateY()}), scale(${
+            `translate(${this._viewConfig.defaultCanvasTranslateX(
               this._zoomConfig.globalZoomScale
-            })`
+            )},${this._viewConfig.defaultCanvasTranslateY(
+              this._zoomConfig.globalZoomScale
+            )}), scale(${this._zoomConfig.globalZoomScale})`
           );
       },
       handleNodeFocus: function (event, node) {
@@ -536,8 +539,8 @@ export default class Visualization {
       +(this.type == "cluster") * 80;
 
     //adjust for taller aspect ratio
-    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 2.5;
-    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 2 : 2.5;
+    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 1.5;
+    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3 : 3.5;
     if (this.type == "radial") {
       this._viewConfig.dx *= BASE_SCALE * 1.5;
       this._viewConfig.dy *= BASE_SCALE;
@@ -551,30 +554,59 @@ export default class Visualization {
   setZoomBehaviour() {
     const zooms = function (e) {
       let t = { ...e.transform };
-      let scale = t.k;
-      t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
-      t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
+      let scale;
+      let x, y;
+      console.log(
+        "t :>> ",
+        this._viewConfig.defaultCanvasTranslateX(BASE_SCALE) +
+          this._zoomConfig.previousRenderZoom?.node?.x,
+        this._viewConfig.defaultCanvasTranslateY(BASE_SCALE) +
+          this._zoomConfig.previousRenderZoom?.node?.y
+      );
+      if (this._zoomConfig.focusMode) {
+        select(".canvas")
+          .transition()
+          .ease(easePolyOut)
+          .duration(5500)
+          .attr(
+            "transform",
+            `translate(${
+              this._viewConfig.defaultCanvasTranslateX(BASE_SCALE) -
+              this._zoomConfig.previousRenderZoom?.node?.x * FOCUS_MODE_SCALE
+            },${
+              this._viewConfig.defaultCanvasTranslateY(BASE_SCALE) -
+              this._zoomConfig.previousRenderZoom?.node?.y * FOCUS_MODE_SCALE
+            }), scale(${BASE_SCALE})`
+          );
+        this._zoomConfig.focusMode = false;
+        return;
+        //   let newTransform = { ...t };
+        //   newTransform.k = this._zoomConfig.globalZoomScale * t.k;
+        //   scale = newTransform.k;
+
+        //   newTransform.x = this._viewConfig.defaultCanvasTranslateX();
+        //   newTransform.y = this._viewConfig.defaultCanvasTranslateY();
+
+        //   x = newTransform.x;
+        //   y = newTransform.y;
+        //   this._zoomConfig.focusMode = false;
+        //   this.zoomBase().call(
+        //     this.zoomer.transform,
+        //     Object.assign(zoomIdentity, newTransform)
+        //   );
+        //   return;
+        //   // debugger;
+      } else {
+        scale = t.k;
+        x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
+        y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
+      }
+
       select(".canvas")
-        .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
         .transition()
         .ease(easePolyOut)
-        .duration(2500);
-      // if (this._zoomConfig.focusMode) {
-      //   let newTransform = t;
-      //   newTransform.k = this._zoomConfig.globalZoomScale;
-      //   newTransform.x =
-      //     t.x + this._viewConfig.defaultCanvasTranslateX(3) * newTransform.k;
-      //   newTransform.y =
-      //     t.y + this._viewConfig.defaultCanvasTranslateY(3) * newTransform.k;
-      //   scale = newTransform.k;
-      //   this._zoomConfig.focusMode = false;
-      //   this.zoomBase().call(this.zoomer.transform, newTransform);
-      // } else {
-      //   scale = t.k;
-      //   t.x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
-      //   t.y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
-      // }
-
+        .duration(500)
+        .attr("transform", `translate(${x},${y}), scale(${scale})`);
       // this._canvas
       //   .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
       //   .transition()
@@ -669,6 +701,7 @@ export default class Visualization {
         this.layout = tree()
           .size(this._viewConfig.canvasWidth, this._viewConfig.canvasHeight)
           .separation((a, b) => (a.parent == b.parent ? 3.5 : 1) / a.depth);
+
         this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
         break;
       case "cluster":
@@ -1260,7 +1293,7 @@ export default class Visualization {
           handleErrorType("No active habits for this date");
         }
       }
-      debounce(this.activateNodeAnimation.bind(this), 400)();
+      debounce(this.activateNodeAnimation.bind(this), 800)();
 
       this.appendCirclesAndLabels();
       this.appendLabels();
