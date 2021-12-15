@@ -23,7 +23,7 @@ import {
 } from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";
-import { isTouchDevice } from "app/helpers";
+import { isTouchDevice() } from "app/helpers";
 
 export const CalendarWidget = ({
   handlePrev,
@@ -68,7 +68,7 @@ export const CalendarWidget = ({
   };
   const toggleSlide = (e) => {
     if (
-      !isTouchDevice ||
+      !isTouchDevice() ||
       e.target.classList.contains("cal-date-nav") ||
       e.target.classList.contains(".fa")
       // || !!e.target.closest(".date-card")
