@@ -11,6 +11,7 @@ import {
   cluster,
   easeCubic,
   easePolyOut,
+  easeSinOut,
   zoomTransform,
   ascending,
 } from "d3";
@@ -65,7 +66,7 @@ function autoBox() {
   document.body.removeChild(this);
   return [x, y, width, height];
 }
-const BASE_SCALE = 1.5;
+const BASE_SCALE = 1.2;
 const FOCUS_MODE_SCALE = 2;
 const XS_LABEL_SCALE = 1.2;
 const LG_LABEL_SCALE = 2.5;
@@ -103,7 +104,7 @@ const getInitialYTranslate = (
   const [x, y, w, h] = defaultView.split` `;
   switch (type) {
     case "tree":
-      return 500;
+      return 700;
     default:
       return (h / levelsHigh) * 2;
   }
@@ -150,7 +151,7 @@ export default class Visualization {
     this.rootData = inputTree;
     this._viewConfig = {
       scale: BASE_SCALE,
-      clickScale: type == "radial" ? BASE_SCALE / 2 : FOCUS_MODE_SCALE,
+      clickScale: type == "radial" ? BASE_SCALE : FOCUS_MODE_SCALE,
       margin: margin || DEFAULT_MARGIN,
       canvasHeight,
       canvasWidth,
@@ -171,10 +172,6 @@ export default class Visualization {
           : initialX;
       },
       defaultCanvasTranslateY: (scale) => {
-        console.log(
-          "newY :>> ",
-          typeof this._zoomConfig.previousRenderZoom?.node?.y !== "undefined"
-        );
         const initialY = getInitialYTranslate.call(
           this,
           this._canvas?._groups[0][0]?.getBoundingClientRect().height,
@@ -459,6 +456,7 @@ export default class Visualization {
     let newCurrent = selectCurrentNodeByMptt(
       store.getState(),
       nodeContent.left,
+      nodeContent.left,
       nodeContent.right
     );
     if (!newCurrent) {
@@ -536,7 +534,7 @@ export default class Visualization {
         (this._viewConfig.isSmallScreen() ? -40 : 100);
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
-      +(this.type == "cluster") * 80;
+      +(this.type == "cluster") * 180;
 
     //adjust for taller aspect ratio
     this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 1.5;
@@ -566,19 +564,22 @@ export default class Visualization {
       if (this._zoomConfig.focusMode) {
         select(".canvas")
           .transition()
-          .ease(easePolyOut)
-          .duration(5500)
+          .ease(easeSinOut)
+          .duration(1000)
           .attr(
             "transform",
             `translate(${
-              this._viewConfig.defaultCanvasTranslateX(BASE_SCALE) -
-              this._zoomConfig.previousRenderZoom?.node?.x * FOCUS_MODE_SCALE
+              this._zoomConfig.previousRenderZoom?.node[
+                this.type == "cluster" ? y : x
+              ] - this._viewConfig.defaultCanvasTranslateX(BASE_SCALE)
             },${
-              this._viewConfig.defaultCanvasTranslateY(BASE_SCALE) -
-              this._zoomConfig.previousRenderZoom?.node?.y * FOCUS_MODE_SCALE
+              this._zoomConfig.previousRenderZoom?.node[
+                this.type == "cluster" ? x : y
+              ] - this._viewConfig.defaultCanvasTranslateY(BASE_SCALE)
             }), scale(${BASE_SCALE})`
           );
         this._zoomConfig.focusMode = false;
+        this.setZoomBehaviour();
         return;
         //   let newTransform = { ...t };
         //   newTransform.k = this._zoomConfig.globalZoomScale * t.k;
@@ -601,22 +602,15 @@ export default class Visualization {
         x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
         y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
       }
-
       select(".canvas")
         .transition()
-        .ease(easePolyOut)
-        .duration(500)
+        .ease(easeSinOut)
+        .duration(this._zoomConfig.zoomedInView() ? 1000 : 500)
         .attr("transform", `translate(${x},${y}), scale(${scale})`);
-      // this._canvas
-      //   .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
-      //   .transition()
-      //   .ease(easePolyOut)
-      //   .duration(500);
-      this._zoomConfig.focusMode = false;
     };
 
     this.zoomer = zoom().scaleExtent([0.5, 5]).on("zoom", zooms.bind(this));
-    this.zoomBase().call(this.zoomer);
+    this.zoomBase().call(this.zoomer, zoomIdentity);
   }
 
   calibrateViewPortAttrs() {
@@ -987,8 +981,9 @@ export default class Visualization {
     selection
       .on("click", (e, d) => {
         if (e.target.tagName !== "circle") return;
-        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
         this.eventHandlers.handleNodeFocus.call(this, e, d);
+        if (this.type == "radial") return;
+        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
         passive: true,
@@ -1024,11 +1019,11 @@ export default class Visualization {
       const doubleTap = new Hammer.Tap({
         event: "doubletap",
         taps: 2,
-        interval: 1000,
+        interval: 200,
       });
       manager.add([doubleTap, singleTap]);
       doubleTap.recognizeWith(singleTap);
-      singleTap.requireFailure(doubleTap);
+      // singleTap.requireFailure(doubleTap);
       manager.on(
         "singletap",
         debounce((ev) => {
@@ -1066,6 +1061,7 @@ export default class Visualization {
       manager.on(
         "doubletap",
         debounce((ev) => {
+          console.log("NODE DOUBLETAP :>> ");
           ev.preventDefault();
           const node = ev.target.__data__.data;
           this.eventHandlers.handleNodeFocus.call(this, ev, node.__data__);

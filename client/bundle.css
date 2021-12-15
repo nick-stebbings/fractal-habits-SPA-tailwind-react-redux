@@ -3095,11 +3095,12 @@ main.wrapper {
   flex: none;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+  justify-content: flex-end;
 }
 #hamburger-wrapper input:checked + nav {
   margin-right: 1rem;
   display: block;
-  transform: translate(-137%);
+  transform: translate(-100%);
   transition: transform 0.7s ease-in;
   -webkit-transition: transform 0.7s;
   -webkit-transition: -webkit-transform 0.2s;
@@ -3870,8 +3871,9 @@ input[type="date"] {
   position: absolute;
   top: 7rem;
   z-index: 20;
-  margin-left: 33%;
   display: none;
+  left: 50vw;
+  right: 0;
   height: 100%;
   flex-direction: column;
   border-bottom-width: 4px;
@@ -3894,7 +3896,6 @@ input[type="date"] {
   .mask-wrapper .wide-nav {
     position: static;
     display: flex;
-    width: 100%;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
