@@ -3,18 +3,14 @@ import {
   scaleOrdinal,
   scaleLinear,
   zoom,
-  zoomIdentity,
   linkVertical,
   linkRadial,
   linkHorizontal,
   tree,
   cluster,
   easeCubic,
-  easePolyOut,
   easeCircleOut,
   easeLinear,
-  zoomTransform,
-  ascending,
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 import Hammer from "hammerjs";
@@ -33,7 +29,7 @@ const { toggleConfirm } = UISlice.actions;
 import HabitSlice from "features/habit/reducer";
 const { updateCurrentHabit } = HabitSlice.actions;
 import NodeSlice from "features/node/reducer";
-const { updateCurrentNode } = NodeSlice.actions;
+const { createNode, updateCurrentNode } = NodeSlice.actions;
 import HabitDateSlice from "features/habitDate/reducer";
 const { updateHabitDateForNode } = HabitDateSlice.actions;
 
@@ -61,6 +57,7 @@ import {
   neutralCol,
   parentPositiveCol,
 } from "app/constants";
+import { selectCurrentDateId } from "../space/slice";
 function autoBox() {
   document.body.appendChild(this);
   const { x, y, width, height } = this.getBBox();
@@ -222,8 +219,6 @@ export default class Visualization {
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
         this._zoomConfig.focusMode = true;
 
-        console.log("NODE ZOOM :>> ");
-
         this.setActiveNode(node.data, event);
         const parentNode = { ...node.parent };
 
@@ -250,25 +245,15 @@ export default class Visualization {
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
-        console.log("NODE FOCUS :>> ");
+        const currentHabit = selectCurrentHabit(store.getState());
 
         const targ = event.target;
         if (targ.tagName == "circle") {
-          if (deadNode(event)) {
-            //P: There is no habit node for this habit. To track a habit for this day:
-            // - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
-            // - We need a visual representation of the node. When a node with this state is toggled, it has a nonPersisted habitDate in the store, set to COMPLETE (a red dot).
-            // - Once a certain amount of time has passed, in order to save the data, we need to do a batch PUT request to the API to update the habit_dates for all habits on that date.
-            // - Do this before moving to a new date
-            // notify the user of the save with a flash message.
-          }
-          if (
-            !(node.data.name == selectCurrentHabit(store.getState())?.meta.name)
-          ) {
+          if (!(node.data.name == currentHabit?.meta.name)) {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
-          this.setActiveNode(node.data, event);
+          // this.setActiveNode(node.data, event);
 
           if (this.type == "tree") {
             const nodesToCollapse = nodesForCollapse
@@ -277,7 +262,7 @@ export default class Visualization {
                 auntCollapse: true,
               })
               .map((n) => n?.data?.content);
-            // console.log("nodesToCollapse :>> ", nodesToCollapse);
+            console.log("nodesToCollapse :>> ", nodesToCollapse);
             this.rootData.each((node) => {
               if (nodesToCollapse.includes(node.data.content)) collapse(node);
             });
@@ -286,6 +271,11 @@ export default class Visualization {
         }
       },
       handleStatusChange: function (node) {
+        const theNode = this.zoomBase()
+          .selectAll(".the-node circle")
+          .filter((n) => {
+            if (n.data.name === node.data.name) return n;
+          });
         if (this.isNotALeaf(node)) {
           //  TODO: ENACT parentCompleted LOGIC
           // 3 state changes possible:
@@ -300,6 +290,8 @@ export default class Visualization {
           // turn the ui green for that node.
           // turn all single parents green too
           // alter the logic for parentCompleted nodes such that they recognise temp habitDates in the store
+          theNode.attr("fill", positiveCol);
+          debugger;
         } else {
         }
 
@@ -324,19 +316,29 @@ export default class Visualization {
       },
       handleNodeToggle: function (event, node) {
         event.preventDefault();
-        if (node.children) {
-          if (deadNode(event)) console.log("dead");
+        const currentHabit = selectCurrentHabit(store.getState());
+        const currentDate = selectCurrentDateId(store.getState());
+        if (deadNode(event)) {
+          // Create a habit date ready for persisting
+          store.dispatch(
+            createNode({
+              habitId: currentHabit?.meta.id,
+              dateId: currentDate,
+              completed: false,
+            })
+          );
+          //P: There is no habit node for this habit. To track a habit for this day:
+          // - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
+          // - We need a visual representation of the node. When a node with this state is toggled, it has a nonPersisted habitDate in the store, set to COMPLETE (a red dot).
+          // - Once a certain amount of time has passed, in order to save the data, we need to do a batch PUT request to the API to update the habit_dates for all habits on that date.
+          // - Do this before moving to a new date
+          // notify the user of the save with a flash message.
           // return;
           // Non-leaf nodes have auto-generated cumulative status
           // (Only leaves can toggle)
           //  TODO: ENACT parentCompleted LOGIC
         }
-        this.previousRenderZoom = {
-          event,
-          node,
-          content: node.data,
-        };
-        // this.eventHandlers.handleStatusChange.call(this, node);
+        this.eventHandlers.handleStatusChange.call(this, node);
       },
       handleMouseEnter: function ({ target: d }) {
         this.currentTooltip = select(d).selectAll("g.tooltip");
@@ -1235,10 +1237,10 @@ export default class Visualization {
       this.setLayout();
 
       accumulateTree(this.rootData);
-      console.log("Formed new layout", this, "!");
+      // console.log("Formed new layout", this, "!");
 
       this.clearCanvas();
-      console.log("Cleared canvas :>> ");
+      // console.log("Cleared canvas :>> ");
 
       this.setNodeAndLinkGroups();
       this.setNodeAndLinkEnterSelections();

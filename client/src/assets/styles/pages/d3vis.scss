@@ -3,6 +3,10 @@ g.nodes {
   pointer-events: all;
 }
 
+.the-node circle {
+  // transition: fill 0.2s ease-out;
+}
+
 .legend-svg .cell:first-child circle::after {
   position: absolute;
   font-family: "Font Awesome 5 Free";

@@ -98,6 +98,7 @@ export function crudReducer(
         .map(mapCallbacks[model])
         .filter((record) => record !== undefined);
       return {
+        ...state,
         current: mapped[0] || state.current, //.slice(-1)
         myRecords: mapped,
       };
@@ -133,7 +134,6 @@ export function createCrudActionCreators(actionTypes, callBacks) {
       ? async function (input, thunkAPI) {
           // Allow 404s for habit_dates
           const response = await callBacks[1](input);
-          console.log("response from create async:>> ", response);
           return [200, 404].includes(response?.status)
             ? thunkAPI.fulfillWithValue(response)
             : thunkAPI.rejectWithValue(response);

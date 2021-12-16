@@ -13,12 +13,22 @@ export const initialState: Dictionary<Dictionary<Node | Node[]>> = {
     parentId: 0,
   },
   myRecords: [],
+  unPersistedForDate: [],
 };
 
 export const nodeSlice = createSlice({
   name: "node",
   initialState,
   reducers: {
+    createNode(state, action: PayloadAction<Node>) {
+      const { habitId, dateId, completed } = action.payload;
+      console.log("state :>> ", state.myRecords);
+      state.unPersistedForDate.push({
+        habit_id: habitId,
+        date_id: dateId,
+        completed_status: completed,
+      });
+    },
     updateCurrentNode(state, action: PayloadAction<Node>) {
       state.current = action.payload;
     },

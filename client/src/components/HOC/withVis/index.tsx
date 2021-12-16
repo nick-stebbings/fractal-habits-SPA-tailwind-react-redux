@@ -33,7 +33,7 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
   
     return (
       <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={1} {...hocProps} routeChanged={routeChanged} render={(currentVis) => {
-        console.log('returned C :>> ',);
+        // console.log('returned C :>> ',);
         return (<>
       <button
             type="button"
@@ -61,17 +61,8 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
             id="reset-tree"
             className="vis-button"
             onClick={(e) => {
-              console.log('e :>> ', e);
-              // const {target} = e
-              // target.parentNode.classList.toggle('active');
               try {
                 currentVis.resetForExpandedMenu({justTranslation: true})
-              // target.textContent == "Collapse"
-              //   ? currentVis.collapse()
-              //   : currentVis.expand();
-              // target.textContent = target.textContent.includes("Collapse")
-                // ? "Expand"
-                // : "Collapse"; 
               } catch (error) {
                 console.error("Could not mutate tree: ", error);
               }

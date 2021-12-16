@@ -96,7 +96,13 @@ export const habitDatePersisted = (node) => {
 };
 
 export const cumulativeValue = (node) => {
-  const content = parseTreeValues(node.content).status;
+  let content;
+  try {
+    content = parseTreeValues(node.content)?.status;
+  } catch (error) {
+    console.log("error accumulating values :>> ", error);
+    console.log("content, node :>> ", content, node);
+  }
   try {
     // if collapsed
     if (!!node?._children) {

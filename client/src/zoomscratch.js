@@ -206,7 +206,6 @@ export default class Visualization {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
-          // console.log("event,node :>> ", event, node);
           this.setActiveNode(node.data, event);
 
           this.activateNodeAnimation();
@@ -284,7 +283,6 @@ export default class Visualization {
       handleMouseEnter: function ({ target: d }) {
         this.currentTooltip = select(d).selectAll("g.tooltip");
         this.currentTooltip.transition().duration(450).style("opacity", "1");
-        console.log("d :>> ", d);
         this.currentButton = select(d).selectAll("g.habit-label-dash-button");
         this.currentButton
           .transition()
@@ -844,7 +842,6 @@ export default class Visualization {
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
       .on("mouseenter", this.eventHandlers.handleMouseEnter.bind(this));
-    console.log(" selection._groups[0] :>> ", selection._groups[0]);
     // Mobile device events
     selection._groups[0].forEach((node) => {
       const manager = new Hammer.Manager(node);
@@ -1027,7 +1024,7 @@ export default class Visualization {
   }
 
   render() {
-    console.log("Rendering vis... :>>", this?._canvas);
+    // console.log("Rendering vis... :>>", this?._canvas);
     // _p("zoomconfig", this._zoomConfig, "info");
     if (!this.noCanvas()) {
       this._hasRendered = true;
@@ -1036,12 +1033,12 @@ export default class Visualization {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
         .classed("canvas", true);
-      console.log(
-        "Configured canvas... :>>",
-        this._canvas,
-        "First render?",
-        this.firstRender()
-      );
+      // console.log(
+      //   "Configured canvas... :>>",
+      //   this._canvas,
+      //   "First render?",
+      //   this.firstRender()
+      // );
     }
     if (this.firstRender()) {
       this.setNodeRadius();

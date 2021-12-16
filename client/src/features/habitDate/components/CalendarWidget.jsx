@@ -181,7 +181,6 @@ export const CalendarWidget = ({
           const tO = setTimeout(() => {
             hideMegaMenu();
           }, 1000);
-          console.log("tO :>> ", tO);
         }}
       >
         {currentWeek &&
