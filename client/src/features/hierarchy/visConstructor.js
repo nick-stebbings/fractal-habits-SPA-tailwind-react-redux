@@ -581,9 +581,9 @@ export default class Visualization {
       let scale;
       let x, y;
       if (this._zoomConfig.focusMode) {
-        setTimeout(() => {
-          this.resetForExpandedMenu({ justTranslation: true });
-        }, 5);
+        // setTimeout(() => {
+        this.resetForExpandedMenu({ justTranslation: true });
+        // }, 5);
         this._zoomConfig.focusMode = false;
         return;
       } else {
@@ -1129,31 +1129,28 @@ export default class Visualization {
     // TODO: Wire up controls svg displaying on event
   }
 
-  activateNodeAnimation() {
-    // _p("animated node", this.activeNode, "!");
-    // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
-    // Credit: Andrew Reid
-    const gCircle = this._canvas?.selectAll(
+  setNodeAnimationGroups() {
+    this.gCirclePulse = this._canvas?.selectAll(
       "g.the-node.solid.active g.node-subgroup"
     );
 
-    const pulseScale = scaleLinear()
+    let pulseScale = scaleLinear()
       .range(["#fff", "#5568d2", "#3349c1"])
       .domain([0, 3 * this._viewConfig.nodeRadius]);
 
-    const pulseData = [
+    this.gCirclePulse.pulseData = [
       0,
       this._viewConfig.nodeRadius,
       this._viewConfig.nodeRadius * 2,
       this._viewConfig.nodeRadius * 2,
     ];
 
-    const pulseCircles = gCircle
+    this.gCirclePulse.pulseCircles = this.gCirclePulse
       .insert("g", ".habit-label-dash-button")
       .classed("active-circle", true)
       .attr("stroke-opacity", "0.8")
       .selectAll("circle")
-      .data(pulseData)
+      .data(this.gCirclePulse.pulseData)
       .enter()
       .insert("circle", ".habit-label-dash-button")
       .attr("r", function (d) {
@@ -1164,9 +1161,15 @@ export default class Visualization {
       .style("stroke", function (d) {
         return pulseScale(d);
       });
+  }
+
+  activateNodeAnimation() {
+    // _p("animated node", this.activeNode, "!");
+    // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
+    // Credit: Andrew Reid
 
     const transition = function () {
-      let data = pulseData
+      let data = this.gCirclePulse.pulseData
         .map((d) => {
           return d == 3 * this._viewConfig.nodeRadius
             ? 0
@@ -1176,7 +1179,7 @@ export default class Visualization {
 
       var i = 0;
       // Grow circles
-      pulseCircles
+      this.gCirclePulse.pulseCircles
         .data(data)
         .filter(function (d) {
           return d > 0;
@@ -1192,10 +1195,10 @@ export default class Visualization {
         .style("opacity", (d) => {
           return d == 3 * this._viewConfig.nodeRadius ? 0 : 1;
         })
-        .duration(500);
+        .duration(200);
 
       //  pulseCircles where r == 0
-      pulseCircles
+      this.gCirclePulse.pulseCircles
         .filter(function (d) {
           return d == 0;
         })
@@ -1285,7 +1288,6 @@ export default class Visualization {
       debounce(this.activateNodeAnimation.bind(this), 800)();
 
       this.appendCirclesAndLabels();
-
       this.appendLabels();
       this.appendButtons();
       console.log("Appended SVG elements... :>>");
@@ -1295,6 +1297,7 @@ export default class Visualization {
         `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
       );
 
+      this.setNodeAnimationGroups();
       this._hasRendered = true;
     }
 
