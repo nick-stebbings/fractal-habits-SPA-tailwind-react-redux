@@ -18,9 +18,11 @@ window._p = function customLog(message, objs, color='black') {
          default: 
               color = color
      }
-
-  console.log(`%c${message}`, `color:${color}`)
-  typeof objs == 'object' && console.table(objs);
+     if (!import.meta.env.PROD) {
+     
+          console.log(`%c${message}`, `color:${color}`)
+          typeof objs == 'object' && console.table(objs);
+     }
 }
 import { debounce } from "app/helpers";
 window.FlashMessage.warning = debounce(window.FlashMessage.warning.bind(window), 700)

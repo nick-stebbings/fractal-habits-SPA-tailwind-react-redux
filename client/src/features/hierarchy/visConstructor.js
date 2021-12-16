@@ -1134,7 +1134,7 @@ export default class Visualization {
       "g.the-node.solid.active g.node-subgroup"
     );
 
-    let pulseScale = scaleLinear()
+    this.gCirclePulse.pulseScale = scaleLinear()
       .range(["#fff", "#5568d2", "#3349c1"])
       .domain([0, 3 * this._viewConfig.nodeRadius]);
 
@@ -1158,9 +1158,7 @@ export default class Visualization {
       })
       .attr("fill", "none")
       .style("stroke-width", "4")
-      .style("stroke", function (d) {
-        return pulseScale(d);
-      });
+      .style("stroke", this.gCirclePulse.pulseScale);
   }
 
   activateNodeAnimation() {
@@ -1189,9 +1187,7 @@ export default class Visualization {
         .attr("r", function (d) {
           return d;
         })
-        .style("stroke", function (d) {
-          return pulseScale(d);
-        })
+        .style("stroke", this.gCirclePulse.pulseScale)
         .style("opacity", (d) => {
           return d == 3 * this._viewConfig.nodeRadius ? 0 : 1;
         })
@@ -1204,15 +1200,13 @@ export default class Visualization {
         })
         .attr("r", 0)
         .style("opacity", 1)
-        .style("stroke", function (d) {
-          return pulseScale(d);
-        });
+        .style("stroke", this.gCirclePulse.pulseScale);
     }.bind(this);
     transition();
   }
 
   render() {
-    console.log("Rendering vis... :>>", this?._canvas);
+    _p("Rendering vis... :>>", this?._canvas);
     if (this.noCanvas()) {
       this._canvas = select(`#${this._svgId}`)
         .append("g")
@@ -1239,20 +1233,20 @@ export default class Visualization {
 
       // Update the current day's rootData
       if (this.hasNextData()) this.rootData = this._nextRootData;
-      // if (!this.activeNode) console.log(this.rootData.data.content);
+      if (!this.activeNode) _p("Need new active node", {});
 
       if (this.noCanvas()) return;
 
       //Render cleared canvas for OOB dates
       const isBlankData = this.rootData?.data?.content == "";
       if (isBlankData) {
-        console.log("Rendered blank :>> ");
+        _p("Rendered blank :>> ");
         this.clearCanvas();
         return;
       }
 
       this.clearCanvas();
-      // console.log("Cleared canvas :>> ");
+      _p("Cleared canvas :>> ");
 
       this.setLayout();
       this.setNodeAndLinkGroups();
@@ -1263,9 +1257,9 @@ export default class Visualization {
       this.addHabitDatesForNewNodes();
 
       accumulateTree(this.rootData);
-      // console.log("Formed new layout", this, "!");
+      _p("Formed new layout", this, "!");
 
-      // console.log("Appended and set groups... :>>");
+      _p("Appended and set groups... :>>", {});
 
       if (!!this.activeNode) {
         this?.isNewActiveNode &&

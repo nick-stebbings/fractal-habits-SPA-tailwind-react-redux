@@ -28,7 +28,7 @@ export const isErrorAction = (action: AnyAction) => {
 };
 
 export const isLoadingAction = (action: AnyAction) => {
-  return action.type.endsWith("/pending") && !action.type.match(/habit_date/);
+  return action.type.endsWith("/pending");
 };
 
 const initialState: Dictionary<boolean | string> = {

@@ -146,7 +146,7 @@ export const nodeStatusColours = (d, currentHierarchy) => {
   const cumulativeVal = cumulativeValue(d?.data || d);
   const status = parseTreeValues(d.data.content).status;
   if (
-    currentHierarchy.leaves().includes(d) ||
+    d.depth === currentHierarchy.height ||
     d?.children?.every((d) => parseTreeValues(d.data.content).status === "OOB")
   ) {
     if (status == "true") return positiveCol;
@@ -158,7 +158,11 @@ export const nodeStatusColours = (d, currentHierarchy) => {
     case 1: // All descendants are positive
       return positiveCol;
     case 0: // Not all descendants are positive
-      if (status == "true") return parentPositiveBorderCol; // Node is complete but some of its descendants are not.
+      if (status == "true") {
+        debugger;
+        cumulativeValue(d?.data || d);
+        return parentPositiveBorderCol;
+      } // Node is complete but some of its descendants are not.
       return negativeCol;
     default:
       return neutralCol;

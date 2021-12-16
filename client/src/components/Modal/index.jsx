@@ -25,7 +25,7 @@ const TITLES = {
   Delete: "You are about to...",
 };
 
-export const Modal = ({ type, toggle, resetConfirm }) => {
+export const Modal = React.memo(({ type, toggle, resetConfirm }) => {
   const dispatch = useAppDispatch();
   const currentDomain = useAppSelector(selectCurrentDomain);
   const currentHabit = useAppSelector(selectCurrentHabit);
@@ -131,4 +131,4 @@ export const Modal = ({ type, toggle, resetConfirm }) => {
       )}
     </div>
   );
-};
+});

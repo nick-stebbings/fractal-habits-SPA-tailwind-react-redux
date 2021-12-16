@@ -53,5 +53,4 @@ export const actionCreators = createCrudActionCreators(
 );
 
 const [_A, fetchHabitTreesREST, _B, _C, fetchHabitTreeREST] = actionCreators;
-console.log("actionCreators :>> ", actionCreators);
 export { fetchHabitTreeREST, fetchHabitTreesREST };

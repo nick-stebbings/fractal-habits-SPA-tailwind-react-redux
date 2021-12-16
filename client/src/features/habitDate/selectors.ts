@@ -50,7 +50,7 @@ export const selectAccumulatedStatusForDate = (
         hierarchyDataForDateId.find(
           (n: any) => n.data.name == currentHabit.meta.name
         );
-      if (!hierarchyDataForDateId) return "OOB";
+      if (!currentHabitHierarchyNode) return "OOB";
 
       let currentHabitStatus;
       const currentHabitNodeDataForDate =
@@ -90,7 +90,11 @@ export const selectAccumulatedStatusForDate = (
               )
           );
 
-      if (unPersisted.length > 0 && currentHabit?.meta?.name == "ANOTHER") {
+      if (
+        unPersisted.length > 0 &&
+        currentHabit?.meta?.name == "ASSSD" &&
+        hasDescendantsIncomplete
+      ) {
         debugger;
       }
 
