@@ -541,7 +541,8 @@ export default class Visualization {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for cluster vertical spacing on different screens
       +(this.type == "cluster") *
-        (this._viewConfig.isSmallScreen() ? -40 : 100);
+        (this._viewConfig.isSmallScreen() ? -40 : 220) +
+      (this.type == "tree" && this._viewConfig.isSmallScreen()) * 60;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
       +(this.type == "cluster") * 80;
