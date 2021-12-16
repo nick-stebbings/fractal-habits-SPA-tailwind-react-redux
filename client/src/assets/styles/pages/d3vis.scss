@@ -17,7 +17,7 @@ g.nodes {
   top: 0;
 }
 
-.legend-svg .cell:last-child circle {
+.legend-svg .cell:nth-child(3) circle {
   stroke: #edd837;
   stroke-width: 8px;
 }

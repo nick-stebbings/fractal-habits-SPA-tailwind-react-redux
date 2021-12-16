@@ -35,7 +35,8 @@ export const HabitTree: React.FC<VisProps> = ({
     if (!currentHabitTree || currentHierarchy?.data.name == "") return
     
     updateVisRootData(currentHabitTree, currentHierarchy, routeChanged);
-    currentHabitTree?.addHabitDatesForNewNodes();
+    currentHabitTree?.addHabitDatesForNewNodes && currentHabitTree.addHabitDatesForNewNodes();
+    // TODO copy to other vis if works ok
 
   }, [routeChanged])
 

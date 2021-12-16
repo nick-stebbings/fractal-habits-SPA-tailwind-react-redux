@@ -21,7 +21,6 @@ export const selectUnStoredHabitDates = (state: RootState) => {
 export const selectCurrentHabitDate = (state: RootState) => {
   return state?.habitDate?.current;
 };
-
 export const selectAccumulatedStatusForDate = (
   fromDateUnixTs: number,
   dateId: number
@@ -74,6 +73,7 @@ export const selectAccumulatedStatusForDate = (
           currentHabitNodeDataForDate
         )!.status;
         if (currentHabitStatus == "OOB") return "OOB";
+        if (currentHabitStatus === false) return false;
         if (currentHabitStatus == "" && typeof habitDateInStore == "undefined")
           return "noHabitDate";
       }
@@ -90,9 +90,13 @@ export const selectAccumulatedStatusForDate = (
               )
           );
 
+      if (unPersisted.length > 0 && currentHabit?.meta?.name == "ANOTHER") {
+        debugger;
+      }
+
       const completedInTreeOrInStore =
         currentHabitStatus == "true" ||
-        habitDateInStore ||
+        !!habitDateInStore ||
         dateIsPersistedCompleted;
       return completedInTreeOrInStore && hasDescendantsIncomplete
         ? "parentCompleted"

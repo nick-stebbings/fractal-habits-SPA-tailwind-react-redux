@@ -55,7 +55,7 @@ import {
   negativeCol,
   noNodeCol,
   neutralCol,
-  parentPositiveCol,
+  parentPositiveBorderCol,
 } from "app/constants";
 
 const BASE_SCALE = 1;
@@ -635,7 +635,7 @@ export default class Visualization {
         return nodeStatusColours(d, this.rootData);
       })
       .style("stroke", (d) =>
-        nodeStatusColours(d, this.rootData) === parentPositiveCol
+        nodeStatusColours(d, this.rootData) === parentPositiveBorderCol
           ? positiveCol
           : noNodeCol
       )
@@ -645,7 +645,7 @@ export default class Visualization {
       .style("stroke-width", (d) =>
         // !!this.activeNode && d.ancestors().includes(this.activeNode)
         // TODO : memoize nodeStatus colours
-        nodeStatusColours(d, this.rootData) === parentPositiveCol
+        nodeStatusColours(d, this.rootData) === parentPositiveBorderCol
           ? "40px"
           : "1px"
       )

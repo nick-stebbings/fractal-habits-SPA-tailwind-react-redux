@@ -55,7 +55,7 @@ import {
   negativeCol,
   noNodeCol,
   neutralCol,
-  parentPositiveCol,
+  parentPositiveBorderCol,
 } from "app/constants";
 import { selectCurrentDateId } from "../space/slice";
 function autoBox() {
@@ -434,8 +434,14 @@ export default class Visualization {
     this._gCircle.each((d) => {
       if (nodeWithoutHabitDate(d?.data)) {
         this.createNewHabitDateForNode(d);
+        this.mutateTreeJsonForNewHabitDates(d);
       }
     });
+  }
+
+  mutateTreeJsonForNewHabitDates(d) {
+    // Toggle in memory
+    d.data.content = d.data.content.replace(/\-/, "-false");
   }
 
   createNewHabitDateForNode(node) {
@@ -492,17 +498,6 @@ export default class Visualization {
     } else {
     }
 
-    const nodeContent = parseTreeValues(node.data.content);
-    const currentStatus = nodeContent.status;
-    // Toggle in memory
-    node.data.content = node.data.content.replace(
-      /true|false|incomplete/,
-      oppositeStatus(currentStatus)
-      // TODO:
-      // 1.alter the node status in memory
-      // 2. re-sum, re-accumulate node values.
-      // 3. re-render without reloading hierarchy data.
-    );
     if (!node.data.name.includes("Sub-Habit")) {
       // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
       store.dispatch(
@@ -534,10 +529,11 @@ export default class Visualization {
       .ease(easeLinear)
       .attr("viewBox", newTranslateString);
     this._zoomConfig.previousRenderZoom = {};
-    this.activeNode.isNew = null;
-    this.activeNode = this.rootData;
     this.expand();
+
     if (!justTranslation) {
+      this.activeNode.isNew = null;
+      this.activeNode = this.rootData;
       document.querySelector(".the-node.active") &&
         document.querySelector(".the-node.active").classList.remove("active");
     }
@@ -755,7 +751,7 @@ export default class Visualization {
         return nodeStatusColours(d, this.rootData);
       })
       .style("stroke", (d) =>
-        nodeStatusColours(d, this.rootData) === parentPositiveCol
+        nodeStatusColours(d, this.rootData) === parentPositiveBorderCol
           ? positiveCol
           : noNodeCol
       )
@@ -765,7 +761,7 @@ export default class Visualization {
       .style("stroke-width", (d) =>
         // !!this.activeNode && d.ancestors().includes(this.activeNode)
         // TODO : memoize nodeStatus colours
-        nodeStatusColours(d, this.rootData) === parentPositiveCol
+        nodeStatusColours(d, this.rootData) === parentPositiveBorderCol
           ? "40px"
           : "1px"
       )
@@ -1075,32 +1071,32 @@ export default class Visualization {
 
   addLegend() {
     const labels = [
-      "",
       "Completed",
-      "Not Yet Tracked",
       "Incomplete",
       "Incomplete Subtree",
+      "Not Yet Tracked",
+      "Out of Bounds",
     ];
     const legendScale = this._viewConfig.isSmallScreen()
       ? BASE_SCALE / 3
       : BASE_SCALE / 2;
     const ordinal = scaleOrdinal()
       .domain(labels)
-      .range([noNodeCol, positiveCol, neutralCol, negativeCol, positiveCol]);
+      .range([positiveCol, negativeCol, positiveCol, neutralCol, noNodeCol]);
 
     const legendSvg = select("svg.legend-svg");
     const controlsSvg = select("svg.controls-svg");
     const gText = controlsSvg
       .append("g")
       .attr("class", "controls")
-      .attr("transform", `translate(${40}, ${45})scale(${legendScale})`);
+      .attr("transform", `translate(${40}, ${50})scale(${legendScale})`);
     const gLegend = legendSvg
       .append("g")
       .attr("class", "legend")
       .attr(
         "transform",
         `translate(5, ${
-          this._viewConfig.isSmallScreen() ? 45 : 10
+          this._viewConfig.isSmallScreen() ? 50 : 20
         }) scale(${legendScale})`
       );
 
@@ -1252,18 +1248,20 @@ export default class Visualization {
         return;
       }
 
-      this.setLayout();
-
-      accumulateTree(this.rootData);
-      // console.log("Formed new layout", this, "!");
-
       this.clearCanvas();
       // console.log("Cleared canvas :>> ");
 
+      this.setLayout();
       this.setNodeAndLinkGroups();
       this.setNodeAndLinkEnterSelections();
       this.setCircleAndLabelGroups();
       this.setButtonGroups();
+
+      this.addHabitDatesForNewNodes();
+
+      accumulateTree(this.rootData);
+      // console.log("Formed new layout", this, "!");
+
       // console.log("Appended and set groups... :>>");
 
       if (!!this.activeNode) {
@@ -1278,7 +1276,8 @@ export default class Visualization {
         try {
           this.setCurrentHabit(newActive);
           this.setCurrentNode(newActive);
-          this.setActiveNode(newActive?.data);
+          !this._zoomConfig.zoomedInView() &&
+            this.setActiveNode(newActive?.data);
         } catch (err) {
           handleErrorType("No active habits for this date");
         }
@@ -1286,6 +1285,7 @@ export default class Visualization {
       debounce(this.activateNodeAnimation.bind(this), 800)();
 
       this.appendCirclesAndLabels();
+
       this.appendLabels();
       this.appendButtons();
       console.log("Appended SVG elements... :>>");
@@ -1294,7 +1294,6 @@ export default class Visualization {
         "transform",
         `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
       );
-      this.addHabitDatesForNewNodes();
 
       this._hasRendered = true;
     }
@@ -1311,6 +1310,7 @@ export function accumulateTree(json) {
   try {
     Visualization.sumHierarchyData.call(null, json);
     Visualization.accumulateNodeValues.call(null, json);
+    // TODO memoise
   } catch (error) {
     console.error("Could not manipulate tree: ", error);
   }

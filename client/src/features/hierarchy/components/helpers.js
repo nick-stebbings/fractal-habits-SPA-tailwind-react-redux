@@ -1,7 +1,7 @@
 import {
   positiveCol,
   negativeCol,
-  parentPositiveCol,
+  parentPositiveBorderCol,
   neutralCol,
   noNodeCol,
 } from "app/constants";
@@ -158,7 +158,7 @@ export const nodeStatusColours = (d, currentHierarchy) => {
     case 1: // All descendants are positive
       return positiveCol;
     case 0: // Not all descendants are positive
-      if (status == "true") return parentPositiveCol; // Node is complete but some of its descendants are not.
+      if (status == "true") return parentPositiveBorderCol; // Node is complete but some of its descendants are not.
       return negativeCol;
     default:
       return neutralCol;

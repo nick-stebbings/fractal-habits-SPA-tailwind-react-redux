@@ -5,7 +5,8 @@ import {
   positiveCol,
   negativeCol,
   noNodeCol,
-  parentPositiveCol,
+  parentPositiveBorderCol,
+  positiveColLighter,
   neutralCol,
 } from "app/constants";
 
@@ -20,7 +21,7 @@ function getColor(completedStatus) {
     case "noHabitDate":
       return neutralCol;
     case "parentCompleted":
-      return parentPositiveCol;
+      return positiveColLighter;
     default:
       return noNodeCol;
   }
@@ -45,7 +46,7 @@ export const DateCard = ({ date, completedStatus, isToday }) => {
       <span className="font-std block uppercase">{weekday || <br />}</span>
       <span className="font-std block text-sm md:text-xl">{monthday}</span>
       <span className="block">{month}</span>
-      <svg className="w-8 h-8 md:w-10 md:h-10 mt-1" viewBox="0 0 48 48">
+      <svg className="w-10 h-10 md:w-12 md:h-12 mt-1" viewBox="-5 0 56 56">
         <g
           transform={`translate(14, 14) scale(${
             isSmallScreen() ? "0.8" : "1"
@@ -56,7 +57,14 @@ export const DateCard = ({ date, completedStatus, isToday }) => {
             cx="12"
             cy="12"
             fill={getColor(completedStatus)}
-            stroke="black"
+            stroke={
+              getColor(completedStatus) == positiveColLighter
+                ? parentPositiveBorderCol
+                : "black"
+            }
+            strokeWidth={
+              getColor(completedStatus) == positiveColLighter ? 10 : 1
+            }
           />
         </g>
       </svg>
