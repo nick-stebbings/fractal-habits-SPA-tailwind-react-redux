@@ -53,7 +53,23 @@ export const initialState: Dictionary<HabitDate[]> = {
 //   - THEN appended nodes don't yet have habit_dates
 //   - AND the view should update parent completed node to parentCompleted colour
 
-// E:
+//P: There is no habit node for this habit. To track a habit for this day:
+// - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
+// - We need a visual representation of the node. When a node with this state is toggled, it has a nonPersisted habitDate in the store, set to COMPLETE (a red dot).
+// - Once a certain amount of time has passed, in order to save the data, we need to do a batch PUT request to the API to update the habit_dates for all habits on that date.
+// - Do this before moving to a new date
+// notify the user of the save with a flash message.
+// return;
+// Non-leaf nodes have auto-generated cumulative status
+// (Only leaves can toggle)
+//  TODO: ENACT parentCompleted LOGIC
+
+// this.eventHandlers.handleStatusChange.call(
+//   this,
+//   node,
+//   currentHabit,
+//   currentDate
+// );
 
 // A:
 //\ Set a new constant for node color 'parentCompleted', to yellow.

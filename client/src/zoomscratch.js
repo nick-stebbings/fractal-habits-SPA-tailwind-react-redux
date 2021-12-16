@@ -39,7 +39,7 @@ import {
   expand,
   collapse,
   nodesForCollapse,
-  deadNode,
+  nodeWithoutHabitDate,
   oppositeStatus,
   contentEqual,
   nodeStatusColours,
@@ -192,7 +192,7 @@ export default class Visualization {
         if (targ.tagName == "circle") {
           // if (targ.closest(".the-node").classList.contains("active"))
           //   return this.reset({ justTranslation: false });
-          if (deadNode(event)) {
+          if (nodeWithoutHabitDate(event)) {
             //P: There is no habit node for this habit. To track a habit for this day:
             // - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
             // - We need a visual representation of the node. When a node with this state is toggled, it has a nonPersisted habitDate in the store, set to COMPLETE (a red dot).
@@ -275,7 +275,7 @@ export default class Visualization {
           node,
           content: node.data,
         };
-        // if (deadNode(event)) return this.reset();
+        // if (nodeWithoutHabitDate(event)) return this.reset();
         // this.eventHandlers.handleStatusChange.call(this, node);
 
         console.log("NODE TOGGLE :>> ");

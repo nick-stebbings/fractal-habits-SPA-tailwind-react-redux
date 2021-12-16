@@ -167,9 +167,8 @@ export const nodeStatusColours = (d, currentHierarchy) => {
 
 // Node/tree manipulation helpers
 
-export const deadNode = (event) =>
-  event.target.__data__.data &&
-  parseTreeValues(event.target.__data__.data.content)?.status == "";
+export const nodeWithoutHabitDate = (data) =>
+  data && parseTreeValues(data.content)?.status == "";
 
 export function expand(d) {
   var children = d.children ? d.children : d._children;

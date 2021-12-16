@@ -39,7 +39,7 @@ import {
   expand,
   collapse,
   nodesForCollapse,
-  deadNode,
+  nodeWithoutHabitDate,
   oppositeStatus,
   contentEqual,
   nodeStatusColours,
@@ -270,84 +270,6 @@ export default class Visualization {
           }
         }
       },
-      handleStatusChange: function (node, currentHabit, currentDate) {
-        const theNode = this.zoomBase()
-          .selectAll(".the-node circle")
-          .filter((n) => {
-            if (n.data.name === node.data.name) return n;
-          });
-        if (this.isNotALeaf(node)) {
-          //  TODO: ENACT parentCompleted LOGIC
-          // 3 state changes possible:
-          // - FROM P_C to all subtree completed
-          // - FROM P_N_C to all subtree completed
-          // - FROM P_N_C to all subtree not-completed?
-        }
-        if (!habitDatePersisted(node)) {
-          // return if not a leaf;
-          // if !habitDateStored
-          // then dispatch a new habitDate action.
-          // turn the ui green for that node.
-          // turn all single parents green too
-          // alter the logic for parentCompleted nodes such that they recognise temp habitDates in the store
-          theNode.attr("fill", positiveCol);
-          debugger;
-        } else {
-        }
-
-        const nodeContent = parseTreeValues(node.data.content);
-        const currentStatus = nodeContent.status;
-        // Toggle in memory
-        node.data.content = node.data.content.replace(
-          /true|false|incomplete/,
-          oppositeStatus(currentStatus)
-          // TODO:
-          // 1.alter the node status in memory
-          // 2. re-sum, re-accumulate node values.
-          // 3. re-render without reloading hierarchy data.
-        );
-        if (!node.data.name.includes("Sub-Habit")) {
-          // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
-          store.dispatch(
-            updateHabitDateForNode({
-              habitId: currentHabit?.meta?.id,
-              dateId: currentDate,
-              completed: !currentStatus,
-            })
-          );
-        }
-      },
-      handleNodeToggle: function (event, node) {
-        event.preventDefault();
-        const currentHabit = selectCurrentHabit(store.getState());
-        const currentDate = selectCurrentDateId(store.getState());
-        if (deadNode(event)) {
-          // Create a habit date ready for persisting
-          store.dispatch(
-            createHabitDate({
-              habitId: currentHabit?.meta.id,
-              dateId: currentDate,
-              completed: false,
-            })
-          );
-          //P: There is no habit node for this habit. To track a habit for this day:
-          // - GIVEN a non OOB, incomplete habit_date, we need a locally stored habitDate ONLY when the habit has been toggled to true.
-          // - We need a visual representation of the node. When a node with this state is toggled, it has a nonPersisted habitDate in the store, set to COMPLETE (a red dot).
-          // - Once a certain amount of time has passed, in order to save the data, we need to do a batch PUT request to the API to update the habit_dates for all habits on that date.
-          // - Do this before moving to a new date
-          // notify the user of the save with a flash message.
-          // return;
-          // Non-leaf nodes have auto-generated cumulative status
-          // (Only leaves can toggle)
-          //  TODO: ENACT parentCompleted LOGIC
-        }
-        this.eventHandlers.handleStatusChange.call(
-          this,
-          node,
-          currentHabit,
-          currentDate
-        );
-      },
       handleMouseEnter: function ({ target: d }) {
         this.currentTooltip = select(d).selectAll("g.tooltip");
         this.currentTooltip.transition().duration(450).style("opacity", "1");
@@ -463,6 +385,7 @@ export default class Visualization {
     });
     return found;
   }
+
   setCurrentNode(node) {
     const nodeContent = node?.data
       ? parseTreeValues(node?.data.content)
@@ -479,6 +402,7 @@ export default class Visualization {
     }
     store.dispatch(updateCurrentNode(newCurrent));
   }
+
   setCurrentHabit(node) {
     let newCurrent;
     try {
@@ -501,6 +425,92 @@ export default class Visualization {
         fetchHabitDatesREST({
           id: newCurrent?.meta.id,
           periodLength: 7,
+        })
+      );
+    }
+  }
+
+  addHabitDatesForNewNodes() {
+    this._gCircle.each((d) => {
+      if (nodeWithoutHabitDate(d?.data)) {
+        this.createNewHabitDateForNode(d);
+        debugger;
+      }
+    });
+  }
+
+  createNewHabitDateForNode(node) {
+    const nodeContent = node?.data
+      ? parseTreeValues(node?.data.content)
+      : parseTreeValues(node.content);
+
+    const currentDate = selectCurrentDateId(store.getState());
+    const currentHabit = selectCurrentHabitByMptt(
+      store.getState(),
+      nodeContent.left,
+      nodeContent.right
+    );
+    if (!currentHabit) {
+      console.log("Couldn't select node when adding habit dates");
+      return;
+    }
+
+    // Create a habit date ready for persisting
+    store.dispatch(
+      createHabitDate({
+        habitId: currentHabit?.meta.id,
+        dateId: currentDate,
+        completed: false,
+      })
+    );
+  }
+
+  handleStatusChange(node) {
+    const currentHabit = selectCurrentHabit(store.getState());
+    const currentDate = selectCurrentDateId(store.getState());
+
+    const theNode = this.zoomBase()
+      .selectAll(".the-node circle")
+      .filter((n) => {
+        if (n.data.name === node.data.name) return n;
+      });
+    if (this.isNotALeaf(node)) {
+      //  TODO: ENACT parentCompleted LOGIC
+      // 3 state changes possible:
+      // - FROM P_C to all subtree completed
+      // - FROM P_N_C to all subtree completed
+      // - FROM P_N_C to all subtree not-completed?
+    }
+    if (!habitDatePersisted(node)) {
+      // return if not a leaf;
+      // if !habitDateStored
+      // then dispatch a new habitDate action.
+      // turn the ui green for that node.
+      // turn all single parents green too
+      // alter the logic for parentCompleted nodes such that they recognise temp habitDates in the store
+      theNode.attr("fill", positiveCol);
+      debugger;
+    } else {
+    }
+
+    const nodeContent = parseTreeValues(node.data.content);
+    const currentStatus = nodeContent.status;
+    // Toggle in memory
+    node.data.content = node.data.content.replace(
+      /true|false|incomplete/,
+      oppositeStatus(currentStatus)
+      // TODO:
+      // 1.alter the node status in memory
+      // 2. re-sum, re-accumulate node values.
+      // 3. re-render without reloading hierarchy data.
+    );
+    if (!node.data.name.includes("Sub-Habit")) {
+      // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
+      store.dispatch(
+        updateHabitDateForNode({
+          habitId: currentHabit?.meta?.id,
+          dateId: currentDate,
+          completed: !currentStatus,
         })
       );
     }
@@ -841,6 +851,7 @@ export default class Visualization {
       .attr("r", this._viewConfig.nodeRadius)
       .on("mouseenter", this.eventHandlers.handleHover.bind(this));
   }
+
   appendLabels() {
     this._gTooltip
       .append("rect")
@@ -975,7 +986,7 @@ export default class Visualization {
       })
       .on("touchend", (e, d) => {
         // this.eventHandlers.handleNodeFocus.call(this, e, d);
-        // this.eventHandlers.handleNodeToggle.call(this, e, d);
+        // this.eventHandlers.createNewHabitDateForNode.call(this, e, d);
       })
       .on("contextmenu", (e, d) => {
         this.eventHandlers.handleNodeFocus.call(this, e, d);
@@ -986,7 +997,7 @@ export default class Visualization {
             d,
             false //this.type == "tree"
           );
-        this.eventHandlers.handleNodeToggle.call(this, e, d);
+        this.handleStatusChange(d);
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
       .on(
@@ -1284,6 +1295,7 @@ export default class Visualization {
         "transform",
         `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
       );
+      this.addHabitDatesForNewNodes();
 
       this._hasRendered = true;
     }
