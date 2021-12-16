@@ -11,6 +11,7 @@ import {
   cluster,
   easeCubic,
   easePolyOut,
+  easeCircleOut,
   easeLinear,
   zoomTransform,
   ascending,
@@ -51,7 +52,7 @@ import {
   habitDatePersisted,
   outOfBoundsNode,
 } from "./components/helpers";
-import { isTouchDevice, debounce, handleErrorType } from "app/helpers";
+import { debounce, handleErrorType } from "app/helpers";
 
 import {
   positiveCol,
@@ -105,6 +106,8 @@ const getInitialYTranslate = (
   switch (type) {
     case "tree":
       return 500;
+    case "radial":
+      return (h / levelsHigh) * 3;
     default:
       return (h / levelsHigh) * 2;
   }
@@ -132,7 +135,6 @@ const newXTranslate = (type, viewConfig, zoomConfig) => {
 
 const newYTranslate = (newScale, type, viewConfig, zoomConfig) => {
   const scale = newScale || viewConfig.scale;
-  // zoomConfig.globalZoomScale = null;
   switch (type) {
     case "cluster":
       return -zoomConfig.previousRenderZoom?.node?.x * scale;
@@ -164,7 +166,6 @@ export default class Visualization {
           this.type,
           this._viewConfig
         );
-        console.log("initialX :>> ", initialX);
         return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
           "undefined"
           ? initialX +
@@ -172,10 +173,6 @@ export default class Visualization {
           : initialX;
       },
       defaultCanvasTranslateY: (scale) => {
-        console.log(
-          "newY :>> ",
-          typeof this._zoomConfig.previousRenderZoom?.node?.y !== "undefined"
-        );
         const initialY = getInitialYTranslate.call(
           this,
           this._canvas?._groups[0][0]?.getBoundingClientRect().height,
@@ -183,7 +180,6 @@ export default class Visualization {
           this.type,
           this._viewConfig
         );
-        console.log("initialY :>> ", initialY);
         return typeof this._zoomConfig.previousRenderZoom?.node?.y !==
           "undefined"
           ? initialY +
@@ -227,16 +223,21 @@ export default class Visualization {
         this._zoomConfig.focusMode = true;
 
         console.log("NODE ZOOM :>> ");
+
+        this.setActiveNode(node.data, event);
         const parentNode = { ...node.parent };
-        // Set for cross render transformation memory
-        this._zoomConfig.previousRenderZoom = {
-          event: event,
-          node: forParent ? parentNode : node,
-          scale: this._zoomConfig.globalZoomScale,
-        };
+
+        if (!(this.type == "radial")) {
+          // Set for cross render transformation memory
+          this._zoomConfig.previousRenderZoom = {
+            event: event,
+            node: forParent ? parentNode : node,
+            scale: this._zoomConfig.globalZoomScale,
+          };
+        }
         select(".canvas")
           .transition()
-          .ease(easePolyOut)
+          .ease(easeCircleOut)
           .duration(this.isDemo ? 200 : 1)
           .attr(
             "transform",
@@ -505,12 +506,12 @@ export default class Visualization {
 
   resetForExpandedMenu({ justTranslation }) {
     let newTranslate = this._viewConfig.defaultView.split` `;
-    newTranslate[0] = newTranslate[2] / 2;
-    newTranslate[1] = newTranslate[3] / 4;
+    newTranslate[0] = -this.activeNode ? this.activeNode.x : 0;
+    newTranslate[1] = -this.activeNode ? this.activeNode.y : 0;
     let newTranslateString = newTranslate.join(" ");
     this.zoomBase()
       .transition()
-      .duration(200)
+      .duration(0)
       .ease(easeLinear)
       .attr("viewBox", newTranslateString);
     this._zoomConfig.previousRenderZoom = {};
@@ -521,7 +522,6 @@ export default class Visualization {
       document.querySelector(".the-node.active") &&
         document.querySelector(".the-node.active").classList.remove("active");
     }
-    // this.zoomBase().call(this.zoomer.transform, zoomIdentity);
   }
 
   setLevelsHighAndWide() {
@@ -565,41 +565,11 @@ export default class Visualization {
       let scale;
       let x, y;
       if (this._zoomConfig.focusMode) {
-        // select(".canvas")
-        //   .transition()
-        //   .ease(easePolyOut)
-        //   .duration(5500)
-        //   .attr(
-        //     "transform",
-        //     `translate(${
-        //       this._viewConfig.defaultCanvasTranslateX(BASE_SCALE) -
-        //       this._zoomConfig.previousRenderZoom?.node?.x * FOCUS_MODE_SCALE
-        //     },${
-        //       this._viewConfig.defaultCanvasTranslateY(BASE_SCALE) -
-        //       this._zoomConfig.previousRenderZoom?.node?.y * FOCUS_MODE_SCALE
-        //     }), scale(${BASE_SCALE})`
-        //   );
-
         setTimeout(() => {
           this.resetForExpandedMenu({ justTranslation: true });
-        }, 20);
+        }, 5);
         this._zoomConfig.focusMode = false;
-        // this.zoomBase().call(
-        //   this.zoomer.transform,
-        //   Object.assign(zoomIdentity, {})
-        // );
         return;
-        //   let newTransform = { ...t };
-        //   newTransform.k = this._zoomConfig.globalZoomScale * t.k;
-        //   scale = newTransform.k;
-
-        //   newTransform.x = this._viewConfig.defaultCanvasTranslateX();
-        //   newTransform.y = this._viewConfig.defaultCanvasTranslateY();
-
-        //   x = newTransform.x;
-        //   y = newTransform.y;
-        //   return;
-        //   // debugger;
       } else {
         scale = t.k;
         x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
@@ -608,14 +578,9 @@ export default class Visualization {
 
       select(".canvas")
         .transition()
-        .ease(easePolyOut)
-        .duration(500)
+        .ease(easeLinear)
+        .duration(200)
         .attr("transform", `translate(${x},${y}), scale(${scale})`);
-      // this._canvas
-      //   .attr("transform", `translate(${t.x},${t.y}), scale(${scale})`)
-      //   .transition()
-      //   .ease(easePolyOut)
-      //   .duration(500);
       this._zoomConfig.focusMode = false;
     };
 
@@ -1008,7 +973,7 @@ export default class Visualization {
             this,
             e,
             d,
-            this.type == "tree"
+            false //this.type == "tree"
           );
         this.eventHandlers.handleNodeToggle.call(this, e, d);
       })
@@ -1212,7 +1177,7 @@ export default class Visualization {
         })
         .duration(500);
 
-      // resetForExpandedMenu pulseCircles where r == 0
+      //  pulseCircles where r == 0
       pulseCircles
         .filter(function (d) {
           return d == 0;
