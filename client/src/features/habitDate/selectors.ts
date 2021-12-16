@@ -14,22 +14,37 @@ export const selectStoredHabitDates = (state: RootState) => {
   return state?.habitDate?.myRecords;
 };
 
+export const selectUnStoredHabitDates = (state: RootState) => {
+  return state?.habitDate?.unPersistedForDate;
+};
+
 export const selectCurrentHabitDate = (state: RootState) => {
   return state?.habitDate?.current;
 };
+
 export const selectAccumulatedStatusForDate = (
   fromDateUnixTs: number,
   dateId: number
 ) => {
   return createSelector(
-    [selectStoredHabitDates, selectCurrentHierarchyRecords, selectCurrentHabit],
-    (dates, hierarchyData, currentHabit) => {
-      const dateIsCompleted =
-        dates &&
-        dates.some(
+    [
+      selectStoredHabitDates,
+      selectCurrentHierarchyRecords,
+      selectCurrentHabit,
+      selectUnStoredHabitDates,
+    ],
+    (persistedDates, hierarchyData, currentHabit, unPersisted) => {
+      // Responsible for collating data from the store and the habit tree, feeding back the string
+      // to determine what colour the status is for this habit on this day
+
+      // First check persisted data
+      const dateIsPersistedCompleted =
+        persistedDates &&
+        persistedDates.some(
           ({ timeframe }: TimeFrame) => timeframe.fromDate == fromDateUnixTs
         );
 
+      // Next check the JSON tree data
       const hierarchyDataForDateId = hierarchyData[dateId];
       const currentHabitHierarchyNode =
         !!hierarchyDataForDateId &&
@@ -41,24 +56,44 @@ export const selectAccumulatedStatusForDate = (
       let currentHabitStatus;
       const currentHabitNodeDataForDate =
         currentHabitHierarchyNode?.data?.content;
+
+      // Next check the store
+      let habitDateInStore;
+      if (unPersisted.length > 0) {
+        const tempHabitDate = unPersisted.find(
+          (hd) => hd.date_id == dateId && hd.habit_id == currentHabit?.meta?.id
+        );
+        if (tempHabitDate) {
+          habitDateInStore = tempHabitDate.completed_status;
+        }
+      }
+
+      // Guard clauses for out of bounds and when there is not a temp habit date in the store
       if (!!currentHabitNodeDataForDate) {
         currentHabitStatus = parseTreeValues(
           currentHabitNodeDataForDate
         )!.status;
         if (currentHabitStatus == "OOB") return "OOB";
-        if (currentHabitStatus == "") return "noHabitDate";
+        if (currentHabitStatus == "" && typeof habitDateInStore == "undefined")
+          return "noHabitDate";
       }
 
+      // Determine if the node is complete but its subtree is not
       const hasDescendantsIncomplete =
         !!currentHabitHierarchyNode?.children &&
-        currentHabitHierarchyNode.children.some(
-          (childNode: any) =>
-            !["true", "OOB"].includes(
-              parseTreeValues(childNode.data.content)!.status
-            )
-        );
+        currentHabitHierarchyNode
+          .descendants()
+          .some(
+            (descendant: any) =>
+              !["true", "OOB"].includes(
+                parseTreeValues(descendant.data.content)!.status
+              )
+          );
+
       const completedInTreeOrInStore =
-        currentHabitStatus == "true" || dateIsCompleted;
+        currentHabitStatus == "true" ||
+        habitDateInStore ||
+        dateIsPersistedCompleted;
       return completedInTreeOrInStore && hasDescendantsIncomplete
         ? "parentCompleted"
         : completedInTreeOrInStore;

@@ -434,7 +434,6 @@ export default class Visualization {
     this._gCircle.each((d) => {
       if (nodeWithoutHabitDate(d?.data)) {
         this.createNewHabitDateForNode(d);
-        debugger;
       }
     });
   }
