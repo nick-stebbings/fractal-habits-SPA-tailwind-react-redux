@@ -15,6 +15,7 @@ export const initialState: Dictionary<HabitDate[]> = {
       length: luxon.Duration.fromObject({ days: 1 }).toString(),
     },
   },
+  unPersistedForDate: [],
 };
 
 // P:
@@ -71,19 +72,20 @@ export const habitDateSlice = createSlice({
   name: "habitDate",
   initialState,
   reducers: {
-    createHabitDate(state, action: PayloadAction<NewHabitDatePayload>) {
-      const { habitDates, id } = action.payload.habitDate;
-      return {
-        ...state,
-        myRecords: { habitDate: habitDate || [] },
-      };
+    createHabitDate(state, action: PayloadAction<Node>) {
+      const { habitId, dateId, completed } = action.payload;
+      state.unPersistedForDate.push({
+        habit_id: habitId,
+        date_id: dateId,
+        completed_status: completed,
+      });
     },
-    // deleteHabitDate(state, action: PayloadAction<number>) {
-    //   delete state[action.payload];
-    // },
     updateHabitDateForNode(state, action: PayloadAction<any>) {
-      const { habitId, value } = action.payload;
-      state.tempForCurrentDate;
+      const { habitId, dateId, completed } = action.payload;
+      const habitDateForUpdate = state.unPersistedForDate!.find(
+        (hd) => hd.habit_id == habitId && hd.date_id == dateId
+      );
+      habitDateForUpdate.completed_status = completed;
     },
   },
   extraReducers: (builder) => {

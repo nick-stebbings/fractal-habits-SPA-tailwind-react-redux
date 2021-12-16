@@ -29,9 +29,9 @@ const { toggleConfirm } = UISlice.actions;
 import HabitSlice from "features/habit/reducer";
 const { updateCurrentHabit } = HabitSlice.actions;
 import NodeSlice from "features/node/reducer";
-const { createNode, updateCurrentNode } = NodeSlice.actions;
+const { updateCurrentNode } = NodeSlice.actions;
 import HabitDateSlice from "features/habitDate/reducer";
-const { updateHabitDateForNode } = HabitDateSlice.actions;
+const { createHabitDate, updateHabitDateForNode } = HabitDateSlice.actions;
 
 import {
   getTransform,
@@ -270,7 +270,7 @@ export default class Visualization {
           }
         }
       },
-      handleStatusChange: function (node) {
+      handleStatusChange: function (node, currentHabit, currentDate) {
         const theNode = this.zoomBase()
           .selectAll(".the-node circle")
           .filter((n) => {
@@ -308,9 +308,12 @@ export default class Visualization {
         );
         if (!node.data.name.includes("Sub-Habit")) {
           // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
-          const habitId = selectCurrentHabit(store.getState())?.meta.id;
           store.dispatch(
-            updateHabitDateForNode({ habitId, value: !currentStatus })
+            updateHabitDateForNode({
+              habitId: currentHabit?.meta?.id,
+              dateId: currentDate,
+              completed: !currentStatus,
+            })
           );
         }
       },
@@ -321,7 +324,7 @@ export default class Visualization {
         if (deadNode(event)) {
           // Create a habit date ready for persisting
           store.dispatch(
-            createNode({
+            createHabitDate({
               habitId: currentHabit?.meta.id,
               dateId: currentDate,
               completed: false,
@@ -338,7 +341,12 @@ export default class Visualization {
           // (Only leaves can toggle)
           //  TODO: ENACT parentCompleted LOGIC
         }
-        this.eventHandlers.handleStatusChange.call(this, node);
+        this.eventHandlers.handleStatusChange.call(
+          this,
+          node,
+          currentHabit,
+          currentDate
+        );
       },
       handleMouseEnter: function ({ target: d }) {
         this.currentTooltip = select(d).selectAll("g.tooltip");
