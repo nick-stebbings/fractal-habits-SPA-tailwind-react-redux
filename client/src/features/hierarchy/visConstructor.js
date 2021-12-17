@@ -764,7 +764,7 @@ export default class Visualization {
       })
       .style("stroke", (d) =>
         nodeStatusColours(d, this.rootData) === parentPositiveBorderCol
-          ? positiveCol
+          ? positiveColLighter
           : noNodeCol
       )
       .style("opacity", (d) =>

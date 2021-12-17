@@ -67,10 +67,10 @@ export const updateVisRootData = (
 export const oppositeStatus = (current) =>
   [undefined, "false", "incomplete", ""].includes(current) ? "true" : "false";
 
-export const sumChildrenValues = (node, hidden = false) =>
-  hidden
-    ? node._children.reduce((sum, n) => sum + n.value, 0)
-    : node.children.reduce((sum, n) => sum + n.value, 0);
+export const sumChildrenValues = (node, hidden = false) => {
+  const children = node?._children || node?.children || node?.data?.children;
+  return children.reduce((sum, n) => sum + n.value, 0);
+};
 
 export const parseTreeValues = (valueString) => {
   if (typeof valueString === "undefined") return;
@@ -98,7 +98,7 @@ export const habitDatePersisted = (node) => {
 export const cumulativeValue = (node) => {
   let content;
   try {
-    content = parseTreeValues(node.content)?.status;
+    content = parseTreeValues(node.content || node?.data.content)?.status;
   } catch (error) {
     console.log("error accumulating values :>> ", error);
     console.log("content, node :>> ", content, node);
@@ -116,7 +116,7 @@ export const cumulativeValue = (node) => {
     }
     // if expanded
     if (content === "true") {
-      if (node && node?.children.length > 0) {
+      if (!!node?.children && node?.children?.length > 0) {
         return +(
           // Were all descendant nodes accumulated to have a 1 value each?
           (
@@ -143,6 +143,7 @@ export const nodeStatusColours = (d, currentHierarchy) => {
   // Guard clause for 'no record'
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return noNodeCol;
+
   const cumulativeVal = cumulativeValue(d);
   const status = parseTreeValues(d.data.content).status;
   if (

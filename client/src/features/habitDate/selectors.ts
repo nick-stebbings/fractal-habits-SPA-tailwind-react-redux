@@ -92,8 +92,8 @@ export const selectAccumulatedStatusForDate = (
 
       if (
         unPersisted.length > 0 &&
-        currentHabit?.meta?.name == "yuiy8uoyu" &&
-        hasDescendantsIncomplete
+        currentHabit?.meta?.name == "Shop healthily" &&
+        currentHabitStatus == "true"
       ) {
         debugger;
       }
