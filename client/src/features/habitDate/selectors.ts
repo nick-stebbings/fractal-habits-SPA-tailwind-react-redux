@@ -95,7 +95,7 @@ export const selectAccumulatedStatusForDate = (
         currentHabit?.meta?.name == "ASSSD" &&
         hasDescendantsIncomplete
       ) {
-        debugger;
+        // debugger;
       }
 
       const completedInTreeOrInStore =

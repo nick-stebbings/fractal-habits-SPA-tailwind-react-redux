@@ -117,6 +117,9 @@ export const cumulativeValue = (node) => {
     // if expanded
     if (content === "true") {
       if (node && node?.children.length > 0) {
+        if (d?.data?.name == "ASSSD") {
+          debugger;
+        }
         return +(
           // Were all descendant nodes accumulated to have a 1 value each?
           (
@@ -143,10 +146,13 @@ export const nodeStatusColours = (d, currentHierarchy) => {
   // Guard clause for 'no record'
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return noNodeCol;
-  const cumulativeVal = cumulativeValue(d?.data || d);
+  const cumulativeVal = cumulativeValue(d);
   const status = parseTreeValues(d.data.content).status;
   if (
-    d.depth === currentHierarchy.height ||
+    d.height === 0 ||
+    d?._children?.every(
+      (d) => parseTreeValues(d.data.content).status === "OOB"
+    ) ||
     d?.children?.every((d) => parseTreeValues(d.data.content).status === "OOB")
   ) {
     if (status == "true") return positiveCol;
@@ -158,9 +164,10 @@ export const nodeStatusColours = (d, currentHierarchy) => {
     case 1: // All descendants are positive
       return positiveCol;
     case 0: // Not all descendants are positive
-      if (status == "true") {
+      if (d?.data?.name == "ASSSD") {
         debugger;
-        cumulativeValue(d?.data || d);
+      }
+      if (status == "true") {
         return parentPositiveBorderCol;
       } // Node is complete but some of its descendants are not.
       return negativeCol;

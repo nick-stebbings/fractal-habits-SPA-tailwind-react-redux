@@ -11,6 +11,7 @@ import {
   easeCubic,
   easeCircleOut,
   easeLinear,
+  hierarchy,
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 import Hammer from "hammerjs";
@@ -32,6 +33,8 @@ import NodeSlice from "features/node/reducer";
 const { updateCurrentNode } = NodeSlice.actions;
 import HabitDateSlice from "features/habitDate/reducer";
 const { createHabitDate, updateHabitDateForNode } = HabitDateSlice.actions;
+import hierarchySlice from "features/hierarchy/reducer";
+import { selectCurrentDateId } from "../space/slice";
 
 import {
   getTransform,
@@ -40,7 +43,6 @@ import {
   collapse,
   nodesForCollapse,
   nodeWithoutHabitDate,
-  oppositeStatus,
   contentEqual,
   nodeStatusColours,
   parseTreeValues,
@@ -57,13 +59,7 @@ import {
   neutralCol,
   parentPositiveBorderCol,
 } from "app/constants";
-import { selectCurrentDateId } from "../space/slice";
-function autoBox() {
-  document.body.appendChild(this);
-  const { x, y, width, height } = this.getBBox();
-  document.body.removeChild(this);
-  return [x, y, width, height];
-}
+
 const BASE_SCALE = 1.5;
 const FOCUS_MODE_SCALE = 2;
 const XS_LABEL_SCALE = 1.2;
@@ -431,12 +427,29 @@ export default class Visualization {
   }
 
   addHabitDatesForNewNodes() {
-    this._gCircle.each((d) => {
+    const currentDate = selectCurrentDateId(store.getState());
+    const { updateCurrentHierarchy, updateCachedHierarchyForDate } =
+      hierarchySlice.actions;
+
+    let newRootData = hierarchy({ ...this.rootData.data });
+    accumulateTree(newRootData);
+
+    newRootData.each((d) => {
       if (nodeWithoutHabitDate(d?.data)) {
+        // if (d.data.name == "ASSSD") {
+        //   debugger;
+        // }
         this.createNewHabitDateForNode(d);
         this.mutateTreeJsonForNewHabitDates(d);
       }
     });
+    store.dispatch(
+      updateCachedHierarchyForDate({
+        dateId: currentDate,
+        newHierarchy: newRootData,
+      })
+    );
+    store.dispatch(updateCurrentHierarchy({ nextDateId: currentDate }));
   }
 
   mutateTreeJsonForNewHabitDates(d) {
@@ -477,7 +490,7 @@ export default class Visualization {
     const theNode = this.zoomBase()
       .selectAll(".the-node circle")
       .filter((n) => {
-        if (n.data.name === node.data.name) return n;
+        if (!!n?.data?.name && n?.data?.name === node.data.name) return n;
       });
     if (this.isNotALeaf(node)) {
       //  TODO: ENACT parentCompleted LOGIC
@@ -1249,14 +1262,17 @@ export default class Visualization {
       _p("Cleared canvas :>> ");
 
       this.setLayout();
+      this.addHabitDatesForNewNodes();
+      accumulateTree(this.rootData);
       this.setNodeAndLinkGroups();
+      console.log(
+        "this.rootData.descendants().map(n => n.value) :>> ",
+        this.rootData.descendants().map((n) => n.value)
+      );
       this.setNodeAndLinkEnterSelections();
       this.setCircleAndLabelGroups();
       this.setButtonGroups();
 
-      this.addHabitDatesForNewNodes();
-
-      accumulateTree(this.rootData);
       _p("Formed new layout", this, "!");
 
       _p("Appended and set groups... :>>", {});

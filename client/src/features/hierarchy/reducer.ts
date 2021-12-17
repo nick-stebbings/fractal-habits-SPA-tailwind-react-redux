@@ -61,6 +61,12 @@ export const hierarchySlice = createSlice({
       }
       return state;
     },
+    updateCachedHierarchyForDate(state, action: PayloadAction<any>) {
+      const { dateId, newHierarchy } = action.payload;
+      if (state.myRecords[dateId]) {
+        state.myRecords[dateId] = newHierarchy;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase("fetch_habit_tree/fulfilled", (state, action) => {
@@ -91,5 +97,5 @@ export const hierarchySlice = createSlice({
   },
 });
 
-export default hierarchySlice.reducer;
+export default hierarchySlice;
 export const visActions = hierarchySlice.actions;
