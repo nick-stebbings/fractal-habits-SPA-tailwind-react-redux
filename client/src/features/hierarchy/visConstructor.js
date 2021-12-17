@@ -58,6 +58,7 @@ import {
   noNodeCol,
   neutralCol,
   parentPositiveBorderCol,
+  positiveColLighter,
 } from "app/constants";
 
 const BASE_SCALE = 1.5;
@@ -436,20 +437,18 @@ export default class Visualization {
 
     newRootData.each((d) => {
       if (nodeWithoutHabitDate(d?.data)) {
-        // if (d.data.name == "ASSSD") {
-        //   debugger;
-        // }
         this.createNewHabitDateForNode(d);
         this.mutateTreeJsonForNewHabitDates(d);
       }
     });
-    store.dispatch(
-      updateCachedHierarchyForDate({
-        dateId: currentDate,
-        newHierarchy: newRootData,
-      })
-    );
-    store.dispatch(updateCurrentHierarchy({ nextDateId: currentDate }));
+    this.rootData.newHabitDatesAdded = true;
+    // store.dispatch(
+    //   updateCachedHierarchyForDate({
+    //     dateId: currentDate,
+    //     newHierarchy: newRootData,
+    //   })
+    // );
+    // store.dispatch(updateCurrentHierarchy({ nextDateId: currentDate }));
   }
 
   mutateTreeJsonForNewHabitDates(d) {
@@ -1086,7 +1085,7 @@ export default class Visualization {
     const labels = [
       "Completed",
       "Incomplete",
-      "Incomplete Subtree",
+      "Complete & Sub-Incomplete",
       "Not Yet Tracked",
       "Out of Bounds",
     ];
@@ -1095,7 +1094,13 @@ export default class Visualization {
       : BASE_SCALE / 2;
     const ordinal = scaleOrdinal()
       .domain(labels)
-      .range([positiveCol, negativeCol, positiveCol, neutralCol, noNodeCol]);
+      .range([
+        positiveCol,
+        negativeCol,
+        positiveColLighter,
+        neutralCol,
+        noNodeCol,
+      ]);
 
     const legendSvg = select("svg.legend-svg");
     const controlsSvg = select("svg.controls-svg");
@@ -1262,13 +1267,10 @@ export default class Visualization {
       _p("Cleared canvas :>> ");
 
       this.setLayout();
-      this.addHabitDatesForNewNodes();
+      typeof this.rootData.newHabitDatesAdded == "undefined" &&
+        this.addHabitDatesForNewNodes();
       accumulateTree(this.rootData);
       this.setNodeAndLinkGroups();
-      console.log(
-        "this.rootData.descendants().map(n => n.value) :>> ",
-        this.rootData.descendants().map((n) => n.value)
-      );
       this.setNodeAndLinkEnterSelections();
       this.setCircleAndLabelGroups();
       this.setButtonGroups();

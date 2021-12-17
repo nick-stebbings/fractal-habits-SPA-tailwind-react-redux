@@ -92,10 +92,10 @@ export const selectAccumulatedStatusForDate = (
 
       if (
         unPersisted.length > 0 &&
-        currentHabit?.meta?.name == "ASSSD" &&
+        currentHabit?.meta?.name == "yuiy8uoyu" &&
         hasDescendantsIncomplete
       ) {
-        // debugger;
+        debugger;
       }
 
       const completedInTreeOrInStore =

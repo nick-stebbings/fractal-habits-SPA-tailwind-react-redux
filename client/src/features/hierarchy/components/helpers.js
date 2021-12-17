@@ -117,9 +117,6 @@ export const cumulativeValue = (node) => {
     // if expanded
     if (content === "true") {
       if (node && node?.children.length > 0) {
-        if (d?.data?.name == "ASSSD") {
-          debugger;
-        }
         return +(
           // Were all descendant nodes accumulated to have a 1 value each?
           (
@@ -164,9 +161,6 @@ export const nodeStatusColours = (d, currentHierarchy) => {
     case 1: // All descendants are positive
       return positiveCol;
     case 0: // Not all descendants are positive
-      if (d?.data?.name == "ASSSD") {
-        debugger;
-      }
       if (status == "true") {
         return parentPositiveBorderCol;
       } // Node is complete but some of its descendants are not.
