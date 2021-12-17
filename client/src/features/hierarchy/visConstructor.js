@@ -763,8 +763,8 @@ export default class Visualization {
         return nodeStatusColours(d, this.rootData);
       })
       .style("stroke", (d) =>
-        nodeStatusColours(d, this.rootData) === parentPositiveBorderCol
-          ? positiveColLighter
+        nodeStatusColours(d, this.rootData) === positiveColLighter
+          ? parentPositiveBorderCol
           : noNodeCol
       )
       .style("opacity", (d) =>
@@ -773,8 +773,8 @@ export default class Visualization {
       .style("stroke-width", (d) =>
         // !!this.activeNode && d.ancestors().includes(this.activeNode)
         // TODO : memoize nodeStatus colours
-        nodeStatusColours(d, this.rootData) === parentPositiveBorderCol
-          ? "40px"
+        nodeStatusColours(d, this.rootData) === positiveColLighter
+          ? "20px"
           : "1px"
       )
       .attr("transform", (d) => {

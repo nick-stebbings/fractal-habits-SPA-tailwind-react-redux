@@ -1,7 +1,7 @@
 import {
   positiveCol,
   negativeCol,
-  parentPositiveBorderCol,
+  positiveColLighter,
   neutralCol,
   noNodeCol,
 } from "app/constants";
@@ -139,7 +139,7 @@ export const contentEqual = (node, other) =>
   node.content.split("-").slice(0, 1)[0] ==
   other.content.split("-").slice(0, 1)[0];
 
-export const nodeStatusColours = (d, currentHierarchy) => {
+export const nodeStatusColours = (d) => {
   // Guard clause for 'no record'
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return noNodeCol;
@@ -163,7 +163,7 @@ export const nodeStatusColours = (d, currentHierarchy) => {
       return positiveCol;
     case 0: // Not all descendants are positive
       if (status == "true") {
-        return parentPositiveBorderCol;
+        return positiveColLighter;
       } // Node is complete but some of its descendants are not.
       return negativeCol;
     default:
