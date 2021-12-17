@@ -75,10 +75,10 @@ export const CreateForm = ({
   return isDemo ? (
     <div className="my-2 mx-2">No Habit creation in Demo mode!</div>
   ) : (
-    <div className="m-0">
+    <div className="m-0 w-5/6 sm:h-3/4">
       <div className="self-start block pl-2 text-xl font-semibold text-gray-700">
         <h2 className="leading-relaxed">{title}</h2>
-        <p className="text-sm font-normal leading-relaxed text-gray-500">
+        <p className="text-sm font-normal text-center leading-relaxed text-gray-500">
           {message}
         </p>
       </div>

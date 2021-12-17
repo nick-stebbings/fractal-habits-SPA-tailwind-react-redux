@@ -2312,8 +2312,8 @@ html {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 @media (min-width: 640px) {
-  .sm\:w-32 {
-    width: 10rem;
+  .sm\:w-48 {
+    width: 12rem;
   }
   .sm\:inset-12 {
     top: 3rem;
@@ -2679,6 +2679,10 @@ html {
 @media (min-width: 640px) {
   .container {
     max-width: 640px;
+  }
+
+  .sm\:h-3\/4 {
+    height: 75%;
   }
 }
 @media (min-width: 768px) {
@@ -3284,7 +3288,6 @@ form {
   width: 100%;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem 1rem 5rem;
 }
 form#create-new-habit-child,
 form#create-new-habit-child > .input-container > div {
@@ -3294,11 +3297,6 @@ form#create-new-habit-child > .input-container > div {
 form#create-new-habit-child,
 form#create-new-habit-child > .input-container > div {
   transition: opacity ease 0.6s;
-}
-form#create-new-habit-child > .input-container {
-  margin: 0 0 1rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
 }
 .form-header {
   font-size: 1.25rem;
@@ -3311,11 +3309,8 @@ form#create-new-habit-child > .input-container {
   }
 }
 .input-container {
-  margin-top: 1rem;
   height: 100%;
   width: 100%;
-  padding-left: 2rem;
-  padding-right: 2rem;
   font-size: 1.25rem;
   line-height: 1.75rem;
 }
@@ -3323,15 +3318,6 @@ form#create-new-habit-child > .input-container {
   .input-container {
     width: 83.333333%;
   }
-}
-#modal .input-container {
-  position: absolute;
-  bottom: auto;
-}
-#modal .input-container {
-  position: absolute;
-  bottom: auto;
-  overflow-y: auto;
 }
 label {
   margin-top: 0.5rem;
@@ -3364,7 +3350,7 @@ label.reqd.not-added:after {
   right: 0px;
   bottom: 0px;
   display: flex;
-  height: 6rem;
+  height: 3rem;
   width: 100%;
   flex-direction: row;
   align-items: center;
@@ -3535,7 +3521,7 @@ main#append-habit .button-container.selected {
   z-index: 10;
 }
 #reset-tree {
-   z-index: 10;
+  z-index: 10;
 }
 @media (min-width: 1024px) {
   #collapse-tree {
