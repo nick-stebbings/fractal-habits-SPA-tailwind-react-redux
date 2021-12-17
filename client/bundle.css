@@ -3103,7 +3103,7 @@ main.wrapper {
 #hamburger-wrapper input:checked + nav {
   margin-right: 1rem;
   display: block;
-  transform: translate(-137%);
+  transform: translate(-152%);
   transition: transform 0.7s ease-in;
   -webkit-transition: transform 0.7s;
   -webkit-transition: -webkit-transform 0.2s;
@@ -3856,7 +3856,7 @@ input[type="date"] {
   }
 }
 .mask-wrapper .wide-nav {
-  width: 50vw;
+  width: 50%;
   position: absolute;
   top: 7rem;
   z-index: 20;

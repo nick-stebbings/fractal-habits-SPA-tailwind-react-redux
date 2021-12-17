@@ -342,8 +342,9 @@ export default class Visualization {
   }
 
   isNotALeaf(node) {
-    !this.rootData.leaves().includes(node) || node?._children;
+    !(d.height === 0) || node?._children;
   }
+
   noCanvas() {
     return (
       typeof this?._canvas == "undefined" ||

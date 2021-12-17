@@ -3807,7 +3807,7 @@ input[type="date"] {
   }
 }
 .mask-wrapper .wide-nav {
-  width: 50vw;
+  width: 50%;
   position: absolute;
   top: 7rem;
   z-index: 20;
