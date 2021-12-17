@@ -34,7 +34,7 @@ const { updateCurrentNode } = NodeSlice.actions;
 import HabitDateSlice from "features/habitDate/reducer";
 const { createHabitDate, updateHabitDateForNode } = HabitDateSlice.actions;
 import hierarchySlice from "features/hierarchy/reducer";
-import { selectCurrentDateId } from "../space/slice";
+import { selectCurrentDateId, selectCurrentDate } from "../space/slice";
 
 import {
   getTransform,
@@ -485,6 +485,8 @@ export default class Visualization {
   handleStatusChange(node) {
     const currentHabit = selectCurrentHabit(store.getState());
     const currentDate = selectCurrentDateId(store.getState());
+    const currentDateFromDate = selectCurrentDate(store.getState())?.timeframe
+      .fromDate;
 
     const nodeContent = parseTreeValues(node.data.content);
     const currentStatus = nodeContent.status;
@@ -526,6 +528,7 @@ export default class Visualization {
           habitId: currentHabit?.meta?.id,
           dateId: currentDate,
           completed: newStatus,
+          fromDateForToday: currentDateFromDate,
         })
       );
     }
@@ -1001,9 +1004,12 @@ export default class Visualization {
         passive: true,
       })
       .on("touchend", (e, d) => {
-        this.handleStatusChange.call(this, d);
-        // this.eventHandlers.handleNodeFocus.call(this, e, d);
-        // this.eventHandlers.createNewHabitDateForNode.call(this, e, d);
+        this.eventHandlers.handleNodeFocus.call(this, e, d);
+        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
+        setTimeout(() => {
+          // TODO remove this once habit dates for current habit are in.
+          this.handleStatusChange.call(this, d);
+        }, 500);
       })
       .on("contextmenu", (e, d) => {
         this.eventHandlers.handleNodeFocus.call(this, e, d);

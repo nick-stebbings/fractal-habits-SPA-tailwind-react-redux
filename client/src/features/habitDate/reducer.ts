@@ -97,7 +97,7 @@ export const habitDateSlice = createSlice({
       });
     },
     updateHabitDateForNode(state, action: PayloadAction<any>) {
-      const { habitId, dateId, completed } = action.payload;
+      const { habitId, dateId, completed, fromDateForToday } = action.payload;
       let habitDateForUpdateIdx = state.unPersistedForDate.findIndex((hd) => {
         return hd.habit_id == habitId && hd.date_id == dateId;
       });
@@ -106,10 +106,14 @@ export const habitDateSlice = createSlice({
       if (habitDateForUpdateIdx !== -1) {
         state.unPersistedForDate[habitDateForUpdateIdx].completed_status =
           completed;
+        state.current = state.unPersistedForDate[habitDateForUpdateIdx];
       } else {
         habitDateForUpdateIdx = state.myRecords.findIndex((hd) => {
-          return hd.habit_id == habitId && hd.date_id == dateId;
+          return (
+            hd.habit_id == habitId && hd.timeframe.fromDate == fromDateForToday
+          );
         });
+        debugger;
 
         if (habitDateForUpdateIdx !== -1) {
           // Then it was in the currentRecords
@@ -117,7 +121,9 @@ export const habitDateSlice = createSlice({
           updatedHabitDate.completed_status = completed;
 
           delete state.myRecords[habitDateForUpdateIdx];
+
           state.unPersistedForDate.push(updatedHabitDate);
+          state.current = updatedHabitDate;
           debugger;
         }
       }
