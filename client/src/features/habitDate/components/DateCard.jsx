@@ -1,5 +1,6 @@
 import React from "react";
 import { isSmallScreen, isSuperSmallScreen } from "app/helpers";
+import { getColor } from "features/hierarchy/components/helpers";
 
 import {
   positiveCol,
@@ -9,23 +10,6 @@ import {
   positiveColLighter,
   neutralCol,
 } from "app/constants";
-
-function getColor(completedStatus) {
-  switch (completedStatus) {
-    case true:
-      return positiveCol;
-    case false:
-      return negativeCol;
-    case "OOB":
-      return noNodeCol;
-    case "noHabitDate":
-      return neutralCol;
-    case "parentCompleted":
-      return positiveColLighter;
-    default:
-      return noNodeCol;
-  }
-}
 
 export const DateCard = ({ date, completedStatus, isToday }) => {
   const [weekday, month, monthday] = date.split(/\W+/);

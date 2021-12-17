@@ -98,10 +98,29 @@ export const habitDateSlice = createSlice({
     },
     updateHabitDateForNode(state, action: PayloadAction<any>) {
       const { habitId, dateId, completed } = action.payload;
-      const habitDateForUpdate = state.unPersistedForDate!.find(
-        (hd) => hd.habit_id == habitId && hd.date_id == dateId
-      );
-      habitDateForUpdate.completed_status = completed;
+      let habitDateForUpdateIdx = state.unPersistedForDate.findIndex((hd) => {
+        return hd.habit_id == habitId && hd.date_id == dateId;
+      });
+      // Check if we have a temp persisted habit date
+
+      if (habitDateForUpdateIdx !== -1) {
+        state.unPersistedForDate[habitDateForUpdateIdx].completed_status =
+          completed;
+      } else {
+        habitDateForUpdateIdx = state.myRecords.findIndex((hd) => {
+          return hd.habit_id == habitId && hd.date_id == dateId;
+        });
+
+        if (habitDateForUpdateIdx !== -1) {
+          // Then it was in the currentRecords
+          let updatedHabitDate = { ...state.myRecords[habitDateForUpdateIdx] };
+          updatedHabitDate.completed_status = completed;
+
+          delete state.myRecords[habitDateForUpdateIdx];
+          state.unPersistedForDate.push(updatedHabitDate);
+          debugger;
+        }
+      }
     },
   },
   extraReducers: (builder) => {

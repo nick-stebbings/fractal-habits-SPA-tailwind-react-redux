@@ -72,6 +72,27 @@ export const sumChildrenValues = (node, hidden = false) => {
   return children.reduce((sum, n) => sum + n.value, 0);
 };
 
+export const isNotALeaf = (node) => {
+  return !(node?.height === 0) || !!node?._children;
+};
+
+export function getColor(completedStatus) {
+  switch (completedStatus) {
+    case true:
+      return positiveCol;
+    case false:
+      return negativeCol;
+    case "OOB":
+      return noNodeCol;
+    case "noHabitDate":
+      return neutralCol;
+    case "parentCompleted":
+      return positiveColLighter;
+    default:
+      return noNodeCol;
+  }
+}
+
 export const parseTreeValues = (valueString) => {
   if (typeof valueString === "undefined") return;
   let splitValues, status, left, right;

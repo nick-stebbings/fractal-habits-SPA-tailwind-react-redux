@@ -49,6 +49,9 @@ import {
   cumulativeValue,
   habitDatePersisted,
   outOfBoundsNode,
+  oppositeStatus,
+  getColor,
+  isNotALeaf,
 } from "./components/helpers";
 import { debounce, handleErrorType } from "app/helpers";
 
@@ -341,10 +344,6 @@ export default class Visualization {
     delete this._hasRendered;
   }
 
-  isNotALeaf(node) {
-    !(d.height === 0) || node?._children;
-  }
-
   noCanvas() {
     return (
       typeof this?._canvas == "undefined" ||
@@ -457,7 +456,7 @@ export default class Visualization {
     d.data.content = d.data.content.replace(/\-/, "-false");
   }
 
-  createNewHabitDateForNode(node) {
+  createNewHabitDateForNode(node, withStatus) {
     const nodeContent = node?.data
       ? parseTreeValues(node?.data.content)
       : parseTreeValues(node.content);
@@ -478,7 +477,7 @@ export default class Visualization {
       createHabitDate({
         habitId: currentHabit?.meta.id,
         dateId: currentDate,
-        completed: false,
+        completed: withStatus || false,
       })
     );
   }
@@ -487,12 +486,24 @@ export default class Visualization {
     const currentHabit = selectCurrentHabit(store.getState());
     const currentDate = selectCurrentDateId(store.getState());
 
+    const nodeContent = parseTreeValues(node.data.content);
+    const currentStatus = nodeContent.status;
+
     const theNode = this.zoomBase()
       .selectAll(".the-node circle")
       .filter((n) => {
         if (!!n?.data?.name && n?.data?.name === node.data.name) return n;
       });
-    if (this.isNotALeaf(node)) {
+
+    const newStatus = oppositeStatus(currentStatus);
+    node.data.content = node.data.content.replace(
+      /true|false|incomplete/,
+      newStatus
+    );
+    theNode.attr("fill", getColor(JSON.parse(newStatus)));
+    theNode.attr("stroke", getColor(JSON.parse(newStatus)));
+
+    if (isNotALeaf(node)) {
       //  TODO: ENACT parentCompleted LOGIC
       // 3 state changes possible:
       // - FROM P_C to all subtree completed
@@ -506,9 +517,6 @@ export default class Visualization {
       // turn the ui green for that node.
       // turn all single parents green too
       // alter the logic for parentCompleted nodes such that they recognise temp habitDates in the store
-      theNode.attr("fill", positiveCol);
-      debugger;
-    } else {
     }
 
     if (!node.data.name.includes("Sub-Habit")) {
@@ -517,7 +525,7 @@ export default class Visualization {
         updateHabitDateForNode({
           habitId: currentHabit?.meta?.id,
           dateId: currentDate,
-          completed: !currentStatus,
+          completed: newStatus,
         })
       );
     }
@@ -775,7 +783,7 @@ export default class Visualization {
         // !!this.activeNode && d.ancestors().includes(this.activeNode)
         // TODO : memoize nodeStatus colours
         nodeStatusColours(d, this.rootData) === positiveColLighter
-          ? "20px"
+          ? "30px"
           : "1px"
       )
       .attr("transform", (d) => {
@@ -993,6 +1001,7 @@ export default class Visualization {
         passive: true,
       })
       .on("touchend", (e, d) => {
+        this.handleStatusChange.call(this, d);
         // this.eventHandlers.handleNodeFocus.call(this, e, d);
         // this.eventHandlers.createNewHabitDateForNode.call(this, e, d);
       })
@@ -1005,7 +1014,7 @@ export default class Visualization {
             d,
             false //this.type == "tree"
           );
-        this.handleStatusChange(d);
+        this.handleStatusChange.call(this, d);
       })
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
       .on(
@@ -1271,12 +1280,13 @@ export default class Visualization {
       typeof this.rootData.newHabitDatesAdded == "undefined" &&
         this.addHabitDatesForNewNodes();
       accumulateTree(this.rootData);
+
+      _p("Formed new layout", this, "!");
+
       this.setNodeAndLinkGroups();
       this.setNodeAndLinkEnterSelections();
       this.setCircleAndLabelGroups();
       this.setButtonGroups();
-
-      _p("Formed new layout", this, "!");
 
       _p("Appended and set groups... :>>", {});
 

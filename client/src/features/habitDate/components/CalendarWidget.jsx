@@ -98,11 +98,11 @@ export const CalendarWidget = ({
           <h2 className="flex mt-1 underline">Initiated On</h2>
           <span>{stringifyDate(currentHabit.timeframe.fromDate)}</span>
           <i
-            className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-1 absolute -left-1 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
+            className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-1 absolute -left-1 active:text-balance-tershades-dark text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
             onClick={handlePrev}
           />
           <i
-            className="cal-date-nav h-16 w-16 cal-date-nav-r fa fa-chevron-circle-right text-3xl ml-2 absolute right-2 sm:right-8 text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
+            className="cal-date-nav h-16 w-16 cal-date-nav-r fa fa-chevron-circle-right text-3xl ml-2 absolute right-2 sm:right-8 active:text-balance-tershades-dark text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
             onClick={handleNext}
             style={{ display: "none" }}
           />
