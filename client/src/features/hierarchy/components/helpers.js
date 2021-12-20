@@ -205,11 +205,8 @@ export const nodeStatusColours = (d) => {
 
 // Node/tree manipulation helpers
 
-export const nodeWithoutHabitDate = (data, store) => {
-  return (
-    !habitDatePersisted(data) && !selectInUnpersisted(data)(store.getState())
-  );
-};
+export const nodeWithoutHabitDate = (data, store) =>
+  !habitDatePersisted(data) && !selectInUnpersisted(data)(store.getState());
 
 export function expand(d) {
   var children = d.children ? d.children : d._children;

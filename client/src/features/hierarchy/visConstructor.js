@@ -464,10 +464,8 @@ export default class Visualization {
     } else {
       if (nodeWithoutHabitDate(startingNode?.data, store))
         // Just create one
-        this.createNewHabitDateForNode(
-          startingNode,
-          JSON.parse(completedValue)
-        );
+        debugger;
+      this.createNewHabitDateForNode(startingNode, JSON.parse(completedValue));
     }
     startingNode.newHabitDatesAdded = true;
   }

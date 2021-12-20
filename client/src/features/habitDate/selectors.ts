@@ -27,17 +27,12 @@ export const selectInUnpersisted = (nodeData: any) =>
       if (unPersisted.length == 0) return false;
       const habitId =
         storedHabits[
-          storedHabits.findIndex((h) => h.meta?.name == nodeData.name)
+          storedHabits.findIndex((h: Habit) => h.meta?.name == nodeData.name)
         ]?.meta?.id;
 
       return (
-        unPersisted.findIndex((hd) => {
-          return (
-            hd?.habitId ==
-            unPersisted.findIndex((hd) => {
-              return hd?.habit_id == habitId && hd?.date_id == currentDateId;
-            })
-          );
+        unPersisted.findIndex((hd: any) => {
+          return hd?.habit_id == habitId && hd?.date_id == currentDateId;
         }) !== -1
       );
     }
