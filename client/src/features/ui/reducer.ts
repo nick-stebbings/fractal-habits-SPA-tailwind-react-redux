@@ -23,6 +23,9 @@ export const isDataAction = (action: AnyAction) => {
   );
 };
 
+export const isDeleteDataAction = (action: AnyAction) =>
+  action.type.startsWith("destroy") && action.type.endsWith("fulfilled");
+
 export const isErrorAction = (action: AnyAction) => {
   return action.type.endsWith("/rejected");
 };
