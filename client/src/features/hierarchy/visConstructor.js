@@ -445,18 +445,31 @@ export default class Visualization {
     this._nextRootData = newRootData;
   }
 
-  addHabitDatesForNewNodes() {
-    let newRootData = hierarchy({ ...this.rootData.data });
-    accumulateTree(newRootData);
+  addHabitDatesForNewNodes(
+    startingNode = this.rootData,
+    completedValue = false
+  ) {
+    if (!completedValue) {
+      let newRootData = hierarchy({ ...startingNode.data });
+      accumulateTree(newRootData, this);
+      // Traverse the tree and create many
 
-    newRootData.each((d) => {
-      if (nodeWithoutHabitDate(d?.data) && !isNotALeaf(d)) {
-        this.createNewHabitDateForNode(d);
-        this.mutateTreeJsonForNewHabitDates(d);
-      }
-    });
-    this.rootData.newHabitDatesAdded = true;
-    this.updateRootDataAfterAccumulation(newRootData);
+      newRootData.each((d) => {
+        if (nodeWithoutHabitDate(d?.data, store) && !isNotALeaf(d)) {
+          this.createNewHabitDateForNode(d, completedValue);
+          this.mutateTreeJsonForNewHabitDates(d);
+        }
+      });
+      this.updateRootDataAfterAccumulation(newRootData);
+    } else {
+      if (nodeWithoutHabitDate(startingNode?.data, store))
+        // Just create one
+        this.createNewHabitDateForNode(
+          startingNode,
+          JSON.parse(completedValue)
+        );
+    }
+    startingNode.newHabitDatesAdded = true;
   }
 
   mutateTreeJsonForNewHabitDates(d) {
@@ -464,7 +477,7 @@ export default class Visualization {
     d.data.content = d.data.content.replace(/\-/, "-false");
   }
 
-  createNewHabitDateForNode(node, withStatus) {
+  createNewHabitDateForNode(node, withStatus = false) {
     const nodeContent = node?.data
       ? parseTreeValues(node?.data.content)
       : parseTreeValues(node.content);
@@ -485,7 +498,7 @@ export default class Visualization {
       createHabitDate({
         habitId: currentHabit?.meta.id,
         dateId: currentDate,
-        completed: withStatus || false,
+        completed: withStatus,
       })
     );
   }
@@ -522,13 +535,13 @@ export default class Visualization {
           updateHabitDateForNode({
             habitId: currentHabit?.meta?.id,
             dateId: currentDate,
-            completed: newStatus,
+            completed: JSON.parse(newStatus),
             fromDateForToday: currentDateFromDate,
           })
         );
       }
 
-      accumulateTree(this.rootData);
+      accumulateTree(this.rootData, this);
       this.updateRootDataAfterAccumulation(this.rootData);
     }
   }
@@ -658,13 +671,16 @@ export default class Visualization {
       return +statusValue;
     });
   }
-  static accumulateNodeValues(data) {
-    if (!data?.descendants) return;
-    while (data.descendants().some((node) => node.value > 1)) {
+  static accumulateNodeValues(node) {
+    if (!node?.descendants) return;
+    while (node.descendants().some((node) => node.value > 1)) {
       // Convert node values to binary based on whether their descendant nodes are all completed
-      data.each((node, idx) => {
-        if (node.value > 0) {
+      node.each((node) => {
+        if (node.value > 1) {
           node.value = cumulativeValue(node);
+        } else if (node.value > 0 && nodeWithoutHabitDate(node?.data, store)) {
+          debugger;
+          this.addHabitDatesForNewNodes(node, true);
         }
       });
     }
@@ -1286,7 +1302,7 @@ export default class Visualization {
       this.setLayout();
       typeof this.rootData.newHabitDatesAdded == "undefined" &&
         this.addHabitDatesForNewNodes();
-      !this.hasSummedData() && accumulateTree(this.rootData);
+      !this.hasSummedData() && accumulateTree(this.rootData, this);
 
       _p("Formed new layout", this, "!");
 
@@ -1339,10 +1355,10 @@ export default class Visualization {
   }
 }
 
-export function accumulateTree(json) {
+export function accumulateTree(json, thisArg) {
   try {
     Visualization.sumHierarchyData.call(null, json);
-    Visualization.accumulateNodeValues.call(null, json);
+    Visualization.accumulateNodeValues.call(thisArg, json);
     // TODO memoise
   } catch (error) {
     console.error("Could not manipulate tree: ", error);

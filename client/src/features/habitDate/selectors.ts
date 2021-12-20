@@ -8,6 +8,8 @@ import { Habit } from "app/features/habit/types";
 
 import { selectCurrentHierarchyRecords } from "../hierarchy/selectors";
 import { selectCurrentHabit } from "../habit/selectors";
+import { selectCurrentDateId } from "../space/slice";
+import { selectStoredHabits } from "../habit/selectors";
 import { parseTreeValues } from "../hierarchy/components/helpers";
 
 export const selectStoredHabitDates = (state: RootState) => {
@@ -17,6 +19,29 @@ export const selectStoredHabitDates = (state: RootState) => {
 export const selectUnStoredHabitDates = (state: RootState) => {
   return state?.habitDate?.unPersistedForDate;
 };
+
+export const selectInUnpersisted = (nodeData: any) =>
+  createSelector(
+    [selectUnStoredHabitDates, selectCurrentDateId, selectStoredHabits],
+    (unPersisted, currentDateId, storedHabits) => {
+      if (unPersisted.length == 0) return false;
+      const habitId =
+        storedHabits[
+          storedHabits.findIndex((h) => h.meta?.name == nodeData.name)
+        ]?.meta?.id;
+
+      return (
+        unPersisted.findIndex((hd) => {
+          return (
+            hd?.habitId ==
+            unPersisted.findIndex((hd) => {
+              return hd?.habit_id == habitId && hd?.date_id == currentDateId;
+            })
+          );
+        }) !== -1
+      );
+    }
+  );
 
 export const selectCurrentHabitDate = (state: RootState) => {
   return state?.habitDate?.current;

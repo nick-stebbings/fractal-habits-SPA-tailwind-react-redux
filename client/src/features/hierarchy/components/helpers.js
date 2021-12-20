@@ -7,6 +7,7 @@ import {
 } from "app/constants";
 
 import { select, hierarchy } from "d3";
+import { selectInUnpersisted } from "features/habitDate/selectors";
 
 // General helpers
 
@@ -117,9 +118,9 @@ export const outOfBoundsNode = (d, rootData) => {
 };
 
 export const habitDatePersisted = (node) => {
-  return (
-    node?.data?.content && parseTreeValues(node.data.content).status !== ""
-  );
+  return node?.data?.content
+    ? parseTreeValues(node.data.content).status !== ""
+    : parseTreeValues(node?.content).status !== "";
 };
 
 export const cumulativeValue = (node) => {
@@ -142,7 +143,7 @@ export const cumulativeValue = (node) => {
       );
     }
     // if expanded
-    if (content === "true" || node?.value > 0) {
+    if (content === "true" || node.value > 0) {
       if (!!node?.children && node?.children?.length > 0) {
         return +(
           // Were all descendant nodes accumulated to have a 1 value each?
@@ -204,8 +205,11 @@ export const nodeStatusColours = (d) => {
 
 // Node/tree manipulation helpers
 
-export const nodeWithoutHabitDate = (data) =>
-  data && parseTreeValues(data.content)?.status == "";
+export const nodeWithoutHabitDate = (data, store) => {
+  return (
+    !habitDatePersisted(data) && !selectInUnpersisted(data)(store.getState())
+  );
+};
 
 export function expand(d) {
   var children = d.children ? d.children : d._children;
