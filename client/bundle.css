@@ -3195,6 +3195,10 @@ div.sm-selector-container .domain-selector {
   .date-card-wrapper {
     padding: 0rem;
   }
+
+  .calendar-widget {
+    right: 1.5rem;
+  }
 }
 @media only screen and (min-width: 1920px) {
   #app > main.wrapper {
