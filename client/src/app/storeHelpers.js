@@ -101,7 +101,7 @@ export function crudReducer(
       return {
         ...state,
         current: mapped[0] || state.current, //.slice(-1)
-        myRecords: mapped,
+        myRecords: mapped, //(state?.myRecords || []).concat(mapped)
       };
 
     // DESTROY
@@ -136,11 +136,22 @@ export function createCrudActionCreators(actionTypes, callBacks) {
           // Allow 404s for habit_dates
           try {
             const response = await callBacks[1](input);
-
+            console.log(
+              "Object.assign:>> ",
+              Object.assign(response, {
+                data:
+                  response?.status === 404
+                    ? `{ "habit_dates": []}`
+                    : response.data,
+              })
+            );
             return [200, 404].includes(response?.status)
               ? thunkAPI.fulfillWithValue(
                   Object.assign(response, {
-                    data: `{ "habit_dates": []}`,
+                    data:
+                      response?.status === 404
+                        ? `{ "habit_dates": []}`
+                        : response.data,
                   })
                 )
               : thunkAPI.rejectWithValue(response);
