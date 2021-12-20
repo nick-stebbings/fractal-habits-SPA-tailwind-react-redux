@@ -85,11 +85,11 @@ export const CalendarWidget = ({
   useAppSelector(selectStoredHabitDates); // Triggers re-render on habit date update
   return (
     <div
-      className="calendar-widget lg:top-20 top-20 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-8"
+      className="calendar-widget lg:top-20 top-28 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-12"
       style={{ maxWidth: "100vw" }}
       onClick={toggleSlide}
     >
-      <div className="habit-description-label lg:opacity-0 gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col overflow-none lg:items-center bg-gray-100 border-4 pb-12 md:pb-0">
+      <div className="habit-description-label lg:opacity-0 gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col overflow-none lg:items-center bg-gray-100 border-4 pb-4 md:pb-0">
         <div className="flex justify-start flex-col relative">
           <h2 className="mt-4 underline">Description</h2>
           <span className="min-h-16 mr-1/3">
@@ -111,7 +111,7 @@ export const CalendarWidget = ({
         <Link to={`habits/list?currentHabit=${"HabitStore.current()?.id"}`}>
           <span
             className={
-              "absolute text-gray-200 pointer-events-none top-2 right-1 sm:right-4"
+              "absolute text-gray-200 pointer-events-none top-1 right-1 sm:right-4"
             }
           >
             <svg
@@ -133,7 +133,7 @@ export const CalendarWidget = ({
         <Link to={`habits/new?currentHabit=${"currentid"}`}>
           <span
             className={
-              "absolute text-gray-200 pointer-events-none top-12  right-1 sm:right-4"
+              "absolute text-gray-200 pointer-events-none top-10  right-1 sm:right-4"
             }
           >
             <svg
@@ -152,7 +152,7 @@ export const CalendarWidget = ({
             </svg>
           </span>
         </Link>
-        <span className={"lg:hidden absolute top-24 right-1 sm:right-4"}>
+        <span className={"lg:hidden absolute top-20 right-1 sm:right-4"}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="text-balance-sshades-desat cursor-pointer w-10 h-10"
@@ -175,10 +175,8 @@ export const CalendarWidget = ({
       </div>
       <div
         className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent"
-        onMouseLeave={async (e) => {
-          setTimeout(() => {
-            hideMegaMenu();
-          }, 1000);
+        onMouseLeave={(e) => {
+          hideMegaMenu();
         }}
       >
         {currentWeek &&
@@ -191,6 +189,10 @@ export const CalendarWidget = ({
               <DateCard
                 key={fromDate}
                 date={fromDate && stringifyDate(fromDate)}
+                handleClick={() => {
+                  if (isTouchDevice()) return;
+                  showMegaMenu();
+                }}
                 completedStatus={selectAccumulatedStatusForDate(
                   fromDate,
                   relativeDateId

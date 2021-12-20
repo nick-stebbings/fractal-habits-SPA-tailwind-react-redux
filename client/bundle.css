@@ -307,6 +307,9 @@ html {
 .top-9 {
   top: 2.25rem;
 }
+.top-1 {
+  top: 0.25rem;
+}
 .top-10 {
   top: 2.5rem;
 }
@@ -3101,9 +3104,9 @@ main.wrapper {
   padding-right: 0.5rem;
 }
 #hamburger-wrapper input:checked + nav {
+  transform: translate(-118%);
   margin-right: 1rem;
   display: block;
-  transform: translate(-152%);
   transition: transform 0.7s ease-in;
   -webkit-transition: transform 0.7s;
   -webkit-transition: -webkit-transform 0.2s;
@@ -3178,10 +3181,16 @@ div.sm-selector-container .domain-selector {
   .date-card-wrapper {
     padding: 2rem 0.25rem;
   }
+  #hamburger-wrapper input:checked + nav {
+    transform: translate(-120%);
+  }
 }
 @media only screen and (min-width: 768px) {
   main.wrapper > .cloud-man-vector {
     grid-column: 2 / span 3;
+  }
+  #hamburger-wrapper input:checked + nav {
+    transform: translate(-127%);
   }
 }
 @media (min-width: 1024px) {
@@ -3197,7 +3206,7 @@ div.sm-selector-container .domain-selector {
   }
 
   .calendar-widget {
-    right: 1.5rem;
+    right: 1.5rem !important;
   }
 }
 @media only screen and (min-width: 1920px) {
@@ -3860,7 +3869,7 @@ input[type="date"] {
   }
 }
 .mask-wrapper .wide-nav {
-  width: 50%;
+  width: 100%;
   position: absolute;
   top: 7rem;
   z-index: 20;

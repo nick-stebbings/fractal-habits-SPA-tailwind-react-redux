@@ -11,7 +11,7 @@ import {
   neutralCol,
 } from "app/constants";
 
-export const DateCard = ({ date, completedStatus, isToday }) => {
+export const DateCard = ({ date, completedStatus, isToday, handleClick }) => {
   const [weekday, month, monthday] = date.split(/\W+/);
   return (
     <div
@@ -27,7 +27,9 @@ export const DateCard = ({ date, completedStatus, isToday }) => {
           : "60px",
       }}
     >
-      <span className="font-std block uppercase">{weekday || <br />}</span>
+      <span onClick={handleClick} className="font-std block uppercase">
+        {weekday || <br />}
+      </span>
       <span className="font-std block text-sm md:text-xl">{monthday}</span>
       <span className="block">{month}</span>
       <svg className="w-10 h-10 md:w-12 md:h-12 mt-1" viewBox="-5 0 56 56">

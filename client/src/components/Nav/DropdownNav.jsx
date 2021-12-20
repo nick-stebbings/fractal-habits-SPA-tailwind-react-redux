@@ -24,7 +24,6 @@ export const DropdownNav = function ({ routes, showMegaMenu, hideMegaMenu }) {
       <div
         className="nav-container"
         onClick={(e) => {
-          if (!e.target.classList.contains("nav-container")) return;
           showMegaMenu();
         }}
       >

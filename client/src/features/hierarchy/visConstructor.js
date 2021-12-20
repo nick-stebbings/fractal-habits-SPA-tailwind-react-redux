@@ -66,7 +66,7 @@ import {
 } from "app/constants";
 
 const BASE_SCALE = 1.5;
-const FOCUS_MODE_SCALE = 2;
+const FOCUS_MODE_SCALE = 2.5;
 const XS_LABEL_SCALE = 1.2;
 const LG_LABEL_SCALE = 2.5;
 const XS_BUTTON_SCALE = 2;
@@ -77,12 +77,6 @@ const XS_LEVELS_HIGH = 6;
 const LG_LEVELS_HIGH = 6;
 const XS_LEVELS_WIDE = 3;
 const LG_LEVELS_WIDE = 3;
-const DEFAULT_MARGIN = {
-  top: 0,
-  right: 0,
-  bottom: 0,
-  left: 0,
-};
 
 const getInitialXTranslate = (
   groupWidth,
@@ -152,7 +146,7 @@ export default class Visualization {
     this._viewConfig = {
       scale: BASE_SCALE,
       clickScale: type == "radial" ? BASE_SCALE / 2 : FOCUS_MODE_SCALE,
-      margin: margin || DEFAULT_MARGIN,
+      margin: margin,
       canvasHeight,
       canvasWidth,
 
@@ -580,8 +574,10 @@ export default class Visualization {
 
   resetForExpandedMenu({ justTranslation }) {
     let newTranslate = this._viewConfig.defaultView.split` `;
-    newTranslate[0] = -this.activeNode ? this.activeNode.x : 0;
-    newTranslate[1] = -this.activeNode ? this.activeNode.y : 0;
+    newTranslate[0] = -(this.activeNode ? this.activeNode.x : 0);
+    newTranslate[1] = -(this.activeNode
+      ? this.activeNode.y - this._viewConfig.defaultCanvasTranslateY() / 2
+      : 0);
     let newTranslateString = newTranslate.join(" ");
     this.zoomBase()
       .transition()
