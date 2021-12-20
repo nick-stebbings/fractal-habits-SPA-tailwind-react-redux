@@ -1,6 +1,5 @@
 // @ts-ignore
 import { RootState } from "app/store";
-import { createSelector } from "@reduxjs/toolkit";
 
 // @ts-ignore
 import { Node } from "app/features/node/types";
@@ -12,10 +11,6 @@ export const selectCurrentNode = (state: RootState): Node => {
 export const selectStoredNodes = (state: RootState): Node[] => {
   return state?.node?.myRecords;
 };
-
-// export const selectCurrentNodes = (state: RootState) => {
-//   return state?.node?.myRecords.filter((record: Node) => {});
-// };
 
 export const selectCurrentNodeByMptt = (
   state: RootState,

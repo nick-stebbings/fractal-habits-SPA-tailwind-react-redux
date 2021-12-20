@@ -102,7 +102,7 @@ export const selectAccumulatedStatusForDate = (
       const hasDescendantsIncomplete =
         !!currentHabitHierarchyNode?.children &&
         currentHabitHierarchyNode
-          .descendants()
+          .leaves()
           .some(
             (descendant: any) =>
               !["true", "OOB"].includes(
@@ -114,6 +114,9 @@ export const selectAccumulatedStatusForDate = (
         currentHabitStatus == "true" ||
         !!habitDateInStore ||
         dateIsPersistedCompleted;
+      // if (completedInTreeOrInStore && hasDescendantsIncomplete) {
+      //   debugger;
+      // }
       return completedInTreeOrInStore && hasDescendantsIncomplete
         ? "parentCompleted"
         : completedInTreeOrInStore;

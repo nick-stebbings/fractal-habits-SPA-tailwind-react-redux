@@ -464,8 +464,10 @@ export default class Visualization {
     } else {
       if (nodeWithoutHabitDate(startingNode?.data, store))
         // Just create one
-        debugger;
-      this.createNewHabitDateForNode(startingNode, JSON.parse(completedValue));
+        this.createNewHabitDateForNode(
+          startingNode,
+          JSON.parse(completedValue)
+        );
     }
     startingNode.newHabitDatesAdded = true;
   }
@@ -677,7 +679,6 @@ export default class Visualization {
         if (node.value > 1) {
           node.value = cumulativeValue(node);
         } else if (node.value > 0 && nodeWithoutHabitDate(node?.data, store)) {
-          debugger;
           this.addHabitDatesForNewNodes(node, true);
         }
       });

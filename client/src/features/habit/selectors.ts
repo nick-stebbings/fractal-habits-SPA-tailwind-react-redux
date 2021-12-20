@@ -1,9 +1,7 @@
 // @ts-ignore
 import { RootState } from "app/store";
-import { createSelector } from "@reduxjs/toolkit";
 import { selectCurrentNodeByMptt } from "../node/selectors";
 import { Habit } from "./types";
-import { Node } from "../node/types";
 
 export const selectCurrentHabit = (state: RootState): Habit => {
   return state?.habit?.current;

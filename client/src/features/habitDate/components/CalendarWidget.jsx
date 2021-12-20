@@ -176,7 +176,7 @@ export const CalendarWidget = ({
       <div
         className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent"
         onMouseLeave={async (e) => {
-          const tO = setTimeout(() => {
+          setTimeout(() => {
             hideMegaMenu();
           }, 1000);
         }}
