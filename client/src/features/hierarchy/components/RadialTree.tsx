@@ -19,7 +19,8 @@ export const RadialTree: React.FC<VisProps> = ({
   margin,
   divId,
   render,
-  routeChanged
+  routeChanged,
+  deleteCompleted
 }) => {
   const dispatch = useAppDispatch();
 

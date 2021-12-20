@@ -20,7 +20,8 @@ export const HabitTree: React.FC<VisProps> = ({
   margin,
   divId,
   render,
-  routeChanged
+  routeChanged,
+  deleteCompleted
 }) => {
   const dispatch = useAppDispatch();
   let currentHabitTree = useAppSelector(selectCurrentTree);

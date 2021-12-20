@@ -9,4 +9,5 @@ export interface VisProps {
   margin?: any; //(_:any):void
   render: any; //(_:any):void
   routeChanged: boolean;
+  deleteCompleted: boolean;
 }

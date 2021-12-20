@@ -38,6 +38,7 @@ const initialState: Dictionary<boolean | string> = {
   responseStatus: idleState,
   confirmStatus: false,
   confirmType: "",
+  deleteCompleted: false,
 };
 
 const uiStatus = createSlice({
@@ -55,7 +56,7 @@ const uiStatus = createSlice({
       return state;
     },
     resetDeleteCompleted(state) {
-      delete state.deleteCompleted;
+      state.deleteCompleted = false;
     },
   },
   extraReducers: (builder) => {
