@@ -42,9 +42,17 @@ export const updateVisRootData = (
 ) => {
   // Check if the hierarchy in the store is a new one (a new tree needs rendering)
   const compareString = JSON.stringify(currentHierarchy.data);
+  const compareString2 = currentHierarchy
+    ?.descendants()
+    ?.map((n) => n.value)
+    ?.join("");
+
   const visExists = visObject?._svgId;
   const newData =
-    visExists && JSON.stringify(visObject.rootData.data) !== compareString;
+    visExists &&
+    (JSON.stringify(visObject.rootData.data) !== compareString ||
+      visObject.rootData.descendants().map((n) => n.value).join`` !==
+        compareString2);
 
   if (visExists && (newData || visObject.firstRender() || routeChanged)) {
     visObject._nextRootData = hierarchy(currentHierarchy.data);
@@ -52,10 +60,8 @@ export const updateVisRootData = (
     // Account for second page load of an already instantiated vis
     if (routeChanged) {
       visObject._nextRootData.routeChanged = true;
-      // delete visObject._canvas;
       visObject.clearFirstRenderFlag();
     }
-
     visObject.render();
     _p("Rendered from component & updated ", {}, "!");
     return visObject;
@@ -136,7 +142,7 @@ export const cumulativeValue = (node) => {
       );
     }
     // if expanded
-    if (content === "true") {
+    if (content === "true" || node?.value > 0) {
       if (!!node?.children && node?.children?.length > 0) {
         return +(
           // Were all descendant nodes accumulated to have a 1 value each?
@@ -165,7 +171,11 @@ export const nodeStatusColours = (d) => {
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return noNodeCol;
 
-  const cumulativeVal = cumulativeValue(d);
+  if (d.height !== 0) {
+    // debugger;
+  }
+  const cumulativeVal =
+    d.height == 0 && d?.value ? d.value : cumulativeValue(d);
   const status = parseTreeValues(d.data.content).status;
   if (
     d.height === 0 ||

@@ -35,7 +35,6 @@ export const Cluster: React.FC<VisProps> = ({
     if (!currentCluster || currentHierarchy?.data.name == "") return
     
     updateVisRootData(currentCluster, currentHierarchy, routeChanged);
-
   }, [routeChanged])
 
   useEffect(() => {

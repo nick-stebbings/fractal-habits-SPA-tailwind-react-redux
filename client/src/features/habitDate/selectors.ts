@@ -73,7 +73,7 @@ export const selectAccumulatedStatusForDate = (
           currentHabitNodeDataForDate
         )!.status;
         if (currentHabitStatus == "OOB") return "OOB";
-        if (currentHabitStatus === false) return false;
+        if (currentHabitStatus === "false") return false;
         if (currentHabitStatus == "" && typeof habitDateInStore == "undefined")
           return "noHabitDate";
       }
@@ -89,14 +89,6 @@ export const selectAccumulatedStatusForDate = (
                 parseTreeValues(descendant.data.content)!.status
               )
           );
-
-      if (
-        unPersisted.length > 0 &&
-        currentHabit?.meta?.name == "Shop healthily" &&
-        currentHabitStatus == "true"
-      ) {
-        debugger;
-      }
 
       const completedInTreeOrInStore =
         currentHabitStatus == "true" ||

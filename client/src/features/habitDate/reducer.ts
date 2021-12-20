@@ -113,7 +113,6 @@ export const habitDateSlice = createSlice({
             hd.habit_id == habitId && hd.timeframe.fromDate == fromDateForToday
           );
         });
-        debugger;
 
         if (habitDateForUpdateIdx !== -1) {
           // Then it was in the currentRecords
@@ -124,7 +123,6 @@ export const habitDateSlice = createSlice({
 
           state.unPersistedForDate.push(updatedHabitDate);
           state.current = updatedHabitDate;
-          debugger;
         }
       }
     },

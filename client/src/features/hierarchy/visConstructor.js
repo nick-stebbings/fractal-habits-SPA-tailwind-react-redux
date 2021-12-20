@@ -353,6 +353,9 @@ export default class Visualization {
   hasNextData() {
     return !!this?._nextRootData;
   }
+  hasSummedData() {
+    return !!this.rootData?.value;
+  }
   hasNewHierarchyData() {
     return (
       this.hasNextData() &&
@@ -427,28 +430,33 @@ export default class Visualization {
     }
   }
 
-  addHabitDatesForNewNodes() {
+  updateRootDataAfterAccumulation(newRootData) {
     const currentDate = selectCurrentDateId(store.getState());
+
     const { updateCurrentHierarchy, updateCachedHierarchyForDate } =
       hierarchySlice.actions;
+    store.dispatch(
+      updateCachedHierarchyForDate({
+        dateId: currentDate,
+        newHierarchy: newRootData,
+      })
+    );
+    store.dispatch(updateCurrentHierarchy({ nextDateId: currentDate }));
+    this._nextRootData = newRootData;
+  }
 
+  addHabitDatesForNewNodes() {
     let newRootData = hierarchy({ ...this.rootData.data });
     accumulateTree(newRootData);
 
     newRootData.each((d) => {
-      if (nodeWithoutHabitDate(d?.data)) {
+      if (nodeWithoutHabitDate(d?.data) && !isNotALeaf(d)) {
         this.createNewHabitDateForNode(d);
         this.mutateTreeJsonForNewHabitDates(d);
       }
     });
     this.rootData.newHabitDatesAdded = true;
-    // store.dispatch(
-    //   updateCachedHierarchyForDate({
-    //     dateId: currentDate,
-    //     newHierarchy: newRootData,
-    //   })
-    // );
-    // store.dispatch(updateCurrentHierarchy({ nextDateId: currentDate }));
+    this.updateRootDataAfterAccumulation(newRootData);
   }
 
   mutateTreeJsonForNewHabitDates(d) {
@@ -483,54 +491,45 @@ export default class Visualization {
   }
 
   handleStatusChange(node) {
-    const currentHabit = selectCurrentHabit(store.getState());
-    const currentDate = selectCurrentDateId(store.getState());
-    const currentDateFromDate = selectCurrentDate(store.getState())?.timeframe
-      .fromDate;
-
-    const nodeContent = parseTreeValues(node.data.content);
-    const currentStatus = nodeContent.status;
-
-    const theNode = this.zoomBase()
-      .selectAll(".the-node circle")
-      .filter((n) => {
-        if (!!n?.data?.name && n?.data?.name === node.data.name) return n;
-      });
-
-    const newStatus = oppositeStatus(currentStatus);
-    node.data.content = node.data.content.replace(
-      /true|false|incomplete/,
-      newStatus
-    );
-    theNode.attr("fill", getColor(JSON.parse(newStatus)));
-    theNode.attr("stroke", getColor(JSON.parse(newStatus)));
-
     if (isNotALeaf(node)) {
-      //  TODO: ENACT parentCompleted LOGIC
-      // 3 state changes possible:
-      // - FROM P_C to all subtree completed
-      // - FROM P_N_C to all subtree completed
-      // - FROM P_N_C to all subtree not-completed?
-    }
-    if (!habitDatePersisted(node)) {
-      // return if not a leaf;
-      // if !habitDateStored
-      // then dispatch a new habitDate action.
-      // turn the ui green for that node.
-      // turn all single parents green too
-      // alter the logic for parentCompleted nodes such that they recognise temp habitDates in the store
-    }
+      return;
+    } else {
+      const currentHabit = selectCurrentHabit(store.getState());
+      const currentDate = selectCurrentDateId(store.getState());
+      const currentDateFromDate = selectCurrentDate(store.getState())?.timeframe
+        .fromDate;
 
-    if (!node.data.name.includes("Sub-Habit")) {
-      // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
-      store.dispatch(
-        updateHabitDateForNode({
-          habitId: currentHabit?.meta?.id,
-          dateId: currentDate,
-          completed: newStatus,
-          fromDateForToday: currentDateFromDate,
-        })
+      const nodeContent = parseTreeValues(node.data.content);
+      const currentStatus = nodeContent.status;
+
+      const theNode = this.zoomBase()
+        .selectAll(".the-node circle")
+        .filter((n) => {
+          if (!!n?.data?.name && n?.data?.name === node.data.name) return n;
+        });
+
+      const newStatus = oppositeStatus(currentStatus);
+      node.data.content = node.data.content.replace(
+        /true|false|incomplete/,
+        newStatus
       );
+      theNode.attr("fill", getColor(JSON.parse(newStatus)));
+      theNode.attr("stroke", getColor(JSON.parse(newStatus)));
+
+      if (!node.data.name.includes("Sub-Habit")) {
+        // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
+        store.dispatch(
+          updateHabitDateForNode({
+            habitId: currentHabit?.meta?.id,
+            dateId: currentDate,
+            completed: newStatus,
+            fromDateForToday: currentDateFromDate,
+          })
+        );
+      }
+
+      accumulateTree(this.rootData);
+      this.updateRootDataAfterAccumulation(this.rootData);
     }
   }
 
@@ -771,7 +770,6 @@ export default class Visualization {
           : "the-node solid";
       })
       .style("fill", (d) => {
-        if (!habitDatePersisted(d)) return neutralCol;
         return nodeStatusColours(d, this.rootData);
       })
       .style("stroke", (d) =>
@@ -1266,7 +1264,10 @@ export default class Visualization {
       // First render OR New hierarchy needs to be rendered
 
       // Update the current day's rootData
-      if (this.hasNextData()) this.rootData = this._nextRootData;
+      if (this.hasSummedData()) {
+        delete this._nextRootData;
+      } else if (this.hasNextData()) this.rootData = this._nextRootData;
+
       if (!this.activeNode) _p("Need new active node", {});
 
       if (this.noCanvas()) return;
@@ -1285,7 +1286,7 @@ export default class Visualization {
       this.setLayout();
       typeof this.rootData.newHabitDatesAdded == "undefined" &&
         this.addHabitDatesForNewNodes();
-      accumulateTree(this.rootData);
+      !this.hasSummedData() && accumulateTree(this.rootData);
 
       _p("Formed new layout", this, "!");
 
