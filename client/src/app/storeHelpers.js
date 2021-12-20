@@ -60,7 +60,7 @@ export function crudReducer(
   destroy,
   fetchOne = {}
 ) {
-  const { payload, type, meta } = action;
+  const { payload, type } = action;
   const model = modelNameFromActionString(type);
   const parsed =
     payload?.data && typeof payload.data == "string"
@@ -94,6 +94,7 @@ export function crudReducer(
 
     case fetch.fulfilled().type:
       // parsed is e.g. { "habits": [ { "id": 1, "name": "another test"... }, ... ]
+      // But could also be a blank array for a 404
       mapped = Object.values(parsed)[0]
         .map(mapCallbacks[model])
         .filter((record) => record !== undefined);
@@ -133,10 +134,19 @@ export function createCrudActionCreators(actionTypes, callBacks) {
     actionTypes[1].match(/habit_dates/)
       ? async function (input, thunkAPI) {
           // Allow 404s for habit_dates
-          const response = await callBacks[1](input);
-          return [200, 404].includes(response?.status)
-            ? thunkAPI.fulfillWithValue(response)
-            : thunkAPI.rejectWithValue(response);
+          try {
+            const response = await callBacks[1](input);
+
+            return [200, 404].includes(response?.status)
+              ? thunkAPI.fulfillWithValue(
+                  Object.assign(response, {
+                    data: `{ "habit_dates": []}`,
+                  })
+                )
+              : thunkAPI.rejectWithValue(response);
+          } catch (error) {
+            console.log("error :>> ", error);
+          }
         }
       : callBacks[1]
   );

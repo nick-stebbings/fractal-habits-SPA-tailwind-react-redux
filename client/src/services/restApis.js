@@ -15,8 +15,8 @@ axios.interceptors.response.use(
     return handleErrorType(res);
   },
   (res) => {
-    if (res?.status == 500) return res; // Already handled with modal
-    return handleErrorType(res);
+    if ([500, 404].includes(res?.response?.status)) return res?.response; // Already handled with modal
+    return handleErrorType(res); // Handle with a flash message
   }
 );
 
