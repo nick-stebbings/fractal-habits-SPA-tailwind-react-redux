@@ -22,6 +22,7 @@ import { selectCurrentNodeByMptt } from "features/node/selectors";
 import {
   selectCurrentHabit,
   selectCurrentHabitByMptt,
+  selectStoredHabits,
 } from "features/habit/selectors";
 import { fetchHabitDatesREST } from "features/habitDate/actions";
 import { selectCurrentHabitDate } from "features/habitDate/selectors";
@@ -253,7 +254,7 @@ export default class Visualization {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
-          // this.setActiveNode(node.data, event);
+          this.setActiveNode(node.data, event);
 
           if (this.type == "tree") {
             const nodesToCollapse = nodesForCollapse
@@ -539,6 +540,29 @@ export default class Visualization {
             fromDateForToday: currentDateFromDate,
           })
         );
+
+        // Also toggle 'cascaded' ancestor nodes
+        const storedHabits = selectStoredHabits(store.getState());
+        node?.ancestors().length &&
+          node.ancestors().forEach((a) => {
+            if (a?.data?.name == currentHabit?.meta?.name) return;
+
+            if (parseTreeValues(a.data.content)?.status == "") {
+              const habitId =
+                storedHabits[
+                  storedHabits.findIndex((h) => h.meta?.name == a.data.name)
+                ]?.meta?.id;
+
+              store.dispatch(
+                updateHabitDateForNode({
+                  habitId: habitId,
+                  dateId: currentDate,
+                  completed: JSON.parse(newStatus),
+                  fromDateForToday: currentDateFromDate,
+                })
+              );
+            }
+          });
       }
 
       accumulateTree(this.rootData, this);

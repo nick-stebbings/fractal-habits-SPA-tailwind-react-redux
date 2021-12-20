@@ -60,7 +60,9 @@ export const selectAccumulatedStatusForDate = (
       const dateIsPersistedCompleted =
         persistedDates &&
         persistedDates.some(
-          ({ timeframe }: TimeFrame) => timeframe.fromDate == fromDateUnixTs
+          ({ timeframe, habitId }: TimeFrame) =>
+            timeframe.fromDate == fromDateUnixTs &&
+            habitId === currentHabit?.meta?.id
         );
 
       // Next check the JSON tree data
@@ -114,9 +116,9 @@ export const selectAccumulatedStatusForDate = (
         currentHabitStatus == "true" ||
         !!habitDateInStore ||
         dateIsPersistedCompleted;
-      // if (completedInTreeOrInStore && hasDescendantsIncomplete) {
-      //   debugger;
-      // }
+      if (completedInTreeOrInStore && hasDescendantsIncomplete) {
+        debugger;
+      }
       return completedInTreeOrInStore && hasDescendantsIncomplete
         ? "parentCompleted"
         : completedInTreeOrInStore;
