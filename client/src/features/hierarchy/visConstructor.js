@@ -26,7 +26,6 @@ import {
 } from "features/habit/selectors";
 import { fetchHabitDatesREST } from "features/habitDate/actions";
 import { selectCurrentHabitDate } from "features/habitDate/selectors";
-import { getRequestStatus } from "features/ui/selectors";
 import UISlice from "features/ui/reducer";
 const { toggleConfirm } = UISlice.actions;
 import HabitSlice from "features/habit/reducer";
@@ -214,8 +213,7 @@ export default class Visualization {
         this.setCurrentHabit(node);
         this.setCurrentNode(node);
         store.dispatch(toggleConfirm({ type: "Delete" }));
-        let a = getRequestStatus(store.getState());
-        debugger;
+        this.render();
       },
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;

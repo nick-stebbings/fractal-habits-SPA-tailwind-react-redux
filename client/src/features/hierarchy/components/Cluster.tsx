@@ -20,7 +20,8 @@ export const Cluster: React.FC<VisProps> = ({
   margin,
   divId,
   render,
-  routeChanged
+  routeChanged,
+  deleteCompleted
 }) => {
   const dispatch = useAppDispatch();
   let currentCluster = useAppSelector(selectCurrentCluster);
@@ -35,7 +36,7 @@ export const Cluster: React.FC<VisProps> = ({
     if (!currentCluster || currentHierarchy?.data.name == "") return
     
     updateVisRootData(currentCluster, currentHierarchy, routeChanged);
-  }, [routeChanged])
+  }, [routeChanged, deleteCompleted])
 
   useEffect(() => {
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;

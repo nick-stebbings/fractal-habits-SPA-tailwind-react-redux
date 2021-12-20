@@ -110,6 +110,7 @@ export function crudReducer(
       const newMyRecords = [...state.myRecords].filter(
         (r) => r?.meta?.id !== +payload.config.url.split`/`.reverse()[0]
       );
+      console.log("parsed :>> ", parsed);
       return {
         myRecords: newMyRecords,
         current: {
@@ -136,15 +137,6 @@ export function createCrudActionCreators(actionTypes, callBacks) {
           // Allow 404s for habit_dates
           try {
             const response = await callBacks[1](input);
-            console.log(
-              "Object.assign:>> ",
-              Object.assign(response, {
-                data:
-                  response?.status === 404
-                    ? `{ "habit_dates": []}`
-                    : response.data,
-              })
-            );
             return [200, 404].includes(response?.status)
               ? thunkAPI.fulfillWithValue(
                   Object.assign(response, {
@@ -162,13 +154,14 @@ export function createCrudActionCreators(actionTypes, callBacks) {
       : callBacks[1]
   );
   const update = createAsyncThunk(actionTypes[2], callBacks[2]);
-  const destroy = createAsyncThunk(actionTypes[3], callBacks[3]);
-  //   async (input, thunkAPI) => {
-  //   const response = await callBacks[3](input);
-  //   return [204].includes(response.status)
-  //     ? thunkAPI.fulfillWithValue(response)
-  //     : thunkAPI.rejectWithValue(response);
-  // });
+  const destroy = createAsyncThunk(actionTypes[3], async (input, thunkAPI) => {
+    console.log("input :>> ", input);
+    const response = await callBacks[3](input);
+
+    return [204].includes(response.status)
+      ? thunkAPI.fulfillWithValue(response)
+      : thunkAPI.rejectWithValue(response);
+  });
   const fetch = createAsyncThunk(actionTypes[4], callBacks[4]);
   return [create, fetchAll, update, destroy, fetch];
 }

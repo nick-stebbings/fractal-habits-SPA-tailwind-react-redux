@@ -54,10 +54,16 @@ const uiStatus = createSlice({
       }
       return state;
     },
+    resetDeleteCompleted(state) {
+      delete state.deleteCompleted;
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(isDataAction, (state) => {
       state.responseStatus = dataState;
+    });
+    builder.addMatcher(isDeleteDataAction, (state) => {
+      state.deleteCompleted = true;
     });
     builder.addMatcher(isLoadingAction, (state) => {
       if (state.responseStatus.status == "ERROR") return state;

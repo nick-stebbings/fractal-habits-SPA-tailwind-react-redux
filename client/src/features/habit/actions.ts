@@ -43,16 +43,6 @@ clientRouteDict.show_all = async (_: any, thunkAPI: any) =>
     return thunkAPI.fulfillWithValue(response);
   });
 
-clientRouteDict.destroy = async (_: any, thunkAPI: any) => {
-  const response = await destroyRoute();
-  const parsed = JSON.parse(response!.data);
-  const s = thunkAPI.getState();
-  console.log("response :>> ", response);
-  debugger;
-
-  return response;
-};
-
 const thunkCallBacks = [
   clientRouteDict.create,
   clientRouteDict.show_all,
