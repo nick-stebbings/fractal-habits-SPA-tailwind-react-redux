@@ -158,7 +158,7 @@ export const Header = ({isVis}) => {
                   <span className="lg:hidden xl:block md:pt-6 xl:pt-3 pt-0 pb-0 mx-4 mb-1 ml-6">
                     <label htmlFor="date-today">Date</label>
                   </span>
-                  <div className="lg:pr-0 lg:w-auto lg:rounded-3xl lg:rounded-t-none xl:-mt-3 rounded-3xl w-56 -mt-2 bg-white">
+                  <div className="lg:pr-0 lg:rounded-3xl lg:rounded-t-none xl:-mt-3 rounded-3xl w-56 -mt-2 bg-white">
                     <span className="lg:pt-2 text-balance-sshades-brighten flex justify-around w-full -mt-3 mb-1">
                       <i
                         id="prev-date-selector"

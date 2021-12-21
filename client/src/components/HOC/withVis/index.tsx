@@ -3,14 +3,13 @@ import React, { ComponentType, useEffect} from 'react'
 import useFetch from '../../../hooks/useFetch'
 import { useLocation, useHistory } from 'react-router-dom';
 import { useLastLocation } from 'react-router-last-location';
-import "../../../assets/styles/pages/d3vis.scss";
+import "../../../assets/styles/components/vis.scss";
 
 import { useAppSelector, useAppDispatch } from 'app/hooks';
 import UISlice from 'features/ui/reducer';
 const { resetDeleteCompleted } = UISlice.actions;
 
 import { selectDeleteCompleted } from 'features/ui/selectors';
-import { current } from 'immer';
 
 const margin = {
   top: 0,

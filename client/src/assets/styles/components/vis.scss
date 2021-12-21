@@ -3,8 +3,9 @@ g.nodes {
   pointer-events: all;
 }
 
-.the-node circle {
-  // transition: fill 0.2s ease-out;
+.the-node.active circle {
+  stroke: #3d3229;
+  stroke-width: 4px;
 }
 
 .legend-svg .cell:first-child circle::after {

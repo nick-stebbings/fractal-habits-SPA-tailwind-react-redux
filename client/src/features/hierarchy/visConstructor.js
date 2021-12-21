@@ -265,7 +265,8 @@ export default class Visualization {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
-          this.setActiveNode(node.data, event);
+          if (currentHabit?.meta?.name !== node.data.name)
+            this.setActiveNode(node.data, event);
 
           if (this.type == "tree") {
             const nodesToCollapse = nodesForCollapse
@@ -383,6 +384,7 @@ export default class Visualization {
     event && event.target?.closest(".the-node")?.classList?.toggle("active");
 
     this.render();
+    this.activateNodeAnimation();
     return this.activeNode;
   }
   findNodeByContent(node) {
@@ -470,7 +472,8 @@ export default class Visualization {
           this.mutateTreeJsonForNewHabitDates(d);
         }
       });
-      // this.updateRootDataAfterAccumulation(newRootData);
+      // debugger;
+      this.updateRootDataAfterAccumulation(newRootData);
     } else {
       if (nodeWithoutHabitDate(startingNode?.data, store))
         // Just create one
@@ -479,7 +482,7 @@ export default class Visualization {
           JSON.parse(completedValue)
         );
     }
-    startingNode.newHabitDatesAdded = true;
+    this.rootData.newHabitDatesAdded = true;
   }
 
   mutateTreeJsonForNewHabitDates(d) {
@@ -573,7 +576,6 @@ export default class Visualization {
             }
           });
       }
-
       accumulateTree(this.rootData, this);
       this.updateRootDataAfterAccumulation(this.rootData);
     }
@@ -1127,14 +1129,10 @@ export default class Visualization {
             );
             ev.target = parentNodeGroup;
             try {
-              this.eventHandlers.handleMouseEnter.call(
-                this,
-                ev,
-                node.__data__.data
-              );
+              this.eventHandlers.handleMouseEnter.call(this, ev, node.data);
               break;
             } catch (error) {
-              debugger;
+              console.error(error);
             }
         }
       }, 1500)
@@ -1247,49 +1245,49 @@ export default class Visualization {
       .style("stroke", this.gCirclePulse.pulseScale);
   }
 
-  activateNodeAnimation() {
-    // _p("animated node", this.activeNode, "!");
+  activateNodeAnimation = debounce(() => {
     // https://stackoverflow.com/questions/45349849/concentric-emanating-circles-d3
     // Credit: Andrew Reid
 
-    const transition = function () {
-      let data = this.gCirclePulse.pulseData
-        .map((d) => {
-          return d == 3 * this._viewConfig.nodeRadius
-            ? 0
-            : d + this._viewConfig.nodeRadius;
-        })
-        .slice(0, -2);
+    // _p("animated node", this.activeNode, "!");
+    this.zoomBase().selectAll(".active-circle").remove();
+    this.setNodeAnimationGroups();
 
-      var i = 0;
-      // Grow circles
-      this.gCirclePulse.pulseCircles
-        .data(data)
-        .filter(function (d) {
-          return d > 0;
-        })
-        .transition()
-        .ease(easeCubic)
-        .attr("r", function (d) {
-          return d;
-        })
-        .style("stroke", this.gCirclePulse.pulseScale)
-        .style("opacity", (d) => {
-          return d == 3 * this._viewConfig.nodeRadius ? 0 : 1;
-        })
-        .duration(200);
+    let data = this.gCirclePulse.pulseData
+      .map((d) => {
+        return d == 3 * this._viewConfig.nodeRadius
+          ? 0
+          : d + this._viewConfig.nodeRadius;
+      })
+      .slice(0, -2);
 
-      //  pulseCircles where r == 0
-      this.gCirclePulse.pulseCircles
-        .filter(function (d) {
-          return d == 0;
-        })
-        .attr("r", 0)
-        .style("opacity", 1)
-        .style("stroke", this.gCirclePulse.pulseScale);
-    }.bind(this);
-    transition();
-  }
+    var i = 0;
+    // Grow circles
+    this.gCirclePulse.pulseCircles
+      .data(data)
+      .filter(function (d) {
+        return d > 0;
+      })
+      .transition()
+      .ease(easeCubic)
+      .attr("r", function (d) {
+        return d;
+      })
+      .style("stroke", this.gCirclePulse.pulseScale)
+      .style("opacity", (d) => {
+        return d == 3 * this._viewConfig.nodeRadius ? 0 : 1;
+      })
+      .duration(200);
+
+    //  pulseCircles where r == 0
+    this.gCirclePulse.pulseCircles
+      .filter(function (d) {
+        return d == 0;
+      })
+      .attr("r", 0)
+      .style("opacity", 1)
+      .style("stroke", this.gCirclePulse.pulseScale);
+  }, 800);
 
   render() {
     _p("Rendering vis... :>>", this?._canvas);
@@ -1368,21 +1366,20 @@ export default class Visualization {
           handleErrorType("No active habits for this date");
         }
       }
-      debounce(this.activateNodeAnimation.bind(this), 800)();
-
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
       // console.log("Appended SVG elements... :>>");
 
-      isTouchDevice() && this.bindMobileEventHandlers(this._enteringNodes);
+      this._viewConfig.isSmallScreen() &&
+        this.bindMobileEventHandlers(this._enteringNodes);
 
       this._canvas.attr(
         "transform",
         `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
       );
 
-      this.setNodeAnimationGroups();
+      this.activateNodeAnimation();
       this._hasRendered = true;
     }
 
