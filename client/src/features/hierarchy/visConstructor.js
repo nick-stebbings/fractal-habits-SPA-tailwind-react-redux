@@ -252,6 +252,7 @@ export default class Visualization {
       },
       handleNodeFocus: function (event, node) {
         event.preventDefault();
+        this.calibrateViewBox();
         const currentHabit = selectCurrentHabit(store.getState());
 
         const targ = event?.target;
@@ -381,7 +382,7 @@ export default class Visualization {
     if (currentActiveG) currentActiveG.classList.toggle("active");
     event && event.target?.closest(".the-node")?.classList?.toggle("active");
 
-    !!event && this.render();
+    this.render();
     return this.activeNode;
   }
   findNodeByContent(node) {

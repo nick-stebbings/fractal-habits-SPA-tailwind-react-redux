@@ -16,9 +16,8 @@ export const idleState: RequestState = {
 };
 
 export const isDataAction = (action: AnyAction) => {
-  // return action.type.endsWith("/fulfilled");
   return (
-    // action.type.endsWith("nodes/fulfilled") ||
+    !action.type.startsWith("habit_trees") && // This multiple day fetch is always done in the background so no spinner needed
     action.type.endsWith("habit_dates/fulfilled")
   );
 };
@@ -31,7 +30,14 @@ export const isErrorAction = (action: AnyAction) => {
 };
 
 export const isLoadingAction = (action: AnyAction) => {
-  return action.type.endsWith("/pending");
+  return (
+    action.type.endsWith("/pending") ||
+    [
+      "fetch_domains/fulfilled",
+      "fetch_habits/fulfilled",
+      "fetch_nodes/fulfilled",
+    ].includes(action.type)
+  ); // These actions are always followed by more fetches and so loading can be considered in progress;
 };
 
 const initialState: Dictionary<boolean | string> = {
