@@ -470,7 +470,7 @@ export default class Visualization {
           this.mutateTreeJsonForNewHabitDates(d);
         }
       });
-      this.updateRootDataAfterAccumulation(newRootData);
+      // this.updateRootDataAfterAccumulation(newRootData);
     } else {
       if (nodeWithoutHabitDate(startingNode?.data, store))
         // Just create one

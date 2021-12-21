@@ -36,26 +36,42 @@ export const appendSvg = (divId) => {
       .attr("style", "pointer-events: all");
 };
 
+const concatenateHierarchyNodeValues = (hierarchy) =>
+  hierarchy?.descendants && hierarchy.descendants().map((n) => n.value).join``;
+
+const hierarchyStateHasChanged = (currentHierarchy, visObject) => {
+  const compareString = JSON.stringify(currentHierarchy.data);
+  const currentHierNodeValueString =
+    concatenateHierarchyNodeValues(currentHierarchy);
+  console.log("currentHierNodeValueString :>> ", currentHierNodeValueString);
+  console.log(
+    "concatenateHierarchyNodeValues(visObject.rootData) :>> ",
+    concatenateHierarchyNodeValues(visObject.rootData)
+  );
+  return (
+    JSON.stringify(visObject.rootData.data) !== compareString ||
+    concatenateHierarchyNodeValues(visObject.rootData) !==
+      currentHierNodeValueString
+  );
+};
+
 export const updateVisRootData = (
   visObject,
   currentHierarchy,
   routeChanged
 ) => {
-  // Check if the hierarchy in the store is a new one (a new tree needs rendering)
-  const compareString = JSON.stringify(currentHierarchy.data);
-  const compareString2 = currentHierarchy
-    ?.descendants()
-    ?.map((n) => n.value)
-    ?.join("");
-
   const visExists = visObject?._svgId;
-  const newData =
-    visExists &&
-    (JSON.stringify(visObject.rootData.data) !== compareString ||
-      visObject.rootData.descendants().map((n) => n.value).join`` !==
-        compareString2);
+  // Check if the hierarchy in the store is a new one (a new tree needs rendering)
+  // either because of a different node set/relationships
+  // or because node values changed
 
-  if (visExists && (newData || visObject.firstRender() || routeChanged)) {
+  debugger;
+  if (
+    visExists &&
+    (visObject.firstRender() ||
+      routeChanged ||
+      hierarchyStateHasChanged(currentHierarchy, visObject))
+  ) {
     visObject._nextRootData = hierarchy(currentHierarchy.data);
 
     // Account for second page load of an already instantiated vis
