@@ -37,7 +37,7 @@ export const HabitTree: React.FC<VisProps> = ({
     
     updateVisRootData(currentHabitTree, currentHierarchy, routeChanged);
 
-  }, [routeChanged])
+  }, [routeChanged,currentHierarchy?.data.name])
 
   useEffect(() => {
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;

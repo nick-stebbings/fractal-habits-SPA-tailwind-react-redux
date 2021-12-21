@@ -37,7 +37,7 @@ export const RadialTree: React.FC<VisProps> = ({
     
     updateVisRootData(currentRadial, currentHierarchy, routeChanged);
 
-  }, [routeChanged])
+  }, [routeChanged,currentHierarchy?.data.name])
 
   useEffect(() => {
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;

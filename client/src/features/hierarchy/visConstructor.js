@@ -55,7 +55,7 @@ import {
   getColor,
   isNotALeaf,
 } from "./components/helpers";
-import { debounce, handleErrorType } from "app/helpers";
+import { debounce, handleErrorType, isTouchDevice } from "app/helpers";
 
 import {
   positiveCol,
@@ -1080,8 +1080,9 @@ export default class Visualization {
 
     manager.on("doubletap", (ev) => {
       const target = ev.firstTarget;
-      if (!target) return;
+      if (!target || target?.tagName !== "circle") return;
       ev.srcEvent.stopPropagation();
+
       const node = target?.__data__;
       try {
         this.eventHandlers.rgtClickOrDoubleTap.call(this, ev.srcEvent, node);
@@ -1093,7 +1094,8 @@ export default class Visualization {
       "singletap",
       debounce((ev) => {
         const target = ev.firstTarget;
-        if (!target) return;
+        if (target.tagName !== "circle") return;
+
         ev.srcEvent.stopPropagation();
         const node = target?.__data__;
 
@@ -1122,8 +1124,16 @@ export default class Visualization {
               }
             );
             ev.target = parentNodeGroup;
-            this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
-            break;
+            try {
+              this.eventHandlers.handleMouseEnter.call(
+                this,
+                ev,
+                node.__data__.data
+              );
+              break;
+            } catch (error) {
+              debugger;
+            }
         }
       }, 1500)
     );
@@ -1364,7 +1374,7 @@ export default class Visualization {
       this.appendButtons();
       console.log("Appended SVG elements... :>>");
 
-      this.bindMobileEventHandlers(this._enteringNodes);
+      isTouchDevice() && this.bindMobileEventHandlers(this._enteringNodes);
 
       this._canvas.attr(
         "transform",

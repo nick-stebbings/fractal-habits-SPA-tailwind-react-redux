@@ -116,9 +116,7 @@ export const selectAccumulatedStatusForDate = (
         currentHabitStatus == "true" ||
         !!habitDateInStore ||
         dateIsPersistedCompleted;
-      if (completedInTreeOrInStore && hasDescendantsIncomplete) {
-        debugger;
-      }
+
       return completedInTreeOrInStore && hasDescendantsIncomplete
         ? "parentCompleted"
         : completedInTreeOrInStore;

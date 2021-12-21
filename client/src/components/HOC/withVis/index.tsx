@@ -1,7 +1,7 @@
 import React, { ComponentType, useEffect} from 'react'
 
 import useFetch from '../../../hooks/useFetch'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useLastLocation } from 'react-router-last-location';
 import "../../../assets/styles/pages/d3vis.scss";
 
@@ -10,6 +10,7 @@ import UISlice from 'features/ui/reducer';
 const { resetDeleteCompleted } = UISlice.actions;
 
 import { selectDeleteCompleted } from 'features/ui/selectors';
+import { current } from 'immer';
 
 const margin = {
   top: 0,
@@ -30,10 +31,14 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
   useFetch(true)
   
   const withVisC: React.FC = (hocProps: T) => {
-    const currentPath = useLocation().pathname
-    const lastPath = useLastLocation()?.pathname
-    const routeChanged = !!lastPath && (currentPath !== lastPath);
-    
+    const currentPath = useLocation()
+    const lastPath = useLastLocation()
+    const routeChanged = !!lastPath && (currentPath.pathname !== lastPath?.pathname);
+    const history = useHistory();
+    if (routeChanged) {
+      history.push(currentPath);
+    }
+
     let deleteCompleted = useAppSelector(selectDeleteCompleted)
     const dispatch = useAppDispatch();
     const { canvasHeight, canvasWidth } = d3SetupCanvas()
@@ -45,8 +50,9 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
         if (deleteCompleted) {
           currentVis.render()
           dispatch(resetDeleteCompleted())
+          debugger;
         }
-      }, [])
+      }, [deleteCompleted])
         return (<>
       <button
             type="button"

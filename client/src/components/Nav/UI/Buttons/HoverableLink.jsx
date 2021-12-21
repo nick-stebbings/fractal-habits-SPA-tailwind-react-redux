@@ -18,8 +18,7 @@ export const HoverableLink = ({
 }) => {
   const handleOpen = (e, idx) => {
     // Toggle active classes
-    console.log("e.currentTarget :>> ", e.currentTarget);
-    e.currentTarget.classList.toggle("active");
+    e.currentTarget.classList.add("active");
     oppositeLink(idx)?.parentNode.classList.remove("active");
     if (window.innerWidth > 1024) {
       document.querySelector(".habit-description-label").style.opacity = "0";
@@ -43,7 +42,6 @@ export const HoverableLink = ({
       // Allow finding the top of the page again using active nav list item
       document.body.scroll(0, 0);
     }
-
     const currentOpenId = document.querySelector(".hoverable.active");
     if (!!currentOpenId) {
       currentOpenId.classList.toggle("active");
@@ -58,7 +56,9 @@ export const HoverableLink = ({
   const isDemo = false;
   return (
     <li className={`hoverable ${classString}`} onClick={handleClick}>
-      <span id={id}>{label}</span>
+      <span id={id} style={{ lineHeight: "3.5rem" }}>
+        {label}
+      </span>
       <div className="mega-menu">
         <div
           className={

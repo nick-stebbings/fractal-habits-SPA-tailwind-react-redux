@@ -21,12 +21,7 @@ export const DropdownNav = function ({ routes, showMegaMenu, hideMegaMenu }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <nav className="nav">
-      <div
-        className="nav-container"
-        onClick={(e) => {
-          showMegaMenu();
-        }}
-      >
+      <div className="nav-container">
         <ul className="nav-links">
           {isDemo && <li id="demo-indicator">DEMO mode</li>}
           {routes.map((route, index) => (

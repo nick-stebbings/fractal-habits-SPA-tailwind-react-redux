@@ -3172,7 +3172,7 @@ div.sm-selector-container .domain-selector {
 }
 
 .date-card-wrapper {
-  padding: 2rem 0 0 0;
+  padding: 2rem 0 0 1rem;
   margin-right: -0.5rem;
   cursor: pointer;
 }
@@ -3182,7 +3182,7 @@ div.sm-selector-container .domain-selector {
     max-width: 100%;
   }
   .date-card-wrapper {
-    padding: 2rem 0.25rem;
+    padding: 2rem 0 0 1rem;
   }
   i.cal-date-nav {
     top: 8rem;
@@ -3208,7 +3208,7 @@ div.sm-selector-container .domain-selector {
     border: 0;
   }
   .date-card-wrapper {
-    padding: 2rem 0rem;
+    padding: 2rem 0 0 1rem;
   }
 
   .calendar-widget {
