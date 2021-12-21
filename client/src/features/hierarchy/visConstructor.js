@@ -67,7 +67,7 @@ import {
 } from "app/constants";
 
 const BASE_SCALE = 1.75;
-const FOCUS_MODE_SCALE = 2.5;
+const FOCUS_MODE_SCALE = 3.5;
 const XS_LABEL_SCALE = 1.2;
 const LG_LABEL_SCALE = 2.5;
 const XS_BUTTON_SCALE = 2;
@@ -100,7 +100,7 @@ const getInitialYTranslate = (
     case "tree":
       return 500;
     case "radial":
-      return (h / levelsHigh) * 3;
+      return (h / levelsHigh) * 2;
     default:
       return (h / levelsHigh) * 2;
   }
@@ -381,7 +381,7 @@ export default class Visualization {
     if (currentActiveG) currentActiveG.classList.toggle("active");
     event && event.target?.closest(".the-node")?.classList?.toggle("active");
 
-    // !!event && this.render();
+    !!event && this.render();
     return this.activeNode;
   }
   findNodeByContent(node) {
@@ -1095,7 +1095,7 @@ export default class Visualization {
         const target = ev.firstTarget;
         if (!target) return;
         ev.srcEvent.stopPropagation();
-        const node = target?.__data__?.data;
+        const node = target?.__data__;
 
         switch (ev.target.tagName) {
           // Delete button is currently the only path
@@ -1117,7 +1117,9 @@ export default class Visualization {
           default:
             let parentNodeGroup = _.find(
               this._enteringNodes._groups[0],
-              (n) => n?.__data__?.data?.content == node.content
+              (n) => {
+                return n?.__data__?.data?.content == node?.data?.content;
+              }
             );
             ev.target = parentNodeGroup;
             this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);

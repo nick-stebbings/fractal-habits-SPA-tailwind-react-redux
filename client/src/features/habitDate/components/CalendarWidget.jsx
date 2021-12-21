@@ -89,7 +89,7 @@ export const CalendarWidget = ({
       style={{ maxWidth: "100vw" }}
       onClick={toggleSlide}
     >
-      <div className="habit-description-label lg:opacity-0 gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col overflow-none lg:items-center bg-gray-100 border-4 pb-4 md:pb-0">
+      <div className="habit-description-label lg:opacity-0 gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col overflow-none lg:items-center bg-gray-100 border-4 pb-8 md:pb-0">
         <div className="flex justify-start flex-col relative">
           <h2 className="mt-4 underline">Description</h2>
           <span className="min-h-16 mr-1/3">
