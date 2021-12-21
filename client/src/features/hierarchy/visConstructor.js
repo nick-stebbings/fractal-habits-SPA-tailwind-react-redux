@@ -211,8 +211,8 @@ export default class Visualization {
         this.render();
       },
       rgtClickOrDoubleTap: (e, d) => {
-        debugger;
         this.eventHandlers.handleNodeFocus.call(this, e, d);
+        this.handleStatusChange.call(this, d);
         this.type != "radial" &&
           this.eventHandlers.handleNodeZoom.call(
             this,
@@ -220,7 +220,6 @@ export default class Visualization {
             d,
             false //this.type == "tree"
           );
-        this.handleStatusChange.call(this, d);
       },
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;
@@ -383,7 +382,7 @@ export default class Visualization {
     if (currentActiveG) currentActiveG.classList.toggle("active");
     event && event.target?.closest(".the-node")?.classList?.toggle("active");
 
-    // this.render();
+    // !!event && this.render();
     return this.activeNode;
   }
   findNodeByContent(node) {
@@ -802,9 +801,8 @@ export default class Visualization {
         const outOfBounds = outOfBoundsNode(d, this.rootData);
         // Set new active node when this one is out of bounds
         if (outOfBounds && this.activeNode?.data.name == d.data.name) {
-          this.setActiveNode(this.rootData);
           this.rootData.isNew = true;
-          this.render();
+          this.setActiveNode(this.rootData);
         }
 
         return !outOfBounds;
@@ -1069,7 +1067,7 @@ export default class Visualization {
     const doubleTap = new Hammer.Tap({
       event: "doubletap",
       taps: 2,
-      interval: 900,
+      interval: 1500,
     });
     manager.add([doubleTap, singleTap]);
     doubleTap.recognizeWith(singleTap);
