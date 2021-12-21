@@ -54,6 +54,7 @@ import {
   oppositeStatus,
   getColor,
   isNotALeaf,
+  hierarchyStateHasChanged,
 } from "./components/helpers";
 import { debounce, handleErrorType, isTouchDevice } from "app/helpers";
 
@@ -368,8 +369,7 @@ export default class Visualization {
   }
   hasNewHierarchyData() {
     return (
-      this.hasNextData() &&
-      this._nextRootData !== JSON.stringify(this.rootData.data)
+      this.hasNextData() && hierarchyStateHasChanged(this._nextRootData, this)
     );
   }
 
@@ -1318,9 +1318,8 @@ export default class Visualization {
       // First render OR New hierarchy needs to be rendered
 
       // Update the current day's rootData
-      if (this.hasSummedData()) {
-        delete this._nextRootData;
-      } else if (this.hasNextData()) this.rootData = this._nextRootData;
+      if (this.hasNextData()) this.rootData = this._nextRootData;
+      if (this.hasSummedData()) delete this._nextRootData;
 
       if (!this.activeNode) _p("Need new active node", {});
 

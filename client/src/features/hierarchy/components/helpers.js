@@ -39,15 +39,11 @@ export const appendSvg = (divId) => {
 const concatenateHierarchyNodeValues = (hierarchy) =>
   hierarchy?.descendants && hierarchy.descendants().map((n) => n.value).join``;
 
-const hierarchyStateHasChanged = (currentHierarchy, visObject) => {
+export const hierarchyStateHasChanged = (currentHierarchy, visObject) => {
   const compareString = JSON.stringify(currentHierarchy.data);
   const currentHierNodeValueString =
     concatenateHierarchyNodeValues(currentHierarchy);
-  console.log("currentHierNodeValueString :>> ", currentHierNodeValueString);
-  console.log(
-    "concatenateHierarchyNodeValues(visObject.rootData) :>> ",
-    concatenateHierarchyNodeValues(visObject.rootData)
-  );
+
   return (
     JSON.stringify(visObject.rootData.data) !== compareString ||
     concatenateHierarchyNodeValues(visObject.rootData) !==
@@ -65,14 +61,13 @@ export const updateVisRootData = (
   // either because of a different node set/relationships
   // or because node values changed
 
-  debugger;
   if (
     visExists &&
     (visObject.firstRender() ||
       routeChanged ||
       hierarchyStateHasChanged(currentHierarchy, visObject))
   ) {
-    visObject._nextRootData = hierarchy(currentHierarchy.data);
+    visObject._nextRootData = currentHierarchy;
 
     // Account for second page load of an already instantiated vis
     if (routeChanged) {
