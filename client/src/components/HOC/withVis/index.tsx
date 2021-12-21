@@ -34,7 +34,7 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
     const lastPath = useLastLocation()?.pathname
     const routeChanged = !!lastPath && (currentPath !== lastPath);
     
-    const deleteCompleted = useAppSelector(selectDeleteCompleted)
+    let deleteCompleted = useAppSelector(selectDeleteCompleted)
     const dispatch = useAppDispatch();
     const { canvasHeight, canvasWidth } = d3SetupCanvas()
   
@@ -46,7 +46,7 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
           currentVis.render()
           dispatch(resetDeleteCompleted())
         }
-      }, [deleteCompleted])
+      }, [])
         // console.log('returned C :>> ',);
         return (<>
       <button
