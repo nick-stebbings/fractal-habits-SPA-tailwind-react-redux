@@ -67,8 +67,8 @@ import {
   positiveColLighter,
 } from "app/constants";
 
-const BASE_SCALE = 1.75;
-const FOCUS_MODE_SCALE = 3.5;
+const BASE_SCALE = 1.5;
+const FOCUS_MODE_SCALE = 3;
 const XS_LABEL_SCALE = 1.2;
 const LG_LABEL_SCALE = 2.5;
 const XS_BUTTON_SCALE = 2;
@@ -1082,6 +1082,7 @@ export default class Visualization {
     });
 
     manager.on("doubletap", (ev) => {
+      window.FlashMessage.warning("TESTING MOB EVENTS");
       const target = ev.firstTarget;
       if (!target || target?.tagName !== "circle") return;
       ev.srcEvent.stopPropagation();

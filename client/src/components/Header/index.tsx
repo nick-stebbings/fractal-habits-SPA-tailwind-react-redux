@@ -63,6 +63,8 @@ export const Header = ({isVis}) => {
     selectHasStoredTreeForDateId(dateId)(store.getState())
 
   const handlePrevDate = (_: any) => {
+    const currentFlash = document.querySelector('.flash-container')
+    if(currentFlash) currentFlash.textContent = '' // Clear flash
     if (isVis) {
       dispatch(updateCurrentHierarchy({nextDateId: currentDateId - 1}))
       const newDateId = Math.max.apply(null, [1, currentDateId - 7]) // Account for minimum date Id
@@ -76,6 +78,8 @@ export const Header = ({isVis}) => {
     dispatch(decrementIdx())
 }
   const handleNextDate = (_: any) => {
+    const currentFlash = document.querySelector('.flash-container')
+    if(currentFlash) currentFlash.textContent = '' // Clear flash
 
     const todaysDate = DateTime.now().startOf("day").ts;
     if (currentDate.timeframe.fromDate == todaysDate) return;

@@ -10,6 +10,7 @@ const addSwipeGestures = function () {
 
   manager.add(Swipe);
   manager.on("swipe", (e) => {
+    window.FlashMessage.warning("TESTING MOB EVENTS");
     if (Math.abs(e.deltaX) > 500) {
       const dispEvent = new Event("click");
       e.deltaX > 0
