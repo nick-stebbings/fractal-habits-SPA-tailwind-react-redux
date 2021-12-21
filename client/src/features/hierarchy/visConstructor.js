@@ -66,7 +66,7 @@ import {
   positiveColLighter,
 } from "app/constants";
 
-const BASE_SCALE = 1.5;
+const BASE_SCALE = 1.75;
 const FOCUS_MODE_SCALE = 2.5;
 const XS_LABEL_SCALE = 1.2;
 const LG_LABEL_SCALE = 2.5;
