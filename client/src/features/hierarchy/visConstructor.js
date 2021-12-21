@@ -1084,6 +1084,7 @@ export default class Visualization {
       ev.srcEvent.stopPropagation();
 
       const node = target?.__data__;
+      _p("DOUBLE TAPPED", ev, "!");
       try {
         this.eventHandlers.rgtClickOrDoubleTap.call(this, ev.srcEvent, node);
       } catch (error) {
@@ -1372,7 +1373,7 @@ export default class Visualization {
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
-      console.log("Appended SVG elements... :>>");
+      // console.log("Appended SVG elements... :>>");
 
       isTouchDevice() && this.bindMobileEventHandlers(this._enteringNodes);
 
