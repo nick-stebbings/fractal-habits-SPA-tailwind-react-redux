@@ -15,6 +15,7 @@ import {
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 import Hammer from "hammerjs";
+import propagating from "propagating-hammerjs";
 import _ from "lodash";
 
 import { store } from "app/store";
@@ -209,6 +210,18 @@ export default class Visualization {
         store.dispatch(toggleConfirm({ type: "Delete" }));
         this.render();
       },
+      rgtClickOrDoubleTap: (e, d) => {
+        debugger;
+        this.eventHandlers.handleNodeFocus.call(this, e, d);
+        this.type != "radial" &&
+          this.eventHandlers.handleNodeZoom.call(
+            this,
+            e,
+            d,
+            false //this.type == "tree"
+          );
+        this.handleStatusChange.call(this, d);
+      },
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
@@ -242,9 +255,12 @@ export default class Visualization {
         event.preventDefault();
         const currentHabit = selectCurrentHabit(store.getState());
 
-        const targ = event.target;
+        const targ = event?.target;
         if (targ.tagName == "circle") {
-          if (!(node.data.name == currentHabit?.meta.name)) {
+          if (
+            !!node?.data?.name &&
+            !(node.data.name == currentHabit?.meta.name)
+          ) {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
@@ -367,7 +383,7 @@ export default class Visualization {
     if (currentActiveG) currentActiveG.classList.toggle("active");
     event && event.target?.closest(".the-node")?.classList?.toggle("active");
 
-    this.render();
+    // this.render();
     return this.activeNode;
   }
   findNodeByContent(node) {
@@ -1036,90 +1052,82 @@ export default class Visualization {
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
         passive: true,
       })
-      .on("touchend", (e, d) => {
-        this.eventHandlers.handleNodeFocus.call(this, e, d);
-        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
-        setTimeout(() => {
-          // TODO remove this once habit dates for current habit are in.
-          this.handleStatusChange.call(this, d);
-        }, 500);
-      })
-      .on("contextmenu", (e, d) => {
-        this.eventHandlers.handleNodeFocus.call(this, e, d);
-        this.type != "radial" &&
-          this.eventHandlers.handleNodeZoom.call(
-            this,
-            e,
-            d,
-            false //this.type == "tree"
-          );
-        this.handleStatusChange.call(this, d);
-      })
+      .on("contextmenu", this.eventHandlers.rgtClickOrDoubleTap.bind(this))
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
       .on(
         "mouseenter",
         debounce(this.eventHandlers.handleMouseEnter.bind(this), 450)
       );
+  }
 
+  bindMobileEventHandlers(selection) {
+    let manager = propagating(
+      new Hammer.Manager(document.body, { domEvents: true })
+    );
+    // Create a recognizer
+    const singleTap = new Hammer.Tap({ event: "singletap" });
+    const doubleTap = new Hammer.Tap({
+      event: "doubletap",
+      taps: 2,
+      interval: 900,
+    });
+    manager.add([doubleTap, singleTap]);
+    doubleTap.recognizeWith(singleTap);
+    singleTap.requireFailure([doubleTap]);
     //----------------------
     // Mobile device events
     //----------------------
-    selection._groups[0].forEach((node) => {
-      const manager = new Hammer.Manager(node);
-      // Create a recognizer
-      const singleTap = new Hammer.Tap({ event: "singletap" });
-      const doubleTap = new Hammer.Tap({
-        event: "doubletap",
-        taps: 2,
-        interval: 1000,
-      });
-      manager.add([doubleTap, singleTap]);
-      doubleTap.recognizeWith(singleTap);
-      singleTap.requireFailure(doubleTap);
-      manager.on(
-        "singletap",
-        debounce((ev) => {
-          ev.preventDefault();
-          const node = ev.target.__data__.data;
-
-          switch (ev.target.tagName) {
-            // Delete
-            case "path":
-              this.eventHandlers.handleDeleteNode.call(
-                this,
-                ev,
-                ev.target.__data__.data
-              );
-              break;
-            // Append or prepend
-            case "rect":
-              if (ev.target.parentNode.classList.contains("tooltip")) return; // Stop label from triggering
-            case "text":
-              ev.target.textContent == "APPEND"
-                ? this.eventHandlers.handleAppendNode.call(this)
-                : this.eventHandlers.handlePrependNode.call(this);
-              break;
-            default:
-              let parentNodeGroup = _.find(
-                this._enteringNodes._groups[0],
-                (n) => n?.__data__?.data?.content == node.content
-              );
-              ev.target = parentNodeGroup;
-              this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
-              break;
-          }
-        }, 500)
-      );
-      manager.on(
-        "doubletap",
-        debounce((ev) => {
-          ev.preventDefault();
-          const node = ev.target.__data__.data;
-          this.eventHandlers.handleNodeFocus.call(this, ev, node.__data__);
-          this.eventHandlers.handleNodeZoom.call(this, ev, node.__data__);
-        }, 500)
-      );
+    selection.selectAll(".node-subgroup").on("touchstart", (e) => {
+      manager.set({ inputTarget: e.currentTarget });
     });
+
+    manager.on("doubletap", (ev) => {
+      const target = ev.firstTarget;
+      if (!target) return;
+      ev.srcEvent.stopPropagation();
+      const node = target?.__data__;
+      try {
+        this.eventHandlers.rgtClickOrDoubleTap.call(this, ev.srcEvent, node);
+      } catch (error) {
+        console.log("Problem with mobile doubletap: ", error);
+      }
+    });
+    manager.on(
+      "singletap",
+      debounce((ev) => {
+        const target = ev.firstTarget;
+        if (!target) return;
+        ev.srcEvent.stopPropagation();
+        const node = target?.__data__?.data;
+
+        switch (ev.target.tagName) {
+          // Delete button is currently the only path
+          case "path":
+            this.eventHandlers.handleDeleteNode.call(
+              this,
+              ev,
+              ev.target.__data__.data
+            );
+            break;
+          case "rect":
+            if (ev.target.parentNode.classList.contains("tooltip")) return; // Stop label from triggering
+          // Append or prepend are currently the only text
+          case "text":
+            ev.target.textContent == "APPEND"
+              ? this.eventHandlers.handleAppendNode.call(this)
+              : this.eventHandlers.handlePrependNode.call(this);
+            break;
+          default:
+            let parentNodeGroup = _.find(
+              this._enteringNodes._groups[0],
+              (n) => n?.__data__?.data?.content == node.content
+            );
+            ev.target = parentNodeGroup;
+            this.eventHandlers.handleMouseEnter.call(this, ev, node.__data__);
+            break;
+        }
+      }, 1500)
+    );
   }
 
   bindLegendEventHandler() {
@@ -1356,6 +1364,8 @@ export default class Visualization {
       this.appendLabels();
       this.appendButtons();
       console.log("Appended SVG elements... :>>");
+
+      this.bindMobileEventHandlers(this._enteringNodes);
 
       this._canvas.attr(
         "transform",

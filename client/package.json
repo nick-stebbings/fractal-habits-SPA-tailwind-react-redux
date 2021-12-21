@@ -9,6 +9,7 @@
     "watch:css": "npx postcss src/styles/tailwind.css -o src/styles/output.css"
   },
   "dependencies": {
+    "@egjs/hammerjs": "^2.0.17",
     "@types/d3-selection": "^3.0.1",
     "axios": "^0.24.0",
     "d3": "^7.1.1",
@@ -23,6 +24,7 @@
     "lodash": "^4.17.21",
     "luxon": "^2.1.1",
     "memoizee": "^0.4.15",
+    "propagating-hammerjs": "^2.0.1",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-redux": "^7.2.5",
