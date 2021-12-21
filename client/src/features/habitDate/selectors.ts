@@ -111,6 +111,7 @@ export const selectAccumulatedStatusForDate = (
                 parseTreeValues(descendant.data.content)!.status
               )
           );
+      debugger;
 
       const completedInTreeOrInStore =
         currentHabitStatus == "true" ||

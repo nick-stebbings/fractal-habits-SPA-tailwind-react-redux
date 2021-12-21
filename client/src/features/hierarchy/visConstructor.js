@@ -186,7 +186,7 @@ export default class Visualization {
           : initialY;
       },
       isSmallScreen: function () {
-        return this.canvasWidth < 768;
+        return this.canvasWidth < 1024;
       },
     };
 
@@ -461,6 +461,7 @@ export default class Visualization {
     startingNode = this.rootData,
     completedValue = false
   ) {
+    // If we are adding a false completed value (temp habit dates that will only be persisted if updated to true)
     if (!completedValue) {
       let newRootData = hierarchy({ ...startingNode.data });
       accumulateTree(newRootData, this);
@@ -475,12 +476,10 @@ export default class Visualization {
       // debugger;
       this.updateRootDataAfterAccumulation(newRootData);
     } else {
-      if (nodeWithoutHabitDate(startingNode?.data, store))
-        // Just create one
-        this.createNewHabitDateForNode(
-          startingNode,
-          JSON.parse(completedValue)
-        );
+      // If we are creating a new true habit date for a 'cascaded' ancestor node
+
+      if (nodeWithoutHabitDate(startingNode?.data, store)) debugger;
+      this.createNewHabitDateForNode(startingNode, JSON.parse(completedValue));
     }
     this.rootData.newHabitDatesAdded = true;
   }
