@@ -47,7 +47,6 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
           dispatch(resetDeleteCompleted())
         }
       }, [])
-        // console.log('returned C :>> ',);
         return (<>
       <button
             type="button"

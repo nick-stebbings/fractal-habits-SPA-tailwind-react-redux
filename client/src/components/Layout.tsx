@@ -7,7 +7,7 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ isVis, children }) => {
-  // console.log('rendered layour :>> ');
+
   const LayoutWithVis = React.Children.only(children) && withVis(children.type)
   return isVis ? (
     <>

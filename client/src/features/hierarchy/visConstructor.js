@@ -272,7 +272,6 @@ export default class Visualization {
                 auntCollapse: true,
               })
               .map((n) => n?.data?.content);
-            console.log("nodesToCollapse :>> ", nodesToCollapse);
             this.rootData.each((node) => {
               if (nodesToCollapse.includes(node.data.content)) collapse(node);
             });

@@ -367,8 +367,8 @@ html {
 .left-4 {
   left: 1rem;
 }
-.-left-1 {
-  left: -0.25rem;
+.-left-12 {
+  left: -3rem;
 }
 .isolate {
   isolation: isolate;
@@ -3169,7 +3169,7 @@ div.sm-selector-container .domain-selector {
 }
 
 .date-card-wrapper {
-  padding: 2rem 0;
+  padding: 2rem 0 0 0;
   margin-right: -0.5rem;
   cursor: pointer;
 }

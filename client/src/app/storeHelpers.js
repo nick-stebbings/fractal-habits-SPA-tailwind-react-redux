@@ -110,7 +110,6 @@ export function crudReducer(
       const newMyRecords = [...state.myRecords].filter(
         (r) => r?.meta?.id !== +payload.config.url.split`/`.reverse()[0]
       );
-      console.log("parsed :>> ", parsed);
       return {
         myRecords: newMyRecords,
         current: {
@@ -155,7 +154,6 @@ export function createCrudActionCreators(actionTypes, callBacks) {
   );
   const update = createAsyncThunk(actionTypes[2], callBacks[2]);
   const destroy = createAsyncThunk(actionTypes[3], async (input, thunkAPI) => {
-    console.log("input :>> ", input);
     const response = await callBacks[3](input);
 
     return [204].includes(response.status)
