@@ -58,7 +58,7 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
             className="vis-button"
             onClick={(e) => {
               const {target} = e
-              target.parentNode.classList.toggle('active');
+              target.classList.toggle('active');
               try {
               target.textContent == "Collapse"
                 ? currentVis.collapse()

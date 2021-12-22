@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 // @ts-ignore
 import { store } from "app/store";
 import { isTouchDevice } from "app/helpers";
@@ -21,7 +21,6 @@ import { selectCurrentHierarchyRecords } from "features/hierarchy/selectors";
 import {
   selectAccumulatedStatusForDate,
   selectStoredHabitDates,
-  selectUnStoredHabitDates,
 } from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";
@@ -82,8 +81,13 @@ export const CalendarWidget = ({
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
+
   const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords); // Triggers re-render on new memoised hierarchies
   useAppSelector(selectStoredHabitDates); // Triggers re-render on habit date update
+
+  const scrollRef = useRef(null);
+  const executeScroll = () => scrollRef.current.scrollIntoView();
+
   return (
     <div
       className="calendar-widget lg:top-20 top-28 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-12"
@@ -100,11 +104,18 @@ export const CalendarWidget = ({
           <span>{stringifyDate(currentHabit.timeframe.fromDate)}</span>
           <i
             className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-1 absolute left-0 active:text-balance-tershades-dark text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
-            onClick={handlePrev}
+            ref={scrollRef}
+            onClick={() => {
+              executeScroll();
+              handlePrev();
+            }}
           />
           <i
             className="cal-date-nav h-16 w-16 cal-date-nav-r fa fa-chevron-circle-right text-3xl ml-2 absolute right-2 sm:right-8 active:text-balance-tershades-dark text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
-            onClick={handleNext}
+            onClick={() => {
+              executeScroll();
+              handleNext();
+            }}
             style={{ display: "none" }}
           />
         </div>

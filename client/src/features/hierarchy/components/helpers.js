@@ -39,6 +39,14 @@ export const appendSvg = (divId) => {
 const concatenateHierarchyNodeValues = (hierarchy) =>
   hierarchy?.descendants && hierarchy.descendants().map((n) => n.value).join``;
 
+const checkAndResetCollapsed = (visObject) => {
+  if (visObject.isCollapsed) {
+    visObject.isCollapsed = false;
+    return true;
+  }
+  return false;
+};
+
 export const hierarchyStateHasChanged = (currentHierarchy, visObject) => {
   const compareString = JSON.stringify(currentHierarchy.data);
   const currentHierNodeValueString =
@@ -65,7 +73,8 @@ export const updateVisRootData = (
     visExists &&
     (visObject.firstRender() ||
       routeChanged ||
-      hierarchyStateHasChanged(currentHierarchy, visObject))
+      hierarchyStateHasChanged(currentHierarchy, visObject) ||
+      checkAndResetCollapsed(visObject))
   ) {
     visObject._nextRootData = currentHierarchy;
 
@@ -103,7 +112,7 @@ export function getColor(completedStatus) {
     case "OOB":
       return noNodeCol;
     case "noHabitDate":
-      return neutralCol;
+      return negativeCol;
     case "parentCompleted":
       return positiveColLighter;
     default:

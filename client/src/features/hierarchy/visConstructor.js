@@ -117,7 +117,6 @@ const radialTranslation = (zoomConfig) => {
 
 const newXTranslate = (type, viewConfig, zoomConfig) => {
   const scale = zoomConfig.globalZoomScale || viewConfig.scale;
-  debugger;
   switch (type) {
     case "cluster":
       return -zoomConfig.previousRenderZoom?.node?.y * scale;
@@ -279,9 +278,10 @@ export default class Visualization {
             this.setActiveNode(node.data, event);
 
           if (this.type == "tree") {
+            debugger;
             const nodesToCollapse = nodesForCollapse
               .call(this, node, {
-                cousinCollapse: false,
+                cousinCollapse: true,
                 auntCollapse: true,
               })
               .map((n) => n?.data?.content);
@@ -289,6 +289,7 @@ export default class Visualization {
               if (nodesToCollapse.includes(node.data.content)) collapse(node);
             });
             expand(node?.parent ? node.parent : node);
+            this.render();
           }
         }
       },
@@ -342,6 +343,8 @@ export default class Visualization {
       );
       expand(firstNode);
       this._nextRootData = this.rootData;
+      this.isCollapsed = false;
+      this.isExpanded = true;
       this.render();
     };
     this.collapse = function () {
@@ -350,6 +353,7 @@ export default class Visualization {
       );
       collapse(firstNode);
       this._nextRootData = this.rootData;
+      this.isCollapsed = true;
       this.render();
     };
   }
@@ -644,7 +648,7 @@ export default class Visualization {
       (this.type == "tree" && this._viewConfig.isSmallScreen()) * 60;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
-      +(this.type == "cluster") * 80;
+      +(this.type == "cluster") * 30;
 
     //adjust for taller aspect ratio
     this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 4.5;
@@ -991,7 +995,7 @@ export default class Visualization {
           "," +
           (this.type != "cluster" ? -35 : 35) +
           ") scale( " +
-          this._viewConfig.scale * 3 +
+          this._viewConfig.scale * 2 +
           ") rotate(" +
           (this.type == "cluster" ? 270 : this.type == "radial" ? 180 : 0) +
           ")"
@@ -1055,7 +1059,7 @@ export default class Visualization {
     selection
       .on("click", (e, d) => {
         if (e.target.tagName !== "circle") return;
-        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
+        this.eventHandlers.handleNodeZoom.call(this, e, d, this.type == "tree");
         this.eventHandlers.handleNodeFocus.call(this, e, d);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
@@ -1097,7 +1101,6 @@ export default class Visualization {
       ev.srcEvent.stopPropagation();
 
       const node = target?.__data__;
-      _p("DOUBLE TAPPED", ev, "!");
       try {
         this.eventHandlers.rgtClickOrDoubleTap.call(this, ev.srcEvent, node);
       } catch (error) {
@@ -1183,14 +1186,14 @@ export default class Visualization {
     const gText = controlsSvg
       .append("g")
       .attr("class", "controls")
-      .attr("transform", `translate(${40}, ${50})scale(${legendScale})`);
+      .attr("transform", `translate(${40}, ${40})scale(${legendScale})`);
     const gLegend = legendSvg
       .append("g")
       .attr("class", "legend")
       .attr(
         "transform",
         `translate(5, ${
-          this._viewConfig.isSmallScreen() ? 50 : 20
+          this._viewConfig.isSmallScreen() ? 40 : 30
         }) scale(${legendScale})`
       );
 
@@ -1321,7 +1324,9 @@ export default class Visualization {
     if (
       this.firstRender() ||
       this.hasNewHierarchyData() ||
-      this.isNewActiveNode
+      this.isNewActiveNode ||
+      this.isCollapsed ||
+      this.isExpanded
     ) {
       // First render OR New hierarchy needs to be rendered
 

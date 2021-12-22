@@ -2,14 +2,7 @@ import React from "react";
 import { isSmallScreen, isSuperSmallScreen } from "app/helpers";
 import { getColor } from "features/hierarchy/components/helpers";
 
-import {
-  positiveCol,
-  negativeCol,
-  noNodeCol,
-  parentPositiveBorderCol,
-  positiveColLighter,
-  neutralCol,
-} from "app/constants";
+import { parentPositiveBorderCol, positiveColLighter } from "app/constants";
 
 export const DateCard = ({ date, completedStatus, isToday, handleClick }) => {
   const [weekday, month, monthday] = date.split(/\W+/);
