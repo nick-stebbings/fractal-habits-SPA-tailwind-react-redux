@@ -11,13 +11,7 @@ const addSwipeGestures = function () {
   manager.add(Swipe);
   manager.on("swipe", (e) => {
     if (Math.abs(e.deltaX) > 500) {
-      window.FlashMessage.warning("TESTING MOB EVENTS");
-      window.FlashMessage.warning(prevDate);
-
-      const dispEvent = new Event("click");
-      e.deltaX > 0
-        ? prevDate.dispatchEvent(dispEvent)
-        : nextDate.dispatchEvent(dispEvent);
+      e.deltaX > 0 ? prevDate.click() : nextDate.click();
     }
   });
 };

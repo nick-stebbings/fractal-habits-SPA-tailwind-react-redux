@@ -67,7 +67,7 @@ import {
   positiveColLighter,
 } from "app/constants";
 
-const BASE_SCALE = 2;
+const BASE_SCALE = 2.2;
 const FOCUS_MODE_SCALE = 3;
 const XS_LABEL_SCALE = 1;
 const LG_LABEL_SCALE = 2.5;
@@ -87,7 +87,7 @@ const getInitialXTranslate = (
   { canvasWidth, levelsWide, nodeRadius, viewportW, defaultView, isSmallScreen }
 ) => {
   const [x, y, w, h] = defaultView.split` `;
-  return w / levelsWide;
+  return w / levelsWide / 1.5;
 };
 
 const getInitialYTranslate = (
@@ -103,7 +103,7 @@ const getInitialYTranslate = (
     case "radial":
       return (h / levelsHigh) * 2;
     default:
-      return (h / levelsHigh) * 2;
+      return (h / levelsHigh) * 1.5;
   }
 };
 
@@ -147,7 +147,7 @@ export default class Visualization {
     this.rootData = inputTree;
     this._viewConfig = {
       scale: BASE_SCALE,
-      clickScale: type == "radial" ? BASE_SCALE / 2 : FOCUS_MODE_SCALE,
+      clickScale: type == "radial" ? BASE_SCALE : FOCUS_MODE_SCALE,
       margin: margin,
       canvasHeight,
       canvasWidth,
