@@ -78,6 +78,7 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
             id="reset-tree"
             className="vis-button"
             onClick={(e) => {
+              window.scrollTo(0,0)
               try {
                 currentVis.resetForExpandedMenu({justTranslation: true})
               } catch (error) {

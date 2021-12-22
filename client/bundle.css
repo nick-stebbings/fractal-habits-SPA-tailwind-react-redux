@@ -3532,7 +3532,7 @@ main#append-habit .button-container.selected {
   }
 }
 .vis-button#reset-tree:before {
-  content: "\f065";
+  content: "\f2d2";
 }
 .vis-button.active:before {
   content: "\f31e";

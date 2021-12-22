@@ -99,7 +99,7 @@ const getInitialYTranslate = (
   const [x, y, w, h] = defaultView.split` `;
   switch (type) {
     case "tree":
-      return 500;
+      return 1000;
     case "radial":
       return (h / levelsHigh) * 2;
     default:
@@ -278,7 +278,6 @@ export default class Visualization {
             this.setActiveNode(node.data, event);
 
           if (this.type == "tree") {
-            debugger;
             const nodesToCollapse = nodesForCollapse
               .call(this, node, {
                 cousinCollapse: true,
