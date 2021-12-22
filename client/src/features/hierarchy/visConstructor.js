@@ -69,9 +69,9 @@ import {
 
 const BASE_SCALE = 2.2;
 const FOCUS_MODE_SCALE = 3;
-const XS_LABEL_SCALE = 1;
+const XS_LABEL_SCALE = 1.5;
 const LG_LABEL_SCALE = 2.5;
-const XS_BUTTON_SCALE = 1.5;
+const XS_BUTTON_SCALE = 2.5;
 const LG_BUTTON_SCALE = 3.2;
 const XS_NODE_RADIUS = 30;
 const LG_NODE_RADIUS = 80;
@@ -644,7 +644,7 @@ export default class Visualization {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for cluster vertical spacing on different screens
       +(this.type == "cluster") *
-        (this._viewConfig.isSmallScreen() ? -40 : 220) +
+        (this._viewConfig.isSmallScreen() ? -40 : 420) +
       (this.type == "tree" && this._viewConfig.isSmallScreen()) * 60;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
@@ -653,10 +653,6 @@ export default class Visualization {
     //adjust for taller aspect ratio
     this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 4.5;
     this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 2.5;
-    if (this.type == "radial") {
-      this._viewConfig.dx *= BASE_SCALE * 1.5;
-      this._viewConfig.dy *= BASE_SCALE;
-    }
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
@@ -787,7 +783,7 @@ export default class Visualization {
       case "radial":
         this.layout = cluster().size([180, this.canvasHeight * 2]);
         this.layout.nodeSize(
-          this._viewConfig.isSmallScreen() ? [300, 300] : [500, 500]
+          this._viewConfig.isSmallScreen() ? [300, 300] : [800, 800]
         );
         break;
     }
@@ -910,14 +906,23 @@ export default class Visualization {
         "transform",
         (d) =>
           `translate(${
-            (-3 / (this.type == "radial" ? this._viewConfig.nodeRadius : 2)) *
-            this._viewConfig.nodeRadius
+            (this._viewConfig.isSmallScreen() ? -2 : -0.98) *
+            (this.type == "radial"
+              ? this._viewConfig.nodeRadius / 1.3
+              : this._viewConfig.nodeRadius)
           }, ${
-            this.type == "radial"
-              ? this._viewConfig.nodeRadius * d.depth
-              : -1.5 * this._viewConfig.nodeRadius
+            -(this._viewConfig.isSmallScreen() ? 1.5 : 1.1) *
+            (this.type == "radial"
+              ? -this._viewConfig.nodeRadius
+              : this._viewConfig.nodeRadius)
           }), scale(${
-            this._viewConfig.isSmallScreen() ? XS_BUTTON_SCALE : LG_BUTTON_SCALE
+            this._viewConfig.isSmallScreen()
+              ? this.type == "radial"
+                ? XS_BUTTON_SCALE / 1.5
+                : XS_BUTTON_SCALE
+              : this.type == "radial"
+              ? LG_BUTTON_SCALE / 1.5
+              : LG_BUTTON_SCALE
           })` +
           (this.type == "radial"
             ? `, rotate(${180 - ((d.x / 8) * 180) / Math.PI - 90})`
@@ -952,7 +957,7 @@ export default class Visualization {
     // Split the name label into two parts:
     this._gTooltip
       .append("text")
-      .attr("x", 5)
+      .attr("x", (d) => `${d.x >= Math.PI ? -25 : 5}`)
       .attr("y", 20)
       .text((d) => {
         const words = d.data.name.split(" ").slice(0, 6);
@@ -969,7 +974,7 @@ export default class Visualization {
       );
     this._gTooltip
       .append("text")
-      .attr("x", 5)
+      .attr("x", (d) => `${d.x >= Math.PI ? -25 : 5}`)
       .attr("y", 50)
       .text((d) => {
         const allWords = d.data.name.split(" ");
@@ -980,7 +985,7 @@ export default class Visualization {
       })
       .attr("transform", (d) =>
         this.type == "radial"
-          ? `scale(0.75), translate(${
+          ? `scale(${this.type == "radial" ? 0.5 : 0.75}), translate(${
               d.x >= Math.PI ? "130, 100" : "0,0"
             }), rotate(${d.x >= Math.PI ? 180 : 0})`
           : ""
@@ -1014,7 +1019,9 @@ export default class Visualization {
       .append("path")
       .attr("d", "M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z")
       .attr("fill", "#e06a58")
+      .attr("display", (d) => (d.depth === 0 ? "none" : "initial"))
       .on("click", this.eventHandlers.handleDeleteNode.bind(this));
+
     if (!this.isDemo) {
       this._gButton
         .append("rect")
@@ -1193,7 +1200,7 @@ export default class Visualization {
       .attr(
         "transform",
         `translate(5, ${
-          this._viewConfig.isSmallScreen() ? 40 : 30
+          this._viewConfig.isSmallScreen() ? 35 : 25
         }) scale(${legendScale})`
       );
 
@@ -1239,7 +1246,6 @@ export default class Visualization {
       0,
       this._viewConfig.nodeRadius,
       this._viewConfig.nodeRadius * 2,
-      this._viewConfig.nodeRadius * 2,
     ];
 
     this.gCirclePulse.pulseCircles = this.gCirclePulse
@@ -1268,7 +1274,7 @@ export default class Visualization {
 
     let data = this.gCirclePulse.pulseData
       .map((d) => {
-        return d == 3 * this._viewConfig.nodeRadius
+        return d == 2 * this._viewConfig.nodeRadius
           ? 0
           : d + this._viewConfig.nodeRadius;
       })
