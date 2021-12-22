@@ -183,9 +183,6 @@ export const nodeStatusColours = (d) => {
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return noNodeCol;
 
-  if (d.height !== 0) {
-    // debugger;
-  }
   const cumulativeVal =
     d.height == 0 && d?.value ? d.value : cumulativeValue(d);
   const status = parseTreeValues(d.data.content).status;

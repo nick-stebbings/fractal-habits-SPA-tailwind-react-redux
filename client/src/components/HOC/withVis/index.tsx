@@ -49,7 +49,6 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
         if (deleteCompleted) {
           currentVis.render()
           dispatch(resetDeleteCompleted())
-          debugger;
         }
       }, [deleteCompleted])
         return (<>

@@ -152,7 +152,7 @@ export const Header = ({isVis}) => {
                   <span className="lg:hidden xl:block pt-2 pb-0 mx-4 mb-1">
                     <label>Domain</label>
                   </span>
-                  <div className="lg:pr-0 lg:rounded-3xl lg:rounded-t-none w-56 -mt-2 pl-1 pr-4 mr-2 bg-white rounded-full">
+                  <div className="lg:pr-0 lg:w-auto lg:rounded-3xl lg:rounded-t-none w-56 -mt-2 pl-1 pr-4 mr-2 bg-white rounded-full">
                     <span className="text-balance-sshades-brighten block w-full pt-2 mb-1">
                       <DomainSelector />
                     </span>

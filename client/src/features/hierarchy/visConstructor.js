@@ -67,13 +67,13 @@ import {
   positiveColLighter,
 } from "app/constants";
 
-const BASE_SCALE = 1.5;
+const BASE_SCALE = 2;
 const FOCUS_MODE_SCALE = 3;
-const XS_LABEL_SCALE = 1.2;
+const XS_LABEL_SCALE = 1;
 const LG_LABEL_SCALE = 2.5;
-const XS_BUTTON_SCALE = 2;
+const XS_BUTTON_SCALE = 1.5;
 const LG_BUTTON_SCALE = 3.2;
-const XS_NODE_RADIUS = 40;
+const XS_NODE_RADIUS = 30;
 const LG_NODE_RADIUS = 80;
 const XS_LEVELS_HIGH = 6;
 const LG_LEVELS_HIGH = 6;
@@ -117,6 +117,7 @@ const radialTranslation = (zoomConfig) => {
 
 const newXTranslate = (type, viewConfig, zoomConfig) => {
   const scale = zoomConfig.globalZoomScale || viewConfig.scale;
+  debugger;
   switch (type) {
     case "cluster":
       return -zoomConfig.previousRenderZoom?.node?.y * scale;
@@ -159,6 +160,15 @@ export default class Visualization {
           scale || this._viewConfig.scale,
           this.type,
           this._viewConfig
+        );
+
+        console.log(
+          "TRANSLATED",
+          typeof this._zoomConfig.previousRenderZoom?.node?.x !== "undefined"
+            ? "NEW"
+            : "INITIAL",
+          this._zoomConfig.previousRenderZoom?.node?.x &&
+            newXTranslate(this.type, this._viewConfig, this._zoomConfig)
         );
         return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
           "undefined"
@@ -473,15 +483,12 @@ export default class Visualization {
           this.mutateTreeJsonForNewHabitDates(d);
         }
       });
-      // debugger;
       this.updateRootDataAfterAccumulation(newRootData);
+      this.rootData.newHabitDatesAdded = true;
     } else {
       // If we are creating a new true habit date for a 'cascaded' ancestor node
-
-      if (nodeWithoutHabitDate(startingNode?.data, store)) debugger;
       this.createNewHabitDateForNode(startingNode, JSON.parse(completedValue));
     }
-    this.rootData.newHabitDatesAdded = true;
   }
 
   mutateTreeJsonForNewHabitDates(d) {
@@ -501,7 +508,7 @@ export default class Visualization {
       nodeContent.right
     );
     if (!currentHabit) {
-      console.log("Couldn't select node when adding habit dates");
+      console.log("Couldn't select habit when adding habit dates");
       return;
     }
 
@@ -557,6 +564,10 @@ export default class Visualization {
         node?.ancestors().length &&
           node.ancestors().forEach((a) => {
             if (a?.data?.name == currentHabit?.meta?.name) return;
+            if (nodeWithoutHabitDate(a?.data, store)) {
+              this.addHabitDatesForNewNodes(a, true);
+              return;
+            }
 
             if (parseTreeValues(a.data.content)?.status == "") {
               const habitId =
@@ -600,6 +611,7 @@ export default class Visualization {
       .duration(0)
       .ease(easeLinear)
       .attr("viewBox", newTranslateString);
+
     this._zoomConfig.previousRenderZoom = {};
     this.expand();
 
@@ -660,8 +672,8 @@ export default class Visualization {
         return;
       } else {
         scale = t.k;
-        x = t.x + this._viewConfig.defaultCanvasTranslateX() * scale;
-        y = t.y + this._viewConfig.defaultCanvasTranslateY() * scale;
+        x = t.x + this._viewConfig.defaultCanvasTranslateX(scale) * scale;
+        y = t.y + this._viewConfig.defaultCanvasTranslateY(scale) * scale;
       }
 
       select(".canvas")
@@ -714,8 +726,6 @@ export default class Visualization {
       node.each((node) => {
         if (node.value > 1) {
           node.value = cumulativeValue(node);
-        } else if (node.value > 0 && nodeWithoutHabitDate(node?.data, store)) {
-          this.addHabitDatesForNewNodes(node, true);
         }
       });
     }

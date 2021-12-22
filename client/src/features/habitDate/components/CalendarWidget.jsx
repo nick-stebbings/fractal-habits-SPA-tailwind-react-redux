@@ -21,6 +21,7 @@ import { selectCurrentHierarchyRecords } from "features/hierarchy/selectors";
 import {
   selectAccumulatedStatusForDate,
   selectStoredHabitDates,
+  selectUnStoredHabitDates,
 } from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";

@@ -2480,7 +2480,7 @@ html {
     line-height: 1.5rem;
   }
 }
-@media (min-width: 1024px) {
+@media (min-width: 1025px) {
   .lg\:static {
     position: static;
   }
