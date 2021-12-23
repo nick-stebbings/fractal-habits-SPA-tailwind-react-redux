@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import { Link } from "react-router-dom";
 import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../../routes/routeInfo";
 
@@ -52,7 +52,10 @@ const hideMegaMenu = () => {
   document.querySelector(".mask-wrapper").style.zIndex = "10";
 };
 
-export const Header = ({isVis}) => {
+export const Header = ({ isVis }) => {
+  const scrollRef = useRef(null);
+  const executeScroll = () => scrollRef.current.scrollIntoView();
+
   const dispatch = useAppDispatch()
   const currentDate = useAppSelector(selectCurrentDate);
   const currentDateId = useAppSelector(selectCurrentDateId);
@@ -103,7 +106,7 @@ export const Header = ({isVis}) => {
           : "mask-wrapper bg-balance-pshades-dark"
       }
     >
-      <CalendarWidget handlePrev={debounce(handlePrevDate, 100)} handleNext={debounce(handleNextDate, 100)} hideMegaMenu={hideMegaMenu} showMegaMenu={showMegaMenu} />
+      <CalendarWidget handlePrev={debounce(handlePrevDate, 100)} handleNext={debounce(handleNextDate, 100)} hideMegaMenu={hideMegaMenu} showMegaMenu={showMegaMenu} scrollRef={scrollRef} />
       <header className={isDemo ? "bg-gray-600" : "bg-balance-pshades-dark"}>
         <div id="responsive-nav">
           <Link to="/">
@@ -148,7 +151,7 @@ export const Header = ({isVis}) => {
             <input type="checkbox" id="hamburger" className="hidden" />
             <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2  translate-x-full" onClick={hideMegaMenu}>
               <div className="label-wrapper" >
-                <div className="nav-label-primary domain-selector max-w-12">
+                <div className="nav-label-primary domain-selector">
                   <span className="lg:hidden xl:block pt-2 pb-0 mx-4 mb-1">
                     <label>Domain</label>
                   </span>
@@ -162,7 +165,7 @@ export const Header = ({isVis}) => {
                   <span className="lg:hidden xl:block md:pt-6 xl:pt-3 pt-0 pb-0 mx-4 mb-1 ml-6">
                     <label htmlFor="date-today">Date</label>
                   </span>
-                  <div className="lg:pr-0 lg:rounded-3xl lg:rounded-t-none xl:-mt-3 rounded-3xl w-56 -mt-2 bg-white">
+                  <div className="lg:pr-0 lg:rounded-3xl lg:rounded-t-none xl:-mt-3 rounded-3xl xl:w-56 -mt-2 bg-white">
                     <span className="lg:pt-2 text-balance-sshades-brighten flex justify-around w-full -mt-3 mb-1">
                       <i
                         id="prev-date-selector"
@@ -235,6 +238,7 @@ export const Header = ({isVis}) => {
         <div className="max-h-12 md:block sm:hidden block overflow-auto">
           {currentHabit.meta.name}
         </div>
+        <i className="down-btn w-12 h-12" onClick={executeScroll} />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 // @ts-ignore
 import { store } from "app/store";
 import { isTouchDevice } from "app/helpers";
@@ -30,6 +30,7 @@ export const CalendarWidget = ({
   handleNext,
   hideMegaMenu,
   showMegaMenu,
+  scrollRef,
 }) => {
   const [mobileFullyVisible, setMobileFullyVisible] = useState(true);
   const slideIntoView = (e) => {
@@ -85,9 +86,6 @@ export const CalendarWidget = ({
   const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords); // Triggers re-render on new memoised hierarchies
   useAppSelector(selectStoredHabitDates); // Triggers re-render on habit date update
 
-  const scrollRef = useRef(null);
-  const executeScroll = () => scrollRef.current.scrollIntoView();
-
   return (
     <div
       className="calendar-widget lg:top-20 top-28 lg:flex lg:right-6 flex-nowrap absolute justify-end w-full pt-12"
@@ -105,17 +103,11 @@ export const CalendarWidget = ({
           <i
             className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-1 absolute left-0 active:text-balance-tershades-dark text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
             ref={scrollRef}
-            onClick={() => {
-              executeScroll();
-              handlePrev();
-            }}
+            onClick={handlePrev}
           />
           <i
             className="cal-date-nav h-16 w-16 cal-date-nav-r fa fa-chevron-circle-right text-3xl ml-2 absolute right-2 sm:right-8 active:text-balance-tershades-dark text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
-            onClick={() => {
-              executeScroll();
-              handleNext();
-            }}
+            onClick={handleNext}
             style={{ display: "none" }}
           />
         </div>
@@ -185,12 +177,7 @@ export const CalendarWidget = ({
           </svg>
         </span>
       </div>
-      <div
-        className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent"
-        onMouseLeave={(e) => {
-          hideMegaMenu();
-        }}
-      >
+      <div className="date-card-wrapper rounded-3xl flex-end -mt-13 border-1 flex justify-end w-full gap-1 lg:gap-2 bg-transparent">
         {currentWeek &&
           currentHierarchyRecords &&
           currentWeek.map(({ timeframe: { fromDate } }) => {

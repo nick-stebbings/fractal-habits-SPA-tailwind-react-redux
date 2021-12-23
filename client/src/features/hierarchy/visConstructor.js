@@ -959,7 +959,7 @@ export default class Visualization {
     // Split the name label into two parts:
     this._gTooltip
       .append("text")
-      .attr("x", (d) => `${d.x >= Math.PI ? -25 : 5}`)
+      .attr("x", (d) => `${this.type == "radial" && d.x >= Math.PI ? -25 : 5}`)
       .attr("y", 20)
       .text((d) => {
         const words = d.data.name.split(" ").slice(0, 6);

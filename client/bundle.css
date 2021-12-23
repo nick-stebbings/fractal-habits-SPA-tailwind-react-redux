@@ -2885,6 +2885,22 @@ li#demo-indicator {
     line-height: 1.25rem;
   }
 }
+#current-habit-label-sm .down-btn {
+  position: relative;
+  right: 0.5rem;
+  top: 1.3rem;
+}
+
+#current-habit-label-sm .down-btn:after {
+  cursor: pointer;
+  position: absolute;
+  color: #f0f0f0;
+  font-weight: 700;
+  font-size: 1.7rem;
+  font-family: "Font Awesome 5 Free";
+  content: "\f0a7";
+}
+
 #current-habit-label-sm > div {
   line-height: 1;
   min-height: 50px;
@@ -3529,14 +3545,17 @@ main#append-habit .button-container.selected {
 #reset-tree {
   bottom: 3.5rem;
 }
+.vis-button#reset-tree:before {
+  content: "\f0a6";
+}
 @media (min-width: 1024px) {
   #reset-tree {
     top: 9rem;
     bottom: auto;
   }
-}
-.vis-button#reset-tree:before {
-  content: "\f2d2";
+  .vis-button#reset-tree:before {
+    content: "\f2d2";
+  }
 }
 .vis-button.active:before {
   content: "\f31e";
@@ -3676,9 +3695,10 @@ input[type="date"] {
     position: absolute;
     pointer-events: none;
   }
-  select.domain-selector {
+  .domain-selector {
     display: block;
     float: right;
+    width: 50%;
   }
 }
 .loader {
@@ -3992,6 +4012,7 @@ input[type="date"] {
 @media (min-width: 1024px) {
   .nav-label-primary.domain-selector {
     border-radius: 1.5rem;
+    width: 30%;
   }
 }
 .nav-label-primary.date-today {
