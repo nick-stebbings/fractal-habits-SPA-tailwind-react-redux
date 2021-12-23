@@ -61,11 +61,11 @@ export const Modal = React.memo(({ type, toggle, resetConfirm }) => {
           }
         >
           <div className="rounded-2xl flex flex-col items-center w-full">
-            <div className="px-4 py-3 border-b border-gray-200">
-              <h2 className="mt-2 text-xl font-semibold text-center text-gray-600">
+            <div className="px-1 md:px-4 py-3 border-b border-gray-200">
+              <h2 className="mt-2 text-sm md:text-xl font-semibold text-center text-gray-600">
                 {TITLES[type]}
               </h2>
-              <h3 className="mt-2 text-2xl font-bold text-center">
+              <h3 className="mt-2 text-sm md:text-2xl font-bold text-center">
                 {(type == "Prepend" || type == "Append") && (
                   <span>{`${currentDomain.meta.name}`}</span>
                 )}

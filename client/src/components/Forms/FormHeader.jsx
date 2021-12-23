@@ -24,8 +24,8 @@ export const FormHeader = ({
           />
         </svg>
       </div>
-      <div className="block self-start pl-2 text-xl font-semibold text-gray-700">
-        <h2 className="leading-relaxed">{title}</h2>
+      <div className="block self-start pl-2 text-sm sm:text-xl font-semibold text-gray-700">
+        <h2 className="leading-tight md:leading-relaxed">{title}</h2>
         <p className="text-sm font-normal leading-relaxed text-gray-500">
           {domainDescription}
         </p>

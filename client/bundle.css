@@ -2392,6 +2392,10 @@ html {
   .sm\:leading-7 {
     line-height: 1.75rem;
   }
+  .sm\:text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
 }
 @media (min-width: 768px) {
   .md\:w-48 {
@@ -2857,7 +2861,7 @@ section > h2:first-of-type,
 }
 form label {
   font-size: 0.875rem;
-  line-height: 1.25rem;
+  line-height: 2.25vh;
   line-height: 2;
 }
 .habit-list-details-name {
@@ -3341,8 +3345,8 @@ form#create-new-habit-child > .input-container > div {
   }
 }
 label {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
   line-height: 2;

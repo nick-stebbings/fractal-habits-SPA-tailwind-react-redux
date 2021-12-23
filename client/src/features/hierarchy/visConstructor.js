@@ -767,7 +767,10 @@ export default class Visualization {
     switch (this.type) {
       case "tree":
         this.layout = tree()
-          .size(this._viewConfig.canvasWidth, this._viewConfig.canvasHeight)
+          .size(
+            this._viewConfig.canvasWidth / 2,
+            this._viewConfig.canvasHeight / 2
+          )
           .separation((a, b) => (a.parent == b.parent ? 3.5 : 1) / a.depth);
 
         this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);

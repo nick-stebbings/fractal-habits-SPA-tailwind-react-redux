@@ -1,5 +1,6 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "app/hooks";
+import { debounce } from "app/helpers";
 
 import { FormHeader } from "./FormHeader.jsx";
 import { FormBody } from "./FormBody.jsx";
@@ -33,7 +34,7 @@ export const CreateForm = ({
   const currentDomain = useAppSelector(selectCurrentDomain);
   const currentHabit = useAppSelector(selectCurrentHabit);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = debounce((e) => {
     e.preventDefault();
 
     const form = document.querySelector(`form#create-${resourceName}`);
@@ -70,13 +71,13 @@ export const CreateForm = ({
     createHabit(data);
     // Close the modal
     toggleClose();
-  };
+  }, 3000);
 
   return isDemo ? (
     <div className="my-2 mx-2">No Habit creation in Demo mode!</div>
   ) : (
     <div className="m-0 w-5/6">
-      <div className="self-start block pl-2 text-xl font-semibold text-gray-700">
+      <div className="self-start block pl-2 text-sm font-semibold text-gray-700">
         <h2 className="leading-relaxed">{title}</h2>
         <p className="text-sm font-normal text-center leading-relaxed text-gray-500">
           {message}
@@ -100,7 +101,7 @@ export const CreateForm = ({
               type="text"
               name="name"
               id={`habit-title-${randId}`}
-              className={"form-input h-12 px-2"}
+              className={"form-input h-8 md:h-12 px-1 md:px-2"}
               required={true}
               maxLength={50}
               placeholder={"e.g. Hydrate in the A.M."}
@@ -114,7 +115,7 @@ export const CreateForm = ({
               type={"text"}
               name={"description"}
               id={`habit-description-${randId}`}
-              className={"form-input h-12 px-2"}
+              className={"form-input h-8 md:h-12 px-1 md:px-2"}
               maxLength={"80"}
               placeholder={"e.g. Drinking water each day after waking"}
             />
@@ -129,7 +130,7 @@ export const CreateForm = ({
               id={`initiation-date-${randId}`}
               required={true}
               name="initiation-date"
-              className="form-input h-12 px-2 w-3/4 sm:w-2/3 md:w-1/2"
+              className="form-input h-8 md:h-12 px-1 md:px-2 w-3/4 sm:w-2/3 md:w-1/2"
               max={new Date().toDateInputValue()}
               defaultValue={new Date().toDateInputValue()}
               min="2021-06-01"
