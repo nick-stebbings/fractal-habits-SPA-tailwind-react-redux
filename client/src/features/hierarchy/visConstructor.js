@@ -185,7 +185,8 @@ export default class Visualization {
         );
         return typeof this._zoomConfig.previousRenderZoom?.node?.y !==
           "undefined"
-          ? initialY +
+          ? this._viewConfig.margin.top +
+              initialY +
               newYTranslate(
                 scale,
                 this.type,
@@ -224,12 +225,7 @@ export default class Visualization {
         this.eventHandlers.handleNodeFocus.call(this, e, d);
         this.handleStatusChange.call(this, d);
         this.type != "radial" &&
-          this.eventHandlers.handleNodeZoom.call(
-            this,
-            e,
-            d,
-            false //this.type == "tree"
-          );
+          this.eventHandlers.handleNodeZoom.call(this, e, d, false);
       },
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;
@@ -604,9 +600,12 @@ export default class Visualization {
 
   resetForExpandedMenu({ justTranslation }) {
     let newTranslate = this._viewConfig.defaultView.split` `;
-    newTranslate[0] = -(this.activeNode ? this.activeNode.x : 0);
-    newTranslate[1] = -(this.activeNode
-      ? this.activeNode.y - this._viewConfig.defaultCanvasTranslateY() / 2
+    newTranslate[0] = -(this._viewConfig.previousRenderZoom
+      ? this._viewConfig.previousRenderZoom.x
+      : 0);
+    newTranslate[1] = -(this._viewConfig.previousRenderZoom
+      ? this._viewConfig.previousRenderZoom.y -
+        this._viewConfig.defaultCanvasTranslateY() / 2
       : 0);
     let newTranslateString = newTranslate.join(" ");
     this.zoomBase()
@@ -616,9 +615,9 @@ export default class Visualization {
       .attr("viewBox", newTranslateString);
 
     this._zoomConfig.previousRenderZoom = {};
-    this.expand();
 
     if (!justTranslation) {
+      this.expand();
       this.activeNode.isNew = null;
       this.activeNode = this.rootData;
       document.querySelector(".the-node.active") &&
@@ -664,9 +663,7 @@ export default class Visualization {
       let scale;
       let x, y;
       if (this._zoomConfig.focusMode) {
-        // setTimeout(() => {
         this.resetForExpandedMenu({ justTranslation: true });
-        // }, 5);
         this._zoomConfig.focusMode = false;
         return;
       } else {
@@ -1068,7 +1065,7 @@ export default class Visualization {
     selection
       .on("click", (e, d) => {
         if (e.target.tagName !== "circle") return;
-        this.eventHandlers.handleNodeZoom.call(this, e, d, this.type == "tree");
+        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
         this.eventHandlers.handleNodeFocus.call(this, e, d);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
@@ -1326,6 +1323,7 @@ export default class Visualization {
       this.setdXdY();
       this.setZoomBehaviour();
     } else {
+      this.resetForExpandedMenu({ justTranslation: true });
       this._hasRendered = true;
     }
 
