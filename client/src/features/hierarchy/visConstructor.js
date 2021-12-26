@@ -997,9 +997,9 @@ export default class Visualization {
       .attr(
         "transform",
         "translate(" +
-          (this.type == "radial" ? 0 : -35) +
+          (this.type == "radial" ? -10 : -35) +
           "," +
-          (this.type == "tree" ? -25 : 35) +
+          (this.type == "tree" ? -25 : this.type == "radial " ? -30 : 5) +
           ") scale( " +
           this._viewConfig.scale * 1.5 +
           ") rotate(" +
