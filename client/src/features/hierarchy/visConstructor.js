@@ -71,7 +71,7 @@ const BASE_SCALE = 2.2;
 const FOCUS_MODE_SCALE = 3;
 const XS_LABEL_SCALE = 1.5;
 const LG_LABEL_SCALE = 2.5;
-const XS_BUTTON_SCALE = 2.5;
+const XS_BUTTON_SCALE = 2;
 const LG_BUTTON_SCALE = 3.2;
 const XS_NODE_RADIUS = 30;
 const LG_NODE_RADIUS = 80;
@@ -146,8 +146,8 @@ export default class Visualization {
     this._svgId = svgId;
     this.rootData = inputTree;
     this._viewConfig = {
-      scale: BASE_SCALE,
-      clickScale: type == "radial" ? BASE_SCALE : FOCUS_MODE_SCALE,
+      scale: type == "radial" ? BASE_SCALE / 2 : BASE_SCALE,
+      clickScale: FOCUS_MODE_SCALE,
       margin: margin,
       canvasHeight,
       canvasWidth,
@@ -654,8 +654,9 @@ export default class Visualization {
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
-      (this._viewConfig.isSmallScreen() ? XS_NODE_RADIUS : LG_NODE_RADIUS) *
-      this._viewConfig.scale;
+      (this._viewConfig.isSmallScreen()
+        ? XS_NODE_RADIUS + +(this.type == "radial" * 2 * XS_NODE_RADIUS)
+        : LG_NODE_RADIUS) * this._viewConfig.scale;
   }
   setZoomBehaviour() {
     const zooms = function (e) {
@@ -780,9 +781,9 @@ export default class Visualization {
         this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
         break;
       case "radial":
-        this.layout = cluster().size([180, this.canvasHeight * 2]);
+        this.layout = cluster().size([360, this.canvasHeight / 2]);
         this.layout.nodeSize(
-          this._viewConfig.isSmallScreen() ? [300, 300] : [800, 800]
+          this._viewConfig.isSmallScreen() ? [500, 500] : [400, 400]
         );
         break;
     }
@@ -892,7 +893,8 @@ export default class Visualization {
         `translate(${this._viewConfig.nodeRadius / 10}, ${
           this._viewConfig.nodeRadius
         }), scale(${
-          this._viewConfig.isSmallScreen() ? XS_LABEL_SCALE : LG_LABEL_SCALE
+          (this.type === "radial" ? 0.5 : 1) *
+          (this._viewConfig.isSmallScreen() ? XS_LABEL_SCALE : LG_LABEL_SCALE)
         })`
       )
       .attr("opacity", (d) => this.activeOrNonActiveOpacity(d, "0"));
@@ -907,12 +909,12 @@ export default class Visualization {
           `translate(${
             (this._viewConfig.isSmallScreen() ? -2 : -0.98) *
             (this.type == "radial"
-              ? this._viewConfig.nodeRadius / 1.3
+              ? -this._viewConfig.nodeRadius / 1.5
               : this._viewConfig.nodeRadius)
           }, ${
-            -(this._viewConfig.isSmallScreen() ? 1.5 : 1.1) *
+            -(this._viewConfig.isSmallScreen() ? 2.5 : 1.1) *
             (this.type == "radial"
-              ? -this._viewConfig.nodeRadius
+              ? 2 * this._viewConfig.nodeRadius
               : this._viewConfig.nodeRadius)
           }), scale(${
             this._viewConfig.isSmallScreen()
@@ -932,7 +934,7 @@ export default class Visualization {
 
   appendCirclesAndLabels() {
     this._gCircle
-      .append("circle")
+      .insert("circle", "g")
       .attr("r", this._viewConfig.nodeRadius)
       .on("mouseenter", this.eventHandlers.handleHover.bind(this));
   }
@@ -995,13 +997,13 @@ export default class Visualization {
       .attr(
         "transform",
         "translate(" +
-          (this.type == "radial" ? (this.type == "radial" ? 33 : 20) : -35) +
+          (this.type == "radial" ? 0 : -35) +
           "," +
-          (this.type != "cluster" ? -35 : 35) +
+          (this.type == "tree" ? -25 : 35) +
           ") scale( " +
-          this._viewConfig.scale * 2 +
+          this._viewConfig.scale * 1.5 +
           ") rotate(" +
-          (this.type == "cluster" ? 270 : this.type == "radial" ? 180 : 0) +
+          (this.type == "cluster" ? 270 : this.type == "radial" ? 270 : 0) +
           ")"
       )
       .append("path")
@@ -1065,7 +1067,8 @@ export default class Visualization {
     selection
       .on("click", (e, d) => {
         if (e.target.tagName !== "circle") return;
-        this.eventHandlers.handleNodeZoom.call(this, e, d, false);
+        if (!(this.type == "radial"))
+          this.eventHandlers.handleNodeZoom.call(this, e, d, false);
         this.eventHandlers.handleNodeFocus.call(this, e, d);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
@@ -1238,7 +1241,7 @@ export default class Visualization {
     );
 
     this.gCirclePulse.pulseScale = scaleLinear()
-      .range(["#fff", "#5568d2", "#3349c1"])
+      .range(["#1a140e", "#5568d2", "#3349c1"])
       .domain([0, 3 * this._viewConfig.nodeRadius]);
 
     this.gCirclePulse.pulseData = [

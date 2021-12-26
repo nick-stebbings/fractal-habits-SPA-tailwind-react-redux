@@ -12,7 +12,7 @@ const { resetDeleteCompleted } = UISlice.actions;
 import { selectDeleteCompleted } from 'features/ui/selectors';
 
 const margin = {
-  top: 400,
+  top: (document.body.getBoundingClientRect().height / 8),
   right: 0,
   bottom: 0,
   left: 0,
@@ -80,13 +80,13 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
             onClick={(e) => {
               window.scrollTo(0,0)
               try {
-                currentVis.resetForExpandedMenu({justTranslation: true})
+                currentVis.resetForExpandedMenu({justTranslation: false})
               } catch (error) {
                 console.error("Could not mutate tree: ", error);
               }
             }}
       >
-        <span>RESET</span>
+        <span>RESET VIEW</span>
       </button>
       </>
       )}} />)

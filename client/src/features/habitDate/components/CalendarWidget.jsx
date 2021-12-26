@@ -200,6 +200,7 @@ export const CalendarWidget = ({
                   stringifyDate(currentSpace.timeframe.fromDate) ===
                   stringifyDate(fromDate)
                 }
+                calendarWidgetIsHidden={mobileFullyVisible}
               />
             );
           })}

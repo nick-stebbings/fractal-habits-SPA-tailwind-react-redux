@@ -4,7 +4,13 @@ import { getColor } from "features/hierarchy/components/helpers";
 
 import { parentPositiveBorderCol, positiveColLighter } from "app/constants";
 
-export const DateCard = ({ date, completedStatus, isToday, handleClick }) => {
+export const DateCard = ({
+  date,
+  completedStatus,
+  isToday,
+  handleClick,
+  calendarWidgetIsHidden,
+}) => {
   const [weekday, month, monthday] = date.split(/\W+/);
   return (
     <div
@@ -13,6 +19,7 @@ export const DateCard = ({ date, completedStatus, isToday, handleClick }) => {
         borderColor: isToday ? "#e3922f" : "#fefefe",
         boxSizing: "initial",
         borderWidth: "3px",
+        order: calendarWidgetIsHidden && isToday ? "1" : "initial",
         maxWidth: isSmallScreen()
           ? isSuperSmallScreen()
             ? "25px"
