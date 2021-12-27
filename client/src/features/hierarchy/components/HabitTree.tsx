@@ -58,10 +58,10 @@ export const HabitTree: React.FC<VisProps> = ({
           }
         )
       );
-      _p("Instantiated vis object :>> ", currentHabitTree, "info");
+      _p("Instantiated vis object :>> ", {}, "info");
     }
   }, [currentHierarchy?.data.name]);
-  _p("renderedd from component", '', '!' )
+  _p("renderedd from component", {currentHier: currentHierarchy?.data.name, routeChanged}, '!' )
   return (
       <>{render(currentHabitTree)}</>
   );

@@ -638,7 +638,7 @@ export default class Visualization {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for cluster vertical spacing on different screens
       +(this.type == "cluster") *
-        (this._viewConfig.isSmallScreen() ? -40 : 420) +
+        (this._viewConfig.isSmallScreen() ? -40 : 520) +
       (this.type == "tree" && this._viewConfig.isSmallScreen()) * 60;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
@@ -646,7 +646,7 @@ export default class Visualization {
 
     //adjust for taller aspect ratio
     this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 4.5;
-    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 2.5;
+    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 4.5;
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
@@ -845,9 +845,7 @@ export default class Visualization {
       )
       .attr("transform", (d) => {
         if (this.type == "radial")
-          return `rotate(${180 + ((d.x / 8) * 180) / Math.PI}) translate(${
-            d.y
-          },0)`;
+          return `rotate(${((d.x / 8) * 180) / Math.PI}) translate(${d.y},0)`;
         return this.type == "cluster"
           ? `translate(${d.y},${d.x})`
           : `translate(${d.x},${d.y})`;
@@ -875,7 +873,12 @@ export default class Visualization {
           ? 0.5
           : 0.3
       )
-      .attr("d", this.getLinkPathGenerator());
+      .attr("d", this.getLinkPathGenerator())
+      .attr("transform", (d) => {
+        if (this.type == "radial")
+          return `rotate(${((d.x / 8) * 180) / Math.PI}) translate(${d.y},0)`;
+        return "";
+      });
   }
   setCircleAndLabelGroups() {
     this._gCircle = this._enteringNodes
@@ -922,7 +925,7 @@ export default class Visualization {
               : LG_BUTTON_SCALE
           })` +
           (this.type == "radial"
-            ? `, rotate(${180 - ((d.x / 8) * 180) / Math.PI - 90})`
+            ? `, rotate(${((d.x / 8) * 180) / Math.PI})`
             : "")
       )
       .attr("style", "opacity: 0");
@@ -998,8 +1001,6 @@ export default class Visualization {
           (this.type == "tree" ? -25 : this.type == "radial " ? -30 : 5) +
           ") scale( " +
           this._viewConfig.scale * 1.5 +
-          ") rotate(" +
-          (this.type == "cluster" ? 270 : this.type == "radial" ? 270 : 0) +
           ")"
       )
       .append("path")
@@ -1341,7 +1342,7 @@ export default class Visualization {
       if (this.hasNextData()) this.rootData = this._nextRootData;
       if (this.hasSummedData()) delete this._nextRootData;
 
-      if (!this.activeNode) _p("Need new active node", {});
+      // if (!this.activeNode) _p("Need new active node", {});
 
       if (this.noCanvas()) return;
 
@@ -1354,14 +1355,14 @@ export default class Visualization {
       }
 
       this.clearCanvas();
-      _p("Cleared canvas :>> ");
+      // _p("Cleared canvas :>> ");
 
       this.setLayout();
       typeof this.rootData.newHabitDatesAdded == "undefined" &&
         this.addHabitDatesForNewNodes();
       !this.hasSummedData() && accumulateTree(this.rootData, this);
 
-      _p("Formed new layout", this, "!");
+      // _p("Formed new layout", this, "!");
 
       this.setNodeAndLinkGroups();
       this.setNodeAndLinkEnterSelections();
