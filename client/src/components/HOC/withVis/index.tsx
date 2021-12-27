@@ -1,7 +1,7 @@
 import React, { ComponentType, useEffect} from 'react'
 
 import useFetch from '../../../hooks/useFetch'
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory, Redirect } from 'react-router-dom';
 import { useLastLocation } from 'react-router-last-location';
 import "../../../assets/styles/components/vis.scss";
 
@@ -30,65 +30,66 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
   useFetch(true)
   
   const withVisC: React.FC = (hocProps: T) => {
-    const currentPath = useLocation()
-    const lastPath = useLastLocation()
-    const routeChanged = !!lastPath && (currentPath.pathname !== lastPath?.pathname);
-    const history = useHistory();
-    if (routeChanged) {
-      history.push(currentPath);
-    }
-
     let deleteCompleted = useAppSelector(selectDeleteCompleted)
     const dispatch = useAppDispatch();
     const { canvasHeight, canvasWidth } = d3SetupCanvas()
-  
+    
+    const currentPath = useLocation()
+    const lastPath = useLastLocation()
+    const routeChanged = !!lastPath && (currentPath.pathname !== lastPath?.pathname);
     return (
       <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={1} {...hocProps} routeChanged={routeChanged} deleteCompleted={deleteCompleted} render={(currentVis) => {
+        // const history = useHistory();
+        useEffect(() => {
+          if (deleteCompleted) {
+            currentVis.render()
+            dispatch(resetDeleteCompleted())
+          }
+        }, [deleteCompleted])
 
-      useEffect(() => {
-        if (deleteCompleted) {
-          currentVis.render()
-          dispatch(resetDeleteCompleted())
+        if (routeChanged) {
+          return (<Redirect to={currentPath} />)
         }
-      }, [deleteCompleted])
-        return (<>
-      <button
-            type="button"
-            id="collapse-tree"
-            className="vis-button"
-            onClick={(e) => {
-              const {target} = e
-              target.classList.toggle('active');
-              try {
-              target.textContent == "Collapse"
-                ? currentVis.collapse()
-                : currentVis.expand();
-              target.textContent = target.textContent.includes("Collapse")
-                ? "Expand"
-                : "Collapse"; 
-              } catch (error) {
-                console.error("Could not mutate tree: ", error);
-              }
-            }}
-      >
-        <span>{currentVis?.rootData && (currentVis.rootData._children ? "Expand" : "Collapse")}</span>
-      </button>
-      <button
-            type="button"
-            id="reset-tree"
-            className="vis-button"
-            onClick={(e) => {
-              window.scrollTo(0,0)
-              try {
-                currentVis.resetForExpandedMenu({justTranslation: false})
-              } catch (error) {
-                console.error("Could not mutate tree: ", error);
-              }
-            }}
-      >
-        <span>RESET VIEW</span>
-      </button>
-      </>
+
+        return (
+          <>
+          <button
+                type="button"
+                id="collapse-tree"
+                className="vis-button"
+                onClick={(e) => {
+                  const {target} = e
+                  target.classList.toggle('active');
+                  try {
+                  target.textContent == "Collapse"
+                    ? currentVis.collapse()
+                    : currentVis.expand();
+                  target.textContent = target.textContent.includes("Collapse")
+                    ? "Expand"
+                    : "Collapse"; 
+                  } catch (error) {
+                    console.error("Could not mutate tree: ", error);
+                  }
+                }}
+          >
+            <span>{currentVis?.rootData && (currentVis.rootData._children ? "Expand" : "Collapse")}</span>
+          </button>
+          <button
+                type="button"
+                id="reset-tree"
+                className="vis-button"
+                onClick={(e) => {
+                  window.scrollTo(0,0)
+                  try {
+                    currentVis.resetForExpandedMenu({justTranslation: false})
+                  } catch (error) {
+                    console.error("Could not mutate tree: ", error);
+                  }
+                }}
+          >
+            <span>RESET VIEW</span>
+          </button>
+       </>
       )}} />)
     }
   return (withVisC)

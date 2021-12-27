@@ -26,15 +26,15 @@ export const CreateForm = ({
   toggleClose,
 }) => {
   const dispatch = useAppDispatch();
-  const createHabit = (data) => {
+  const debouncedCreateHabit = debounce((data) => {
     dispatch(createHabitREST(data));
-  };
+  }, 1000);
 
   const isDemo = false;
   const currentDomain = useAppSelector(selectCurrentDomain);
   const currentHabit = useAppSelector(selectCurrentHabit);
 
-  const handleSubmit = debounce((e) => {
+  const handleSubmit = (e) => {
     debugger;
     const form = document.querySelector(`form#create-${resourceName}`);
 
@@ -66,11 +66,10 @@ export const CreateForm = ({
       data.parent_node_id =
         modalType === "Prepend" ? `D${data.domain_id}` : currentHabit.meta.id;
     }
-
-    createHabit(data);
+    debouncedCreateHabit(data);
     // Close the modal
     toggleClose();
-  }, 3000);
+  };
 
   return isDemo ? (
     <div className="my-2 mx-2">No Habit creation in Demo mode!</div>
