@@ -35,8 +35,7 @@ export const CreateForm = ({
   const currentHabit = useAppSelector(selectCurrentHabit);
 
   const handleSubmit = debounce((e) => {
-    e.preventDefault();
-
+    debugger;
     const form = document.querySelector(`form#create-${resourceName}`);
 
     // Validate fields
@@ -83,7 +82,13 @@ export const CreateForm = ({
           {message}
         </p>
       </div>
-      <form id={`create-habit`} onSubmit={handleSubmit}>
+      <form
+        id={`create-habit`}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit(e);
+        }}
+      >
         {addHeader && (
           <FormHeader
             iconPath="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
