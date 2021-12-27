@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 import { selectCurrentHierarchyRecords } from "features/hierarchy/selectors";
-import { getUIStatus } from "../features/ui/selectors";
+import { getUIStatus, selectDeleteCompleted } from "../features/ui/selectors";
 import { fetchDomainsREST } from "../features/domain/actions";
 import {
   fetchHabitTreeREST,
@@ -18,6 +18,7 @@ import { fetchNodesREST } from "../features/node/actions";
 export default function useFetch(isVisComponent: boolean) {
   const dispatch = useAppDispatch();
   const UIStatus = useAppSelector(getUIStatus);
+  const awaitingDeletionCompletion = useAppSelector(selectDeleteCompleted);
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentDateId = useAppSelector(selectCurrentDateId);
   const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords);
@@ -52,7 +53,12 @@ export default function useFetch(isVisComponent: boolean) {
   }, []);
 
   useEffect(() => {
-    if (currentHabit?.meta.id == 0 || currentHabit?.meta?.name) return;
+    if (
+      currentHabit?.meta.id == 0 ||
+      currentHabit?.meta?.name ||
+      awaitingDeletionCompletion
+    )
+      return;
     loadNodeData();
     loadNewCurrentHabit();
     if (
@@ -65,7 +71,7 @@ export default function useFetch(isVisComponent: boolean) {
       removeFutureRecords();
     }
     isVisComponent && loadTreeData();
-  }, [currentHabit?.meta?.id]);
+  }, [currentHabit?.meta?.id, awaitingDeletionCompletion]);
 
   return { UIStatus };
 }

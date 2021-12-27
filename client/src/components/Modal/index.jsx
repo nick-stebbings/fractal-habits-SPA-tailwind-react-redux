@@ -110,7 +110,6 @@ export const Modal = React.memo(({ type, toggle, resetConfirm }) => {
                   store.dispatch(deleteCurrentHabit());
 
                   store.dispatch(destroyNodeREST({ id: currentNodeId }));
-                  // store.dispatch(deleteCurrentNode()); // May not be needed due to new node fetch
 
                   closeModal();
                 }}

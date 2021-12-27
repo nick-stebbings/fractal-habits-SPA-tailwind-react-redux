@@ -8,6 +8,8 @@ import "../../../assets/styles/components/vis.scss";
 import { useAppSelector, useAppDispatch } from 'app/hooks';
 import UISlice from 'features/ui/reducer';
 const { resetDeleteCompleted } = UISlice.actions;
+import HabitSlice from 'features/habit/reducer';
+const { updateCurrentHabit } = HabitSlice.actions;
 
 import { selectDeleteCompleted } from 'features/ui/selectors';
 

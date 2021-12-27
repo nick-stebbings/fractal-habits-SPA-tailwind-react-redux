@@ -26,9 +26,9 @@ export const CreateForm = ({
   toggleClose,
 }) => {
   const dispatch = useAppDispatch();
-  const debouncedCreateHabit = debounce((data) => {
+  const createHabit = (data) => {
     dispatch(createHabitREST(data));
-  }, 1000);
+  };
 
   const isDemo = false;
   const currentDomain = useAppSelector(selectCurrentDomain);
@@ -65,7 +65,7 @@ export const CreateForm = ({
       data.parent_node_id =
         modalType === "Prepend" ? `D${data.domain_id}` : currentHabit.meta.id;
     }
-    debouncedCreateHabit(data);
+    createHabit(data);
     // Close the modal
     toggleClose();
   };
@@ -84,6 +84,7 @@ export const CreateForm = ({
         id={`create-habit`}
         onSubmit={(e) => {
           e.preventDefault();
+          e.target.lastElementChild.lastElementChild.ariaDisabled = true; // Stop double submit
           handleSubmit(e);
         }}
       >
@@ -151,6 +152,7 @@ export const CreateForm = ({
           <SubmitButton
             id={`submit-form-${String(Math.ceil(Math.random() * 100))}`}
             name="submit"
+            className="submit-btn"
             label="Start Tracking"
           />
         </div>

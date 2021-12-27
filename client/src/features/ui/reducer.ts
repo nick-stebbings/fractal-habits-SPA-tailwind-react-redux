@@ -23,19 +23,34 @@ export const isDataAction = (action: AnyAction) => {
 };
 
 export const isDeleteDataAction = (action: AnyAction) =>
-  action.type.startsWith("destroy") && action.type.endsWith("fulfilled");
+  action.type.startsWith("destroy_habit") && action.type.endsWith("fulfilled"); // For every habit deleted a node will be deleted, so pickup this action
 
 export const isErrorAction = (action: AnyAction) => {
   return action.type.endsWith("/rejected");
 };
 
+export const isLocalAction = (action: AnyAction) => {
+  return (
+    !action.type.endsWith("/pending") &&
+    !action.type.endsWith("/fulfilled") &&
+    !action.type.endsWith("/pending")
+  );
+};
+
+const isFirstHabitDatesAction = (action: AnyAction) => {
+  return action.type === "fetch_habit_dates/pending" && action.meta.arg.id == 1;
+};
+
 export const isLoadingAction = (action: AnyAction) => {
   return (
-    action.type.endsWith("/pending") ||
+    isFirstHabitDatesAction(action) ||
+    (action.type != "fetch_habit_dates/pending" &&
+      action.type.endsWith("/pending")) ||
     [
       "fetch_domains/fulfilled",
       "fetch_habits/fulfilled",
       "fetch_nodes/fulfilled",
+      "create_habit/fulfilled",
     ].includes(action.type)
   ); // These actions are always followed by more fetches and so loading can be considered in progress;
 };
@@ -45,6 +60,7 @@ const initialState: Dictionary<boolean | string> = {
   confirmStatus: false,
   confirmType: "",
   deleteCompleted: false,
+  routeChanged: false,
 };
 
 const uiStatus = createSlice({
@@ -79,6 +95,7 @@ const uiStatus = createSlice({
     builder.addMatcher(isErrorAction, (state) => {
       state.responseStatus = errorState;
     });
+    builder.addMatcher(isLocalAction, (state) => state);
     builder.addDefaultCase((state) => ({
       ...state,
       responseStatus: idleState,
