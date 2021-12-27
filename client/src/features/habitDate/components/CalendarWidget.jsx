@@ -24,7 +24,7 @@ import {
 } from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";
-import { selectDeleteCompleted } from "features/ui/selectors";
+import { selectDeleteCompleted, getConfirmStatus } from "features/ui/selectors";
 
 export const CalendarWidget = ({
   handlePrev,
@@ -85,12 +85,13 @@ export const CalendarWidget = ({
   const currentSpace = useAppSelector(selectCurrentSpace);
 
   const deleteCompleted = useAppSelector(selectDeleteCompleted); // Triggers re-render on new memoised hierarchies
+  const openDialogBox = useAppSelector(getConfirmStatus); // Triggers re-render on new memoised hierarchies
   const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords); // Triggers re-render on new memoised hierarchies
   useAppSelector(selectStoredHabitDates); // Triggers re-render on habit date update
 
   useEffect(() => {
-    if (deleteCompleted) hideMegaMenu();
-  }, [deleteCompleted]);
+    if (deleteCompleted || openDialogBox) hideMegaMenu();
+  }, [deleteCompleted, openDialogBox]);
 
   return (
     <div
