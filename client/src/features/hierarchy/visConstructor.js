@@ -160,15 +160,6 @@ export default class Visualization {
           this.type,
           this._viewConfig
         );
-
-        console.log(
-          "TRANSLATED",
-          typeof this._zoomConfig.previousRenderZoom?.node?.x !== "undefined"
-            ? "NEW"
-            : "INITIAL",
-          this._zoomConfig.previousRenderZoom?.node?.x &&
-            newXTranslate(this.type, this._viewConfig, this._zoomConfig)
-        );
         return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
           "undefined"
           ? initialX +
@@ -522,7 +513,12 @@ export default class Visualization {
   }
 
   handleStatusChange(node) {
-    if (isNotALeaf(node)) {
+    const nodeHasOOBAncestors =
+      node.descendants().findIndex((n) => {
+        return n.data.content.match(/OOB/);
+      }) !== -1;
+
+    if (isNotALeaf(node) && !node?._children && !nodeHasOOBAncestors) {
       return;
     } else {
       const currentHabit = selectCurrentHabit(store.getState());
@@ -538,12 +534,12 @@ export default class Visualization {
         .filter((n) => {
           if (!!n?.data?.name && n?.data?.name === node.data.name) return n;
         });
-
       const newStatus = oppositeStatus(currentStatus);
-      node.data.content = node.data.content.replace(
-        /true|false|incomplete/,
-        newStatus
-      );
+      if (currentStatus) {
+        node.data.content = node.data.content.replace(/true|false/, newStatus);
+      } else {
+        node.data.content = node.data.content.replace(/\-$/, "-" + newStatus);
+      }
       theNode.attr("fill", getColor(JSON.parse(newStatus)));
       theNode.attr("stroke", getColor(JSON.parse(newStatus)));
 
@@ -1091,7 +1087,7 @@ export default class Visualization {
     const doubleTap = new Hammer.Tap({
       event: "doubletap",
       taps: 2,
-      interval: 1500,
+      interval: 560,
     });
     manager.add([doubleTap, singleTap]);
     doubleTap.recognizeWith(singleTap);
@@ -1104,12 +1100,14 @@ export default class Visualization {
     });
 
     manager.on("doubletap", (ev) => {
-      window.FlashMessage.warning("TESTING MOB EVENTS");
       const target = ev.firstTarget;
       if (!target || target?.tagName !== "circle") return;
       ev.srcEvent.stopPropagation();
 
-      const node = target?.__data__;
+      let node = target?.__data__;
+      if (typeof node == "number") {
+        node = ev.target.parentNode?.__data__;
+      }
       try {
         this.eventHandlers.rgtClickOrDoubleTap.call(this, ev.srcEvent, node);
       } catch (error) {
@@ -1125,7 +1123,7 @@ export default class Visualization {
         ev.srcEvent.stopPropagation();
         const node = target?.__data__;
 
-        switch (ev.target.tagName) {
+        switch (ev?.target?.tagName) {
           // Delete button is currently the only path
           case "path":
             this.eventHandlers.handleDeleteNode.call(
