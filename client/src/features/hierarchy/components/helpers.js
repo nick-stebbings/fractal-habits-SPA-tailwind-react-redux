@@ -6,7 +6,7 @@ import {
   noNodeCol,
 } from "app/constants";
 
-import { select, hierarchy } from "d3";
+import { select } from "d3";
 import { selectInUnpersisted } from "features/habitDate/selectors";
 
 // General helpers
@@ -64,7 +64,7 @@ export const updateVisRootData = (
   currentHierarchy,
   routeChanged
 ) => {
-  const visExists = visObject?._svgId;
+  const visExists = visObject?._svgId && visObject?.firstRender;
   // Check if the hierarchy in the store is a new one (a new tree needs rendering)
   // either because of a different node set/relationships
   // or because node values changed

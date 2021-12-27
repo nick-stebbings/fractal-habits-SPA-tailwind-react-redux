@@ -60,7 +60,7 @@ export const RadialTree: React.FC<VisProps> = ({
       );
       _p("Instantiated vis object :>> ", currentRadial, "info");
     }
-  }, [currentHierarchy.name]);
+  }, [currentHierarchy?.data.name]);
 
   return (
       <>{render(currentRadial)}</>

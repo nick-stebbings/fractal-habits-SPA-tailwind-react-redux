@@ -68,7 +68,7 @@ export const selectAccumulatedStatusForDate = (
       // Next check the JSON tree data
       const hierarchyDataForDateId = hierarchyData[dateId];
       const currentHabitHierarchyNode =
-        !!hierarchyDataForDateId &&
+        !!hierarchyDataForDateId?.find &&
         hierarchyDataForDateId.find(
           (n: any) => n.data.name == currentHabit.meta.name
         );

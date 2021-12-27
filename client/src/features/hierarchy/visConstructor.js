@@ -845,7 +845,7 @@ export default class Visualization {
       )
       .attr("transform", (d) => {
         if (this.type == "radial")
-          return `rotate(${((d.x / 8) * 180) / Math.PI - 90}) translate(${
+          return `rotate(${180 + ((d.x / 8) * 180) / Math.PI}) translate(${
             d.y
           },0)`;
         return this.type == "cluster"

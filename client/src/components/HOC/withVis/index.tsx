@@ -10,6 +10,7 @@ import UISlice from 'features/ui/reducer';
 const { resetDeleteCompleted } = UISlice.actions;
 
 import { selectDeleteCompleted } from 'features/ui/selectors';
+import { current } from 'immer';
 
 const margin = {
   top: (document.body.getBoundingClientRect().height / 8),
@@ -39,15 +40,18 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
     const routeChanged = !!lastPath && (currentPath.pathname !== lastPath?.pathname);
     return (
       <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={1} {...hocProps} routeChanged={routeChanged} deleteCompleted={deleteCompleted} render={(currentVis) => {
-        // const history = useHistory();
         useEffect(() => {
           if (deleteCompleted) {
             currentVis.render()
             dispatch(resetDeleteCompleted())
           }
         }, [deleteCompleted])
-
+        
         if (routeChanged) {
+          const history = useHistory();
+          history.push(currentPath)
+          return;
+          debugger;
           return (<Redirect to={currentPath} />)
         }
 
