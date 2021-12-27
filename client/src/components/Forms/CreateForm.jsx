@@ -35,7 +35,6 @@ export const CreateForm = ({
   const currentHabit = useAppSelector(selectCurrentHabit);
 
   const handleSubmit = (e) => {
-    debugger;
     const form = document.querySelector(`form#create-${resourceName}`);
 
     // Validate fields
