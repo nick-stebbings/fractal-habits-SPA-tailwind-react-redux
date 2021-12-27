@@ -149,7 +149,7 @@ export const Header = ({ isVis }) => {
               </label>
             </div>
             <input type="checkbox" id="hamburger" className="hidden" />
-            <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2  translate-x-full" onClick={hideMegaMenu}>
+            <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2  translate-x-full">
               <div className="label-wrapper" >
                 <div className="nav-label-primary domain-selector">
                   <span className="lg:hidden xl:block pt-2 pb-0 mx-4 mb-1">

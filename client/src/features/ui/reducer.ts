@@ -16,10 +16,7 @@ export const idleState: RequestState = {
 };
 
 export const isDataAction = (action: AnyAction) => {
-  return (
-    !action.type.startsWith("habit_trees") && // This multiple day fetch is always done in the background so no spinner needed
-    action.type.endsWith("habit_dates/fulfilled")
-  );
+  return action.type.endsWith("habit_dates/fulfilled");
 };
 
 export const isDeleteDataAction = (action: AnyAction) =>
@@ -43,15 +40,16 @@ const isFirstHabitDatesAction = (action: AnyAction) => {
 
 export const isLoadingAction = (action: AnyAction) => {
   return (
-    isFirstHabitDatesAction(action) ||
-    (action.type != "fetch_habit_dates/pending" &&
-      action.type.endsWith("/pending")) ||
-    [
-      "fetch_domains/fulfilled",
-      "fetch_habits/fulfilled",
-      "fetch_nodes/fulfilled",
-      "create_habit/fulfilled",
-    ].includes(action.type)
+    !action.type.startsWith("fetch_habit_trees") && // This multiple day fetch is always done in the background so no spinner needed
+    (isFirstHabitDatesAction(action) ||
+      (action.type != "fetch_habit_dates/pending" &&
+        action.type.endsWith("/pending")) ||
+      [
+        "fetch_domains/fulfilled",
+        "fetch_habits/fulfilled",
+        "fetch_nodes/fulfilled",
+        "create_habit/fulfilled",
+      ].includes(action.type))
   ); // These actions are always followed by more fetches and so loading can be considered in progress;
 };
 

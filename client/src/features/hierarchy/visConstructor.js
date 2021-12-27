@@ -1172,13 +1172,13 @@ export default class Visualization {
     const labels = [
       "Completed",
       "Incomplete",
-      "Complete & Sub-Incomplete",
+      "Sub-Incomplete",
       "Not Yet Tracked",
       "Out of Bounds",
     ];
     const legendScale = this._viewConfig.isSmallScreen()
-      ? BASE_SCALE / 3
-      : BASE_SCALE / 2;
+      ? BASE_SCALE / 4
+      : BASE_SCALE / 3;
     const ordinal = scaleOrdinal()
       .domain(labels)
       .range([

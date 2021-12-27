@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // @ts-ignore
 import { store } from "app/store";
 import { isTouchDevice } from "app/helpers";
@@ -24,6 +24,7 @@ import {
 } from "features/habitDate/selectors";
 
 import { DateCard } from "./DateCard";
+import { selectDeleteCompleted } from "features/ui/selectors";
 
 export const CalendarWidget = ({
   handlePrev,
@@ -83,8 +84,13 @@ export const CalendarWidget = ({
   const currentWeek = useAppSelector(selectThisWeekSpaces);
   const currentSpace = useAppSelector(selectCurrentSpace);
 
+  const deleteCompleted = useAppSelector(selectDeleteCompleted); // Triggers re-render on new memoised hierarchies
   const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords); // Triggers re-render on new memoised hierarchies
   useAppSelector(selectStoredHabitDates); // Triggers re-render on habit date update
+
+  useEffect(() => {
+    if (deleteCompleted) hideMegaMenu();
+  }, [deleteCompleted]);
 
   return (
     <div
