@@ -779,7 +779,7 @@ export default class Visualization {
       case "radial":
         this.layout = cluster().size([360, this.canvasHeight / 2]);
         this.layout.nodeSize(
-          this._viewConfig.isSmallScreen() ? [500, 500] : [400, 400]
+          this._viewConfig.isSmallScreen() ? [500, 500] : [600, 600]
         );
         break;
     }
@@ -845,7 +845,9 @@ export default class Visualization {
       )
       .attr("transform", (d) => {
         if (this.type == "radial")
-          return `rotate(${((d.x / 8) * 180) / Math.PI}) translate(${d.y},0)`;
+          return `rotate(${((d.x / 8) * 180) / Math.PI - 90}) translate(${
+            d.y
+          },0)`;
         return this.type == "cluster"
           ? `translate(${d.y},${d.x})`
           : `translate(${d.x},${d.y})`;
@@ -908,7 +910,7 @@ export default class Visualization {
           `translate(${
             (this._viewConfig.isSmallScreen() ? -2 : -0.98) *
             (this.type == "radial"
-              ? -this._viewConfig.nodeRadius / 1.5
+              ? -this._viewConfig.nodeRadius / 0.5
               : this._viewConfig.nodeRadius)
           }, ${
             -(this._viewConfig.isSmallScreen() ? 2.5 : 1.1) *
@@ -925,7 +927,7 @@ export default class Visualization {
               : LG_BUTTON_SCALE
           })` +
           (this.type == "radial"
-            ? `, rotate(${((d.x / 8) * 180) / Math.PI})`
+            ? `, rotate(${180 - ((d.x / 8) * 180) / Math.PI - 90})`
             : "")
       )
       .attr("style", "opacity: 0");
@@ -1001,6 +1003,8 @@ export default class Visualization {
           (this.type == "tree" ? -25 : this.type == "radial " ? -30 : 5) +
           ") scale( " +
           this._viewConfig.scale * 1.5 +
+          ") rotate(" +
+          (this.type == "cluster" ? 270 : this.type == "radial" ? 270 : 0) +
           ")"
       )
       .append("path")
@@ -1062,6 +1066,7 @@ export default class Visualization {
 
   bindEventHandlers(selection) {
     selection
+      .on("contextmenu", this.eventHandlers.rgtClickOrDoubleTap.bind(this))
       .on("click", (e, d) => {
         if (e.target.tagName !== "circle") return;
         if (!(this.type == "radial"))
@@ -1071,7 +1076,6 @@ export default class Visualization {
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
         passive: true,
       })
-      .on("contextmenu", this.eventHandlers.rgtClickOrDoubleTap.bind(this))
       .on("mouseleave", this.eventHandlers.handleMouseLeave.bind(this))
       .on(
         "mouseenter",

@@ -16,7 +16,7 @@ import { selectDeleteCompleted } from 'features/ui/selectors';
 const margin = {
   top: (document.body.getBoundingClientRect().height / 8),
   right: 0,
-  bottom: 0,
+  bottom:  (document.body.getBoundingClientRect().height / 5),
   left: 0,
 };
 
