@@ -12,6 +12,7 @@ import {
   easeCircleOut,
   easeLinear,
   hierarchy,
+  zoomTransform,
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 import Hammer from "hammerjs";
@@ -67,7 +68,7 @@ import {
   positiveColLighter,
 } from "app/constants";
 
-const BASE_SCALE = 2.5;
+const BASE_SCALE = 2;
 const FOCUS_MODE_SCALE = 3;
 const XS_LABEL_SCALE = 1.5;
 const LG_LABEL_SCALE = 2.5;
@@ -144,7 +145,7 @@ export default class Visualization {
     this._svgId = svgId;
     this.rootData = inputTree;
     this._viewConfig = {
-      scale: type == "radial" ? BASE_SCALE * 0.5 : BASE_SCALE,
+      scale: type == "radial" ? BASE_SCALE / 2 : BASE_SCALE,
       clickScale: FOCUS_MODE_SCALE,
       margin: margin,
       canvasHeight,
@@ -283,8 +284,8 @@ export default class Visualization {
         this.currentButton = select(d).selectAll("g.habit-label-dash-button");
         this.currentButton
           .transition()
-          .delay(200)
-          .duration(850)
+          .delay(100)
+          .duration(450)
           .style("opacity", "1");
       },
       handleMouseLeave: function (e) {
@@ -594,13 +595,15 @@ export default class Visualization {
 
   resetForExpandedMenu({ justTranslation }) {
     let newTranslate = this._viewConfig.defaultView.split` `;
-    newTranslate[0] = -(this._viewConfig.previousRenderZoom
-      ? this._viewConfig.previousRenderZoom.x + this._viewConfig.margin.left
-      : 0);
-    newTranslate[1] = -(this._viewConfig.previousRenderZoom
-      ? this._viewConfig.previousRenderZoom.y -
-        this._viewConfig.defaultCanvasTranslateY() / 2
-      : 0);
+    if (this.type !== "radial") {
+      newTranslate[0] = -(this._viewConfig.previousRenderZoom
+        ? this._viewConfig.previousRenderZoom.x + this._viewConfig.margin.left
+        : 0);
+      newTranslate[1] = -(this._viewConfig.previousRenderZoom
+        ? this._viewConfig.previousRenderZoom.y -
+          this._viewConfig.defaultCanvasTranslateY() / 2
+        : 0);
+    }
     let newTranslateString = newTranslate.join(" ");
     this.zoomBase()
       .transition()
@@ -630,25 +633,35 @@ export default class Visualization {
   }
   setdXdY() {
     this._viewConfig.dx =
-      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for cluster vertical spacing on different screens
+      this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for tree horizontal spacing on different screens
       +(this.type == "tree" && this._viewConfig.isSmallScreen()) * 250;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide;
 
     //adjust for taller aspect ratio
-    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 4.25 : 4.5;
-    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 4.5;
+    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 4.25 : 3.5;
+    this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 3.5;
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
       (this._viewConfig.isSmallScreen() ? XS_NODE_RADIUS : LG_NODE_RADIUS) *
-      this._viewConfig.scale;
+      (this.type == "radial" ? BASE_SCALE / 2 : BASE_SCALE);
   }
   setZoomBehaviour() {
     const zooms = function (e) {
       let t = { ...e.transform };
       let scale;
       let x, y;
+
+      if (this.type == "radial" && t.k == 1 && t.x < 50 && t.y < 50) {
+        // Radial needs an initial zoom in
+        t.k = this._viewConfig.clickScale;
+        this.zoomBase().call(
+          this.zoomer.transform,
+          Object.assign(e.transform, t)
+        );
+        return;
+      }
       if (this._zoomConfig.focusMode) {
         this.resetForExpandedMenu({ justTranslation: true });
         this._zoomConfig.focusMode = false;
@@ -658,7 +671,6 @@ export default class Visualization {
         x = t.x + this._viewConfig.defaultCanvasTranslateX(scale) * scale;
         y = t.y + this._viewConfig.defaultCanvasTranslateY(scale) * scale;
       }
-
       select(".canvas")
         .transition()
         .ease(easeLinear)
@@ -767,7 +779,9 @@ export default class Visualization {
         this.layout.nodeSize([this._viewConfig.dx, this._viewConfig.dy]);
         break;
       case "radial":
-        this.layout = cluster().size([360, this.canvasHeight / 2]);
+        this.layout = cluster()
+          .size([360, this.canvasHeight / 2])
+          .separation((a, b) => (a.parent == b.parent ? 2.5 : 5) / a.depth);
         this.layout.nodeSize(
           this._viewConfig.isSmallScreen() ? [300, 300] : [600, 600]
         );
