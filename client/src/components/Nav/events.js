@@ -20,15 +20,15 @@ const addSwipeGestures = function () {
 
 document.addEventListener("DOMContentLoaded", () => {
   isTouchDevice() && addSwipeGestures();
-  // ResponsiveNav groups
-  const navGroupsList = document
-    .querySelector("ul.nav-groups")
-    ?.addEventListener("click", (e) => {
-      if (e.target.tagName === "A") {
-        // Collapse responsive menu when you click active link
-        document.getElementById("hamburger").checked = false;
-      }
-    });
+  // // ResponsiveNav groups
+  // const navGroupsList = document
+  //   .querySelector("ul.nav-groups")
+  //   ?.addEventListener("click", (e) => {
+  //     if (e.target.tagName === "A") {
+  //       // Collapse responsive menu when you click active link
+  //       document.getElementById("hamburger").checked = false;
+  //     }
+  //   });
 
   // Date list
   const dateInputs = document.querySelectorAll(".date-today");

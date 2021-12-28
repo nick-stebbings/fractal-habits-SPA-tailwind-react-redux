@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useRef, useState} from "react";
 import { Link } from "react-router-dom";
 import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../../routes/routeInfo";
 
@@ -54,6 +54,7 @@ const hideMegaMenu = () => {
 
 export const Header = ({ isVis }) => {
   const scrollRef = useRef(null);
+  const checkBoxRef = useRef(null);
   const executeScroll = () => scrollRef.current.scrollIntoView();
 
   const dispatch = useAppDispatch()
@@ -97,6 +98,7 @@ export const Header = ({ isVis }) => {
     dispatch(incrementIdx())
 }
 
+  const [responsiveNavOpen, setResponsiveNavOpen] = useState(false)
   let isDemo = false;
   return (
     <div
@@ -148,7 +150,9 @@ export const Header = ({ isVis }) => {
                 </svg>
               </label>
             </div>
-            <input type="checkbox" id="hamburger" className="hidden" />
+            <input type="checkbox" id="hamburger" className="hidden" ref={checkBoxRef} onClick={(e) => {
+              setResponsiveNavOpen(checkBoxRef?.current.checked)
+            }} />
             <nav className="wide-nav sm:top-18 shadow-tershades-gray max-w-1/2  translate-x-full">
               <div className="label-wrapper" >
                 <div className="nav-label-primary domain-selector">
@@ -238,7 +242,7 @@ export const Header = ({ isVis }) => {
         <div className="max-h-12 md:block sm:hidden block overflow-auto">
           {currentHabit.meta.name}
         </div>
-        <i className="down-btn w-12 h-12" onClick={executeScroll} />
+        <i className="down-btn w-12 h-12" onClick={executeScroll} hidden={responsiveNavOpen} />
       </div>
     </div>
   );

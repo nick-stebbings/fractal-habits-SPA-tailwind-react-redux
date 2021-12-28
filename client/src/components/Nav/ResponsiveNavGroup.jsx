@@ -6,6 +6,12 @@ export const ResponsiveNavGroup = ({ id, classString, label, subpaths }) => {
     <li
       className="responsive-nav-group flex flex-wrap w-5/6 py-6 mx-auto"
       id={id}
+      onClick={(e) => {
+        if (e.target.tagName === "A") {
+          // Collapse responsive menu when you click active link
+          document.getElementById("hamburger").checked = false;
+        }
+      }}
     >
       <h2 id={id} className={classString} style={{ flexBasis: 100 }}>
         {label}
