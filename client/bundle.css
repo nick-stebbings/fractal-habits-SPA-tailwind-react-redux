@@ -2854,6 +2854,25 @@ section > h2:first-of-type,
   --tw-text-opacity: 1;
   color: rgba(33, 25, 18, var(--tw-text-opacity));
 }
+@media (min-width: 640px) {
+  .button-group {
+    height: 4rem;
+  }
+
+  #modal h3 {
+    font-size: large;
+  }
+
+  #modal input,
+  #modal label {
+    margin-top: 0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  #modal input {
+    height: 3rem;
+  }
+}
 @media (min-width: 1024px) {
   .user-nav-label {
     font-size: 1rem;
@@ -3129,6 +3148,7 @@ main.wrapper {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
+
 #hamburger-wrapper input:checked + nav {
   transform: translate(-118%);
   margin-right: 1rem;
@@ -3236,6 +3256,15 @@ div.sm-selector-container .domain-selector {
 
   .calendar-widget {
     right: 1.5rem !important;
+  }
+
+  #modal {
+    right: 20%;
+    left: 20%;
+  }
+
+  #modal h3 {
+    font-size: xx-large;
   }
 }
 @media only screen and (min-width: 1920px) {
@@ -3402,11 +3431,6 @@ label.reqd.not-added:after {
   border-radius: 1rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
-}
-@media (min-width: 640px) {
-  .button-group {
-    height: 4rem;
-  }
 }
 .button-container {
   margin: 0.25rem 0.5rem;
