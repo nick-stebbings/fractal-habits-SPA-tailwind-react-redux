@@ -18,6 +18,62 @@ export const initialState: Dictionary<HabitDate[]> = {
   unPersistedForDate: [],
 };
 
+export const habitDateSlice = createSlice({
+  name: "habitDate",
+  initialState,
+  reducers: {
+    createHabitDate(state, action: PayloadAction<Node>) {
+      const { habitId, dateId, completed } = action.payload;
+      state.unPersistedForDate.push({
+        habit_id: habitId,
+        date_id: dateId,
+        completed_status: completed,
+      });
+    },
+    updateHabitDateForNode(state, action: PayloadAction<any>) {
+      const { habitId, dateId, completed, fromDateForToday } = action.payload;
+      let habitDateForUpdateIdx = state.unPersistedForDate.findIndex((hd) => {
+        return hd.habit_id == habitId && hd.date_id == dateId;
+      });
+      // Check if we have a temp persisted habit date
+
+      if (habitDateForUpdateIdx !== -1) {
+        state.unPersistedForDate[habitDateForUpdateIdx].completed_status =
+          completed;
+        state.current = state.unPersistedForDate[habitDateForUpdateIdx];
+      } else {
+        habitDateForUpdateIdx = state.myRecords.findIndex((hd) => {
+          return (
+            hd.habit_id == habitId && hd.timeframe.fromDate == fromDateForToday
+          );
+        });
+
+        if (habitDateForUpdateIdx !== -1) {
+          // Then it was in the currentRecords
+          let updatedHabitDate = { ...state.myRecords[habitDateForUpdateIdx] };
+          updatedHabitDate.completed_status = completed;
+
+          delete state.myRecords[habitDateForUpdateIdx];
+
+          state.unPersistedForDate.push(updatedHabitDate);
+          state.current = updatedHabitDate;
+        }
+      }
+    },
+    clearUnpersistedHabitDateCache(state) {
+      state.unPersistedForDate = [];
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      (action) => isCrud(action, ...actionCreators),
+      (state, action) => crudReducer(state, action, ...actionCreators)
+    );
+  },
+});
+
+export default habitDateSlice;
+
 // P:
 //     When a habit has been completed in the past as an atom, and it gets consequently subdivided, it's recorded state will be completed.
 
@@ -64,13 +120,6 @@ export const initialState: Dictionary<HabitDate[]> = {
 // (Only leaves can toggle)
 //  TODO: ENACT parentCompleted LOGIC
 
-// this.eventHandlers.handleStatusChange.call(
-//   this,
-//   node,
-//   currentHabit,
-//   currentDate
-// );
-
 // A:
 //\ Set a new constant for node color 'parentCompleted', to yellow.
 
@@ -81,58 +130,3 @@ export const initialState: Dictionary<HabitDate[]> = {
 // - WHEN a node is completed and a child is appended
 //   - THEN its new
 //   -
-
-// Set the calendar widget and tree to display the parentCompleted colour when a node is completed but it has children
-
-export const habitDateSlice = createSlice({
-  name: "habitDate",
-  initialState,
-  reducers: {
-    createHabitDate(state, action: PayloadAction<Node>) {
-      const { habitId, dateId, completed } = action.payload;
-      state.unPersistedForDate.push({
-        habit_id: habitId,
-        date_id: dateId,
-        completed_status: completed,
-      });
-    },
-    updateHabitDateForNode(state, action: PayloadAction<any>) {
-      const { habitId, dateId, completed, fromDateForToday } = action.payload;
-      let habitDateForUpdateIdx = state.unPersistedForDate.findIndex((hd) => {
-        return hd.habit_id == habitId && hd.date_id == dateId;
-      });
-      // Check if we have a temp persisted habit date
-
-      if (habitDateForUpdateIdx !== -1) {
-        state.unPersistedForDate[habitDateForUpdateIdx].completed_status =
-          completed;
-        state.current = state.unPersistedForDate[habitDateForUpdateIdx];
-      } else {
-        habitDateForUpdateIdx = state.myRecords.findIndex((hd) => {
-          return (
-            hd.habit_id == habitId && hd.timeframe.fromDate == fromDateForToday
-          );
-        });
-
-        if (habitDateForUpdateIdx !== -1) {
-          // Then it was in the currentRecords
-          let updatedHabitDate = { ...state.myRecords[habitDateForUpdateIdx] };
-          updatedHabitDate.completed_status = completed;
-
-          delete state.myRecords[habitDateForUpdateIdx];
-
-          state.unPersistedForDate.push(updatedHabitDate);
-          state.current = updatedHabitDate;
-        }
-      }
-    },
-  },
-  extraReducers: (builder) => {
-    builder.addMatcher(
-      (action) => isCrud(action, ...actionCreators),
-      (state, action) => crudReducer(state, action, ...actionCreators)
-    );
-  },
-});
-
-export default habitDateSlice;

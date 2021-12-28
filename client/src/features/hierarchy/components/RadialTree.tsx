@@ -62,7 +62,7 @@ export const RadialTree: React.FC<VisProps> = ({
     }
   }, [currentHierarchy?.data.name]);
 
-  _p("renderedd from component", {currentHier: currentHierarchy?.data.name, routeChanged}, '!' )
+  // _p("renderedd from component", {currentHier: currentHierarchy?.data.name, routeChanged}, '!' )
   return (
       <>{render(currentRadial)}</>
   );

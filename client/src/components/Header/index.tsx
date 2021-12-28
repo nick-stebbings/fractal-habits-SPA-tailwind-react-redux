@@ -9,15 +9,20 @@ import { useAppDispatch, useAppSelector } from "app/hooks";
 import { debounce } from "app/helpers";
 
 // @ts-ignore
-import { selectCurrentHabit } from "features/habit/selectors";
-// @ts-ignore
 import slice, { selectCurrentDateId, selectCurrentDatePositionIdx, selectCurrentDate } from 'features/space/slice';
 const { decrementIdx, incrementIdx } = slice.actions;
 
-import { visActions } from "features/hierarchy/reducer";
-import { selectHasStoredTreeForDateId } from "features/hierarchy/selectors";
-const {updateCurrentHierarchy} = visActions
+import HabitDateSlice from "features/habitDate/reducer";
+const { clearUnpersistedHabitDateCache } = HabitDateSlice.actions;
+import { createHabitDateREST } from "features/habitDate/actions";
+
 import { fetchHabitTreeREST,fetchHabitTreesREST } from "features/hierarchy/actions";
+import { visActions } from "features/hierarchy/reducer";
+const {updateCurrentHierarchy} = visActions
+
+import { selectCurrentHabit } from "features/habit/selectors";
+import { selectHasStoredTreeForDateId } from "features/hierarchy/selectors";
+import { selectUnStoredHabitDates } from "features/habitDate/selectors";
 
 // @ts-ignore
 import { CalendarWidget } from "features/habitDate/components/CalendarWidget";
@@ -28,7 +33,7 @@ import { DateSelector } from "../Nav/UI/Inputs/DateSelector";
 
 import "../../assets/styles/components/MaskHeader.scss";
 
-const showMegaMenu = (id) => {
+const showMegaMenu = (id: number) => {
   document.querySelector(".mask-wrapper").style.height = "357px";
   const menus = [...document.querySelectorAll(".mega-menu")];
   menus.forEach((menu, idx) => {
@@ -62,33 +67,48 @@ export const Header = ({ isVis }) => {
   const currentDateId = useAppSelector(selectCurrentDateId);
   const currentDatePositionIdx = useAppSelector(selectCurrentDatePositionIdx);
   const currentHabit = useAppSelector(selectCurrentHabit);
+  const currentUnpersistedHabitDates = useAppSelector(selectUnStoredHabitDates);
   
+  const persistTodaysUnstoredHabitDates = () => {
+    const nodesToPersist = currentUnpersistedHabitDates.filter(hd => hd.completed_status )
+    // dispatch(createHabitDateREST({ dateId: currentDateId, habitDates: nodesToPersist }))
+    
+    dispatch(clearUnpersistedHabitDateCache())
+  }
+
   const isMemoised = (dateId: number) =>
     selectHasStoredTreeForDateId(dateId)(store.getState())
 
   const handlePrevDate = (_: any) => {
     const currentFlash = document.querySelector('.flash-container')
     if(currentFlash) currentFlash.textContent = '' // Clear flash
+
     if (isVis) {
+      // First dispatch action to POST unpersisted habit-dates
+      persistTodaysUnstoredHabitDates()
+      
       dispatch(updateCurrentHierarchy({nextDateId: currentDateId - 1}))
       const newDateId = Math.max.apply(null, [1, currentDateId - 7]) // Account for minimum date Id
-
+      
     if ( !isMemoised(newDateId)) {
       currentDatePositionIdx < 0 && updateCurrentHierarchy({nextDateId: -1}) // Account for boundary of possible stored habit tree jsons 
       currentDatePositionIdx == 3 && // Fetch the previous week when we are close to the start of the current week
       dispatch(fetchHabitTreesREST({ domainId: 1, dateId: newDateId - 3 }));
     }
-}
+  }
     dispatch(decrementIdx())
-}
+  }
   const handleNextDate = (_: any) => {
     const currentFlash = document.querySelector('.flash-container')
     if(currentFlash) currentFlash.textContent = '' // Clear flash
-
+    
     const todaysDate = DateTime.now().startOf("day").ts;
     if (currentDate.timeframe.fromDate == todaysDate) return;
     
     if (isVis) {
+      // First dispatch action to POST unpersisted habit-dates
+      persistTodaysUnstoredHabitDates()
+
       if (isMemoised(currentDateId + 1)) {
         dispatch(updateCurrentHierarchy({nextDateId: currentDateId + 1}))
       } else {
