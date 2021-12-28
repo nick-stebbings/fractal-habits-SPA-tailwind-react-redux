@@ -74,7 +74,7 @@ const LG_LABEL_SCALE = 2.5;
 const XS_BUTTON_SCALE = 2;
 const LG_BUTTON_SCALE = 3.2;
 const XS_NODE_RADIUS = 40;
-const LG_NODE_RADIUS = 80;
+const LG_NODE_RADIUS = 70;
 const XS_LEVELS_HIGH = 6;
 const LG_LEVELS_HIGH = 6;
 const XS_LEVELS_WIDE = 3;
@@ -146,7 +146,7 @@ export default class Visualization {
     this._svgId = svgId;
     this.rootData = inputTree;
     this._viewConfig = {
-      scale: type == "radial" ? BASE_SCALE * 0.7 : BASE_SCALE,
+      scale: type == "radial" ? BASE_SCALE * 0.5 : BASE_SCALE,
       clickScale: FOCUS_MODE_SCALE,
       margin: margin,
       canvasHeight,
@@ -597,7 +597,7 @@ export default class Visualization {
   resetForExpandedMenu({ justTranslation }) {
     let newTranslate = this._viewConfig.defaultView.split` `;
     newTranslate[0] = -(this._viewConfig.previousRenderZoom
-      ? this._viewConfig.previousRenderZoom.x
+      ? this._viewConfig.previousRenderZoom.x + this._viewConfig.margin.left
       : 0);
     newTranslate[1] = -(this._viewConfig.previousRenderZoom
       ? this._viewConfig.previousRenderZoom.y -
@@ -623,10 +623,8 @@ export default class Visualization {
 
   setLevelsHighAndWide() {
     if (this._viewConfig.isSmallScreen()) {
-      this._viewConfig.levelsHigh =
-        this.type == "radial" ? XS_LEVELS_HIGH / 1.5 : XS_LEVELS_HIGH;
-      this._viewConfig.levelsWide =
-        this.type == "radial" ? XS_LEVELS_WIDE : XS_LEVELS_WIDE;
+      this._viewConfig.levelsHigh = XS_LEVELS_HIGH;
+      this._viewConfig.levelsWide = XS_LEVELS_WIDE;
     } else {
       this._viewConfig.levelsHigh = LG_LEVELS_HIGH;
       this._viewConfig.levelsWide = LG_LEVELS_WIDE;
@@ -635,22 +633,18 @@ export default class Visualization {
   setdXdY() {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for cluster vertical spacing on different screens
-      +(this.type == "cluster") *
-        (this._viewConfig.isSmallScreen() ? -140 : 520) +
-      (this.type == "tree" && this._viewConfig.isSmallScreen()) * 60;
+      +(this.type == "tree" && this._viewConfig.isSmallScreen()) * 250;
     this._viewConfig.dy =
-      this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
-      +(this.type == "cluster") * 30;
+      this._viewConfig.canvasHeight / this._viewConfig.levelsWide;
 
     //adjust for taller aspect ratio
-    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 2.25 : 4.5;
+    this._viewConfig.dx *= this._viewConfig.isSmallScreen() ? 4.25 : 4.5;
     this._viewConfig.dy *= this._viewConfig.isSmallScreen() ? 3.25 : 4.5;
   }
   setNodeRadius() {
     this._viewConfig.nodeRadius =
-      (this._viewConfig.isSmallScreen()
-        ? XS_NODE_RADIUS + +(this.type == "radial" * 2 * XS_NODE_RADIUS)
-        : LG_NODE_RADIUS) * this._viewConfig.scale;
+      (this._viewConfig.isSmallScreen() ? XS_NODE_RADIUS : LG_NODE_RADIUS) *
+      this._viewConfig.scale;
   }
   setZoomBehaviour() {
     const zooms = function (e) {
@@ -777,7 +771,7 @@ export default class Visualization {
       case "radial":
         this.layout = cluster().size([360, this.canvasHeight / 2]);
         this.layout.nodeSize(
-          this._viewConfig.isSmallScreen() ? [300, 300] : [500, 500]
+          this._viewConfig.isSmallScreen() ? [300, 300] : [600, 600]
         );
         break;
     }

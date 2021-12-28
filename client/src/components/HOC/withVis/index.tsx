@@ -16,10 +16,10 @@ const { updateCurrentHierarchy } = hierarchySlice.actions;
 import { selectDeleteCompleted } from 'features/ui/selectors';
 
 const margin = {
-  top: 0,
+  top: (document.body.getBoundingClientRect().height / (document.body.getBoundingClientRect().height > 1024 ? 6 : 4)),
   right: 0,
-  bottom: (document.body.getBoundingClientRect().height / (document.body.getBoundingClientRect().height > 1024 ? 7 : -2)),
-  left: 0,
+  bottom: 0,
+  left: 200,
 };
 
 const d3SetupCanvas = function () {
