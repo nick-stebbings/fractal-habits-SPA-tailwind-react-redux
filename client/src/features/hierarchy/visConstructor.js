@@ -67,13 +67,13 @@ import {
   positiveColLighter,
 } from "app/constants";
 
-const BASE_SCALE = 2.2;
+const BASE_SCALE = 2.5;
 const FOCUS_MODE_SCALE = 3;
 const XS_LABEL_SCALE = 1.5;
 const LG_LABEL_SCALE = 2.5;
 const XS_BUTTON_SCALE = 2;
 const LG_BUTTON_SCALE = 3.2;
-const XS_NODE_RADIUS = 30;
+const XS_NODE_RADIUS = 40;
 const LG_NODE_RADIUS = 80;
 const XS_LEVELS_HIGH = 6;
 const LG_LEVELS_HIGH = 6;
@@ -101,9 +101,9 @@ const getInitialYTranslate = (
     case "tree":
       return 1000;
     case "radial":
-      return (h / levelsHigh) * 2;
+      return h / levelsHigh;
     default:
-      return (h / levelsHigh) * 1.5;
+      return (h / levelsHigh) * 1.3;
   }
 };
 
@@ -146,7 +146,7 @@ export default class Visualization {
     this._svgId = svgId;
     this.rootData = inputTree;
     this._viewConfig = {
-      scale: type == "radial" ? BASE_SCALE / 2 : BASE_SCALE,
+      scale: type == "radial" ? BASE_SCALE * 0.7 : BASE_SCALE,
       clickScale: FOCUS_MODE_SCALE,
       margin: margin,
       canvasHeight,
@@ -623,12 +623,10 @@ export default class Visualization {
 
   setLevelsHighAndWide() {
     if (this._viewConfig.isSmallScreen()) {
-      this._viewConfig.levelsHigh = this.previousRenderZoom
-        ? XS_LEVELS_HIGH
-        : XS_LEVELS_HIGH;
-      this._viewConfig.levelsWide = this.previousRenderZoom
-        ? XS_LEVELS_WIDE
-        : XS_LEVELS_WIDE;
+      this._viewConfig.levelsHigh =
+        this.type == "radial" ? XS_LEVELS_HIGH / 1.5 : XS_LEVELS_HIGH;
+      this._viewConfig.levelsWide =
+        this.type == "radial" ? XS_LEVELS_WIDE : XS_LEVELS_WIDE;
     } else {
       this._viewConfig.levelsHigh = LG_LEVELS_HIGH;
       this._viewConfig.levelsWide = LG_LEVELS_WIDE;
@@ -638,7 +636,7 @@ export default class Visualization {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for cluster vertical spacing on different screens
       +(this.type == "cluster") *
-        (this._viewConfig.isSmallScreen() ? -40 : 520) +
+        (this._viewConfig.isSmallScreen() ? -140 : 520) +
       (this.type == "tree" && this._viewConfig.isSmallScreen()) * 60;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide -
@@ -779,7 +777,7 @@ export default class Visualization {
       case "radial":
         this.layout = cluster().size([360, this.canvasHeight / 2]);
         this.layout.nodeSize(
-          this._viewConfig.isSmallScreen() ? [500, 500] : [600, 600]
+          this._viewConfig.isSmallScreen() ? [300, 300] : [500, 500]
         );
         break;
     }
@@ -792,7 +790,7 @@ export default class Visualization {
     }
   }
   setNodeAndLinkGroups() {
-    const transformation = `translate(${0}, ${0})`;
+    const transformation = this.type == "radial" ? `rotate(180)` : "";
     this._gLink = this._canvas
       .append("g")
       .classed("links", true)
@@ -877,6 +875,7 @@ export default class Visualization {
       )
       .attr("d", this.getLinkPathGenerator())
       .attr("transform", (d) => {
+        if (!d?.x) return "";
         if (this.type == "radial")
           return `rotate(${((d.x / 8) * 180) / Math.PI}) translate(${d.y},0)`;
         return "";
@@ -908,14 +907,15 @@ export default class Visualization {
         "transform",
         (d) =>
           `translate(${
-            (this._viewConfig.isSmallScreen() ? -2 : -0.98) *
+            (this._viewConfig.isSmallScreen() ? -1.25 : -0.98) *
             (this.type == "radial"
-              ? -this._viewConfig.nodeRadius / 0.5
+              ? this._viewConfig.nodeRadius
               : this._viewConfig.nodeRadius)
           }, ${
-            -(this._viewConfig.isSmallScreen() ? 2.5 : 1.1) *
+            -(this._viewConfig.isSmallScreen() ? 1.5 : 1.1) *
             (this.type == "radial"
-              ? 2 * this._viewConfig.nodeRadius
+              ? d.height / this._viewConfig.nodeRadius +
+                1.2 * this._viewConfig.nodeRadius
               : this._viewConfig.nodeRadius)
           }), scale(${
             this._viewConfig.isSmallScreen()
@@ -927,7 +927,7 @@ export default class Visualization {
               : LG_BUTTON_SCALE
           })` +
           (this.type == "radial"
-            ? `, rotate(${180 - ((d.x / 8) * 180) / Math.PI - 90})`
+            ? `, rotate(${360 - ((d.x / 8) * 180) / Math.PI - 90})`
             : "")
       )
       .attr("style", "opacity: 0");
@@ -959,7 +959,10 @@ export default class Visualization {
     // Split the name label into two parts:
     this._gTooltip
       .append("text")
-      .attr("x", (d) => `${this.type == "radial" && d.x >= Math.PI ? -25 : 5}`)
+      .attr(
+        "x",
+        (d) => `${this.type == "radial" && d.x < Math.PI / 2 ? -25 : 5}`
+      )
       .attr("y", 20)
       .text((d) => {
         const words = d.data.name.split(" ").slice(0, 6);
@@ -967,16 +970,16 @@ export default class Visualization {
           words[3] || ""
         }`;
       })
-      .attr("transform", (d) =>
-        this.type == "radial"
+      .attr("transform", (d) => {
+        return this.type == "radial"
           ? `scale(0.75), translate(${
-              d.x >= Math.PI ? "130, 100" : "0,0"
-            }), rotate(${d.x >= Math.PI ? 180 : 0})`
-          : ""
-      );
+              d.x < Math.PI / 2 ? "130, 100" : "0,0"
+            }), rotate(${d.x < Math.PI / 2 ? 180 : 0})`
+          : "";
+      });
     this._gTooltip
       .append("text")
-      .attr("x", (d) => `${d.x >= Math.PI ? -25 : 5}`)
+      .attr("x", (d) => `${d.x < Math.PI / 2 ? -25 : 5}`)
       .attr("y", 50)
       .text((d) => {
         const allWords = d.data.name.split(" ");
@@ -988,8 +991,8 @@ export default class Visualization {
       .attr("transform", (d) =>
         this.type == "radial"
           ? `scale(${this.type == "radial" ? 0.5 : 0.75}), translate(${
-              d.x >= Math.PI ? "130, 100" : "0,0"
-            }), rotate(${d.x >= Math.PI ? 180 : 0})`
+              d.x < Math.PI / 2 ? "130, 100" : "0,0"
+            }), rotate(${d.x < Math.PI / 2 ? 180 : 0})`
           : ""
       );
 

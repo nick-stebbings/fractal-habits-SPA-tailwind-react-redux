@@ -55,7 +55,11 @@ export const hierarchySlice = createSlice({
           hier: {
             name: "OOB",
             content: "",
-            data: { content: "", children: "" },
+            data: {
+              name: nextDateId == 0 ? "RESET" : undefined,
+              content: "",
+              children: "",
+            },
           },
         };
       }

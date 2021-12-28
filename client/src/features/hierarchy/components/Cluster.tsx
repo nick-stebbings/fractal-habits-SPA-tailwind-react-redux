@@ -40,7 +40,7 @@ export const Cluster: React.FC<VisProps> = ({
 
   useEffect(() => {
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
-    if ((currentRequestState === "IDLE") && !currentCluster._svgId) {
+    if ((currentRequestState === "IDLE") && !currentCluster._svgId || currentHierarchy?.data.name == "RESET") {
       currentCluster = new Vis(
             `div${divId}`,
             currentHierarchy,

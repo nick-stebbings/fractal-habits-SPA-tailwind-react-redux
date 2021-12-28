@@ -10,13 +10,15 @@ import UISlice from 'features/ui/reducer';
 const { resetDeleteCompleted } = UISlice.actions;
 import HabitSlice from 'features/habit/reducer';
 const { updateCurrentHabit } = HabitSlice.actions;
+import hierarchySlice from 'features/hierarchy/reducer';
+const { updateCurrentHierarchy } = hierarchySlice.actions;
 
 import { selectDeleteCompleted } from 'features/ui/selectors';
 
 const margin = {
-  top: (document.body.getBoundingClientRect().height / 8),
+  top: 0,
   right: 0,
-  bottom:  (document.body.getBoundingClientRect().height / 5),
+  bottom: (document.body.getBoundingClientRect().height / (document.body.getBoundingClientRect().height > 1024 ? 7 : -2)),
   left: 0,
 };
 
@@ -50,7 +52,20 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
         }, [deleteCompleted])
         
         if (routeChanged) {
-          return (<Redirect to={currentPath} />)
+          if (!currentVis?.rootData) {
+            dispatch(updateCurrentHierarchy({ nextDateId: 0 })) // Triggers recreation and re-rendering of vis component on new route
+            dispatch(updateCurrentHabit({timeframe: {
+              fromDate: 0,
+              toDate: 0,
+              length: 0,
+            },
+            meta: {
+              name: "",
+              id: 1,
+            },  }))
+
+          }
+          return (<Redirect to={currentPath.pathname} />)
         }
 
         return (
@@ -83,7 +98,7 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
                 onClick={(e) => {
                   window.scrollTo(0,0)
                   try {
-                    currentVis.resetForExpandedMenu({justTranslation: false})
+                    currentVis?.resetForExpandedMenu && currentVis.resetForExpandedMenu({justTranslation: false})
                   } catch (error) {
                     console.error("Could not mutate tree: ", error);
                   }
