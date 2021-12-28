@@ -100,10 +100,8 @@ const getInitialYTranslate = (
   switch (type) {
     case "tree":
       return 1000;
-    case "radial":
-      return h / levelsHigh;
     default:
-      return (h / levelsHigh) * 1.3;
+      return (h / levelsHigh) * 1.15;
   }
 };
 
@@ -801,7 +799,11 @@ export default class Visualization {
         // Set new active node when this one is out of bounds
         if (outOfBounds && this.activeNode?.data.name == d.data.name) {
           this.rootData.isNew = true;
-          this.setActiveNode(this.rootData);
+          let newActive = this.rootData.find((n) => {
+            return !n.data.content.match(/OOB/);
+          });
+          this.setActiveNode(newActive || this.rootData);
+          this._zoomConfig.previousRenderZoom = { node: newActive };
         }
 
         return !outOfBounds;
@@ -1343,7 +1345,7 @@ export default class Visualization {
       if (this.hasNextData()) this.rootData = this._nextRootData;
       if (this.hasSummedData()) delete this._nextRootData;
 
-      // if (!this.activeNode) _p("Need new active node", {});
+      if (!this.activeNode) _p("Need new active node", {});
 
       if (this.noCanvas()) return;
 
