@@ -464,10 +464,14 @@ export default class Visualization {
     if (!completedValue) {
       let newRootData = hierarchy({ ...startingNode.data });
       accumulateTree(newRootData, this);
-      // Traverse the tree and create many
+      // Option 1: Traverse the tree and create many
 
       newRootData.each((d) => {
-        if (nodeWithoutHabitDate(d?.data, store) && !isNotALeaf(d)) {
+        if (
+          nodeWithoutHabitDate(d?.data, store) &&
+          !isNotALeaf(d) &&
+          !d?.data.content.match(/OOB/)
+        ) {
           this.createNewHabitDateForNode(d, completedValue);
           this.mutateTreeJsonForNewHabitDates(d);
         }
@@ -475,7 +479,7 @@ export default class Visualization {
       this.updateRootDataAfterAccumulation(newRootData);
       this.rootData.newHabitDatesAdded = true;
     } else {
-      // If we are creating a new true habit date for a 'cascaded' ancestor node
+      // Option 2: Create a new true habit date for a 'cascaded' ancestor node
       this.createNewHabitDateForNode(startingNode, JSON.parse(completedValue));
     }
   }
