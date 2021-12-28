@@ -20,7 +20,7 @@ export const HoverableLink = ({
     // Toggle active classes
     e.currentTarget.classList.add("active");
     oppositeLink(idx)?.parentNode.classList.remove("active");
-    if (window.innerWidth > 1024) {
+    if (window.innerWidth > 1025) {
       document.querySelector(".habit-description-label").style.opacity = "0";
     }
 

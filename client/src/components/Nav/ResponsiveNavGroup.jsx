@@ -4,7 +4,7 @@ import { ResponsiveNavLink } from "./UI/Buttons/ResponsiveNavLink";
 export const ResponsiveNavGroup = ({ id, classString, label, subpaths }) => {
   return (
     <li
-      className="responsive-nav-group flex flex-wrap w-5/6 py-6 mx-auto"
+      className="responsive-nav-group flex items-center flex-wrap w-5/6 py-6 mx-auto"
       id={id}
       onClick={(e) => {
         if (e.target.tagName === "A") {
@@ -13,7 +13,11 @@ export const ResponsiveNavGroup = ({ id, classString, label, subpaths }) => {
         }
       }}
     >
-      <h2 id={id} className={classString} style={{ flexBasis: 100 }}>
+      <h2
+        id={id}
+        className={classString}
+        style={{ flexBasis: 100, marginRight: "3rem" }}
+      >
         {label}
       </h2>
       <ul className="responsive-nav-link flex flex-wrap justify-around h-full">

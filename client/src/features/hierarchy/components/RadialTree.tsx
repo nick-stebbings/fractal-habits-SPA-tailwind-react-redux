@@ -33,7 +33,7 @@ export const RadialTree: React.FC<VisProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!currentRadial || currentHierarchy?.data.name == "") return
+    if (!currentRadial?._svgId || currentHierarchy?.data.name == "") return
     
     updateVisRootData(currentRadial, currentHierarchy, routeChanged);
 
@@ -41,7 +41,7 @@ export const RadialTree: React.FC<VisProps> = ({
 
   useEffect(() => {
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
-    if (currentRequestState === "IDLE" && !currentRadial._svgId) {
+    if (currentRequestState === "IDLE" && !currentRadial._svgId || (typeof currentRadial == 'object' && Object.keys(currentRadial).length == 0 )) {
       currentRadial = new Vis(
             `div${divId}`,
             currentHierarchy,

@@ -33,14 +33,14 @@ export const Cluster: React.FC<VisProps> = ({
   }, []);
   
   useEffect(() => {
-    if (!currentCluster || currentHierarchy?.data.name == "") return
-    
+    if (!currentCluster?._svgId || currentHierarchy?.data.name == "") return
+
     updateVisRootData(currentCluster, currentHierarchy, routeChanged);
   }, [routeChanged,currentHierarchy?.data.name])
 
   useEffect(() => {
     if (['','OOB',undefined].includes(currentHierarchy?.data.name)) return;
-    if ((currentRequestState === "IDLE") && !currentCluster._svgId || currentHierarchy?.data.name == "RESET") {
+    if ((currentRequestState === "IDLE") && !currentCluster._svgId || (typeof currentCluster == 'object' && Object.keys(currentCluster).length == 0 )) {
       currentCluster = new Vis(
             `div${divId}`,
             currentHierarchy,

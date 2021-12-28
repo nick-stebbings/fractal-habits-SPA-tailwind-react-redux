@@ -349,7 +349,7 @@ span.logo svg path,
   }
 }
 
-@media only screen and (min-width: 1024px) {
+@media only screen and (min-width: 1025px) {
   div.mask-wrapper {
     @apply relative z-40 overflow-hidden;
     mask: no-repeat 10px -20px url("../../images/fib-mask-1900-420.svg");

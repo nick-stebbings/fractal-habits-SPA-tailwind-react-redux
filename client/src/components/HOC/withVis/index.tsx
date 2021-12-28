@@ -16,7 +16,7 @@ const { updateCurrentHierarchy } = hierarchySlice.actions;
 import { selectDeleteCompleted } from 'features/ui/selectors';
 
 const margin = {
-  top: (document.body.getBoundingClientRect().height / (document.body.getBoundingClientRect().height > 1024 ? 6 : 4)),
+  top: (document.body.getBoundingClientRect().height / (document.body.getBoundingClientRect().height > 1025 ? 6 : 4)),
   right: 0,
   bottom: 0,
   left: 200,

@@ -100,7 +100,7 @@ const getInitialYTranslate = (
   const [x, y, w, h] = defaultView.split` `;
   switch (type) {
     case "tree":
-      return 1000;
+      return 800;
     default:
       return (h / levelsHigh) * 1.15;
   }
@@ -186,7 +186,7 @@ export default class Visualization {
           : initialY;
       },
       isSmallScreen: function () {
-        return this.canvasWidth < 1024;
+        return this.canvasWidth < 1025;
       },
     };
 
@@ -653,7 +653,7 @@ export default class Visualization {
       let scale;
       let x, y;
 
-      if (this.type == "radial" && t.k == 1 && t.x < 50 && t.y < 50) {
+      if (this.type == "radial" && t.k == 1 && t.x < 150 && t.y < 150) {
         // Radial needs an initial zoom in
         t.k = this._viewConfig.clickScale;
         this.zoomBase().call(
@@ -1105,7 +1105,7 @@ export default class Visualization {
     const doubleTap = new Hammer.Tap({
       event: "doubletap",
       taps: 2,
-      interval: 560,
+      interval: 800,
     });
     manager.add([doubleTap, singleTap]);
     doubleTap.recognizeWith(singleTap);
