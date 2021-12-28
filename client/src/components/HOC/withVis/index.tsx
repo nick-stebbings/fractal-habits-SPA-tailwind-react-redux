@@ -52,19 +52,19 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
         }, [deleteCompleted])
         
         if (routeChanged) {
-          if (!currentVis?.rootData) {
-            dispatch(updateCurrentHierarchy({ nextDateId: 0 })) // Triggers recreation and re-rendering of vis component on new route
-            dispatch(updateCurrentHabit({timeframe: {
-              fromDate: 0,
-              toDate: 0,
-              length: 0,
-            },
-            meta: {
-              name: "",
-              id: 1,
-            },  }))
+          // if (!currentVis?.rootData) {
+          //   dispatch(updateCurrentHierarchy({ nextDateId: 0 })) // Triggers recreation and re-rendering of vis component on new route
+          //   dispatch(updateCurrentHabit({timeframe: {
+          //     fromDate: 0,
+          //     toDate: 0,
+          //     length: 0,
+          //   },
+          //   meta: {
+          //     name: "",
+          //     id: 1,
+          //   },  }))
 
-          }
+          // }
           return (<Redirect to={currentPath.pathname} />)
         }
 
