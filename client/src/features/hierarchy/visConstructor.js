@@ -1086,10 +1086,11 @@ export default class Visualization {
     selection
       .on("contextmenu", this.eventHandlers.rgtClickOrDoubleTap.bind(this))
       .on("click", (e, d) => {
+        if (isTouchDevice()) return;
+
         if (e.target.tagName !== "circle") return;
         if (!(this.type == "radial"))
           this.eventHandlers.handleNodeZoom.call(this, e, d, false);
-        this.eventHandlers.handleNodeFocus.call(this, e, d);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
         passive: true,
@@ -1114,7 +1115,7 @@ export default class Visualization {
     });
     manager.add([doubleTap, singleTap]);
     doubleTap.recognizeWith(singleTap);
-    singleTap.requireFailure([doubleTap]);
+    singleTap.requireFailure(doubleTap);
     //----------------------
     // Mobile device events
     //----------------------
@@ -1123,6 +1124,7 @@ export default class Visualization {
     });
 
     manager.on("doubletap", (ev) => {
+      ev.srcEvent.preventDefault();
       const target = ev.firstTarget;
       if (!target || target?.tagName !== "circle") return;
       ev.srcEvent.stopPropagation();
@@ -1140,10 +1142,12 @@ export default class Visualization {
     manager.on(
       "singletap",
       debounce((ev) => {
+        ev.srcEvent.preventDefault();
+        ev.srcEvent.stopPropagation();
+
         const target = ev.firstTarget;
         if (target.tagName !== "circle") return;
 
-        ev.srcEvent.stopPropagation();
         const node = target?.__data__;
 
         switch (ev?.target?.tagName) {
@@ -1173,12 +1177,19 @@ export default class Visualization {
             ev.target = parentNodeGroup;
             try {
               this.eventHandlers.handleMouseEnter.call(this, ev, node.data);
+              if (!(this.type == "radial"))
+                this.eventHandlers.handleNodeZoom.call(
+                  this,
+                  ev.srcEvent,
+                  node,
+                  false
+                );
               break;
             } catch (error) {
               console.error(error);
             }
         }
-      }, 1500)
+      }, 300)
     );
   }
 

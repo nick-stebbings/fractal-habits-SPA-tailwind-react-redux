@@ -2941,11 +2941,14 @@ li#demo-indicator {
 #current-habit-label-sm > span:first-of-type,
 #subnav .nav-links > li.hoverable a,
 #current-habit-sm span {
-  padding-left: 2%;
   padding-top: 0.5rem;
   text-transform: uppercase;
   line-height: 2.5rem;
 }
+#current-habit-sm div:last-child {
+  padding-left: 2%;
+}
+
 @media (min-width: 1025px) {
   #current-habit-label-sm > span:first-of-type,
   #subnav .nav-links > li.hoverable a,
