@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useRef, useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../../routes/routeInfo";
 
@@ -12,17 +12,12 @@ import { debounce } from "app/helpers";
 import slice, { selectCurrentDateId, selectCurrentDatePositionIdx, selectCurrentDate } from 'features/space/slice';
 const { decrementIdx, incrementIdx } = slice.actions;
 
-import HabitDateSlice from "features/habitDate/reducer";
-const { clearUnpersistedHabitDateCache } = HabitDateSlice.actions;
-import { createHabitDateREST } from "features/habitDate/actions";
-
 import { fetchHabitTreeREST,fetchHabitTreesREST } from "features/hierarchy/actions";
 import { visActions } from "features/hierarchy/reducer";
-const {updateCurrentHierarchy, updateCachedHierarchyForDate,clearFutureCache} = visActions
+const {updateCurrentHierarchy} = visActions
 
 import { selectCurrentHabit } from "features/habit/selectors";
 import { selectHasStoredTreeForDateId } from "features/hierarchy/selectors";
-import { selectUnStoredHabitDates } from "features/habitDate/selectors";
 
 // @ts-ignore
 import { CalendarWidget } from "features/habitDate/components/CalendarWidget";
@@ -57,7 +52,7 @@ const hideMegaMenu = () => {
   document.querySelector(".mask-wrapper").style.zIndex = "10";
 };
 
-export const Header = ({ isVis }) => {
+export const Header = ({ isVis, persistTodaysUnstoredHabitDates }) => {
   const scrollRef = useRef(null);
   const checkBoxRef = useRef(null);
   const executeScroll = () => scrollRef.current.scrollIntoView();
@@ -67,22 +62,6 @@ export const Header = ({ isVis }) => {
   const currentDateId = useAppSelector(selectCurrentDateId);
   const currentDatePositionIdx = useAppSelector(selectCurrentDatePositionIdx);
   const currentHabit = useAppSelector(selectCurrentHabit);
-  const currentUnpersistedHabitDates = useAppSelector(selectUnStoredHabitDates);
-  
-  const persistTodaysUnstoredHabitDates = () => {
-    const nodesToPersist = currentUnpersistedHabitDates.filter(hd => hd.completed_status )
-  
-    if (nodesToPersist.length > 0) {
-      dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))
-      dispatch(updateCachedHierarchyForDate({
-        dateId: currentDateId
-      }))
-      dispatch(clearFutureCache({
-        dateId: currentDateId
-      }))
-    }
-    dispatch(clearUnpersistedHabitDateCache())
-  }
 
   const isMemoised = (dateId: number) =>
     selectHasStoredTreeForDateId(dateId)(store.getState())
@@ -93,7 +72,7 @@ export const Header = ({ isVis }) => {
 
     if (isVis) {
       // First dispatch action to POST unpersisted habit-dates
-      persistTodaysUnstoredHabitDates()
+      persistTodaysUnstoredHabitDates(currentDateId)
       
       dispatch(updateCurrentHierarchy({nextDateId: currentDateId - 1}))
       const newDateId = Math.max.apply(null, [1, currentDateId - 7]) // Account for minimum date Id
@@ -115,7 +94,7 @@ export const Header = ({ isVis }) => {
     
     if (isVis) {
       // First dispatch action to POST unpersisted habit-dates
-      persistTodaysUnstoredHabitDates()
+      persistTodaysUnstoredHabitDates(currentDateId)
 
       if (isMemoised(currentDateId + 1)) {
         dispatch(updateCurrentHierarchy({nextDateId: currentDateId + 1}))
