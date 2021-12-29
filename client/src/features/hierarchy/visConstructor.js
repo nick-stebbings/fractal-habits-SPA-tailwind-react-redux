@@ -454,7 +454,7 @@ export default class Visualization {
     );
     store.dispatch(updateCurrentHierarchy({ nextDateId: currentDate }));
     this._nextRootData = newRootData;
-    this._nextRootData.newHabitDatesAdded = false;
+    delete this._nextRootData.newHabitDatesAdded;
   }
 
   addHabitDatesForNewNodes(
@@ -638,7 +638,8 @@ export default class Visualization {
   setdXdY() {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for tree horizontal spacing on different screens
-      +(this.type == "tree" && this._viewConfig.isSmallScreen()) * 250;
+      +(this.type == "tree" && this._viewConfig.isSmallScreen()) * 250 -
+      (this.type == "cluster" && this._viewConfig.isSmallScreen()) * 150;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide;
 
@@ -1118,7 +1119,7 @@ export default class Visualization {
     // Mobile device events
     //----------------------
     selection.selectAll(".node-subgroup").on("touchstart", (e) => {
-      manager.set({ inputTarget: e.currentTarget });
+      manager.set({ inputTarget: e.target });
     });
 
     manager.on("doubletap", (ev) => {

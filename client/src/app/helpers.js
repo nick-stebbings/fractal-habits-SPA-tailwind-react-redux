@@ -10,6 +10,7 @@ export const handleErrorType = function (err, type = "warning") {
     interactive: true,
     timeout: 2000,
   };
+  if (err?.status < 300) return window.FlashMessage.info(response, opts);
   switch (type) {
     case "info":
       window.FlashMessage.info(response, opts);
