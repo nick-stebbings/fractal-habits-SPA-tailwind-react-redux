@@ -6,12 +6,12 @@ import { HABIT_DATE_BACKGROUND_PERSISTENCE_INTERVAL } from "app/constants";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 
 import HabitDateSlice from "features/habitDate/reducer";
-const { clearUnpersistedHabitDateCache } = HabitDateSlice.actions;
+const { clearUnpersistedHabitDateCache,clearPersistedHabitDateCache } = HabitDateSlice.actions;
 import { createHabitDateREST } from "features/habitDate/actions";
 import { selectUnStoredHabitDates } from "features/habitDate/selectors";
 
 import { visActions } from "features/hierarchy/reducer";
-const { updateCachedHierarchyForDate, clearFutureCache } = visActions
+const { updateCachedHierarchyForDate, clearFutureCache,updateCurrentHierarchy } = visActions
 
 import { selectCurrentDateId } from 'features/space/slice';
 import { HabitDate } from "features/habitDate/types";
@@ -41,19 +41,23 @@ export default function App({ isVisComponent, children }: indexProps) {
       }))
     }
     dispatch(clearUnpersistedHabitDateCache())
+    dispatch(clearPersistedHabitDateCache())
+
+    dispatch(updateCurrentHierarchy({nextDateId: 0}))
   }
 
 
-  const currentDateId = useAppSelector(selectCurrentDateId);
-  // Send a habit-date post request periodically
-  if (!setIntervalTimer) {
-    setIntervalTimer = setInterval(() => {
-      if (currentUnpersistedHabitDates.filter((hd: HabitDate) => hd.completed_status).length > 3) {
-        persistTodaysUnstoredHabitDates(currentDateId)
-        debugger;
-        setIntervalTimer = null;
-      }
-    }, 30000)
+  // const currentDateId = useAppSelector(selectCurrentDateId);
+  // // Send a habit-date post request periodically
+  // if (!setIntervalTimer) {
+  //   setIntervalTimer = setInterval(() => {
+  //     if (currentUnpersistedHabitDates.filter((hd: HabitDate) => hd.completed_status).length > 3) {
+  //       persistTodaysUnstoredHabitDates(currentDateId)
+  //       debugger;
+  //       setIntervalTimer = null;
+  //     }
+  //   }, 30000)
+  // }
 
   return (
     <>

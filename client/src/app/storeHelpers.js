@@ -136,7 +136,7 @@ export function createCrudActionCreators(actionTypes, callBacks) {
           // Allow 404s for habit_dates
           try {
             const response = await callBacks[1](input);
-            return [200, 404].includes(response?.status)
+            return [200, 204, 404].includes(response?.status)
               ? thunkAPI.fulfillWithValue(
                   Object.assign(response, {
                     data:
