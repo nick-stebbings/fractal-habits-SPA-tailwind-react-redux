@@ -53,7 +53,7 @@ export default function App({ isVisComponent, children }: indexProps) {
     dispatch(clearUnpersistedHabitDateCache())
     // dispatch(clearPersistedHabitDateCache())
 
-    dispatch(updateCurrentHierarchy({nextDateId: 0}))
+    // dispatch(updateCurrentHierarchy({nextDateId: 0}))
   }
 
 

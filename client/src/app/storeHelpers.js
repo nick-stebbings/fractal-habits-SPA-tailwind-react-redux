@@ -33,7 +33,7 @@ const mapCallbacks = {
   },
   habit_dates: (element) => {
     const { date, completed_status, habit_id } = element;
-    if (!completed_status) return;
+    // if (!completed_status) return;
 
     const daySpace = createInterval(0, 1, DateTime.fromSQL(date));
     return {
@@ -98,6 +98,15 @@ export function crudReducer(
       mapped = Object.values(parsed)[0]
         .map(mapCallbacks[model])
         .filter((record) => record !== undefined);
+
+      if (model == "habit_dates") {
+        // Cache each habit separately
+        let currentRecords = { ...state.myRecords };
+        const habitDateHabitId = action.meta.arg.id;
+        currentRecords[habitDateHabitId] = mapped;
+
+        mapped = currentRecords;
+      }
       return {
         ...state,
         current: mapped[0] || state.current, //.slice(-1)

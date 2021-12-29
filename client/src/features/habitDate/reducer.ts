@@ -64,7 +64,7 @@ export const habitDateSlice = createSlice({
       state.unPersistedForDate = [];
     },
     clearPersistedHabitDateCache(state) {
-      state.myRecords = [];
+      state.myRecords = {};
     },
   },
   extraReducers: (builder) => {
