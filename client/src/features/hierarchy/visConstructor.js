@@ -1089,6 +1089,8 @@ export default class Visualization {
         if (isTouchDevice()) return;
 
         if (e.target.tagName !== "circle") return;
+
+        this.eventHandlers.handleNodeFocus.call(this, e, d);
         if (!(this.type == "radial"))
           this.eventHandlers.handleNodeZoom.call(this, e, d, false);
       })
@@ -1407,7 +1409,7 @@ export default class Visualization {
       if (!!this.activeNode) {
         this?.isNewActiveNode &&
           this.zoomBase().selectAll(".active-circle").remove();
-      } else {
+      } else if (!this.firstRender()) {
         // Set a default active node
         this.isNewActiveNode = true;
         let newActive = this.rootData.find((n) => {
