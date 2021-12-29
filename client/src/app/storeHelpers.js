@@ -100,7 +100,7 @@ export function crudReducer(
         .filter((record) => record !== undefined);
 
       if (model == "habit_dates") {
-        // Cache each habit separately
+        // Cache each habit's habit_dates separately
         let currentRecords = { ...state.myRecords };
         const habitDateHabitId = action.meta.arg.id;
         currentRecords[habitDateHabitId] = mapped;
@@ -134,7 +134,8 @@ export function crudReducer(
 export function createCrudActionCreators(actionTypes, callBacks) {
   const create = createAsyncThunk(actionTypes[0], async (input, thunkAPI) => {
     const response = await callBacks[0](input);
-    return [201].includes(response.status)
+    debugger;
+    return [201, 200].includes(response.status)
       ? thunkAPI.fulfillWithValue(response)
       : thunkAPI.rejectWithValue(response);
   });

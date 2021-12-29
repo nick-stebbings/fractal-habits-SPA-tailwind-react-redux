@@ -468,6 +468,13 @@ export default class Visualization {
       // Option 1: Traverse the tree and create many
 
       newRootData.each((d) => {
+        console.log(
+          "d,  :>> ",
+          d,
+          nodeWithoutHabitDate(d?.data, store),
+          !isNotALeaf(d),
+          !d?.data.content.match(/OOB/)
+        );
         if (
           nodeWithoutHabitDate(d?.data, store) &&
           !isNotALeaf(d) &&

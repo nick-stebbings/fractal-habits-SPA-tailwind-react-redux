@@ -106,10 +106,11 @@ export const Modal = React.memo(({ type, toggle, resetConfirm }) => {
                   const currentId = selectCurrentHabit(store.getState()).meta
                     .id;
                   const currentNodeId = selectCurrentNode(store.getState()).id;
-                  store.dispatch(destroyHabitREST({ id: currentId }));
-                  store.dispatch(deleteCurrentHabit());
-
                   store.dispatch(destroyNodeREST({ id: currentNodeId }));
+                  setTimeout(() => {
+                    store.dispatch(destroyHabitREST({ id: currentId }));
+                  }, 1);
+                  store.dispatch(deleteCurrentHabit());
 
                   closeModal();
                 }}

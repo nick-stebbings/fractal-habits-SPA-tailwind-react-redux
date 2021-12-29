@@ -13,8 +13,10 @@ import { selectStoredHabits } from "../habit/selectors";
 import { parseTreeValues } from "../hierarchy/components/helpers";
 
 export const selectStoredHabitDates = (state: RootState) => {
+  // Return all stored records in one array
   return (
     state?.habitDate?.myRecords &&
+      Object.values(state.habitDate.myRecords).length &&
       Object.values(state.habitDate.myRecords).reduce((accum, records) =>
         accum.concat(records)
       ),

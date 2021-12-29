@@ -16,6 +16,7 @@ export const initialState: Dictionary<HabitDate[]> = {
     },
   },
   unPersistedForDate: [],
+  myRecords: {},
 };
 
 export const habitDateSlice = createSlice({
