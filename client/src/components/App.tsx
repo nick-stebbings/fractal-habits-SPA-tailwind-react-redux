@@ -13,6 +13,8 @@ import { selectUnStoredHabitDates } from "features/habitDate/selectors";
 import { visActions } from "features/hierarchy/reducer";
 const { updateCachedHierarchyForDate, clearFutureCache,updateCurrentHierarchy } = visActions
 
+import HabitSlice from 'features/habit/reducer';
+const { updateCurrentHabit } = HabitSlice.actions;
 import { selectCurrentDateId } from 'features/space/slice';
 import { HabitDate } from "features/habitDate/types";
 import { useModal } from '../hooks/useModal';
@@ -29,19 +31,27 @@ export default function App({ isVisComponent, children }: indexProps) {
   const currentUnpersistedHabitDates = useAppSelector(selectUnStoredHabitDates);
   
   const persistTodaysUnstoredHabitDates = (currentDateId: number) => {
-    const nodesToPersist = currentUnpersistedHabitDates.filter((hd: HabitDate) => hd.completed_status )
-  
+    const nodesToPersist = currentUnpersistedHabitDates//.filter((hd: HabitDate) => hd.completed_status )
+    debugger;
     if (nodesToPersist.length > 0) {
       dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))
-      dispatch(updateCachedHierarchyForDate({
-        dateId: currentDateId
+      dispatch(updateCurrentHabit({
+        timeframe: {
+          fromDate: 0,
+          toDate: 0,
+          length: 0,
+        },
+        meta: {
+          name: "",
+          id: 1,
+        },
       }))
       dispatch(clearFutureCache({
-        dateId: currentDateId + 1
+        dateId: currentDateId
       }))
     }
     dispatch(clearUnpersistedHabitDateCache())
-    dispatch(clearPersistedHabitDateCache())
+    // dispatch(clearPersistedHabitDateCache())
 
     dispatch(updateCurrentHierarchy({nextDateId: 0}))
   }

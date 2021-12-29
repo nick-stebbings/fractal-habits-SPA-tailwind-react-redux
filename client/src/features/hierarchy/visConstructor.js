@@ -454,6 +454,7 @@ export default class Visualization {
     );
     store.dispatch(updateCurrentHierarchy({ nextDateId: currentDate }));
     this._nextRootData = newRootData;
+    this._nextRootData.newHabitDatesAdded = false;
   }
 
   addHabitDatesForNewNodes(
@@ -504,7 +505,6 @@ export default class Visualization {
       console.log("Couldn't select habit when adding habit dates");
       return;
     }
-
     // Create a habit date ready for persisting
     store.dispatch(
       createHabitDate({
