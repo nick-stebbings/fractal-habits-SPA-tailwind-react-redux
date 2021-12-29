@@ -8,9 +8,9 @@ export const neutralCol = "#DADECD";
 export const DB_DATE_ID_OFFSET = import.meta.env.PROD ? 5 : 5; // Accounts for the starting ID of the date relation in the DB, which is not stored locally.
 
 export const API_RESPONSE_CODE_FLASH_MESSAGES = {
-  201: "The item was created successfully.",
+  201: "The habit was created successfully.",
   500: "Something went wrong on the server.",
-  204: "The item was deleted successfully.",
+  204: "The habit was deleted successfully.",
   400: "Bad Request: There may have been something wrong with your input.",
   404: "No records available for this date.",
   422: "Unprocessable entity: There may have been something wrong with your input.",

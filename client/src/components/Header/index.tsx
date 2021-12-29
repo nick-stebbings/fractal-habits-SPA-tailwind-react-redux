@@ -18,7 +18,7 @@ import { createHabitDateREST } from "features/habitDate/actions";
 
 import { fetchHabitTreeREST,fetchHabitTreesREST } from "features/hierarchy/actions";
 import { visActions } from "features/hierarchy/reducer";
-const {updateCurrentHierarchy} = visActions
+const {updateCurrentHierarchy, updateCachedHierarchyForDate,clearFutureCache} = visActions
 
 import { selectCurrentHabit } from "features/habit/selectors";
 import { selectHasStoredTreeForDateId } from "features/hierarchy/selectors";
@@ -71,8 +71,16 @@ export const Header = ({ isVis }) => {
   
   const persistTodaysUnstoredHabitDates = () => {
     const nodesToPersist = currentUnpersistedHabitDates.filter(hd => hd.completed_status )
-    // dispatch(createHabitDateREST({ dateId: currentDateId, habitDates: nodesToPersist }))
-    
+  
+    if (nodesToPersist.length > 0) {
+      dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))
+      dispatch(updateCachedHierarchyForDate({
+        dateId: currentDateId
+      }))
+      dispatch(clearFutureCache({
+        dateId: currentDateId
+      }))
+    }
     dispatch(clearUnpersistedHabitDateCache())
   }
 
