@@ -99,8 +99,8 @@ export const sumChildrenValues = (node, hidden = false) => {
   return children.reduce((sum, n) => sum + n.value, 0);
 };
 
-export const isNotALeaf = (node) => {
-  return !(node?.height === 0) || !!node?._children;
+export const isALeaf = (node) => {
+  return node?.height === 0 && !node?._children;
 };
 
 export function getColor(completedStatus) {

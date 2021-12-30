@@ -43,7 +43,9 @@ export const habitDateSlice = createSlice({
           completed;
         state.current = state.unPersistedForDate[habitDateForUpdateIdx];
       } else {
-        habitDateForUpdateIdx = state.myRecords.findIndex((hd) => {
+        habitDateForUpdateIdx = state.myRecords[
+          habitDateForUpdateIdx
+        ].findIndex((hd) => {
           return (
             hd.habit_id == habitId && hd.timeframe.fromDate == fromDateForToday
           );

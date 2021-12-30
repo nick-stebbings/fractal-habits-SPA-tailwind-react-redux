@@ -31,29 +31,28 @@ export default function App({ isVisComponent, children }: indexProps) {
   const currentUnpersistedHabitDates = useAppSelector(selectUnStoredHabitDates);
   
   const persistTodaysUnstoredHabitDates = (currentDateId: number) => {
-    const nodesToPersist = currentUnpersistedHabitDates//.filter((hd: HabitDate) => hd.completed_status )
-    debugger;
+    const nodesToPersist = currentUnpersistedHabitDates.filter((hd: HabitDate) => hd.completed_status )
     if (nodesToPersist.length > 0) {
       dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))
-      dispatch(updateCurrentHabit({
-        timeframe: {
-          fromDate: 0,
-          toDate: 0,
-          length: 0,
-        },
-        meta: {
-          name: "",
-          id: 1,
-        },
-      }))
+      // dispatch(updateCurrentHabit({
+      //   timeframe: {
+      //     fromDate: 0,
+      //     toDate: 0,
+      //     length: 0,
+      //   },
+      //   meta: {
+      //     name: "",
+      //     id: 1,
+      //   },
+      // }))
       dispatch(clearFutureCache({
         dateId: currentDateId
       }))
     }
     dispatch(clearUnpersistedHabitDateCache())
+    // dispatch(updateCurrentHierarchy({nextDateId: 0}))
     // dispatch(clearPersistedHabitDateCache())
 
-    // dispatch(updateCurrentHierarchy({nextDateId: 0}))
   }
 
 

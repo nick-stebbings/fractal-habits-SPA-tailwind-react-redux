@@ -54,7 +54,7 @@ import {
   outOfBoundsNode,
   oppositeStatus,
   getColor,
-  isNotALeaf,
+  isALeaf,
   hierarchyStateHasChanged,
 } from "./components/helpers";
 import { debounce, handleErrorType, isTouchDevice } from "app/helpers";
@@ -472,12 +472,12 @@ export default class Visualization {
           "d,  :>> ",
           d,
           nodeWithoutHabitDate(d?.data, store),
-          !isNotALeaf(d),
+          isALeaf(d),
           !d?.data.content.match(/OOB/)
         );
         if (
           nodeWithoutHabitDate(d?.data, store) &&
-          !isNotALeaf(d) &&
+          isALeaf(d) &&
           !d?.data.content.match(/OOB/)
         ) {
           this.createNewHabitDateForNode(d, completedValue);
@@ -528,7 +528,7 @@ export default class Visualization {
         return n.data.content.match(/OOB/);
       }) !== -1;
 
-    if (isNotALeaf(node) && !node?._children && !nodeHasOOBAncestors) {
+    if (!isALeaf(node) && !nodeHasOOBAncestors) {
       return;
     } else {
       const currentHabit = selectCurrentHabit(store.getState());
@@ -544,6 +544,7 @@ export default class Visualization {
         .filter((n) => {
           if (!!n?.data?.name && n?.data?.name === node.data.name) return n;
         });
+
       const newStatus = oppositeStatus(currentStatus);
       if (currentStatus) {
         node.data.content = node.data.content.replace(/true|false/, newStatus);
@@ -553,46 +554,53 @@ export default class Visualization {
       theNode.attr("fill", getColor(JSON.parse(newStatus)));
       theNode.attr("stroke", getColor(JSON.parse(newStatus)));
 
-      if (!node.data.name.includes("Sub-Habit")) {
-        // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
-        store.dispatch(
-          updateHabitDateForNode({
-            habitId: currentHabit?.meta?.id,
-            dateId: currentDate,
-            completed: JSON.parse(newStatus),
-            fromDateForToday: currentDateFromDate,
-          })
-        );
+      if (node.data.name.includes("Sub-Habit")) return;
 
-        // Also toggle 'cascaded' ancestor nodes
-        const storedHabits = selectStoredHabits(store.getState());
-        node?.ancestors().length &&
-          node.ancestors().forEach((a) => {
-            if (a?.data?.name == currentHabit?.meta?.name) return;
-            if (nodeWithoutHabitDate(a?.data, store)) {
-              this.addHabitDatesForNewNodes(a, true);
-              return;
-            }
+      // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
+      store.dispatch(
+        updateHabitDateForNode({
+          habitId: currentHabit?.meta?.id,
+          dateId: currentDate,
+          completed: JSON.parse(newStatus),
+          fromDateForToday: currentDateFromDate,
+        })
+      );
 
-            if (parseTreeValues(a.data.content)?.status == "") {
-              const habitId =
-                storedHabits[
-                  storedHabits.findIndex((h) => h.meta?.name == a.data.name)
-                ]?.meta?.id;
-
-              store.dispatch(
-                updateHabitDateForNode({
-                  habitId: habitId,
-                  dateId: currentDate,
-                  completed: JSON.parse(newStatus),
-                  fromDateForToday: currentDateFromDate,
-                })
-              );
-            }
-          });
-      }
       accumulateTree(this.rootData, this);
       this.updateRootDataAfterAccumulation(this.rootData);
+      // Also toggle 'cascaded' ancestor nodes
+      const storedHabits = selectStoredHabits(store.getState());
+      let lastCascadedNode = false;
+      node?.ancestors().length &&
+        node.ancestors().forEach((a) => {
+          if (a?.data?.name == currentHabit?.meta?.name || lastCascadedNode)
+            return;
+          if (a.children.length > 1) {
+            lastCascadedNode = true;
+            return;
+          }
+
+          if (nodeWithoutHabitDate(a?.data, store)) {
+            this.addHabitDatesForNewNodes(a, true);
+            return;
+          }
+
+          if (parseTreeValues(a.data.content)?.status == "") {
+            const habitId =
+              storedHabits[
+                storedHabits.findIndex((h) => h.meta?.name == a.data.name)
+              ]?.meta?.id;
+
+            store.dispatch(
+              updateHabitDateForNode({
+                habitId: habitId,
+                dateId: currentDate,
+                completed: JSON.parse(newStatus),
+                fromDateForToday: currentDateFromDate,
+              })
+            );
+          }
+        });
     }
   }
 
@@ -1400,8 +1408,9 @@ export default class Visualization {
       // _p("Cleared canvas :>> ");
 
       this.setLayout();
-      typeof this.rootData.newHabitDatesAdded == "undefined" &&
+      if (typeof this.rootData.newHabitDatesAdded == "undefined") {
         this.addHabitDatesForNewNodes();
+      }
       !this.hasSummedData() && accumulateTree(this.rootData, this);
 
       // _p("Formed new layout", this, "!");
