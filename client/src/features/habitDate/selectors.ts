@@ -104,7 +104,11 @@ export const selectAccumulatedStatusForDate = (
         )!.status;
         if (currentHabitStatus == "OOB") return "OOB";
         if (currentHabitStatus === "false") return false;
-        if (currentHabitStatus == "" && typeof habitDateInStore == "undefined")
+        if (
+          currentHabitStatus == "" &&
+          typeof habitDateInStore == "undefined" &&
+          !currentHabitHierarchyNode.value
+        )
           return "noHabitDate";
       }
 

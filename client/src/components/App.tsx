@@ -57,8 +57,6 @@ export default function App({ isVisComponent, children }: indexProps) {
       const currentSpaceTimeframe = selectCurrentSpace(store.getState())
       dispatch(clearUnpersistedHabitDateCache({currentSpaceTimeframe}))
     }
-    // dispatch(updateCurrentHierarchy({nextDateId: 0}))
-    // dispatch(clearPersistedHabitDateCache())
   }
 
 
