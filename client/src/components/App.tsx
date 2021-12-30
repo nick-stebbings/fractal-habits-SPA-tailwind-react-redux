@@ -1,6 +1,8 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { Header } from "./Header";
 import { Layout } from "./Layout";
+
+import { store } from 'app/store';
 
 import { HABIT_DATE_BACKGROUND_PERSISTENCE_INTERVAL } from "app/constants";
 import { useAppDispatch, useAppSelector } from "app/hooks";
@@ -14,6 +16,7 @@ import { visActions } from "features/hierarchy/reducer";
 const { updateCachedHierarchyForDate, clearFutureCache,updateCurrentHierarchy } = visActions
 
 import HabitSlice from 'features/habit/reducer';
+import { selectCurrentSpace } from "features/space/slice";
 const { updateCurrentHabit } = HabitSlice.actions;
 import { selectCurrentDateId } from 'features/space/slice';
 import { HabitDate } from "features/habitDate/types";
@@ -24,14 +27,12 @@ interface indexProps {
   children?: JSX.Element
 }
 
-let setIntervalTimer: number;
-
 export default function App({ isVisComponent, children }: indexProps) {
   const dispatch = useAppDispatch();
-  const currentUnpersistedHabitDates = useAppSelector(selectUnStoredHabitDates);
   
   const persistTodaysUnstoredHabitDates = (currentDateId: number) => {
-    const nodesToPersist = currentUnpersistedHabitDates.filter((hd: HabitDate) => hd.completed_status )
+    const nodesToPersist = selectUnStoredHabitDates(store.getState()).filter((hd: any) => hd.completed_status)
+
     if (nodesToPersist.length > 0) {
       dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))
       // dispatch(updateCurrentHabit({
@@ -48,25 +49,30 @@ export default function App({ isVisComponent, children }: indexProps) {
       dispatch(clearFutureCache({
         dateId: currentDateId
       }))
+      window.FlashMessage.info('Habit progress saved',{
+        interactive: true,
+        timeout: 3000,
+      })
+      
+      const currentSpaceTimeframe = selectCurrentSpace(store.getState())
+      dispatch(clearUnpersistedHabitDateCache({currentSpaceTimeframe}))
     }
-    dispatch(clearUnpersistedHabitDateCache())
     // dispatch(updateCurrentHierarchy({nextDateId: 0}))
     // dispatch(clearPersistedHabitDateCache())
-
   }
 
 
-  // const currentDateId = useAppSelector(selectCurrentDateId);
-  // // Send a habit-date post request periodically
-  // if (!setIntervalTimer) {
-  //   setIntervalTimer = setInterval(() => {
-  //     if (currentUnpersistedHabitDates.filter((hd: HabitDate) => hd.completed_status).length > 3) {
-  //       persistTodaysUnstoredHabitDates(currentDateId)
-  //       debugger;
-  //       setIntervalTimer = null;
-  //     }
-  //   }, 30000)
-  // }
+  const currentDateId = useAppSelector(selectCurrentDateId);
+
+  // Send a habit-date post request periodically
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (selectUnStoredHabitDates(store.getState()).filter((hd: any) => hd.completed_status).length > 0) {
+        persistTodaysUnstoredHabitDates(currentDateId)
+      }
+    }, HABIT_DATE_BACKGROUND_PERSISTENCE_INTERVAL * 1000)
+   return () => clearInterval(interval) 
+  }, [])
 
   return (
     <>

@@ -564,11 +564,9 @@ export default class Visualization {
           completed: JSON.parse(newStatus),
           fromDateForToday: currentDateFromDate,
         })
+        // Also toggle 'cascaded' ancestor nodes
       );
 
-      accumulateTree(this.rootData, this);
-      this.updateRootDataAfterAccumulation(this.rootData);
-      // Also toggle 'cascaded' ancestor nodes
       const storedHabits = selectStoredHabits(store.getState());
       let lastCascadedNode = false;
       node?.ancestors().length &&
@@ -601,6 +599,9 @@ export default class Visualization {
             );
           }
         });
+
+      accumulateTree(this.rootData, this);
+      this.updateRootDataAfterAccumulation(this.rootData);
     }
   }
 

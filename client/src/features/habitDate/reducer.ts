@@ -43,14 +43,11 @@ export const habitDateSlice = createSlice({
           completed;
         state.current = state.unPersistedForDate[habitDateForUpdateIdx];
       } else {
-        habitDateForUpdateIdx = state.myRecords[
-          habitDateForUpdateIdx
-        ].findIndex((hd) => {
+        habitDateForUpdateIdx = state.myRecords[habitId].findIndex((hd) => {
           return (
             hd.habit_id == habitId && hd.timeframe.fromDate == fromDateForToday
           );
         });
-
         if (habitDateForUpdateIdx !== -1) {
           // Then it was in the currentRecords
           let updatedHabitDate = { ...state.myRecords[habitDateForUpdateIdx] };
@@ -59,12 +56,39 @@ export const habitDateSlice = createSlice({
           delete state.myRecords[habitDateForUpdateIdx];
 
           state.unPersistedForDate.push(updatedHabitDate);
+
           state.current = updatedHabitDate;
         }
       }
     },
-    clearUnpersistedHabitDateCache(state) {
-      state.unPersistedForDate = [];
+    clearUnpersistedHabitDateCache(state, action) {
+      const { currentSpaceTimeframe } = action.payload;
+
+      const todaysHabitDate = (hd: HabitDate) =>
+        hd.timeframe.fromDate == currentSpaceTimeframe.fromDate;
+
+      // First update the persisted records in the store to prevent immediate refetch
+      state.unPersistedForDate.forEach((hd: any) => {
+        const habitRecords = state.myRecords[hd.habit_id];
+
+        if (habitRecords) {
+          const indexOfDateForHabit = habitRecords.findIndex(todaysHabitDate);
+
+          if (indexOfDateForHabit !== -1) {
+            if (!hd.completed_status) delete habitRecords[indexOfDateForHabit];
+          }
+          if (!hd.completed_status) return; // We don't persist 'false' completed values any further
+
+          habitRecords.push({
+            habitId: hd.habit_id,
+            timeframe: { ...currentSpaceTimeframe },
+          });
+        }
+      });
+
+      state.unPersistedForDate = state.unPersistedForDate.filter(
+        (hd: any) => !hd.completed_status
+      );
     },
     clearPersistedHabitDateCache(state) {
       state.myRecords = {};

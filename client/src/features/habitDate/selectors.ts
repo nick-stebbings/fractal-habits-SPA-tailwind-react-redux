@@ -121,6 +121,7 @@ export const selectAccumulatedStatusForDate = (
           );
 
       const completedInTreeOrInStore =
+        currentHabitHierarchyNode?.value == 1 ||
         currentHabitStatus == "true" ||
         !!habitDateInStore ||
         dateIsPersistedCompleted;
