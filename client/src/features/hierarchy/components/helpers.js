@@ -187,26 +187,29 @@ export const contentEqual = (node, other) =>
   node.content.split("-").slice(0, 1)[0] ==
   other.content.split("-").slice(0, 1)[0];
 
+const allOOB = (nodes) =>
+  nodes.every((d) => parseTreeValues(d.data.content).status === "OOB");
+
 export const nodeStatusColours = (d) => {
   // Guard clause for 'no record'
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return noNodeCol;
 
   const cumulativeVal =
-    d.height == 0 && d?.value ? d.value : cumulativeValue(d);
+    (d.depth == 0 || allOOB(d.ancestors().slice(1))) && d?.value
+      ? d.value
+      : cumulativeValue(d);
   const status = parseTreeValues(d.data.content).status;
-  if (
-    d.height === 0 ||
-    d?._children?.every(
-      (d) => parseTreeValues(d.data.content).status === "OOB"
-    ) ||
-    d?.children?.every((d) => parseTreeValues(d.data.content).status === "OOB")
-  ) {
+
+  if (d.height === 0 || allOOB(d?.children)) {
     if (status == "true") return positiveCol;
     if (status == "false") return negativeCol;
   }
   if (status == "OOB") return noNodeCol; // Untracked (out of bounds) nodes are neutral
 
+  if (d?.data.name == "dae2e") {
+    debugger;
+  }
   switch (cumulativeVal) {
     case 1: // All descendants are positive
       return positiveCol;
