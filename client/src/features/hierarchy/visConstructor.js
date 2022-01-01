@@ -1441,6 +1441,7 @@ export default class Visualization {
           handleErrorType("No active habits for this date");
         }
       }
+      this.activateNodeAnimation();
       this.appendCirclesAndLabels();
       this.appendLabels();
       this.appendButtons();
@@ -1454,7 +1455,6 @@ export default class Visualization {
         `scale(${BASE_SCALE}), translate(${this._viewConfig.defaultCanvasTranslateX()}, ${this._viewConfig.defaultCanvasTranslateY()})`
       );
 
-      this.activateNodeAnimation();
       this._hasRendered = true;
     }
 
