@@ -216,14 +216,20 @@ export const nodeStatusColours = (d) => {
     case 1: // All descendants are positive
       return positiveCol;
     case 0: // Not all descendants are positive
+      const childColors = d?.children?.map(nodeStatusColours);
+      const descendantsColors = d
+        ?.descendants()
+        ?.slice(1)
+        .map(nodeStatusColours);
       if (
+        // We first exclude sub-incomplete nodes as they have a different colour
         status == "true" ||
         d?.value ||
-        d
-          ?.descendants()
-          ?.slice(1)
-          .map(nodeStatusColours)
-          .includes(positiveColLighter)
+        (descendantsColors?.length &&
+          descendantsColors.includes(positiveColLighter)) ||
+        (childColors?.length &&
+          childColors.includes(positiveCol) &&
+          childColors.includes(negativeCol))
       ) {
         return positiveColLighter;
       } // Node is complete but some of its descendants are not.

@@ -36,20 +36,20 @@ export const habitDateSlice = createSlice({
       let habitDateForUpdateIdx = state.unPersistedForDate.findIndex((hd) => {
         return hd.habit_id == habitId && hd.date_id == dateId;
       });
-      // Check if we have a temp persisted habit date
 
+      // Check if we have a temp persisted habit date
       if (habitDateForUpdateIdx !== -1) {
         state.unPersistedForDate[habitDateForUpdateIdx].completed_status =
           completed;
         state.current = state.unPersistedForDate[habitDateForUpdateIdx];
       } else {
-        habitDateForUpdateIdx = state.myRecords[habitId].findIndex((hd) => {
+        habitDateForUpdateIdx = state.myRecords[habitId]?.findIndex((hd) => {
           return (
             hd.habit_id == habitId && hd.timeframe.fromDate == fromDateForToday
           );
         });
-        if (habitDateForUpdateIdx !== -1) {
-          // Then it was in the currentRecords
+        if (habitDateForUpdateIdx && habitDateForUpdateIdx !== -1) {
+          // it was in the currentRecords
           let updatedHabitDate = { ...state.myRecords[habitDateForUpdateIdx] };
           updatedHabitDate.completed_status = completed;
 

@@ -571,7 +571,6 @@ export default class Visualization {
       let lastCascadedNode = false;
       node?.ancestors()?.length &&
         node.ancestors().forEach((a) => {
-          debugger;
           if (a?.data?.name == currentHabit?.meta?.name || lastCascadedNode)
             return;
           if (a?.children && a.children.length > 1) {
