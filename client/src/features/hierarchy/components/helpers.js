@@ -195,26 +195,36 @@ export const nodeStatusColours = (d) => {
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return noNodeCol;
 
-  const cumulativeVal =
-    (d.depth == 0 || allOOB(d.ancestors().slice(1))) && d?.value
-      ? d.value
-      : cumulativeValue(d);
+  const cumulativeVal = cumulativeValue(d);
+  let decidingVal =
+    d?.value && d.value == cumulativeVal ? d.value : cumulativeVal;
   const status = parseTreeValues(d.data.content).status;
 
-  if (d.height === 0 || allOOB(d?.children)) {
+  if (
+    d.height === 0 ||
+    d?._children?.every(
+      (d) => parseTreeValues(d.data.content).status === "OOB"
+    ) ||
+    d?.children?.every((d) => parseTreeValues(d.data.content).status === "OOB")
+  ) {
     if (status == "true") return positiveCol;
     if (status == "false") return negativeCol;
   }
   if (status == "OOB") return noNodeCol; // Untracked (out of bounds) nodes are neutral
 
-  if (d?.data.name == "dae2e") {
-    debugger;
-  }
-  switch (cumulativeVal) {
+  switch (decidingVal) {
     case 1: // All descendants are positive
       return positiveCol;
     case 0: // Not all descendants are positive
-      if (status == "true") {
+      if (
+        status == "true" ||
+        d?.value ||
+        d
+          ?.descendants()
+          ?.slice(1)
+          .map(nodeStatusColours)
+          .includes(positiveColLighter)
+      ) {
         return positiveColLighter;
       } // Node is complete but some of its descendants are not.
       return negativeCol;

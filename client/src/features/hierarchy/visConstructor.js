@@ -569,11 +569,12 @@ export default class Visualization {
 
       const storedHabits = selectStoredHabits(store.getState());
       let lastCascadedNode = false;
-      node?.ancestors().length &&
+      node?.ancestors()?.length &&
         node.ancestors().forEach((a) => {
+          debugger;
           if (a?.data?.name == currentHabit?.meta?.name || lastCascadedNode)
             return;
-          if (a.children.length > 1) {
+          if (a?.children && a.children.length > 1) {
             lastCascadedNode = true;
             return;
           }

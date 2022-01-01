@@ -32,7 +32,7 @@ export default function App({ isVisComponent, children }: indexProps) {
   
   const persistTodaysUnstoredHabitDates = (currentDateId: number) => {
     const nodesToPersist = selectUnStoredHabitDates(store.getState()).filter((hd: any) => hd.completed_status)
-
+    debugger;
     if (nodesToPersist.length > 0) {
       dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))
       // dispatch(updateCurrentHabit({
