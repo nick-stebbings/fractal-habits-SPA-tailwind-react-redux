@@ -51,19 +51,18 @@ export const habitDateSlice = createSlice({
           typeof habitDateForUpdateIdx !== "undefined" &&
           habitDateForUpdateIdx !== -1
         ) {
-          // it was in the currentRecords
+          // it was in the currentRecords, but now place it in the temp store ready for re-persisting in the DB
           let updatedHabitDate = {
-            ...state.myRecords[habitId][habitDateForUpdateIdx],
+            habit_id: habitId,
+            date_id: dateId,
+            completed_status: completed,
           };
-          updatedHabitDate.completed_status = completed;
 
           delete state.myRecords[habitDateForUpdateIdx];
 
           state.unPersistedForDate.push(updatedHabitDate);
 
           state.current = updatedHabitDate;
-        } else {
-          // it
         }
       }
     },

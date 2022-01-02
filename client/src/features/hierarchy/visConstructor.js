@@ -462,19 +462,12 @@ export default class Visualization {
     completedValue = false
   ) {
     // If we are adding a false completed value (temp habit dates that will only be persisted if updated to true)
-    if (!completedValue) {
+    if (startingNode.data.name == this.rootData.name) {
       let newRootData = hierarchy({ ...startingNode.data });
       accumulateTree(newRootData, this);
       // Option 1: Traverse the tree and create many
 
       newRootData.each((d) => {
-        console.log(
-          "d,  :>> ",
-          d,
-          nodeWithoutHabitDate(d?.data, store),
-          isALeaf(d),
-          !d?.data.content.match(/OOB/)
-        );
         if (
           nodeWithoutHabitDate(d?.data, store) &&
           isALeaf(d) &&
@@ -544,8 +537,24 @@ export default class Visualization {
         .filter((n) => {
           if (!!n?.data?.name && n?.data?.name === node.data.name) return n;
         });
-
+      if (node.data.name.includes("Sub-Habit")) return;
+      // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
       const newStatus = oppositeStatus(currentStatus);
+      if (currentStatus == "true" && newStatus == "false") {
+        debugger;
+        this.addHabitDatesForNewNodes(node, false);
+      } else {
+        store.dispatch(
+          updateHabitDateForNode({
+            habitId: currentHabit?.meta?.id,
+            dateId: currentDate,
+            completed: JSON.parse(newStatus),
+            fromDateForToday: currentDateFromDate,
+          })
+          // Also toggle 'cascaded' ancestor nodes
+        );
+      }
+
       if (currentStatus) {
         node.data.content = node.data.content.replace(/true|false/, newStatus);
       } else {
@@ -553,19 +562,6 @@ export default class Visualization {
       }
       theNode.attr("fill", getColor(JSON.parse(newStatus)));
       theNode.attr("stroke", getColor(JSON.parse(newStatus)));
-
-      if (node.data.name.includes("Sub-Habit")) return;
-
-      // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
-      store.dispatch(
-        updateHabitDateForNode({
-          habitId: currentHabit?.meta?.id,
-          dateId: currentDate,
-          completed: JSON.parse(newStatus),
-          fromDateForToday: currentDateFromDate,
-        })
-        // Also toggle 'cascaded' ancestor nodes
-      );
 
       const storedHabits = selectStoredHabits(store.getState());
       let lastCascadedNode = false;

@@ -194,7 +194,7 @@ export const nodeStatusColours = (d) => {
   // Guard clause for 'no record'
   if (typeof d === "undefined" || typeof d.data.content === "undefined")
     return noNodeCol;
-
+  debugger;
   const cumulativeVal = cumulativeValue(d);
   let decidingVal =
     d?.value && d.value == cumulativeVal ? d.value : cumulativeVal;

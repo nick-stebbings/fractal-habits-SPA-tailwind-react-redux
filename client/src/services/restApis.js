@@ -29,7 +29,14 @@ function clientRoutes(basePath) {
     create: (attrs) => axios.post(basePath, JSON.stringify(attrs)),
     show_all: () => axios.get(basePath),
     update: (id, update) => axios.patch(`${basePath}/${id}`, update),
-    destroy: ({ id }) => axios.delete(`${basePath}/${id}`),
+    destroy: (attrs) => {
+      if (Object.values(attrs).length > 1) {
+        // Account for many-many relationships
+        return axios.delete(`${basePath}/${attrs.id1}/${attrs.id2}`);
+      } else {
+        return axios.delete(`${basePath}/${attrs.id}`);
+      }
+    },
     show_one: ({ id }) => axios.get(`${basePath}/${id}`),
     replace: (id, update) => axios.put(`${basePath}/${id}`, update),
   };
