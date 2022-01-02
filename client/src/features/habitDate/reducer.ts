@@ -43,14 +43,18 @@ export const habitDateSlice = createSlice({
           completed;
         state.current = state.unPersistedForDate[habitDateForUpdateIdx];
       } else {
-        habitDateForUpdateIdx = state.myRecords[habitId]?.findIndex((hd) => {
-          return (
-            hd.habit_id == habitId && hd.timeframe.fromDate == fromDateForToday
-          );
-        });
-        if (habitDateForUpdateIdx && habitDateForUpdateIdx !== -1) {
+        habitDateForUpdateIdx = state.myRecords[habitId]?.findIndex(
+          (hd: any) =>
+            hd.timeframe.fromDate == fromDateForToday && +hd.habitId == habitId
+        );
+        if (
+          typeof habitDateForUpdateIdx !== "undefined" &&
+          habitDateForUpdateIdx !== -1
+        ) {
           // it was in the currentRecords
-          let updatedHabitDate = { ...state.myRecords[habitDateForUpdateIdx] };
+          let updatedHabitDate = {
+            ...state.myRecords[habitId][habitDateForUpdateIdx],
+          };
           updatedHabitDate.completed_status = completed;
 
           delete state.myRecords[habitDateForUpdateIdx];
@@ -58,6 +62,8 @@ export const habitDateSlice = createSlice({
           state.unPersistedForDate.push(updatedHabitDate);
 
           state.current = updatedHabitDate;
+        } else {
+          // it
         }
       }
     },
@@ -86,9 +92,7 @@ export const habitDateSlice = createSlice({
         }
       });
 
-      state.unPersistedForDate = state.unPersistedForDate.filter(
-        (hd: any) => !hd.completed_status
-      );
+      state.unPersistedForDate = [];
     },
     clearPersistedHabitDateCache(state) {
       state.myRecords = {};

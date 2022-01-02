@@ -16,11 +16,8 @@ export const selectStoredHabitDates = (state: RootState) => {
   // Return all stored records in one array
   return (
     state?.habitDate?.myRecords &&
-      Object.values(state.habitDate.myRecords).length &&
-      Object.values(state.habitDate.myRecords).reduce((accum, records) =>
-        accum.concat(records)
-      ),
-    []
+    Object.values(state.habitDate.myRecords).length &&
+    [].concat.apply([], Object.values(state.habitDate.myRecords))
   );
 };
 
@@ -96,7 +93,18 @@ export const selectAccumulatedStatusForDate = (
           habitDateInStore = tempHabitDate.completed_status;
         }
       }
-
+      // Determine if the node is complete but its subtree is not
+      const nodeDescendants = currentHabitHierarchyNode
+        ?.descendants()
+        ?.slice(1);
+      const hasDescendantsIncomplete =
+        nodeDescendants &&
+        nodeDescendants.some(
+          (descendant: any) =>
+            !["true", "OOB"].includes(
+              parseTreeValues(descendant.data.content)!.status
+            )
+        );
       // Guard clauses for out of bounds and when there is not a temp habit date in the store
       if (!!currentHabitNodeDataForDate) {
         currentHabitStatus = parseTreeValues(
@@ -107,30 +115,18 @@ export const selectAccumulatedStatusForDate = (
         if (
           currentHabitStatus == "" &&
           typeof habitDateInStore == "undefined" &&
-          !currentHabitHierarchyNode.value
+          !currentHabitHierarchyNode.value &&
+          !hasDescendantsIncomplete
         )
           return "noHabitDate";
       }
-
-      // Determine if the node is complete but its subtree is not
-      const hasDescendantsIncomplete =
-        !!currentHabitHierarchyNode?.children &&
-        currentHabitHierarchyNode
-          .leaves()
-          .some(
-            (descendant: any) =>
-              !["true", "OOB"].includes(
-                parseTreeValues(descendant.data.content)!.status
-              )
-          );
 
       const completedInTreeOrInStore =
         currentHabitHierarchyNode?.value == 1 ||
         currentHabitStatus == "true" ||
         !!habitDateInStore ||
         dateIsPersistedCompleted;
-
-      return completedInTreeOrInStore && hasDescendantsIncomplete
+      return hasDescendantsIncomplete
         ? "parentCompleted"
         : completedInTreeOrInStore;
     }

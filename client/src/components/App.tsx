@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "app/hooks";
 import HabitDateSlice from "features/habitDate/reducer";
 const { clearUnpersistedHabitDateCache,clearPersistedHabitDateCache } = HabitDateSlice.actions;
 import { createHabitDateREST } from "features/habitDate/actions";
-import { selectUnStoredHabitDates } from "features/habitDate/selectors";
+import { selectUnStoredHabitDates, selectStoredHabitDates } from "features/habitDate/selectors";
 
 import { visActions } from "features/hierarchy/reducer";
 const { updateCachedHierarchyForDate, clearFutureCache,updateCurrentHierarchy } = visActions
@@ -29,9 +29,30 @@ interface indexProps {
 
 export default function App({ isVisComponent, children }: indexProps) {
   const dispatch = useAppDispatch();
+  const currentSpaceTimeframe = selectCurrentSpace(store.getState())?.timeframe
   
-  const persistTodaysUnstoredHabitDates = (currentDateId: number) => {
-    const nodesToPersist = selectUnStoredHabitDates(store.getState()).filter((hd: any) => hd.completed_status)
+  const todaysHabitDate = (hd: HabitDate) =>
+    hd.timeframe.fromDate == currentSpaceTimeframe.fromDate;
+  
+  const persistTodaysUnstoredHabitDates = (currentDateId: number, periodicSave: boolean) => {
+    if (!periodicSave) {
+      periodicSave = false
+    }
+    let s = store.getState()
+    const alreadyPersisted = selectStoredHabitDates(s)
+
+    const nodesToDestroy = selectUnStoredHabitDates(s).filter((hd: any) => {
+      const id = hd.habit_id
+      debugger;
+      return !hd.completed_status
+        && -1 !== alreadyPersisted?.findIndex((hd: any) => {
+          return (
+            hd.habitId == id && hd.timeframe.fromDate == currentSpaceTimeframe.fromDate
+          )
+        })
+    })
+    const nodesToPersist = selectUnStoredHabitDates(s).filter((hd: any) => hd.completed_status)
+
     if (nodesToPersist.length > 0) {
       dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))
       // dispatch(updateCurrentHabit({
@@ -53,9 +74,11 @@ export default function App({ isVisComponent, children }: indexProps) {
         timeout: 3000,
       })
       
-      const currentSpaceTimeframe = selectCurrentSpace(store.getState())
-      dispatch(clearUnpersistedHabitDateCache({currentSpaceTimeframe}))
+    } else if (nodesToDestroy.length > 0) {
+      
     }
+    
+    if(!periodicSave) dispatch(clearUnpersistedHabitDateCache({currentSpaceTimeframe}))
   }
 
 
@@ -65,7 +88,7 @@ export default function App({ isVisComponent, children }: indexProps) {
   useEffect(() => {
     const interval = setInterval(() => {
       if (selectUnStoredHabitDates(store.getState()).filter((hd: any) => hd.completed_status).length > 0) {
-        persistTodaysUnstoredHabitDates(currentDateId)
+        persistTodaysUnstoredHabitDates(currentDateId, true)
       }
     }, HABIT_DATE_BACKGROUND_PERSISTENCE_INTERVAL * 1000)
    return () => clearInterval(interval) 
