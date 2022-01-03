@@ -137,10 +137,10 @@ export const outOfBoundsNode = (d, rootData) => {
   return nodeStatusColours(d, rootData) == noNodeCol;
 };
 
-export const habitDatePersisted = (node) => {
+export const habitDateNotPersisted = (node) => {
   return node?.data?.content
-    ? parseTreeValues(node.data.content).status !== ""
-    : parseTreeValues(node?.content).status !== "";
+    ? ["", "false"].includes(parseTreeValues(node.data.content).status)
+    : ["", "false"].includes(parseTreeValues(node?.content).status);
 };
 
 export const cumulativeValue = (node) => {
@@ -242,7 +242,7 @@ export const nodeStatusColours = (d) => {
 // Node/tree manipulation helpers
 
 export const nodeWithoutHabitDate = (data, store) =>
-  !habitDatePersisted(data) && !selectInUnpersisted(data)(store.getState());
+  habitDateNotPersisted(data) && !selectInUnpersisted(data)(store.getState());
 
 export function expand(d) {
   var children = d.children ? d.children : d._children;

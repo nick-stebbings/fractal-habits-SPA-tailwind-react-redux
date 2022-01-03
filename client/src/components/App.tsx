@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import { Header } from "./Header";
 import { Layout } from "./Layout";
 
@@ -29,60 +29,58 @@ export default function App({ isVisComponent, children }: indexProps) {
   const dispatch = useAppDispatch();
   const currentSpaceTimeframe = selectCurrentSpace(store.getState())?.timeframe
   const currentDateId = selectCurrentDateId(store.getState())
-  
-  const todaysHabitDate = (hd: HabitDate) =>
-    hd.timeframe.fromDate == currentSpaceTimeframe.fromDate;
-  
-  const persistTodaysUnstoredHabitDates = debounce((currentDateId: number, periodicSave: boolean) => {
-    if (!periodicSave) {
-      periodicSave = false
-    }
 
+  const [changesMade, setChangesMade] = useState(null)
+
+  const persistTodaysUnstoredHabitDates = (periodicSave: boolean = false) => {
+    console.log('changesMade :>> ', changesMade);
     let s = store.getState()
     const alreadyPersisted = selectStoredHabitDates(s)
     
     const nodesToDestroy = selectUnStoredHabitDates(s).filter((hd: any) => {
       const id = hd.habit_id
       return !hd.completed_status
-      && -1 !== alreadyPersisted?.findIndex((hd: any) => {
-        return (
-          hd.habitId == id && hd.timeframe.fromDate == currentSpaceTimeframe.fromDate
+        && -1 !== alreadyPersisted?.findIndex((hd: any) => {
+          return (
+            hd?.habitId == id && hd?.timeframe.fromDate == currentSpaceTimeframe.fromDate
           )
         })
-      })
+    })
     const nodesToPersist = selectUnStoredHabitDates(s).filter((hd: any) => hd.completed_status)
     
-    const willUpdate = nodesToPersist.length > 0 || nodesToDestroy.length > 0
+    const persisting = nodesToPersist.length > 0 || nodesToDestroy.length > 0
 
     
-      if (nodesToPersist.length > 0) {
-      dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist })) 
+    if (nodesToPersist.length > 0) {
+      dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))
     } else if (nodesToDestroy.length > 0) {
       debugger;
-        // it was in currentRecords as completed, but now is incomplete and needs destroying in the DB
-      nodesToDestroy.forEach((n:any) => {
-        const {habit_id, date_id} = n
-        dispatch(destroyHabitDateREST({ id1: habit_id, id2: date_id}))
+      // it was in currentRecords as completed, but now is incomplete and needs destroying in the DB
+      nodesToDestroy.forEach((n: any) => {
+        const { habit_id, date_id } = n
+        dispatch(destroyHabitDateREST({ id1: habit_id, id2: date_id }))
       });
     }
     
-    if (willUpdate) {
+    if (persisting) {
       dispatch(clearFutureCache({
         dateId: currentDateId
       }))
-      window.FlashMessage.info('Habit progress saved',{
+      window.FlashMessage.info('Habit progress saved', {
         interactive: true,
         timeout: 3000,
       })
+      setChangesMade(false)
     }
-    if(!periodicSave) dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
-  }, 5000)
+
+    !periodicSave && dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
+  }// debounce(}, 5000)
 
 
   // Send a habit-date post request periodically
   useEffect(() => {
     const interval = setInterval(() => {
-      if (selectUnStoredHabitDates(store.getState())) {
+      if (selectUnStoredHabitDates(store.getState()).length > 0){// && (changesMade === true)){
         persistTodaysUnstoredHabitDates(currentDateId, true)
       }
     }, HABIT_DATE_BACKGROUND_PERSISTENCE_INTERVAL * 1000)
@@ -93,7 +91,7 @@ export default function App({ isVisComponent, children }: indexProps) {
     <>
       {useModal()}
       <Header isVis={isVisComponent} persistTodaysUnstoredHabitDates={persistTodaysUnstoredHabitDates} />
-      <Layout children={children} isVis={isVisComponent} />
+      <Layout children={children} isVis={isVisComponent} changesMade={setChangesMade} />
       </>
   );
 };

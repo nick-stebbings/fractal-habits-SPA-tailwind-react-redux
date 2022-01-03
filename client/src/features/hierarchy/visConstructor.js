@@ -40,7 +40,6 @@ import hierarchySlice from "features/hierarchy/reducer";
 import { selectCurrentDateId, selectCurrentDate } from "../space/slice";
 
 import {
-  getTransform,
   radialPoint,
   expand,
   collapse,
@@ -50,7 +49,6 @@ import {
   nodeStatusColours,
   parseTreeValues,
   cumulativeValue,
-  habitDatePersisted,
   outOfBoundsNode,
   oppositeStatus,
   getColor,
@@ -467,13 +465,16 @@ export default class Visualization {
     if (startingNode.data.name == this.rootData.data.name) {
       // Option 1: Traverse the tree and create many
       newRootData.each((d) => {
-        console.log(
-          "d,  :>> ",
-          d,
-          nodeWithoutHabitDate(d?.data, store),
-          isALeaf(d),
-          !d?.data.content.match(/OOB/)
-        );
+        if (!nodeWithoutHabitDate(d?.data, store)) {
+          console.log(
+            "d,  :>> ",
+            d,
+            nodeWithoutHabitDate(d?.data, store),
+            isALeaf(d),
+            !d?.data.content.match(/OOB/)
+          );
+          debugger;
+        }
         if (
           nodeWithoutHabitDate(d?.data, store) &&
           isALeaf(d) &&
