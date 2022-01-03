@@ -14,6 +14,7 @@ import {
   parseTreeValues,
   areSomeDescendantsIncomplete,
   areAllChildrenIncomplete,
+  areAllChildrenComplete,
   isALeaf,
   notOOB,
 } from "../hierarchy/components/helpers";
@@ -111,6 +112,9 @@ export const selectAccumulatedStatusForDate = (
       const allChildrenIncomplete = areAllChildrenIncomplete(
         currentHabitHierarchyNode?.children
       );
+      const allChildrenComplete = areAllChildrenComplete(
+        currentHabitHierarchyNode?.children
+      );
 
       // Guard clauses for out of bounds and when there is not a temp habit date in the store
       if (!!currentHabitNodeDataForDate) {
@@ -132,7 +136,8 @@ export const selectAccumulatedStatusForDate = (
         currentHabitHierarchyNode?.value == 1 ||
         currentHabitStatus == "true" ||
         !!habitDateInStore ||
-        dateIsPersistedCompleted;
+        dateIsPersistedCompleted ||
+        allChildrenComplete;
 
       return completedInTreeOrInStore
         ? someDescendantIncomplete
