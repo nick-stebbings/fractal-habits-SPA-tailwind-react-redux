@@ -54,7 +54,6 @@ export default function App({ isVisComponent, children }: indexProps) {
     if (nodesToPersist.length > 0) {
       dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))
     } else if (nodesToDestroy.length > 0) {
-      debugger;
       // it was in currentRecords as completed, but now is incomplete and needs destroying in the DB
       nodesToDestroy.forEach((n: any) => {
         const { habit_id, date_id } = n

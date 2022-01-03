@@ -465,7 +465,13 @@ export default class Visualization {
     if (startingNode.data.name == this.rootData.data.name) {
       // Option 1: Traverse the tree and create many
       newRootData.each((d) => {
-        if (!nodeWithoutHabitDate(d?.data, store)) {
+        if (
+          !(
+            nodeWithoutHabitDate(d?.data, store) &&
+            isALeaf(d) &&
+            !d?.data.content.match(/OOB/)
+          )
+        ) {
           console.log(
             "d,  :>> ",
             d,
@@ -473,7 +479,6 @@ export default class Visualization {
             isALeaf(d),
             !d?.data.content.match(/OOB/)
           );
-          debugger;
         }
         if (
           nodeWithoutHabitDate(d?.data, store) &&
@@ -494,7 +499,7 @@ export default class Visualization {
 
   mutateTreeJsonForNewHabitDates(d) {
     // Toggle in memory
-    d.data.content = d.data.content.replace(/\-/, "-false");
+    d.data.content = d.data.content.replace(/\-*/, "-false");
   }
 
   createNewHabitDateForNode(node, withStatus = false) {
@@ -1164,7 +1169,7 @@ export default class Visualization {
       debounce((ev) => {
         ev.srcEvent.preventDefault();
         ev.srcEvent.stopPropagation();
-        console.log("SINGLETAP :>> ", SINGLETAP);
+
         const target = ev.firstTarget;
         if (target.tagName !== "circle") return;
 
@@ -1474,6 +1479,7 @@ export function accumulateTree(json, thisArg) {
     Visualization.accumulateNodeValues.call(thisArg, json);
     // TODO memoise
   } catch (error) {
+    debugger;
     console.error("Could not manipulate tree: ", error);
   }
 }

@@ -99,8 +99,14 @@ export const sumChildrenValues = (node, hidden = false) => {
   return children.reduce((sum, n) => sum + n.value, 0);
 };
 
+const allOOB = (nodes) =>
+  nodes.every((d) => parseTreeValues(d.data.content).status === "OOB");
+
 export const isALeaf = (node) => {
-  return node?.height === 0 && !node?._children;
+  return (
+    (node?.height === 0 || (node?.children && allOOB(node.children))) &&
+    !node?._children
+  );
 };
 
 export function getColor(completedStatus) {
@@ -186,9 +192,6 @@ export const cumulativeValue = (node) => {
 export const contentEqual = (node, other) =>
   node.content.split("-").slice(0, 1)[0] ==
   other.content.split("-").slice(0, 1)[0];
-
-const allOOB = (nodes) =>
-  nodes.every((d) => parseTreeValues(d.data.content).status === "OOB");
 
 export const nodeStatusColours = (d) => {
   // Guard clause for 'no record'
