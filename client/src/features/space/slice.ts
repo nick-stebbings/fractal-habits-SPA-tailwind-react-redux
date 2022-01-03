@@ -28,7 +28,7 @@ export const selectCurrentDateId = (state: RootState) => {
     .startOf("day")
     .diff(baseDate, ["day"])
     .toObject().days;
-  return state?.space.currentRelativeIdx + 1 + DB_DATE_ID_OFFSET + dateDiff;
+  return state?.space.currentRelativeIdx - 1 + DB_DATE_ID_OFFSET + dateDiff;
 };
 
 export const selectRelativeDateId = (fromDateTimestampUnix: number) =>

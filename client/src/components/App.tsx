@@ -15,10 +15,10 @@ import { selectUnStoredHabitDates, selectStoredHabitDates } from "features/habit
 import { visActions } from "features/hierarchy/reducer";
 const { clearFutureCache } = visActions
 
-import { selectCurrentSpace } from "features/space/slice";
-import { selectCurrentDateId } from 'features/space/slice';
+import { selectCurrentSpace,selectCurrentDateId } from "features/space/slice";
 import { HabitDate } from "features/habitDate/types";
 import { useModal } from '../hooks/useModal';
+import { debounce } from 'app/helpers';
 
 interface indexProps {
   isVisComponent?: boolean
@@ -28,16 +28,19 @@ interface indexProps {
 export default function App({ isVisComponent, children }: indexProps) {
   const dispatch = useAppDispatch();
   const currentSpaceTimeframe = selectCurrentSpace(store.getState())?.timeframe
+  const currentDateId = selectCurrentDateId(store.getState())
   
   const todaysHabitDate = (hd: HabitDate) =>
     hd.timeframe.fromDate == currentSpaceTimeframe.fromDate;
   
-  const persistTodaysUnstoredHabitDates = (currentDateId: number, periodicSave: boolean) => {
+  const persistTodaysUnstoredHabitDates = debounce((currentDateId: number, periodicSave: boolean) => {
     if (!periodicSave) {
       periodicSave = false
     }
+
     let s = store.getState()
     const alreadyPersisted = selectStoredHabitDates(s)
+    
     const nodesToDestroy = selectUnStoredHabitDates(s).filter((hd: any) => {
       const id = hd.habit_id
       return !hd.completed_status
@@ -47,13 +50,15 @@ export default function App({ isVisComponent, children }: indexProps) {
           )
         })
       })
-      const nodesToPersist = selectUnStoredHabitDates(s).filter((hd: any) => hd.completed_status)
-      const willUpdate = nodesToPersist.length > 0 || nodesToDestroy.length > 0
+    const nodesToPersist = selectUnStoredHabitDates(s).filter((hd: any) => hd.completed_status)
+    
+    const willUpdate = nodesToPersist.length > 0 || nodesToDestroy.length > 0
 
-      debugger;
-    if (nodesToPersist.length > 0) {
+    
+      if (nodesToPersist.length > 0) {
       dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist })) 
     } else if (nodesToDestroy.length > 0) {
+      debugger;
         // it was in currentRecords as completed, but now is incomplete and needs destroying in the DB
       nodesToDestroy.forEach((n:any) => {
         const {habit_id, date_id} = n
@@ -71,10 +76,8 @@ export default function App({ isVisComponent, children }: indexProps) {
       })
     }
     if(!periodicSave) dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
-  }
+  }, 5000)
 
-
-  const currentDateId = useAppSelector(selectCurrentDateId);
 
   // Send a habit-date post request periodically
   useEffect(() => {

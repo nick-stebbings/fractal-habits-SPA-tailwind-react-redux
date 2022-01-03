@@ -462,9 +462,9 @@ export default class Visualization {
     completedValue = false
   ) {
     // If we are adding a false completed value (temp habit dates that will only be persisted if updated to true)
-    let newRootData = hierarchy({ ...startingNode.data });
+    let newRootData = hierarchy({ ...this.rootData.data });
     accumulateTree(newRootData, this);
-    if (startingNode.data.name == this.rootData.name) {
+    if (startingNode.data.name == this.rootData.data.name) {
       // Option 1: Traverse the tree and create many
       newRootData.each((d) => {
         console.log(
@@ -474,8 +474,6 @@ export default class Visualization {
           isALeaf(d),
           !d?.data.content.match(/OOB/)
         );
-
-        debugger;
         if (
           nodeWithoutHabitDate(d?.data, store) &&
           isALeaf(d) &&

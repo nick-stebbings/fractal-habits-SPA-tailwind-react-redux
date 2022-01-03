@@ -72,7 +72,7 @@ export const Header = ({ isVis, persistTodaysUnstoredHabitDates }) => {
 
     if (isVis) {
       // First dispatch action to POST unpersisted habit-dates
-      persistTodaysUnstoredHabitDates(currentDateId)
+      persistTodaysUnstoredHabitDates()
       
       dispatch(updateCurrentHierarchy({nextDateId: currentDateId - 1}))
       const newDateId = Math.max.apply(null, [1, currentDateId - 7]) // Account for minimum date Id
@@ -94,7 +94,7 @@ export const Header = ({ isVis, persistTodaysUnstoredHabitDates }) => {
     
     if (isVis) {
       // First dispatch action to POST unpersisted habit-dates
-      persistTodaysUnstoredHabitDates(currentDateId)
+      persistTodaysUnstoredHabitDates()
 
       if (isMemoised(currentDateId + 1)) {
         dispatch(updateCurrentHierarchy({nextDateId: currentDateId + 1}))

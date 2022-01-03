@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { off } from "hammerjs";
 import { DateTime } from "luxon";
 import { createInterval } from "../features/space/utils";
 
@@ -34,7 +35,6 @@ const mapCallbacks = {
   habit_dates: (element) => {
     const { date, completed_status, habit_id } = element;
     // if (!completed_status) return;
-
     const daySpace = createInterval(0, 1, DateTime.fromSQL(date));
     return {
       ...daySpace,
@@ -134,7 +134,10 @@ export function crudReducer(
 export function createCrudActionCreators(actionTypes, callBacks) {
   const create = createAsyncThunk(actionTypes[0], async (input, thunkAPI) => {
     const response = await callBacks[0](input);
-    debugger;
+
+    if (typeof response == "undefined")
+      return thunkAPI.fulfillWithValue({ data: [] }); //Accounts for reponses without a body
+
     return [201, 200].includes(response.status)
       ? thunkAPI.fulfillWithValue(response)
       : thunkAPI.rejectWithValue(response);
