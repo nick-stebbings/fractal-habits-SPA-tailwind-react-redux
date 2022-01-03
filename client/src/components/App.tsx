@@ -33,7 +33,6 @@ export default function App({ isVisComponent, children }: indexProps) {
   const [changesMade, setChangesMade] = useState(null)
 
   const persistTodaysUnstoredHabitDates = (periodicSave: boolean = false) => {
-    console.log('changesMade :>> ', changesMade);
     let s = store.getState()
     const alreadyPersisted = selectStoredHabitDates(s)
     
@@ -73,18 +72,19 @@ export default function App({ isVisComponent, children }: indexProps) {
     }
 
     !periodicSave && dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
-  }// debounce(}, 5000)
+  }
 
 
   // Send a habit-date post request periodically
   useEffect(() => {
+    if (!changesMade) return;
     const interval = setInterval(() => {
-      if (selectUnStoredHabitDates(store.getState()).length > 0){// && (changesMade === true)){
+      if (selectUnStoredHabitDates(store.getState()).length > 0){
         persistTodaysUnstoredHabitDates(currentDateId, true)
       }
     }, HABIT_DATE_BACKGROUND_PERSISTENCE_INTERVAL * 1000)
    return () => clearInterval(interval) 
-  }, [])
+  }, [changesMade])
 
   return (
     <>

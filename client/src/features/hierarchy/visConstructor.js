@@ -472,6 +472,7 @@ export default class Visualization {
             !d?.data.content.match(/OOB/)
           )
         ) {
+          debugger;
           console.log(
             "d,  :>> ",
             d,
@@ -499,7 +500,7 @@ export default class Visualization {
 
   mutateTreeJsonForNewHabitDates(d) {
     // Toggle in memory
-    d.data.content = d.data.content.replace(/\-*/, "-false");
+    d.data.content = d.data.content.replace(/\-$/, "-false");
   }
 
   createNewHabitDateForNode(node, withStatus = false) {
@@ -565,7 +566,9 @@ export default class Visualization {
           // Also toggle 'cascaded' ancestor nodes
         );
       }
-
+      if (node.data.name == "Shop healthily") {
+        debugger;
+      }
       if (currentStatus) {
         node.data.content = node.data.content.replace(/true|false/, newStatus);
       } else {
@@ -738,6 +741,7 @@ export default class Visualization {
 
       if (content.status === "") return 0;
       if (content.status === "OOB") return 0;
+
       const statusValue = JSON.parse(content.status);
       return +statusValue;
     });
@@ -1479,7 +1483,6 @@ export function accumulateTree(json, thisArg) {
     Visualization.accumulateNodeValues.call(thisArg, json);
     // TODO memoise
   } catch (error) {
-    debugger;
     console.error("Could not manipulate tree: ", error);
   }
 }
