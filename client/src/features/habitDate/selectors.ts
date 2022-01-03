@@ -93,11 +93,17 @@ export const selectAccumulatedStatusForDate = (
           habitDateInStore = tempHabitDate.completed_status;
         }
       }
+      if (
+        dateId == 34 &&
+        currentHabitHierarchyNode?.data?.name == "Shop healthily"
+      ) {
+        debugger;
+      }
       // Determine if the node is complete but its subtree is not
       const nodeDescendants = currentHabitHierarchyNode
         ?.descendants()
         ?.slice(1);
-      const hasDescendantsIncomplete =
+      const hasDescendantsIncompleteInTree =
         nodeDescendants &&
         nodeDescendants.some(
           (descendant: any) =>
@@ -105,6 +111,7 @@ export const selectAccumulatedStatusForDate = (
               parseTreeValues(descendant.data.content)!.status
             )
         );
+
       // Guard clauses for out of bounds and when there is not a temp habit date in the store
       if (!!currentHabitNodeDataForDate) {
         currentHabitStatus = parseTreeValues(
@@ -115,8 +122,7 @@ export const selectAccumulatedStatusForDate = (
         if (
           currentHabitStatus == "" &&
           typeof habitDateInStore == "undefined" &&
-          !currentHabitHierarchyNode.value &&
-          !hasDescendantsIncomplete
+          !currentHabitHierarchyNode.value
         )
           return "noHabitDate";
       }
@@ -126,7 +132,9 @@ export const selectAccumulatedStatusForDate = (
         currentHabitStatus == "true" ||
         !!habitDateInStore ||
         dateIsPersistedCompleted;
-      return hasDescendantsIncomplete
+
+      return hasDescendantsIncompleteInTree &&
+        currentHabitHierarchyNode?.value == 1
         ? "parentCompleted"
         : completedInTreeOrInStore;
     }

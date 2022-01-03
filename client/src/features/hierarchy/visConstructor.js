@@ -468,6 +468,13 @@ export default class Visualization {
       // Option 1: Traverse the tree and create many
 
       newRootData.each((d) => {
+        console.log(
+          "d,  :>> ",
+          d,
+          nodeWithoutHabitDate(d?.data, store),
+          isALeaf(d),
+          !d?.data.content.match(/OOB/)
+        );
         if (
           nodeWithoutHabitDate(d?.data, store) &&
           isALeaf(d) &&
@@ -541,7 +548,6 @@ export default class Visualization {
       // If this was not a ternarising/placeholder sub habit that we created just for more even distribution
       const newStatus = oppositeStatus(currentStatus);
       if (currentStatus == "true" && newStatus == "false") {
-        debugger;
         this.addHabitDatesForNewNodes(node, false);
       } else {
         store.dispatch(
