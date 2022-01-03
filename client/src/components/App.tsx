@@ -69,8 +69,8 @@ export default function App({ isVisComponent, children }: indexProps) {
         interactive: true,
         timeout: 3000,
       })
-      dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
     }
+    if(!periodicSave) dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
   }
 
 

@@ -474,6 +474,8 @@ export default class Visualization {
           isALeaf(d),
           !d?.data.content.match(/OOB/)
         );
+
+        debugger;
         if (
           nodeWithoutHabitDate(d?.data, store) &&
           isALeaf(d) &&
@@ -1163,7 +1165,7 @@ export default class Visualization {
       debounce((ev) => {
         ev.srcEvent.preventDefault();
         ev.srcEvent.stopPropagation();
-
+        console.log("SINGLETAP :>> ", SINGLETAP);
         const target = ev.firstTarget;
         if (target.tagName !== "circle") return;
 
