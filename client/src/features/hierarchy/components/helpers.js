@@ -233,7 +233,6 @@ export const nodeStatusColours = (d) => {
         return positiveColLighter;
       } // Node is complete but some of its descendants are not.
 
-      debugger;
       return negativeCol;
     default:
       return neutralCol;

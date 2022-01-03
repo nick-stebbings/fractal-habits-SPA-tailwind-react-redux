@@ -93,12 +93,6 @@ export const selectAccumulatedStatusForDate = (
           habitDateInStore = tempHabitDate.completed_status;
         }
       }
-      if (
-        dateId == 34 &&
-        currentHabitHierarchyNode?.data?.name == "Shop healthily"
-      ) {
-        debugger;
-      }
       // Determine if the node is complete but its subtree is not
       const nodeDescendants = currentHabitHierarchyNode
         ?.descendants()

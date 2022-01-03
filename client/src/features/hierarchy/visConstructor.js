@@ -462,11 +462,10 @@ export default class Visualization {
     completedValue = false
   ) {
     // If we are adding a false completed value (temp habit dates that will only be persisted if updated to true)
+    let newRootData = hierarchy({ ...startingNode.data });
+    accumulateTree(newRootData, this);
     if (startingNode.data.name == this.rootData.name) {
-      let newRootData = hierarchy({ ...startingNode.data });
-      accumulateTree(newRootData, this);
       // Option 1: Traverse the tree and create many
-
       newRootData.each((d) => {
         console.log(
           "d,  :>> ",
@@ -484,12 +483,12 @@ export default class Visualization {
           this.mutateTreeJsonForNewHabitDates(d);
         }
       });
-      this.updateRootDataAfterAccumulation(newRootData);
-      this.rootData.newHabitDatesAdded = true;
     } else {
       // Option 2: Create a new true habit date for a 'cascaded' ancestor node
       this.createNewHabitDateForNode(startingNode, JSON.parse(completedValue));
     }
+    this.updateRootDataAfterAccumulation(newRootData);
+    this.rootData.newHabitDatesAdded = true;
   }
 
   mutateTreeJsonForNewHabitDates(d) {

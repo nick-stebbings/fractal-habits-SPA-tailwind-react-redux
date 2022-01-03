@@ -40,7 +40,6 @@ export default function App({ isVisComponent, children }: indexProps) {
     const alreadyPersisted = selectStoredHabitDates(s)
     const nodesToDestroy = selectUnStoredHabitDates(s).filter((hd: any) => {
       const id = hd.habit_id
-      debugger;
       return !hd.completed_status
       && -1 !== alreadyPersisted?.findIndex((hd: any) => {
         return (
@@ -51,8 +50,8 @@ export default function App({ isVisComponent, children }: indexProps) {
       const nodesToPersist = selectUnStoredHabitDates(s).filter((hd: any) => hd.completed_status)
       const willUpdate = nodesToPersist.length > 0 || nodesToDestroy.length > 0
 
-    if (nodesToPersist.length > 0) {
       debugger;
+    if (nodesToPersist.length > 0) {
       dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist })) 
     } else if (nodesToDestroy.length > 0) {
         // it was in currentRecords as completed, but now is incomplete and needs destroying in the DB
