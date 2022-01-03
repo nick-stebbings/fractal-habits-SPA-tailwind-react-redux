@@ -102,6 +102,9 @@ export const sumChildrenValues = (node, hidden = false) => {
 const allOOB = (nodes) =>
   nodes.every((d) => parseTreeValues(d.data.content).status === "OOB");
 
+export const notOOB = (node) =>
+  parseTreeValues(node.data.content).status !== "OOB";
+
 export const isALeaf = (node) => {
   return (
     (node?.height === 0 || (node?.children && allOOB(node.children))) &&
@@ -142,6 +145,35 @@ export const parseTreeValues = (valueString) => {
 export const outOfBoundsNode = (d, rootData) => {
   return nodeStatusColours(d, rootData) == noNodeCol;
 };
+
+export const areSomeDescendantsIncomplete = (descendants) =>
+  descendants &&
+  !!(
+    descendants
+      .map((n) => n.value)
+      .join("")
+      .match(/0/) ||
+    descendants.some(
+      (descendant) =>
+        !["true", "OOB"].includes(
+          parseTreeValues(descendant.data.content).status
+        )
+    )
+  );
+
+export const areAllChildrenIncomplete = (children) =>
+  children &&
+  !children
+    .map((n) => n.value)
+    .join("")
+    .match(/1/);
+
+export const areAllChildrenComplete = (children) =>
+  children &&
+  !children
+    .map((n) => n.value)
+    .join("")
+    .match(/0/);
 
 export const habitDateNotPersisted = (node) => {
   return node?.data?.content

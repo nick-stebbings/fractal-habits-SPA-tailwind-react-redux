@@ -466,22 +466,6 @@ export default class Visualization {
       // Option 1: Traverse the tree and create many
       newRootData.each((d) => {
         if (
-          !(
-            nodeWithoutHabitDate(d?.data, store) &&
-            isALeaf(d) &&
-            !d?.data.content.match(/OOB/)
-          )
-        ) {
-          debugger;
-          console.log(
-            "d,  :>> ",
-            d,
-            nodeWithoutHabitDate(d?.data, store),
-            isALeaf(d),
-            !d?.data.content.match(/OOB/)
-          );
-        }
-        if (
           nodeWithoutHabitDate(d?.data, store) &&
           isALeaf(d) &&
           !d?.data.content.match(/OOB/)
@@ -565,9 +549,6 @@ export default class Visualization {
           })
           // Also toggle 'cascaded' ancestor nodes
         );
-      }
-      if (node.data.name == "Shop healthily") {
-        debugger;
       }
       if (currentStatus) {
         node.data.content = node.data.content.replace(/true|false/, newStatus);
