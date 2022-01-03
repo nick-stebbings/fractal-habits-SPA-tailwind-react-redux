@@ -16,7 +16,11 @@ export const idleState: RequestState = {
 };
 
 export const isDataAction = (action: AnyAction) => {
-  return action.type.endsWith("habit_dates/fulfilled");
+  return (
+    action.type.endsWith("habit_dates/fulfilled") ||
+    action.type.startsWith("create_habit_date") ||
+    action.type.startsWith("destroy_habit_date")
+  );
 };
 
 export const isDeleteDataAction = (action: AnyAction) =>
@@ -40,6 +44,7 @@ const isFirstHabitDatesAction = (action: AnyAction) => {
 
 export const isLoadingAction = (action: AnyAction) => {
   return (
+    !isDataAction(action) &&
     !action.type.startsWith("fetch_habit_trees") && // This multiple day fetch is always done in the background so no spinner needed
     (isFirstHabitDatesAction(action) ||
       (action.type != "fetch_habit_dates/pending" &&

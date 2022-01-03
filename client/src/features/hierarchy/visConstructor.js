@@ -591,8 +591,10 @@ export default class Visualization {
           }
         });
 
+      debugger;
       accumulateTree(this.rootData, this);
       this.updateRootDataAfterAccumulation(this.rootData);
+      this.newHabitDatesAdded = true;
     }
   }
 
