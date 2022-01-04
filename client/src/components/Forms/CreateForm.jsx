@@ -8,9 +8,8 @@ import { InputGroup } from "./FormInputGroup.jsx";
 import { SubmitButton } from "../Nav/UI/Buttons/SubmitButton.jsx";
 import { CancelButton } from "../Nav/UI/Buttons/CancelButton.jsx";
 
-// @ts-ignore
 import { selectCurrentDomain } from "features/domain/selectors";
-// @ts-ignore
+
 import { selectCurrentHabit } from "features/habit/selectors";
 import { createHabitREST } from "features/habit/actions";
 useAppDispatch;

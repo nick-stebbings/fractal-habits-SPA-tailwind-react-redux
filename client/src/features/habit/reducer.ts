@@ -3,10 +3,8 @@ import { DateTime, Duration } from "luxon";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Habit, NewHabitPayload, UpdateHabitPayload } from "./types";
 
-// @ts-ignore
 import { Dictionary } from "app/types";
 
-// @ts-ignore
 import { crudReducer, isCrud } from "app/storeHelpers";
 import { actionCreators } from "./actions";
 

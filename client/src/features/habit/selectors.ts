@@ -1,4 +1,3 @@
-// @ts-ignore
 import { RootState } from "app/store";
 import { selectCurrentNodeByMptt } from "../node/selectors";
 import { Habit } from "./types";

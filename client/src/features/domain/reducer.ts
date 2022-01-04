@@ -6,10 +6,8 @@ import {
   UpdateDomainPayload,
 } from "./types";
 
-// @ts-ignore
 import { Dictionary } from "app/types";
 
-// @ts-ignore
 import { crudReducer, isCrud } from "app/storeHelpers";
 import { actionCreators } from "./actions";
 

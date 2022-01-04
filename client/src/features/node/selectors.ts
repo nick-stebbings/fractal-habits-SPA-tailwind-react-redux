@@ -1,7 +1,5 @@
-// @ts-ignore
 import { RootState } from "app/store";
 
-// @ts-ignore
 import { Node } from "app/features/node/types";
 
 export const selectCurrentNode = (state: RootState): Node => {

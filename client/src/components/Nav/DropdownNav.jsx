@@ -3,7 +3,6 @@ import { useAppSelector } from "app/hooks";
 
 import { selectCurrentHabit } from "features/habit/selectors";
 import { HoverableLink } from "./UI/Buttons/HoverableLink";
-import "./events.js";
 
 export const DropdownNav = function ({ routes, showMegaMenu, hideMegaMenu }) {
   const handleLabelClick = (e) => {

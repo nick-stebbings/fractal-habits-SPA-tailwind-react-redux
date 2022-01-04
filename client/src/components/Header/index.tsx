@@ -4,11 +4,11 @@ import MENU_ROUTES, { MENU_ROUTE_FIRST_SELECTED } from "../../routes/routeInfo";
 
 import { DateTime } from "luxon";
 import { store } from "app/store";
-// @ts-ignore
+
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { debounce } from "app/helpers";
 
-// @ts-ignore
+
 import slice, { selectCurrentDateId, selectCurrentDatePositionIdx, selectCurrentDate } from 'features/space/slice';
 const { decrementIdx, incrementIdx } = slice.actions;
 
@@ -19,7 +19,7 @@ const {updateCurrentHierarchy} = visActions
 import { selectCurrentHabit } from "features/habit/selectors";
 import { selectHasStoredTreeForDateId } from "features/hierarchy/selectors";
 
-// @ts-ignore
+
 import { CalendarWidget } from "features/habitDate/components/CalendarWidget";
 import { ResponsiveNavGroup } from "../Nav/ResponsiveNavGroup";
 import { DomainSelector } from "../Nav/UI/Inputs/DomainSelector";

@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 
-// @ts-ignore
+
 import { useAppSelector, useAppDispatch } from "app/hooks";
-// @ts-ignore
+
 import { selectCurrentCluster } from "features/hierarchy/selectors";
-// @ts-ignore
+
 import { getRequestStatus } from "features/ui/selectors";
 
 import {VisProps} from '../types';

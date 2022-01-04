@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { off } from "hammerjs";
 import { DateTime } from "luxon";
 import { createInterval } from "../features/space/helpers";
 

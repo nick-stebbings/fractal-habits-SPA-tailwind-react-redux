@@ -1,13 +1,11 @@
 import { createSelector, createSlice } from "@reduxjs/toolkit";
 
 import { DB_DATE_ID_OFFSET } from "app/constants";
-// @ts-ignore
+
 import { Dictionary, TimeFrame } from "app/types";
 
-// @ts-ignore
 import { RootState } from "app/store";
 
-// @ts-ignore
 import { weekOfDaySpaces, createInterval } from "./helpers";
 import { DateTime } from "luxon";
 

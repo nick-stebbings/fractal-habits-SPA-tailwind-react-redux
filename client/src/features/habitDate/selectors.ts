@@ -1,9 +1,8 @@
-// @ts-ignore
 import { RootState } from "app/store";
 import { createSelector } from "@reduxjs/toolkit";
-// @ts-ignore
+
 import { TimeFrame } from "app/types";
-// @ts-ignore
+
 import { Habit } from "app/features/habit/types";
 
 import { selectCurrentHierarchyRecords } from "../hierarchy/selectors";

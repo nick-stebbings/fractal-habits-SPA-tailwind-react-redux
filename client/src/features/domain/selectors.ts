@@ -1,4 +1,3 @@
-// @ts-ignore
 import { RootState } from "app/store";
 
 export const selectCurrentDomain = (state: RootState) => {

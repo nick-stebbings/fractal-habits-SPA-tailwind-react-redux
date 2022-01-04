@@ -4,7 +4,7 @@
 //   newRecord,
 // } from "../../../../../../assets/scripts/controller";
 import React from "react";
-// @ts-ignore
+
 import { useAppSelector } from "app/hooks";
 import { selectCurrentDomain } from "features/domain/selectors";
 

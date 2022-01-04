@@ -10,6 +10,9 @@ import "./styles/bundle.css";
 // Vendor CSS
 import "./styles/vendor/flashJS/import";
 
+// Misc JS
+import "./app/mobSwipeEvents"
+
 // Vendor JS
 import "./assets/scripts/vendor/flash.min.js";
 

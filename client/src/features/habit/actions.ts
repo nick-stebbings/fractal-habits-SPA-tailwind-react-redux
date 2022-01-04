@@ -1,8 +1,7 @@
-// @ts-ignore
 import { clientRoutes } from "services/restApis";
-// @ts-ignore
+
 import { createCrudActionCreators } from "app/storeHelpers";
-// @ts-ignore
+
 import { fetchHabitDatesREST } from "features/habitDate/actions";
 import { selectCurrentHabit } from "./selectors";
 import { selectCurrentHabitDate } from "./../habitDate/selectors";

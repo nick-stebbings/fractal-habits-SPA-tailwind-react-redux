@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
-// @ts-ignore
+
 import { store } from "app/store";
 import { isTouchDevice } from "app/helpers";
 import { useAppSelector } from "app/hooks";
 import { Link } from "react-router-dom";
 
-// @ts-ignore
 import { stringifyDate } from "features/habitDate/helpers";
-// @ts-ignore
+
 import {
   selectCurrentSpace,
   selectThisWeekSpaces,
   selectRelativeDateId,
 } from "features/space/slice";
-// @ts-ignore
+
 import { selectCurrentHabit } from "features/habit/selectors";
-// @ts-ignore
+
 import { selectCurrentHierarchyRecords } from "features/hierarchy/selectors";
-// @ts-ignore
+
 import {
   selectAccumulatedStatusForDate,
   selectStoredHabitDates,

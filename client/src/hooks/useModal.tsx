@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-// @ts-ignore
+
 import { useAppSelector } from "app/hooks";
 import uiSlice from "features/ui/reducer";
 const { toggleConfirm } = uiSlice.actions;
 import { getUIStatus, getConfirmStatus } from "features/ui/selectors";
 
-// @ts-ignore
+
 import { Modal } from "components/Modal";
 import { store } from "app/store";
 
