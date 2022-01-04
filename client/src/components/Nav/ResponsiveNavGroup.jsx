@@ -13,11 +13,7 @@ export const ResponsiveNavGroup = ({ id, classString, label, subpaths }) => {
         }
       }}
     >
-      <h2
-        id={id}
-        className={classString}
-        style={{ flexBasis: 100, marginRight: "3rem" }}
-      >
+      <h2 id={id} className={classString} style={{ marginRight: "3rem" }}>
         {label}
       </h2>
       <ul className="responsive-nav-link flex flex-wrap justify-around h-full">

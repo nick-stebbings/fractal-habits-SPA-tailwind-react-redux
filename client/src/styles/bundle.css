@@ -3883,6 +3883,10 @@ input[type="date"] {
     padding-left: 0rem;
     padding-right: 0.75rem;
   }
+  .nav-groups li h2 {
+    display: flex;
+    flex-basis: 150px;
+  }
 }
 @media (min-width: 1025px) {
   .mask-wrapper #responsive-nav {

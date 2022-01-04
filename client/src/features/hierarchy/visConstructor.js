@@ -79,26 +79,16 @@ const LG_LEVELS_HIGH = 6;
 const XS_LEVELS_WIDE = 3;
 const LG_LEVELS_WIDE = 3;
 
-const getInitialXTranslate = (
-  groupWidth,
-  scale,
-  type,
-  { canvasWidth, levelsWide, nodeRadius, viewportW, defaultView, isSmallScreen }
-) => {
+const getInitialXTranslate = ({ levelsWide, defaultView }) => {
   const [x, y, w, h] = defaultView.split` `;
   return w / levelsWide / 1.5;
 };
 
-const getInitialYTranslate = (
-  groupHeight,
-  scale,
-  type,
-  { canvasHeight, levelsHigh, defaultView, isSmallScreen }
-) => {
+const getInitialYTranslate = (type, { levelsHigh, defaultView }) => {
   const [x, y, w, h] = defaultView.split` `;
   switch (type) {
     case "tree":
-      return 800;
+      return 900;
     default:
       return (h / levelsHigh) * 1.15;
   }
@@ -150,13 +140,7 @@ export default class Visualization {
       canvasWidth,
 
       defaultCanvasTranslateX: (scale) => {
-        const initialX = getInitialXTranslate.call(
-          this,
-          this._canvas?._groups[0][0]?.getBoundingClientRect().width,
-          scale || this._viewConfig.scale,
-          this.type,
-          this._viewConfig
-        );
+        const initialX = getInitialXTranslate.call(this, this._viewConfig);
         return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
           "undefined"
           ? initialX +
@@ -166,8 +150,6 @@ export default class Visualization {
       defaultCanvasTranslateY: (scale) => {
         const initialY = getInitialYTranslate.call(
           this,
-          this._canvas?._groups[0][0]?.getBoundingClientRect().height,
-          scale || this._viewConfig.scale,
           this.type,
           this._viewConfig
         );
@@ -591,7 +573,6 @@ export default class Visualization {
           }
         });
 
-      debugger;
       accumulateTree(this.rootData, this);
       this.updateRootDataAfterAccumulation(this.rootData);
       this.newHabitDatesAdded = true;
@@ -648,7 +629,7 @@ export default class Visualization {
     this._viewConfig.dx =
       this._viewConfig.canvasWidth / this._viewConfig.levelsHigh - // Adjust for tree horizontal spacing on different screens
       +(this.type == "tree" && this._viewConfig.isSmallScreen()) * 250 -
-      (this.type == "cluster" && this._viewConfig.isSmallScreen()) * 150;
+      (this.type == "cluster" && this._viewConfig.isSmallScreen()) * 210;
     this._viewConfig.dy =
       this._viewConfig.canvasHeight / this._viewConfig.levelsWide;
 
@@ -1183,17 +1164,13 @@ export default class Visualization {
           });
           ev.target = parentNodeGroup;
           try {
-            this.eventHandlers.handleMouseEnter.call(this, ev, node.data);
-            this.eventHandlers.handleNodeFocus.call(
-              this,
-              ev.srcEvent,
-              node.data
-            );
+            this.eventHandlers.handleMouseEnter.call(this, ev, node);
+            this.eventHandlers.handleNodeFocus.call(this, ev.srcEvent, node);
             if (!(this.type == "radial"))
               this.eventHandlers.handleNodeZoom.call(
                 this,
                 ev.srcEvent,
-                node.data,
+                node,
                 false
               );
             break;
