@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { off } from "hammerjs";
 import { DateTime } from "luxon";
-import { createInterval } from "../features/space/utils";
+import { createInterval } from "../features/space/helpers";
 
 export function isCrud(action, create, fetch, update, destroy, fetchOne) {
   return [create, fetch, update, destroy, fetchOne]

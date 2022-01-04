@@ -4,7 +4,7 @@ import { useAppSelector } from "app/hooks";
 import { selectCurrentHabit } from "features/habit/selectors";
 import { DateTime } from "luxon";
 import { selectCurrentSpace, selectThisWeekSpaces } from "features/space/slice";
-import { stringifyDate } from "features/habitDate/utils";
+import { stringifyDate } from "features/habitDate/helpers";
 
 export const DateSelector = function () {
   const currentDateSpace = useAppSelector(selectCurrentSpace);

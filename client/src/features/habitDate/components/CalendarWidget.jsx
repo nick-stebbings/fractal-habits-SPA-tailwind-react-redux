@@ -6,7 +6,7 @@ import { useAppSelector } from "app/hooks";
 import { Link } from "react-router-dom";
 
 // @ts-ignore
-import { stringifyDate } from "features/habitDate/utils";
+import { stringifyDate } from "features/habitDate/helpers";
 // @ts-ignore
 import {
   selectCurrentSpace,

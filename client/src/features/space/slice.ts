@@ -8,7 +8,7 @@ import { Dictionary, TimeFrame } from "app/types";
 import { RootState } from "app/store";
 
 // @ts-ignore
-import { weekOfDaySpaces, createInterval } from "./utils";
+import { weekOfDaySpaces, createInterval } from "./helpers";
 import { DateTime } from "luxon";
 
 export const selectThisWeekSpaces = (state: RootState) => state?.space.thisWeek;
