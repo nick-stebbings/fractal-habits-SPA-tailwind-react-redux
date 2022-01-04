@@ -74,7 +74,6 @@ export default function App({ isVisComponent, children }: indexProps) {
     !periodicSave && dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
   }
 
-
   // Send a habit-date post request periodically
   useEffect(() => {
     if (!changesMade) return;
