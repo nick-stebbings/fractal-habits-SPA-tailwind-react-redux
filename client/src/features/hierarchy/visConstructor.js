@@ -1151,58 +1151,57 @@ export default class Visualization {
         console.log("Problem with mobile doubletap: ", error);
       }
     });
-    manager.on(
-      "singletap",
-      debounce((ev) => {
-        ev.srcEvent.preventDefault();
-        ev.srcEvent.stopPropagation();
+    manager.on("singletap", (ev) => {
+      ev.srcEvent.preventDefault();
+      ev.srcEvent.stopPropagation();
 
-        const target = ev.firstTarget;
-        if (target.tagName !== "circle") return;
+      const target = ev.firstTarget;
+      if (target.tagName !== "circle") return;
 
-        const node = target?.__data__;
+      const node = target?.__data__;
 
-        switch (ev?.target?.tagName) {
-          // Delete button is currently the only path
-          case "path":
-            this.eventHandlers.handleDeleteNode.call(
+      switch (ev?.target?.tagName) {
+        // Delete button is currently the only path
+        case "path":
+          this.eventHandlers.handleDeleteNode.call(
+            this,
+            ev,
+            ev.target.__data__.data
+          );
+          break;
+        case "rect":
+          if (ev.target.parentNode.classList.contains("tooltip")) return; // Stop label from triggering
+        // Append or prepend are currently the only text
+        case "text":
+          ev.target.textContent == "APPEND"
+            ? this.eventHandlers.handleAppendNode.call(this)
+            : this.eventHandlers.handlePrependNode.call(this);
+          break;
+        default:
+          let parentNodeGroup = _.find(this._enteringNodes._groups[0], (n) => {
+            return n?.__data__?.data?.content == node?.data?.content;
+          });
+          ev.target = parentNodeGroup;
+          try {
+            this.eventHandlers.handleMouseEnter.call(this, ev, node.data);
+            this.eventHandlers.handleNodeFocus.call(
               this,
-              ev,
-              ev.target.__data__.data
+              ev.srcEvent,
+              node.data
             );
+            if (!(this.type == "radial"))
+              this.eventHandlers.handleNodeZoom.call(
+                this,
+                ev.srcEvent,
+                node.data,
+                false
+              );
             break;
-          case "rect":
-            if (ev.target.parentNode.classList.contains("tooltip")) return; // Stop label from triggering
-          // Append or prepend are currently the only text
-          case "text":
-            ev.target.textContent == "APPEND"
-              ? this.eventHandlers.handleAppendNode.call(this)
-              : this.eventHandlers.handlePrependNode.call(this);
-            break;
-          default:
-            let parentNodeGroup = _.find(
-              this._enteringNodes._groups[0],
-              (n) => {
-                return n?.__data__?.data?.content == node?.data?.content;
-              }
-            );
-            ev.target = parentNodeGroup;
-            try {
-              this.eventHandlers.handleMouseEnter.call(this, ev, node.data);
-              if (!(this.type == "radial"))
-                this.eventHandlers.handleNodeZoom.call(
-                  this,
-                  ev.srcEvent,
-                  node,
-                  false
-                );
-              break;
-            } catch (error) {
-              console.error(error);
-            }
-        }
-      }, 300)
-    );
+          } catch (error) {
+            console.error(error);
+          }
+      }
+    });
   }
 
   bindLegendEventHandler() {
