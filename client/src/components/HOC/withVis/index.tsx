@@ -3,15 +3,11 @@ import React, { ComponentType, useEffect} from 'react'
 import useFetch from '../../../hooks/useFetch'
 import { useLocation,  Redirect } from 'react-router-dom';
 import { useLastLocation } from 'react-router-last-location';
-import "../../../assets/styles/components/vis.scss";
+import "./vis.scss";
 
 import { useAppSelector, useAppDispatch } from 'app/hooks';
 import UISlice from 'features/ui/reducer';
 const { resetDeleteCompleted } = UISlice.actions;
-import HabitSlice from 'features/habit/reducer';
-const { updateCurrentHabit } = HabitSlice.actions;
-import hierarchySlice from 'features/hierarchy/reducer';
-const { updateCurrentHierarchy } = hierarchySlice.actions;
 
 import { selectDeleteCompleted } from 'features/ui/selectors';
 

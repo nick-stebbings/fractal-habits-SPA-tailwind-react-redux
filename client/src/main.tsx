@@ -35,8 +35,10 @@ import { Provider } from "react-redux";
 import { Routes } from "./routes/Routes";
 
 // Import our CSS
-import "../bundle.css";
-import "./assets/styles/vendor/flashJS/import";
+import "./styles/bundle.css";
+
+// Vendor CSS
+import "../.vscode/styles/vendor/flashJS/import";
 
 // Vendor JS
 import "./assets/scripts/vendor/flash.min.js";

@@ -1,6 +1,6 @@
 // Pages
-import CreateHabit from "../pages/CreateHabit";
-import AppendHabit from "../pages/AppendHabit";
+import CreateHabit from "../pages/HabitList";
+import AppendHabit from "../pages/QuickWrite";
 import HabitDashboard from "../pages/HabitDashboard";
 import HabitTree from "../pages/HabitTree";
 import Cluster from "../pages/Cluster";

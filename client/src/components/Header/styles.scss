@@ -1,28 +1,3 @@
-// @layer utilities {
-//   @variants active, focus {
-//     .darken {
-//       background-blend-mode: darken;
-//     }
-//     .outline-shadow {
-//       @apply rounded-full;
-//     }
-//     .outline-dashed {
-//       @apply outline-light;
-//     }
-//     .outline-light {
-//       @apply border-4; // border-balance-sshades-sat;
-//     }
-//     .outline-none {
-//       overflow: hidden;
-//       outline: none;
-//     }
-//     .outline-shadow {
-//       @apply rounded-full;
-//       box-shadow: 0 0 10px 0.75rem rgb(33, 25, 18);
-//     }
-//   }
-// }
-
 .logo-link {
   @apply fixed text-white z-50 w-12 hidden lg:block;
   left: -2px;

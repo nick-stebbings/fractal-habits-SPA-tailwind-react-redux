@@ -26,7 +26,7 @@ import { DomainSelector } from "../Nav/UI/Inputs/DomainSelector";
 import { DropdownNav } from "../Nav/DropdownNav";
 import { DateSelector } from "../Nav/UI/Inputs/DateSelector";
 
-import "../../assets/styles/components/MaskHeader.scss";
+import "./styles.scss";
 
 const showMegaMenu = (id: number) => {
   document.querySelector(".mask-wrapper").style.height = "357px";

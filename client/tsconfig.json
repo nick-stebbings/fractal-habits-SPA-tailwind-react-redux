@@ -31,6 +31,6 @@
     "services/*": ["./src/services/*"],
     "components/*": ["./src/components/*"]
   },
-  "include": ["./src"],
+  "include": ["./src", ".vscode/styles"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
