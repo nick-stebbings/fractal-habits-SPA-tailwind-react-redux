@@ -11,10 +11,6 @@ import { selectInUnpersisted } from "features/habitDate/selectors";
 
 // General helpers
 
-export const radialPoint = (x, y) => {
-  return [(y = +y) * Math.cos((x -= Math.PI / 2)), y * Math.sin(x)];
-};
-
 export const getTransform = (node, xScale) => {
   if (typeof node === "undefined") return;
   var x = node.__data__ ? node.__data__.x : node.x;
@@ -89,6 +85,53 @@ export const updateVisRootData = (
   }
 };
 
+export const getInitialXTranslate = ({ levelsWide, defaultView }) => {
+  const [x, y, w, h] = defaultView.split` `;
+  return w / levelsWide / 1.5;
+};
+
+export const getInitialYTranslate = (type, { levelsHigh, defaultView }) => {
+  const [x, y, w, h] = defaultView.split` `;
+  switch (type) {
+    case "tree":
+      return 900;
+    default:
+      return (h / levelsHigh) * 1.15;
+  }
+};
+
+export const radialTranslation = (zoomConfig) => {
+  const [x, y] = radialPoint(
+    zoomConfig.previousRenderZoom?.node?.x,
+    zoomConfig.previousRenderZoom?.node?.y
+  );
+  return { x, y };
+};
+
+export const newXTranslate = (type, viewConfig, zoomConfig) => {
+  const scale = zoomConfig.globalZoomScale || viewConfig.scale;
+  switch (type) {
+    case "cluster":
+      return -zoomConfig.previousRenderZoom?.node?.y * scale;
+    case "radial":
+      return -radialTranslation(zoomConfig).x * scale;
+    case "tree":
+      return -zoomConfig.previousRenderZoom?.node?.x * scale;
+  }
+};
+
+export const newYTranslate = (newScale, type, viewConfig, zoomConfig) => {
+  const scale = newScale || viewConfig.scale;
+  switch (type) {
+    case "cluster":
+      return -zoomConfig.previousRenderZoom?.node?.x * scale;
+    case "radial":
+      return -radialTranslation(zoomConfig).y * scale;
+    case "tree":
+      return -zoomConfig.previousRenderZoom?.node?.y * scale;
+  }
+};
+
 // Node Status helpers
 
 export const oppositeStatus = (current) =>
@@ -98,6 +141,9 @@ export const sumChildrenValues = (node, hidden = false) => {
   const children = node?._children || node?.children || node?.data?.children;
   return children.reduce((sum, n) => sum + n.value, 0);
 };
+
+export const nodeWithoutHabitDate = (data, store) =>
+  habitDateNotPersisted(data) && !selectInUnpersisted(data)(store.getState());
 
 const allOOB = (nodes) =>
   nodes.every((d) => parseTreeValues(d.data.content).status === "OOB");
@@ -275,9 +321,6 @@ export const nodeStatusColours = (d) => {
 };
 
 // Node/tree manipulation helpers
-
-export const nodeWithoutHabitDate = (data, store) =>
-  habitDateNotPersisted(data) && !selectInUnpersisted(data)(store.getState());
 
 export function expand(d) {
   var children = d.children ? d.children : d._children;

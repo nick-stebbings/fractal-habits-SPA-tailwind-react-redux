@@ -40,7 +40,6 @@ import hierarchySlice from "features/hierarchy/reducer";
 import { selectCurrentDateId, selectCurrentDate } from "../space/slice";
 
 import {
-  radialPoint,
   expand,
   collapse,
   nodesForCollapse,
@@ -54,6 +53,11 @@ import {
   getColor,
   isALeaf,
   hierarchyStateHasChanged,
+  getInitialXTranslate,
+  getInitialYTranslate,
+  radialTranslation,
+  newXTranslate,
+  newYTranslate,
 } from "./components/helpers";
 import { debounce, handleErrorType, isTouchDevice } from "app/helpers";
 
@@ -78,53 +82,6 @@ const XS_LEVELS_HIGH = 6;
 const LG_LEVELS_HIGH = 6;
 const XS_LEVELS_WIDE = 3;
 const LG_LEVELS_WIDE = 3;
-
-const getInitialXTranslate = ({ levelsWide, defaultView }) => {
-  const [x, y, w, h] = defaultView.split` `;
-  return w / levelsWide / 1.5;
-};
-
-const getInitialYTranslate = (type, { levelsHigh, defaultView }) => {
-  const [x, y, w, h] = defaultView.split` `;
-  switch (type) {
-    case "tree":
-      return 900;
-    default:
-      return (h / levelsHigh) * 1.15;
-  }
-};
-
-const radialTranslation = (zoomConfig) => {
-  const [x, y] = radialPoint(
-    zoomConfig.previousRenderZoom?.node?.x,
-    zoomConfig.previousRenderZoom?.node?.y
-  );
-  return { x, y };
-};
-
-const newXTranslate = (type, viewConfig, zoomConfig) => {
-  const scale = zoomConfig.globalZoomScale || viewConfig.scale;
-  switch (type) {
-    case "cluster":
-      return -zoomConfig.previousRenderZoom?.node?.y * scale;
-    case "radial":
-      return -radialTranslation(zoomConfig).x * scale;
-    case "tree":
-      return -zoomConfig.previousRenderZoom?.node?.x * scale;
-  }
-};
-
-const newYTranslate = (newScale, type, viewConfig, zoomConfig) => {
-  const scale = newScale || viewConfig.scale;
-  switch (type) {
-    case "cluster":
-      return -zoomConfig.previousRenderZoom?.node?.x * scale;
-    case "radial":
-      return -radialTranslation(zoomConfig).y * scale;
-    case "tree":
-      return -zoomConfig.previousRenderZoom?.node?.y * scale;
-  }
-};
 
 export default class Visualization {
   constructor(svgId, inputTree, canvasHeight, canvasWidth, margin, type) {
