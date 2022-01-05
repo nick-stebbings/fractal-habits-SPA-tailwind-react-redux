@@ -90,11 +90,15 @@ export const getInitialXTranslate = ({ levelsWide, defaultView }) => {
   return w / levelsWide / 1.5;
 };
 
-export const getInitialYTranslate = (type, { levelsHigh, defaultView }) => {
+export const getInitialYTranslate = (
+  type,
+  { levelsHigh, defaultView },
+  menuExpanded
+) => {
   const [x, y, w, h] = defaultView.split` `;
   switch (type) {
     case "tree":
-      return 900;
+      return menuExpanded ? h / 3 : h / 8;
     default:
       return (h / levelsHigh) * 1.15;
   }

@@ -55,7 +55,6 @@ import {
   hierarchyStateHasChanged,
   getInitialXTranslate,
   getInitialYTranslate,
-  radialTranslation,
   newXTranslate,
   newYTranslate,
 } from "./components/helpers";
@@ -108,7 +107,8 @@ export default class Visualization {
         const initialY = getInitialYTranslate.call(
           this,
           this.type,
-          this._viewConfig
+          this._viewConfig,
+          document.querySelector(".calendar-widget").style.right == "0px"
         );
         return typeof this._zoomConfig.previousRenderZoom?.node?.y !==
           "undefined"
@@ -1149,10 +1149,9 @@ export default class Visualization {
   }
 
   bindLegendEventHandler() {
-    let infoCell = document.querySelector(".legend-svg .cell:first-child");
-    infoCell.addEventListener("click", () => {
-      let controlsSvg = document.querySelector(".controls-svg");
-      controlsSvg.classList.toggle("hidden");
+    let infoCell = document.querySelector(".help-svg");
+    infoCell?.addEventListener("click", () => {
+      store.dispatch(toggleConfirm({ type: "Instructions" }));
     });
   }
 
@@ -1166,7 +1165,7 @@ export default class Visualization {
     ];
     const legendScale = this._viewConfig.isSmallScreen()
       ? BASE_SCALE / 4
-      : BASE_SCALE / 3;
+      : BASE_SCALE / 2;
     const ordinal = scaleOrdinal()
       .domain(labels)
       .range([
@@ -1178,11 +1177,6 @@ export default class Visualization {
       ]);
 
     const legendSvg = select("svg.legend-svg");
-    const controlsSvg = select("svg.controls-svg");
-    const gText = controlsSvg
-      .append("g")
-      .attr("class", "controls")
-      .attr("transform", `translate(${40}, ${40})scale(${legendScale})`);
     const gLegend = legendSvg
       .append("g")
       .attr("class", "legend")
@@ -1193,24 +1187,7 @@ export default class Visualization {
         }) scale(${legendScale})`
       );
 
-    // Borrowing the habit label for the legend
-    // if (isTouchDevice()) {
-    //   gText
-    //     .append("text")
-    //     .text("Single Tap -> Select Habit & Focus")
-    //     .attr("y", -45);
-    //   gText
-    //     .append("text")
-    //     .text("Double Tap -> Select Family/Tick Off Habit")
-    //     .attr("y", 30);
-    //   gText.append("text").text("Swipe Left ---> Next Day").attr("y", 5);
-    //   gText.append("text").text("Swipe Right ---> Last Day").attr("y", -10);
-    // } else {
-    //   gText.append("text").text("L/Click ---> Mark Complete");
-    //   gText.append("text").attr("y", 25).text("R/Click -> Focus");
-    //   gText.append("text").text("Scroll Up -> Zoom").attr("y", -25);
-    // }
-    const colorLegend = legendColor()
+    const legend = legendColor()
       .orient("horizontal")
       .labels(labels)
       .orient("vertical")
@@ -1218,8 +1195,8 @@ export default class Visualization {
       .shapeRadius(14)
       .shapePadding(-5)
       .scale(ordinal);
-    gLegend.call(colorLegend);
-    // TODO: Wire up controls svg displaying on event
+
+    gLegend.call(legend);
   }
 
   setNodeAnimationGroups() {

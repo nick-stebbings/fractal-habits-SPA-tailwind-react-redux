@@ -36,9 +36,15 @@ g.nodes {
 }
 
 .controls-svg {
-  background-color: #1a140e;
-  stroke: gray;
-  color: #f8f8f8;
+  width: 72vw;
+  height: 15vh;
+  background-color: #dddddd;
+  opacity: 0.4;
+}
+
+.swipe-zone {
+  color: #ddd;
+  font-weight: 900;
 }
 
 svg path.link {

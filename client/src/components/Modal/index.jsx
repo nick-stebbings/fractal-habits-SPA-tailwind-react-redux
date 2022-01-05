@@ -57,7 +57,7 @@ export const Modal = React.memo(({ type, toggle, resetConfirm }) => {
           className={
             type == "Error" || confirmationDialog
               ? "h-72 inset-y-1/3 inset-x-10 sm:inset-1/4 rounded-2xl shadow-tershades-gray absolute flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
-              : "h-full sm:h-3/4 md:inset-2 inset-1 sm:inset-12 rounded-2xl shadow-tershades-gray absolute bottom-auto flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0 text-sm"
+              : "m-2 h-full sm:h-3/4 md:inset-2 inset-1 sm:inset-12 rounded-2xl shadow-tershades-gray absolute bottom-auto flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0 text-sm"
           }
         >
           <div className="rounded-2xl flex flex-col items-center w-full">
@@ -127,13 +127,14 @@ export const Modal = React.memo(({ type, toggle, resetConfirm }) => {
               />
             )}
             {type == "Instructions" && (
-              <InfoBox
+              <DialogBox
                 type="instruct"
                 title="How To Use HabitFract"
                 message="A little confused? Here's a breakdown of this app's functionality"
                 type={type}
-                iconColor="text-balance-buttonbg-closelighter"
-                iconPath="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                iconColor="text-balance-buttontext-digblue"
+                iconPath="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                handleClose={closeModal}
               />
             )}
           </div>
