@@ -168,7 +168,7 @@ export function createCrudActionCreators(actionTypes, callBacks) {
   const destroy = createAsyncThunk(actionTypes[3], async (input, thunkAPI) => {
     const response = await callBacks[3](input);
 
-    return [204].includes(response?.status)
+    return [204, 404].includes(response?.status)
       ? thunkAPI.fulfillWithValue(response)
       : thunkAPI.rejectWithValue(response);
   });
