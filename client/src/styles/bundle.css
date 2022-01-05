@@ -3603,7 +3603,6 @@ main#append-habit .button-container.selected {
   color: rgba(255, 255, 255, var(--tw-text-opacity));
 }
 .vis-button {
-  z-index: 101;
   transition: right 0.2s ease-in;
   position: fixed;
   right: -9rem;
@@ -3650,9 +3649,6 @@ main#append-habit .button-container.selected {
     top: 9rem;
     bottom: auto;
   }
-  /* .vis-button#reset-tree:before {
-    content: "\f2d2";
-  } */
 }
 .vis-button.active:before {
   content: "\f31e";
@@ -3661,6 +3657,7 @@ main#append-habit .button-container.selected {
   bottom: 0.25rem;
   z-index: 10;
 }
+#collapse-tree,
 #reset-tree {
   z-index: 10;
 }

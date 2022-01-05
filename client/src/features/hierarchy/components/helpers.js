@@ -99,20 +99,18 @@ export const getInitialYTranslate = (
   switch (type) {
     case "tree":
       return menuExpanded ? h / 5.5 : h / 5.5;
-    case "cluster":
-      return menuExpanded ? h / 5 : h / 8;
     default:
       return (h / levelsHigh) * 1.15;
   }
 };
 
-export const radialTranslation = (zoomConfig) => {
-  const [x, y] = radialPoint(
-    zoomConfig.previousRenderZoom?.node?.x,
-    zoomConfig.previousRenderZoom?.node?.y
-  );
-  return { x, y };
-};
+// export const radialTranslation = (zoomConfig) => {
+//   const [x, y] = radialPoint(
+//     zoomConfig.previousRenderZoom?.node?.x,
+//     zoomConfig.previousRenderZoom?.node?.y
+//   );
+//   return { x, y };
+// };
 
 export const newXTranslate = (type, viewConfig, zoomConfig) => {
   const scale = zoomConfig.globalZoomScale || viewConfig.scale;
@@ -120,7 +118,7 @@ export const newXTranslate = (type, viewConfig, zoomConfig) => {
     case "cluster":
       return -zoomConfig.previousRenderZoom?.node?.y * scale;
     case "radial":
-      return -radialTranslation(zoomConfig).x * scale;
+      return 0; // -radialTranslation(zoomConfig).x * scale;
     case "tree":
       return -zoomConfig.previousRenderZoom?.node?.x * scale;
   }

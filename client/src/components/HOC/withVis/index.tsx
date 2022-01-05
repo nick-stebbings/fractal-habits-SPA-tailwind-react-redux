@@ -6,6 +6,7 @@ import { useLastLocation } from 'react-router-last-location';
 import "./vis.scss";
 
 import { useAppSelector, useAppDispatch } from 'app/hooks';
+import {isTouchDevice} from 'app/helpers'
 import UISlice from 'features/ui/reducer';
 const { resetDeleteCompleted } = UISlice.actions;
 

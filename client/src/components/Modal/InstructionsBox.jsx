@@ -90,11 +90,11 @@ export const InstructBox = ({
           </p>
           <p className="mt-2 w-1/2 mx-auto text-center">
             Look for these buttons:
-            <div className="flex items-center justify-center">
-              <img src={expandBtn} />
-              <img src={divideBtn} />
-            </div>
           </p>
+          <div className="flex items-center justify-center">
+            <img src={expandBtn} />
+            <img src={divideBtn} />
+          </div>
           <hr className="mt-4 mb-8 w-8 mx-auto" />
 
           <h1 className="text-center mt-2">Drop what doesn't serve you</h1>
@@ -117,7 +117,7 @@ export const InstructBox = ({
           </div>
           <p className="mt-2">
             Be careful - if you delete a habit, you also delete all of its
-            dividends (sub-habits)! You also delete the habit historically when
+            fractions (sub-habits)! You also delete the habit historically when
             you confirm this action.
           </p>
           <hr className="mt-4 mb-8 w-8 mx-auto" />
@@ -135,7 +135,7 @@ export const InstructBox = ({
           </p>
           <p className="mt-2">
             Sometimes there just isn't enough screen-space... especially in
-            Focus Mode. Try to zoom out/move away manually and you will return
+            Focused Mode. Try to zoom out/move away manually and you will return
             to a scaled out view.
           </p>
           <hr className="mt-4 mb-8 w-8 mx-auto" />
@@ -162,7 +162,7 @@ export const InstructBox = ({
               {isTouchDevice() ? " double tap" : " right click"}
             </span>{" "}
             on that habit's circle. It will change colour when it changes state
-            - and so will the habits above it in the tree.
+            - and so will the habits above it in the hierarchy.
           </p>
           <hr className="mt-4 mb-8 w-8 mx-auto" />
 

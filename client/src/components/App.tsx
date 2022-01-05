@@ -47,9 +47,9 @@ export default function App({ isVisComponent, children }: indexProps) {
     
     const persisting = nodesToPersist.length > 0 || nodesToDestroy.length > 0
     
-    // if (persisting) {
-    //   debugger;
-    // }
+    if (nodesToDestroy.length > 0) {
+      debugger;
+    }
     
     if (nodesToPersist.length > 0) {
       dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))

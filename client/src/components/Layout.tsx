@@ -14,18 +14,19 @@ export const Layout: React.FC<LayoutProps> = ({ isVis,changesMade, children }) =
   return isVis ? (
     <>
       <LayoutWithVis />
-
-        {isTouchDevice() && <>
-          <h2 className='swipe-zone fixed text-xl uppercase bottom-20 left-1/3 lg:hidden'>Swipe Zone</h2>
-          <svg className="controls-svg lg:hidden opacity-10 z-40 fixed bottom-0 border-2 left-0 w-full right-48">
-          </svg>
-      </>}
-      
       <div id="vis" className="w-full h-full mx-auto" onContextMenuCapture={(e) => {
           if(e.target.tagName !== 'circle') return
             changesMade(true)
-          }}>
-        <div className="fixed bottom-0 h-28 w-1/3 md:w-48" style={{ bottom: "-40px"}}>
+      }}>
+        
+
+        {isTouchDevice() && <>
+          <h2 className='swipe-zone fixed text-xl uppercase bottom-20 left-1/3 lg:hidden'>Swipe Zone</h2>
+          <div className="controls-div lg:hidden fixed bottom-0 border-2 left-0 w-full right-0">
+          </div>
+        </>}
+
+        <div className="fixed bottom-0 z-20 h-28 w-1/3 md:w-48" style={{ bottom: "-40px"}}>
             <svg className="legend-svg w-full z-10"></svg>
         </div>
 
