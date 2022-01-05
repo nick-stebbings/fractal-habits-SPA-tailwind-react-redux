@@ -1005,7 +1005,7 @@ export default class Visualization {
         .append("rect")
         .attr("rx", 15)
         .attr("y", -30)
-        .attr("width", 100)
+        .attr("width", 90)
         .attr("height", 30)
         .on("click", (e) => {
           e.stopPropagation();
@@ -1014,7 +1014,7 @@ export default class Visualization {
         .append("text")
         .attr("x", 15)
         .attr("y", (d) => (d.parent ? -8 : -5))
-        .text((d) => "APPEND")
+        .text((d) => "DIVIDE")
         .on("click", (e, n) => {
           this.eventHandlers.handleAppendNode.call(this, e, n);
         });
@@ -1023,7 +1023,7 @@ export default class Visualization {
         .attr("style", (d) => (d.parent ? "opacity: 0" : "opacity: 1"))
         .attr("rx", 15)
         .attr("y", -55)
-        .attr("width", 100)
+        .attr("width", 90)
         .attr("height", 30)
         .on("click", (e) => {
           e.stopPropagation();
@@ -1033,7 +1033,7 @@ export default class Visualization {
         .attr("style", (d) => (d.parent ? "opacity: 0" : "opacity: 1"))
         .attr("x", 12)
         .attr("y", -30)
-        .text("PREPEND")
+        .text("EXPAND")
         .on("click", (e, n) => {
           this.eventHandlers.handlePrependNode.call(this, e, n);
         });
@@ -1121,7 +1121,7 @@ export default class Visualization {
           if (ev.target.parentNode.classList.contains("tooltip")) return; // Stop label from triggering
         // Append or prepend are currently the only text
         case "text":
-          ev.target.textContent == "APPEND"
+          ev.target.textContent == "DIVIDE"
             ? this.eventHandlers.handleAppendNode.call(this)
             : this.eventHandlers.handlePrependNode.call(this);
           break;

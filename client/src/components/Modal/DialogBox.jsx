@@ -47,16 +47,12 @@ export const DialogBox = ({
             type={type}
             handleClose={handleClose}
           />
-          {type !== "Instructions" ? (
-            <SubmitButton
-              id={`submit-form-${randId}`}
-              name="submit"
-              label="Confirm"
-              handleConfirm={handleConfirm}
-            />
-          ) : (
-            <></>
-          )}
+          <SubmitButton
+            id={`submit-form-${randId}`}
+            name="submit"
+            label="Confirm"
+            handleConfirm={handleConfirm}
+          />
         </div>
       </form>
     </div>

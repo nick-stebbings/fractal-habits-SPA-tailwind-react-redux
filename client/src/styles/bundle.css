@@ -2771,6 +2771,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.instructions h1,
 #call-to-action h2,
 section.info-cards h3,
 section > h2:first-of-type {

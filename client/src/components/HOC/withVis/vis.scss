@@ -8,16 +8,7 @@ g.nodes {
   stroke-width: 4px;
 }
 
-.legend-svg .cell:first-child circle::after {
-  position: absolute;
-  font-family: "Font Awesome 5 Free";
-  content: "";
-  width: 3rem;
-  height: 3rem;
-  left: 0;
-  top: 0;
-}
-
+.instruct-legend .cell:nth-child(3) circle,
 .legend-svg .cell:nth-child(3) circle {
   fill: #edd837;
   stroke: #93cc96;
@@ -29,6 +20,7 @@ g.nodes {
   stroke-width: 2px;
 }
 
+.instruct-legend .cell,
 .legend-svg .cell {
   position: relative;
   pointer-events: none;

@@ -15,7 +15,7 @@ let MENU_ROUTES = [
         status: "enabled",
         title: "Habit Tree",
         description:
-          "A hierarchical tree showing relationships. Add habits above (PREPEND) or under (APPEND) an existing habit",
+          "A hierarchical tree showing relationships. Add habits above or under an existing habit",
         component: HabitTree,
         icon: "tree",
       },

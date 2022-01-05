@@ -8,14 +8,13 @@ import { selectCurrentNode } from "features/node/selectors";
 
 import { CreateForm } from "../Forms/CreateForm";
 import { DialogBox } from "./DialogBox";
+import { InstructBox } from "./InstructionsBox";
 import { InfoBox } from "./InfoBox";
 
 import { destroyHabitREST } from "features/habit/actions";
 import { destroyNodeREST } from "features/node/actions";
 import HabitSlice from "features/habit/reducer";
 const { deleteCurrentHabit } = HabitSlice.actions;
-import NodeSlice from "features/node/reducer";
-const { deleteCurrentNode } = NodeSlice.actions;
 
 const TITLES = {
   Confirm: "Message: You are about to...",
@@ -23,6 +22,7 @@ const TITLES = {
   Append: "Create a new child habit under the life domain",
   Error: "There has been an error!",
   Delete: "You are about to...",
+  Instructions: "How to Use HabitFract",
 };
 
 export const Modal = React.memo(({ type, toggle, resetConfirm }) => {
@@ -127,7 +127,7 @@ export const Modal = React.memo(({ type, toggle, resetConfirm }) => {
               />
             )}
             {type == "Instructions" && (
-              <DialogBox
+              <InstructBox
                 type="instruct"
                 title="How To Use HabitFract"
                 message="A little confused? Here's a breakdown of this app's functionality"
