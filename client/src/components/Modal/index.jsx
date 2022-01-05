@@ -126,6 +126,16 @@ export const Modal = React.memo(({ type, toggle, resetConfirm }) => {
                 iconPath="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             )}
+            {type == "Instructions" && (
+              <InfoBox
+                type="instruct"
+                title="How To Use HabitFract"
+                message="A little confused? Here's a breakdown of this app's functionality"
+                type={type}
+                iconColor="text-balance-buttonbg-closelighter"
+                iconPath="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            )}
           </div>
         </div>
       )}

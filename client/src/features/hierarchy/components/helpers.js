@@ -293,7 +293,10 @@ export const nodeStatusColours = (d) => {
   if (status == "OOB") return noNodeCol; // Untracked (out of bounds) nodes are neutral
 
   const childColors = d?.children?.map(nodeStatusColours);
-  if (!decidingVal && childColors.every((c) => c === positiveCol))
+  if (!decidingVal && childColors?.every((c) => c === positiveCol))
+    return positiveCol;
+  const ghostChildColors = d?._children?.map(nodeStatusColours);
+  if (!decidingVal && ghostChildColors?.every((c) => c === positiveCol))
     return positiveCol;
 
   switch (decidingVal) {
