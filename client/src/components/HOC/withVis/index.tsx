@@ -48,6 +48,9 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
         }, [deleteCompleted])
         
         if (routeChanged) {
+          if (currentVis?.rootData) {
+            currentVis.rootData.routeChanged = true
+          }
           return (<Redirect to={currentPath.pathname} />)
         }
 

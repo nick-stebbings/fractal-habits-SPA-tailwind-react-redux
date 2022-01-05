@@ -1370,6 +1370,7 @@ export default class Visualization {
       );
 
       this._hasRendered = true;
+      console.log("this.rootData :>> ", this.rootData?.routeChanged);
     }
 
     if (!select("svg.legend-svg").empty() && select("svg .legend").empty()) {
