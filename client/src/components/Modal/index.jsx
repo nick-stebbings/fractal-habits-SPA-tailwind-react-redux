@@ -56,7 +56,7 @@ export const Modal = React.memo(({ type, toggle, resetConfirm }) => {
           id="modal"
           className={
             type == "Error" || confirmationDialog
-              ? "h-72 inset-y-1/3 inset-x-10 sm:inset-1/4 rounded-2xl shadow-tershades-gray absolute flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
+              ? "h-72 inset-y-1/3 inset-x-2 sm:inset-1/4 rounded-2xl shadow-tershades-gray absolute flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0"
               : "m-2 h-full sm:h-3/4 md:inset-2 inset-1 sm:inset-12 rounded-2xl shadow-tershades-gray absolute bottom-auto flex transition-transform duration-300 transform scale-150 -translate-y-full bg-white opacity-0 text-sm"
           }
         >

@@ -197,7 +197,7 @@ export default class Visualization {
             this.setCurrentHabit(node);
             this.setCurrentNode(node);
           }
-          if (currentHabit?.meta?.name !== node.data.name)
+          if (currentHabit?.meta?.name !== node?.data?.name)
             this.setActiveNode(node.data, event);
 
           if (this.type == "tree") {
@@ -1157,7 +1157,7 @@ export default class Visualization {
 
   addLegend() {
     const labels = [
-      "Completed",
+      "Complete",
       "Incomplete",
       "Sub-Incomplete",
       "Not Yet Tracked",

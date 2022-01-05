@@ -98,6 +98,8 @@ export const getInitialYTranslate = (
   const [x, y, w, h] = defaultView.split` `;
   switch (type) {
     case "tree":
+      return menuExpanded ? h / 5.5 : h / 8;
+    case "cluster":
       return menuExpanded ? h / 5 : h / 8;
     default:
       return (h / levelsHigh) * 1.15;
