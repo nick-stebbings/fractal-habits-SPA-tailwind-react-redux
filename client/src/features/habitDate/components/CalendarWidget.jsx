@@ -74,14 +74,15 @@ export const CalendarWidget = ({
       e.target.classList.contains(".fa")
       // || !!e.target.closest(".date-card")
     ) {
-      !isTouchDevice() && isSmallScreen();
-      window.FlashMessage.warning(
-        "This is the desktop version, for full functionality please retry on a mobile or in DevTools after a refresh",
-        {
-          interactive: true,
-          timeout: 4000,
-        }
-      );
+      if (!isTouchDevice() && isSmallScreen()) {
+        window.FlashMessage.warning(
+          "This is the desktop version, for full functionality please retry on a mobile or in DevTools after a refresh",
+          {
+            interactive: true,
+            timeout: 4000,
+          }
+        );
+      }
       return;
     }
     mobileFullyVisible ? slideIntoView(e) : slideOutOfView(e);

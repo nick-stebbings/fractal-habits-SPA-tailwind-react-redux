@@ -292,11 +292,13 @@ export const nodeStatusColours = (d) => {
   }
   if (status == "OOB") return noNodeCol; // Untracked (out of bounds) nodes are neutral
 
+  const childColors = d?.children?.map(nodeStatusColours);
+  if (childColors.every((c) => c === positiveCol)) return positiveCol;
+
   switch (decidingVal) {
     case 1: // All descendants are positive
       return positiveCol;
     case 0: // Not all descendants are positive
-      const childColors = d?.children?.map(nodeStatusColours);
       const descendantsColors = d
         ?.descendants()
         ?.slice(1)
@@ -313,7 +315,6 @@ export const nodeStatusColours = (d) => {
       ) {
         return positiveColLighter;
       } // Node is complete but some of its descendants are not.
-
       return negativeCol;
     default:
       return neutralCol;
