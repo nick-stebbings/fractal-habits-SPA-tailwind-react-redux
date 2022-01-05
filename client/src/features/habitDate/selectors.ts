@@ -16,6 +16,7 @@ import {
   areAllChildrenComplete,
   isALeaf,
   notOOB,
+  cumulativeValue,
 } from "../hierarchy/components/helpers";
 
 export const selectStoredHabitDates = (state: RootState) => {
@@ -114,12 +115,7 @@ export const selectAccumulatedStatusForDate = (
       const allChildrenComplete = areAllChildrenComplete(
         currentHabitHierarchyNode?.children
       );
-      if (
-        dateId == 33 &&
-        currentHabitHierarchyNode.data.name == "Shop healthily"
-      ) {
-        debugger;
-      }
+
       if (!!currentHabitNodeDataForDate) {
         // Guard clauses for out of bounds and when there is not a temp habit date in the store
         currentHabitStatus = parseTreeValues(
@@ -131,7 +127,7 @@ export const selectAccumulatedStatusForDate = (
           currentHabitStatus == "" &&
           typeof habitDateInStore == "undefined" &&
           !currentHabitHierarchyNode.value &&
-          allChildrenIncomplete
+          !currentHabitHierarchyNode?.children
         )
           return "noHabitDate";
       }
@@ -141,7 +137,11 @@ export const selectAccumulatedStatusForDate = (
         currentHabitStatus == "true" ||
         !!habitDateInStore ||
         dateIsPersistedCompleted ||
-        allChildrenComplete;
+        allChildrenComplete ||
+        currentHabitHierarchyNode
+          ?.descendants()
+          ?.map((c: any) => cumulativeValue(c))
+          .includes(1);
 
       return completedInTreeOrInStore
         ? someDescendantIncomplete
