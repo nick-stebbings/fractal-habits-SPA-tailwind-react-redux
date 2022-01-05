@@ -494,8 +494,9 @@ export default class Visualization {
       } else {
         node.data.content = node.data.content.replace(/\-$/, "-" + newStatus);
       }
-      theNode.attr("fill", getColor(JSON.parse(newStatus)));
-      theNode.attr("stroke", getColor(JSON.parse(newStatus)));
+      const newColor = getColor(JSON.parse(newStatus));
+      theNode.attr("fill", newColor);
+      theNode.attr("stroke", newColor);
 
       const storedHabits = selectStoredHabits(store.getState());
       let lastCascadedNode = false;
@@ -507,6 +508,15 @@ export default class Visualization {
             lastCascadedNode = true;
             return;
           }
+
+          const nodeCircle = this.zoomBase()
+            .selectAll(".the-node circle")
+            .filter((n) => {
+              if (!!n?.data?.name && n?.data?.name === a.data.name) return a;
+            });
+
+          nodeCircle.attr("fill", newColor);
+          nodeCircle.attr("stroke", newColor);
 
           if (nodeWithoutHabitDate(a?.data, store)) {
             this.addHabitDatesForNewNodes(a, true);
