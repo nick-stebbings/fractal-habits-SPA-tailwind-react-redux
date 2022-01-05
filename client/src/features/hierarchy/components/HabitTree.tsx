@@ -21,7 +21,8 @@ export const HabitTree: React.FC<VisProps> = ({
   divId,
   render,
   routeChanged,
-  deleteCompleted
+  deleteCompleted,
+  changesMade
 }) => {
   const dispatch = useAppDispatch();
   let currentHabitTree = useAppSelector(selectCurrentTree);

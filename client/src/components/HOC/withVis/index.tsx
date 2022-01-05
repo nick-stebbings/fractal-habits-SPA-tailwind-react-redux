@@ -31,7 +31,9 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
   useFetch(true)
   
   const withVisC: React.FC = (hocProps: T) => {
+    const { changesMade } = hocProps;
     let deleteCompleted = useAppSelector(selectDeleteCompleted)
+
     const dispatch = useAppDispatch();
     const { canvasHeight, canvasWidth } = d3SetupCanvas()
     
@@ -40,7 +42,20 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
     const routeChanged = !!lastPath && (currentPath.pathname !== lastPath?.pathname);
     
     return (
-      <C canvasHeight={canvasHeight} routeChanged={routeChanged} canvasWidth={canvasWidth} margin={margin} divId={1} {...hocProps} deleteCompleted={deleteCompleted} render={(currentVis) => {
+      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={1} changesMade={changesMade} deleteCompleted={deleteCompleted} routeChanged={routeChanged} render={(currentVis:any) => {
+
+        // Propagate changes to the App component so that it can post new habitDates only after a doubletap event is handled
+        useEffect(() => {
+          if (currentVis?._manager) { // If mobile event handlers have been bound
+            const f = currentVis.eventHandlers.rgtClickOrDoubleTap.bind(null)
+            currentVis.eventHandlers.rgtClickOrDoubleTap = function (e:any, d:any) {
+              f.call(null, e, d) // Call the original function
+              
+              changesMade(true)
+            }.bind(currentVis)
+            }
+        }, [])
+  
         useEffect(() => {
           if (deleteCompleted) {
             currentVis.render()

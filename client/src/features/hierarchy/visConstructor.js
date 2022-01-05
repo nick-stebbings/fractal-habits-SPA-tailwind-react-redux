@@ -12,7 +12,6 @@ import {
   easeCircleOut,
   easeLinear,
   hierarchy,
-  zoomTransform,
 } from "d3";
 import { legendColor } from "d3-svg-legend";
 import Hammer from "hammerjs";
@@ -148,12 +147,12 @@ export default class Visualization {
         store.dispatch(toggleConfirm({ type: "Delete" }));
         this.render();
       },
-      rgtClickOrDoubleTap: (e, d) => {
+      rgtClickOrDoubleTap: function (e, d) {
         this.eventHandlers.handleNodeFocus.call(this, e, d);
         this.handleStatusChange.call(this, d);
         this.type != "radial" &&
           this.eventHandlers.handleNodeZoom.call(this, e, d, false);
-      },
+      }.bind(this),
       handleNodeZoom: function (event, node, forParent = false) {
         if (!event || !node || event.deltaY >= 0) return;
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
@@ -1042,7 +1041,7 @@ export default class Visualization {
 
   bindEventHandlers(selection) {
     selection
-      .on("contextmenu", this.eventHandlers.rgtClickOrDoubleTap.bind(this))
+      .on("contextmenu", this.eventHandlers.rgtClickOrDoubleTap)
       .on("click", (e, d) => {
         if (isTouchDevice()) return;
 
@@ -1063,7 +1062,7 @@ export default class Visualization {
   }
 
   bindMobileEventHandlers(selection) {
-    let manager = propagating(
+    this._manager = propagating(
       new Hammer.Manager(document.body, { domEvents: true })
     );
     // Create a recognizer
@@ -1073,17 +1072,17 @@ export default class Visualization {
       taps: 2,
       interval: 800,
     });
-    manager.add([doubleTap, singleTap]);
+    this._manager.add([doubleTap, singleTap]);
     doubleTap.recognizeWith(singleTap);
     singleTap.requireFailure(doubleTap);
     //----------------------
     // Mobile device events
     //----------------------
     selection.selectAll(".node-subgroup").on("touchstart", (e) => {
-      manager.set({ inputTarget: e.target });
+      this._manager.set({ inputTarget: e.target });
     });
 
-    manager.on("doubletap", (ev) => {
+    this._manager.on("doubletap", (ev) => {
       ev.srcEvent.preventDefault();
       const target = ev.firstTarget;
       if (!target || target?.tagName !== "circle") return;
@@ -1099,7 +1098,7 @@ export default class Visualization {
         console.log("Problem with mobile doubletap: ", error);
       }
     });
-    manager.on("singletap", (ev) => {
+    this._manager.on("singletap", (ev) => {
       ev.srcEvent.preventDefault();
       ev.srcEvent.stopPropagation();
 

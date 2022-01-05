@@ -9,17 +9,14 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ isVis,changesMade, children }) => {
-
   const LayoutWithVis = React.Children.only(children) && withVis(children.type)
   return isVis ? (
     <>
-      <LayoutWithVis />
+      <LayoutWithVis changesMade={changesMade} />
       <div id="vis" className="w-full h-full mx-auto" onContextMenuCapture={(e) => {
           if(e.target.tagName !== 'circle') return
-            changesMade(true)
+        changesMade(true)
       }}>
-        
-
         {isTouchDevice() && <>
           <h2 className='swipe-zone fixed text-xl uppercase bottom-20 left-1/3 lg:hidden'>Swipe Zone</h2>
           <div className="controls-div lg:hidden fixed bottom-0 border-2 left-0 w-full right-0">
@@ -30,7 +27,7 @@ export const Layout: React.FC<LayoutProps> = ({ isVis,changesMade, children }) =
             <svg className="legend-svg w-full z-10"></svg>
         </div>
 
-        <svg className="help-svg h-10 w-10 fixed bottom-2 lg:right-2 right-14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#6478E9">
+        <svg className="help-svg h-10 w-10 fixed bottom-2 lg:right-2 right-14 z-20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#6478E9">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>

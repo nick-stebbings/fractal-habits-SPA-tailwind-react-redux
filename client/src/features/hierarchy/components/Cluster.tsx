@@ -21,7 +21,8 @@ export const Cluster: React.FC<VisProps> = ({
   divId,
   render,
   routeChanged,
-  deleteCompleted
+  deleteCompleted,
+  changesMade
 }) => {
   const dispatch = useAppDispatch();
   let currentCluster = useAppSelector(selectCurrentCluster);

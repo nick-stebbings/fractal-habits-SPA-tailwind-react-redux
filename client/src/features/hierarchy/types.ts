@@ -10,4 +10,5 @@ export interface VisProps {
   render: any; //(_:any):void
   routeChanged: boolean;
   deleteCompleted: boolean;
+  changesMade: any;
 }
