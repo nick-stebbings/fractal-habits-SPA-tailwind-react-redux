@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { store } from "app/store";
-import { isTouchDevice } from "app/helpers";
+import { isTouchDevice, isSmallScreen } from "app/helpers";
 import { useAppSelector } from "app/hooks";
 import { Link } from "react-router-dom";
 
@@ -73,8 +73,17 @@ export const CalendarWidget = ({
       e.target.classList.contains("cal-date-nav") ||
       e.target.classList.contains(".fa")
       // || !!e.target.closest(".date-card")
-    )
+    ) {
+      !isTouchDevice() && isSmallScreen();
+      window.FlashMessage.warning(
+        "This is the desktop version, for full functionality please retry on a mobile or in DevTools after a refresh",
+        {
+          interactive: true,
+          timeout: 4000,
+        }
+      );
       return;
+    }
     mobileFullyVisible ? slideIntoView(e) : slideOutOfView(e);
     setMobileFullyVisible(!mobileFullyVisible);
   };
