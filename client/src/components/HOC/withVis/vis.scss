@@ -29,13 +29,13 @@ g.nodes {
   stroke-width: 2px;
 }
 
-.legend-svg .cell,
-.controls-svg {
+.legend-svg .cell {
   position: relative;
   pointer-events: none;
 }
 
 .controls-svg {
+  pointer-events: none;
   width: 72vw;
   height: 15vh;
   background-color: #dddddd;
