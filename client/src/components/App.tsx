@@ -46,7 +46,10 @@ export default function App({ isVisComponent, children }: indexProps) {
     const nodesToPersist = selectUnStoredHabitDates(s).filter((hd: any) => hd.completed_status)
     
     const persisting = nodesToPersist.length > 0 || nodesToDestroy.length > 0
-
+    
+    // if (persisting) {
+    //   debugger;
+    // }
     
     if (nodesToPersist.length > 0) {
       dispatch(createHabitDateREST({ date_id: currentDateId, habit_dates: nodesToPersist }))
@@ -67,9 +70,8 @@ export default function App({ isVisComponent, children }: indexProps) {
         timeout: 3000,
       })
     }
+    changesMade && dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
     setChangesMade(false)
-
-    dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
   }
 
   // Send a habit-date post request periodically

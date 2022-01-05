@@ -254,9 +254,16 @@ export const InstructBox = ({
                 specifically!
                 <img className="mx-auto my-2" src={swipeZone} />
               </p>
-              <p className="mt-2 mb-64">
-                You can swipe left to go back a day and right to go forwards a
-                day, but try to do it in the greyed out area.
+              <p className="mt-4 mb-64">
+                You can{" "}
+                <span className="uppercase text-xl bg-balance-tershades-light pr-2 ml-2 mr-1">
+                  swipe left
+                </span>{" "}
+                to go back a day and{" "}
+                <span className="uppercase text-xl bg-balance-tershades-light pr-2 ml-2 mr-1">
+                  swipe right
+                </span>{" "}
+                to go forwards a day, but try to do it in the greyed out area.
               </p>
             </>
           )}

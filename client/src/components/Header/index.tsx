@@ -66,7 +66,7 @@ export const Header = ({ isVis, persistTodaysUnstoredHabitDates }) => {
   const isMemoised = (dateId: number) =>
     selectHasStoredTreeForDateId(dateId)(store.getState())
 
-  const handlePrevDate = (_: any) => {
+  const handlePrevDate = debounce((_: any) => {
     const currentFlash = document.querySelector('.flash-container')
     if(currentFlash) currentFlash.textContent = '' // Clear flash
 
@@ -84,8 +84,9 @@ export const Header = ({ isVis, persistTodaysUnstoredHabitDates }) => {
     }
   }
     dispatch(decrementIdx())
-  }
-  const handleNextDate = (_: any) => {
+  }, 250)
+  
+  const handleNextDate = debounce((_: any) => {
     const currentFlash = document.querySelector('.flash-container')
     if(currentFlash) currentFlash.textContent = '' // Clear flash
     
@@ -103,7 +104,7 @@ export const Header = ({ isVis, persistTodaysUnstoredHabitDates }) => {
       }
     }
     dispatch(incrementIdx())
-}
+}, 250)
 
   const [responsiveNavOpen, setResponsiveNavOpen] = useState(false)
   let isDemo = false;

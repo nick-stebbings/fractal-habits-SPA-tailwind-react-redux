@@ -114,9 +114,14 @@ export const selectAccumulatedStatusForDate = (
       const allChildrenComplete = areAllChildrenComplete(
         currentHabitHierarchyNode?.children
       );
-
-      // Guard clauses for out of bounds and when there is not a temp habit date in the store
+      if (
+        dateId == 33 &&
+        currentHabitHierarchyNode.data.name == "Shop healthily"
+      ) {
+        debugger;
+      }
       if (!!currentHabitNodeDataForDate) {
+        // Guard clauses for out of bounds and when there is not a temp habit date in the store
         currentHabitStatus = parseTreeValues(
           currentHabitNodeDataForDate
         )!.status;
