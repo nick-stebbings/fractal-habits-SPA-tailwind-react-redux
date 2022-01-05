@@ -1,4 +1,3 @@
-import BASE_URL from "services/restApis";
 import { todoSlice } from "./reducer";
 const {
   createList,

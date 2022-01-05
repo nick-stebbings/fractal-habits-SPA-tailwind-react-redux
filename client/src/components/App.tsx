@@ -8,7 +8,7 @@ import { HABIT_DATE_BACKGROUND_PERSISTENCE_INTERVAL } from "app/constants";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 
 import HabitDateSlice from "features/habitDate/reducer";
-const { clearUnpersistedHabitDateCache,clearPersistedHabitDateCache } = HabitDateSlice.actions;
+const { clearUnpersistedHabitDateCache } = HabitDateSlice.actions;
 import { createHabitDateREST,destroyHabitDateREST } from "features/habitDate/actions";
 import { selectUnStoredHabitDates, selectStoredHabitDates } from "features/habitDate/selectors";
 
@@ -16,9 +16,7 @@ import { visActions } from "features/hierarchy/reducer";
 const { clearFutureCache } = visActions
 
 import { selectCurrentSpace,selectCurrentDateId } from "features/space/slice";
-import { HabitDate } from "features/habitDate/types";
 import { useModal } from '../hooks/useModal';
-import { debounce } from 'app/helpers';
 
 interface indexProps {
   isVisComponent?: boolean
