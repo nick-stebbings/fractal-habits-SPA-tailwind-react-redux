@@ -528,8 +528,9 @@ html {
 .mr-2 {
   margin-right: 0.5rem;
 }
-.mr-16 {
-  margin-right: 4rem;
+.mx-12 {
+  margin-right: 3rem;
+  margin-left: 3rem;
 }
 .mr-3 {
   margin-right: 0.75rem;
@@ -3497,6 +3498,13 @@ label.reqd.not-added:after {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 rgba(0, 0, 0, 0)),
     var(--tw-ring-shadow, 0 0 rgba(0, 0, 0, 0)), var(--tw-shadow);
 }
+
+#form-dialog .button-group > .button-container:only-child {
+  border-radius: 1rem !important;
+  margin-right: 0.5rem !important;
+  margin-top: 0.5rem;
+}
+
 .button-container > span,
 .button-group > button {
   display: flex;

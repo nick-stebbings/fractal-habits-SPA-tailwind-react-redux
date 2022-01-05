@@ -16,7 +16,7 @@ export const DialogBox = ({
 
   return (
     <div className="sm:m-8 flex items-center m-4">
-      <div className="form-header mr-16 w-14 h-14 bg-balance-tershades-gray flex items-center justify-center flex-shrink-0 font-mono rounded-full">
+      <div className="form-header mx-12 w-14 h-14 bg-balance-tershades-gray flex items-center justify-center flex-shrink-0 font-mono rounded-full">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -55,7 +55,7 @@ export const DialogBox = ({
               handleConfirm={handleConfirm}
             />
           ) : (
-            <div className="w-2"></div>
+            <></>
           )}
         </div>
       </form>
