@@ -5,7 +5,7 @@ import { Layout } from "./Layout";
 import { store } from 'app/store';
 
 import { HABIT_DATE_BACKGROUND_PERSISTENCE_INTERVAL } from "app/constants";
-import { useAppDispatch, useAppSelector } from "app/hooks";
+import { useAppDispatch } from "app/hooks";
 
 import HabitDateSlice from "features/habitDate/reducer";
 const { clearUnpersistedHabitDateCache } = HabitDateSlice.actions;
@@ -66,10 +66,10 @@ export default function App({ isVisComponent, children }: indexProps) {
         interactive: true,
         timeout: 3000,
       })
-      setChangesMade(false)
     }
+    setChangesMade(false)
 
-    !periodicSave && dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
+    dispatch(clearUnpersistedHabitDateCache({ currentSpaceTimeframe }))
   }
 
   // Send a habit-date post request periodically
