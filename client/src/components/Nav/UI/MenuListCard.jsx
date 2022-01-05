@@ -1,8 +1,8 @@
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
 import tree from "/images/icons/tree.svg";
-import radial from "/images/icons/tree.svg";
-import cluster from "/images/icons/tree.svg";
+import radial from "/images/icons/radial.svg";
+import cluster from "/images/icons/cluster.svg";
 
 export const MenuListCard = ({
   title,
@@ -38,10 +38,10 @@ export const MenuListCard = ({
       <div className="overlay flex items-center justify-center">
         <h3>Under Construction</h3>
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex items-center flex-col-reverse justify-center">
         <h3 className="flex px-2 mb-2">{title}</h3>
         <div className="text-balance-pshades-dark w-18 h-18 flex items-center justify-center">
-          <img src={getIcon(icon)}></img>
+          <img className="w-12" src={getIcon(icon)}></img>
         </div>
       </div>
       <div className="flex flex-col items-center" style={{ flexBasis: "75%" }}>

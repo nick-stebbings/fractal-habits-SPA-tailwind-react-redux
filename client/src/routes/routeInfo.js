@@ -15,7 +15,7 @@ let MENU_ROUTES = [
         status: "enabled",
         title: "Habit Tree",
         description:
-          "A hierarchical tree showing relationships. Add habits above (prepend) or under (append) an existing habit",
+          "A hierarchical tree showing relationships. Add habits above (PREPEND) or under (APPEND) an existing habit",
         component: HabitTree,
         icon: "tree",
       },
@@ -31,7 +31,7 @@ let MENU_ROUTES = [
         status: "enabled",
         title: "Radial Tree",
         description:
-          "A pretty hierarchical tree diagram where your habits branch off from the centre of a circle.",
+          "A round tree diagram where your habits branch off from the centre of a circle.",
         component: RadialTree,
         icon: "radial",
       },
