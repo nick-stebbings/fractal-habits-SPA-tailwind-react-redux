@@ -84,7 +84,7 @@ export const Header = ({ isVis, persistTodaysUnstoredHabitDates }) => {
     }
   }
     dispatch(decrementIdx())
-  }, 250)
+  }, 20)
   
   const handleNextDate = debounce((_: any) => {
     const currentFlash = document.querySelector('.flash-container')
@@ -104,7 +104,7 @@ export const Header = ({ isVis, persistTodaysUnstoredHabitDates }) => {
       }
     }
     dispatch(incrementIdx())
-}, 250)
+}, 20)
 
   const [responsiveNavOpen, setResponsiveNavOpen] = useState(false)
   let isDemo = false;
@@ -239,8 +239,8 @@ export const Header = ({ isVis, persistTodaysUnstoredHabitDates }) => {
       <div
         className={
           isDemo
-            ? "px-0.5 -ml-2 -mt-4 max-h-14 bg-gray-600 lg:hidden text-gray-50 flex items-baseline justify-center leading-8 sm:leading-7 pb-16 border-b-4 relative"
-            : "px-0.5 -ml-2 -mt-4 max-h-14 bg-balance-pshades-dark lg:hidden text-gray-50 flex items-baseline leading-8 sm:leading-7 pb-16 border-b-4 md:leading-6 relative"
+            ? "px-0.5 -ml-2 -top-7 max-h-14 bg-gray-600 lg:hidden text-gray-50 flex items-baseline justify-center leading-8 sm:leading-7 pb-20 border-b-4 relative"
+            : "px-0.5 -ml-2 -top-7 max-h-14 bg-balance-pshades-dark lg:hidden text-gray-50 flex items-baseline leading-8 sm:leading-7 pb-20 border-b-4 md:leading-6 relative"
         }
         id="current-habit-label-sm"
       >

@@ -28,7 +28,7 @@ div.mask-wrapper {
   transition: height 0.3s ease;
 
   > header {
-    @apply z-10 flex-none h-16;
+    @apply z-10 flex-none h-12;
   }
 
   #current-habit-label span {

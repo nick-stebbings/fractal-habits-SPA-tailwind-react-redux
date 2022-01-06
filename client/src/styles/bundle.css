@@ -514,6 +514,9 @@ html {
 .-mt-4 {
   margin-top: -1rem;
 }
+.-top7 {
+  top: -1.75rem;
+}
 .-mt-11 {
   margin-top: -2.75rem;
 }
@@ -1780,6 +1783,9 @@ html {
 .pb-2 {
   padding-bottom: 0.5rem;
 }
+.pb-20 {
+  padding-bottom: 5rem;
+}
 .pb-4 {
   padding-bottom: 1rem;
 }
@@ -2991,7 +2997,7 @@ li#demo-indicator {
 #current-habit-label-sm > span:first-of-type,
 #subnav .nav-links > li.hoverable a,
 #current-habit-sm span {
-  padding-top: 0.5rem;
+  padding-top: 2rem;
   text-transform: uppercase;
   line-height: 2.5rem;
 }
@@ -3656,10 +3662,12 @@ main#append-habit .button-container.selected {
 #collapse-tree {
   bottom: 0.25rem;
 }
+
 #collapse-tree,
 #reset-tree {
   z-index: 18;
 }
+
 @media (min-width: 1025px) {
   #collapse-tree {
     top: 6rem;
