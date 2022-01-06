@@ -2425,6 +2425,9 @@ html {
   .sm\:h-16 {
     height: 4rem;
   }
+  .sm\:w-10 {
+    width: 2.5rem;
+  }
   .sm\:w-2\/3 {
     width: 66.666667%;
   }

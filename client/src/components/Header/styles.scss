@@ -220,7 +220,8 @@ li.hoverable {
 
 i.cal-date-nav {
   top: 5.5rem;
-  @apply text-3xl md:text-7xl;
+  font-size: 1.55rem;
+  @apply md:text-7xl;
 }
 
 .habit-description-label,
