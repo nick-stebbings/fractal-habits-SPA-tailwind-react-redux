@@ -30,7 +30,15 @@ g.nodes {
   height: 15vh;
   background-color: #dddddd;
   opacity: 0.4;
-  z-index: 9;
+  z-index: 10;
+}
+
+.help-svg,
+.legend-svg {
+  z-index: 17;
+}
+.legend-svg {
+  z-index: 19;
 }
 
 .swipe-zone {

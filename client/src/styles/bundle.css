@@ -3655,11 +3655,10 @@ main#append-habit .button-container.selected {
 }
 #collapse-tree {
   bottom: 0.25rem;
-  z-index: 10;
 }
 #collapse-tree,
 #reset-tree {
-  z-index: 10;
+  z-index: 18;
 }
 @media (min-width: 1025px) {
   #collapse-tree {
