@@ -219,13 +219,13 @@ li.hoverable {
 }
 
 i.cal-date-nav {
-  top: 7.5rem;
+  top: 5.5rem;
   @apply text-3xl md:text-7xl;
 }
 
 .habit-description-label,
 .habit-description-label div:first-child {
-  min-height: 6rem;
+  min-height: 5rem;
   width: 100%;
 }
 
@@ -305,6 +305,15 @@ span.logo svg path,
   .sm-selector-container .date-today {
     transform: translateY(-0.22rem);
   }
+
+  .habit-description-label,
+  .habit-description-label div:first-child {
+    min-height: 6rem;
+  }
+  i.cal-date-nav {
+    top: 7.5rem;
+  }
+
   .mask-wrapper .wide-nav {
     top: 7rem;
   }

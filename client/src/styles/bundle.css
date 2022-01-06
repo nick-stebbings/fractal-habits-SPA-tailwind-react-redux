@@ -315,6 +315,9 @@ html {
 .top-1 {
   top: 0.25rem;
 }
+.top-8 {
+  top: 2rem;
+}
 .top-10 {
   top: 2.5rem;
 }
@@ -324,6 +327,9 @@ html {
 .top-16 {
   top: 4rem;
 }
+.top-14 {
+  top: 3.5rem;
+}
 .top-20 {
   top: 5rem;
 }
@@ -331,7 +337,7 @@ html {
   top: 6rem;
 }
 .top-28 {
-  top: 7rem;
+  top: 8rem;
 }
 .right-1 {
   right: 0.25rem;
@@ -661,6 +667,9 @@ html {
 }
 .h-1 {
   height: 0.25rem;
+}
+.h-4 {
+  height: 1rem;
 }
 .h-6 {
   height: 1.5rem;
@@ -2373,6 +2382,12 @@ html {
     bottom: 3rem;
     left: 3rem;
   }
+  .sm\:top-10 {
+    top: 2.5rem;
+  }
+  .sm\:top-20 {
+    top: 5rem;
+  }
   .sm\:inset-1\/4 {
     top: 25%;
     right: 25%;
@@ -2856,12 +2871,13 @@ section > h2:first-of-type {
   font-weight: 700;
 }
 .habit-description-label h2,
+.habit-desc-text,
 .nav-label-primary > span,
 .user-nav-label span label,
 .responsive-nav-group > h2,
 .responsive-nav-group > a {
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: 0.8rem;
+  line-height: 1rem;
   text-transform: uppercase;
   line-height: 1.25;
   letter-spacing: 0.025em;
@@ -2870,6 +2886,7 @@ section > h2:first-of-type {
 }
 @media (min-width: 768px) {
   .habit-description-label h2,
+  .habit-desc-text,
   .nav-label-primary > span,
   .user-nav-label span label,
   .responsive-nav-group > h2,
@@ -3299,7 +3316,7 @@ div.sm-selector-container .nav-label.domain-selector {
     padding: 2rem 0 0 1rem;
   }
   i.cal-date-nav {
-    top: 8rem;
+    /* top: 8rem; */
   }
   #hamburger-wrapper input:checked + nav {
     transform: translate(-120%);

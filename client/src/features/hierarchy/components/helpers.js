@@ -98,9 +98,9 @@ export const getInitialYTranslate = (
   const [x, y, w, h] = defaultView.split` `;
   switch (type) {
     case "tree":
-      return menuExpanded ? h / 5.5 : h / 5.5;
+      return menuExpanded ? h / 5.5 : h / 3;
     default:
-      return (h / levelsHigh) * 1.15;
+      return (h / levelsHigh) * 1.5;
   }
 };
 

@@ -111,11 +111,13 @@ export const CalendarWidget = ({
       <div className="habit-description-label lg:opacity-0 gap-y-2 rounded-3xl text-balance-basic-black xl:flex relative top-0 z-0 pl-2 flex flex-col overflow-none lg:items-center bg-gray-100 border-4 pb-8 md:pb-0">
         <div className="flex justify-start flex-col relative">
           <h2 className="mt-4 underline">Description</h2>
-          <span className="min-h-16 mr-1/3">
+          <span className="min-h-16 mr-1/3 habit-desc-text">
             {currentHabit?.meta.description}
           </span>
           <h2 className="flex mt-1 underline">Initiated On</h2>
-          <span>{stringifyDate(currentHabit.timeframe.fromDate)}</span>
+          <span className="habit-desc-text">
+            {stringifyDate(currentHabit.timeframe.fromDate)}
+          </span>
           <i
             className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-1 absolute left-0 active:text-balance-tershades-dark text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
             ref={scrollRef}
@@ -128,54 +130,58 @@ export const CalendarWidget = ({
           />
         </div>
         <i className="fa-solid fa-circle-info" />
-        <Link to={`habits/list?currentHabit=${"HabitStore.current()?.id"}`}>
-          <span
-            className={
-              "absolute text-gray-200 pointer-events-none top-1 right-1 sm:right-4"
-            }
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-10 h-10"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-              />
-            </svg>
-          </span>
-        </Link>
-        <Link to={`habits/new?currentHabit=${"currentid"}`}>
-          <span
-            className={
-              "absolute text-gray-200 pointer-events-none top-10  right-1 sm:right-4"
-            }
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-10 h-10"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </span>
-        </Link>
-        <span className={"lg:hidden absolute top-20 right-1 sm:right-4"}>
+        {/* <Link to={`habits/list?currentHabit=${"HabitStore.current()?.id"}`}> */}
+        <span
+          className={
+            "absolute text-gray-200 pointer-events-none top-1 right-1 sm:right-4"
+          }
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="text-balance-sshades-desat cursor-pointer w-10 h-10"
+            className="w-8 h-8 sm:w-10 sm:h-10"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.5"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+            />
+          </svg>
+        </span>
+        {/* </Link> */}
+        {/* <Link to={`habits/new?currentHabit=${"currentid"}`}> */}
+        <span
+          className={
+            "absolute text-gray-200 pointer-events-none top-8 sm:top-10  right-1 sm:right-4"
+          }
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-8 h-8 sm:w-10 sm:h-10"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.5"
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </span>
+        {/* </Link> */}
+        <span
+          className={
+            "lg:hidden absolute top-14 sm:top-20 right-1 sm:right-4 pt-1"
+          }
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="text-balance-sshades-desat cursor-pointer w-8 h-8 sm:w-10 sm:h-10"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

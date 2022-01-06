@@ -52,12 +52,15 @@ export const InstructBox = ({
               {message}
             </p>
           </div>
-          <div className="button-group py-3 mr-4 -mb-12- text-sm bg-transparent">
+          <div
+            className="button-group py-3 mr-4 -mb-12- text-sm bg-transparent"
+            style={{ top: "0px" }}
+          >
             <CancelButton
               id={`close-modal-instructions`}
               name="close"
               label="Close"
-              type={type}
+              type={"small"}
               handleClose={handleClose}
             />
           </div>
