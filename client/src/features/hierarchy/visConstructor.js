@@ -752,7 +752,14 @@ export default class Visualization {
         this.layout.nodeSize(
           this._viewConfig.isSmallScreen()
             ? [300, 300]
-            : [this.rootData.height * 100, this.rootData.height * 100]
+            : [
+                this.rootData.height > 4
+                  ? 1200 / this.rootData.height
+                  : this.rootData.height * 100,
+                this.rootData.height > 4
+                  ? 1200 / this.rootData.height
+                  : this.rootData.height * 100,
+              ]
         );
         break;
     }
