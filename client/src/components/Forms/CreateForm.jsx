@@ -62,7 +62,7 @@ export const CreateForm = ({
       // Assign a -1 id for parent if it is a d3vis-prepend modalType (root node)
       // Then pass the domain_id as a string to signal to the API to reorder nodes
       data.parent_node_id =
-        modalType === "Prepend" ? `D${data.domain_id}` : currentHabit.meta.id;
+        modalType === "Prepend" ? `D${data.domain_id}` : currentHabit?.meta.id;
     }
     createHabit(data);
     // Close the modal

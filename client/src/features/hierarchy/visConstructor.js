@@ -613,8 +613,13 @@ export default class Visualization {
       let t = { ...e.transform };
       let scale;
       let x, y;
-
-      if (this.type == "radial" && t.k == 1 && t.x < 150 && t.y < 150) {
+      if (
+        this.type == "radial" && // If it's the first zoom, just zoom in a little programatically, not out to scale 1
+        ((Math.abs(t.k < 1.1) &&
+          e.sourceEvent.deltaY < 0 &&
+          e.sourceEvent.deltaY > -60) ||
+          (t.k == 1 && t.x < 150 && t.y < 150))
+      ) {
         // Radial needs an initial zoom in
         t.k = this._viewConfig.clickScale;
         this.zoomBase().call(

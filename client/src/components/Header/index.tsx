@@ -248,7 +248,7 @@ export const Header = ({ isVis, persistTodaysUnstoredHabitDates }) => {
           HABIT
         </span>
         <div className="max-h-12 md:block sm:hidden block overflow-auto">
-          {currentHabit.meta.name}
+          {currentHabit?.meta.name}
         </div>
         <i className="down-btn w-12 h-12" onClick={executeScroll} hidden={responsiveNavOpen} />
       </div>

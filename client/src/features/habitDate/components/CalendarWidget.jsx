@@ -112,7 +112,7 @@ export const CalendarWidget = ({
         <div className="flex justify-start flex-col relative">
           <h2 className="mt-4 underline">Description</h2>
           <span className="min-h-16 mr-1/3">
-            {currentHabit.meta.description}
+            {currentHabit?.meta.description}
           </span>
           <h2 className="flex mt-1 underline">Initiated On</h2>
           <span>{stringifyDate(currentHabit.timeframe.fromDate)}</span>

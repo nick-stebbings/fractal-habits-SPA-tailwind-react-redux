@@ -46,8 +46,8 @@ export const DropdownNav = function ({ routes, showMegaMenu, hideMegaMenu }) {
         >
           <span id="current-habit">Habit</span>
           <span id="current-habit">
-            {currentHabit.meta.name !== ""
-              ? currentHabit.meta.name
+            {currentHabit?.meta.name !== ""
+              ? currentHabit?.meta.name
               : "No Habits Registered "}
           </span>
         </div>

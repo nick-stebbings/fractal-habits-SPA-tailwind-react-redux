@@ -82,7 +82,7 @@ export const selectAccumulatedStatusForDate = (
       const currentHabitHierarchyNode =
         !!hierarchyDataForDateId?.find &&
         hierarchyDataForDateId.find(
-          (n: any) => n.data.name == currentHabit.meta.name
+          (n: any) => n.data.name == currentHabit?.meta.name
         );
       if (!currentHabitHierarchyNode) return "OOB";
 
