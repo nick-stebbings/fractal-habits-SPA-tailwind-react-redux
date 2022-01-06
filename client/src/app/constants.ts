@@ -5,7 +5,7 @@ export const parentPositiveBorderCol = "#93cc97";
 export const noNodeCol = "#888";
 export const neutralCol = "#DADECD";
 
-export const DB_DATE_ID_OFFSET = import.meta.env.PROD ? 1 : 3; // Accounts for the starting ID of the date relation in the DB, which is not stored locally.
+export const DB_DATE_ID_OFFSET = import.meta.env.PROD ? -1 : 3; // Accounts for the starting ID of the date relation in the DB, which is not stored locally.
 export const HABIT_DATE_BACKGROUND_PERSISTENCE_INTERVAL = 15; // seconds
 
 export const API_RESPONSE_CODE_FLASH_MESSAGES = {

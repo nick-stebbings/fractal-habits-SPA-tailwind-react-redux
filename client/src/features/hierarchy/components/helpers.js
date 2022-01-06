@@ -130,7 +130,7 @@ export const newYTranslate = (newScale, type, viewConfig, zoomConfig) => {
     case "cluster":
       return -zoomConfig.previousRenderZoom?.node?.x * scale;
     case "radial":
-      return -radialTranslation(zoomConfig).y * scale;
+      return 0; //-radialTranslation(zoomConfig).y * scale;
     case "tree":
       return -zoomConfig.previousRenderZoom?.node?.y * scale;
   }
