@@ -745,7 +745,9 @@ export default class Visualization {
           .size([360, this.canvasHeight / 2])
           .separation((a, b) => (a.parent == b.parent ? 2.5 : 5) / a.depth);
         this.layout.nodeSize(
-          this._viewConfig.isSmallScreen() ? [300, 300] : [600, 600]
+          this._viewConfig.isSmallScreen()
+            ? [300, 300]
+            : [this.rootData.height * 100, this.rootData.height * 100]
         );
         break;
     }
@@ -758,7 +760,7 @@ export default class Visualization {
     }
   }
   setNodeAndLinkGroups() {
-    const transformation = this.type == "radial" ? `rotate(180)` : "";
+    const transformation = this.type == "radial" ? `rotate(90)` : "";
     this._gLink = this._canvas
       .append("g")
       .classed("links", true)
@@ -860,6 +862,7 @@ export default class Visualization {
     this._gTooltip = this._enteringNodes
       .append("g")
       .classed("tooltip", true)
+      .classed("hidden", this.type == "radial")
       .attr(
         "transform",
         `translate(${this._viewConfig.nodeRadius / 10}, ${
@@ -899,7 +902,7 @@ export default class Visualization {
               : LG_BUTTON_SCALE
           })` +
           (this.type == "radial"
-            ? `, rotate(${360 - ((d.x / 8) * 180) / Math.PI - 90})`
+            ? `, rotate(${450 - ((d.x / 8) * 180) / Math.PI - 90})`
             : "")
       )
       .attr("style", "opacity: 0");
@@ -921,12 +924,11 @@ export default class Visualization {
       .attr("y", -25);
 
     this._gTooltip
-      .append("rect")
+      .append("div")
       .attr("width", this.type == "radial" ? 130 : 275)
       .attr("height", 100)
       .attr("x", -6)
-      .attr("y", -10)
-      .attr("rx", 15);
+      .attr("y", -10);
 
     // Split the name label into two parts:
     this._gTooltip
@@ -946,12 +948,12 @@ export default class Visualization {
         return this.type == "radial"
           ? `scale(0.75), translate(${
               d.x < Math.PI / 2 ? "130, 100" : "0,0"
-            }), rotate(${d.x < Math.PI / 2 ? 180 : 0})`
+            }), rotate(${0})`
           : "";
       });
     this._gTooltip
       .append("text")
-      .attr("x", (d) => `${d.x < Math.PI / 2 ? -25 : 5}`)
+      .attr("x", (d) => `${d.x < Math.PI ? -25 : 5}`)
       .attr("y", 50)
       .text((d) => {
         const allWords = d.data.name.split(" ");
@@ -959,14 +961,7 @@ export default class Visualization {
         return `${words[4] || ""} ${words[5] || ""} ${words[6] || ""} ${
           allWords.length > 7 ? "..." : ""
         }`;
-      })
-      .attr("transform", (d) =>
-        this.type == "radial"
-          ? `scale(${this.type == "radial" ? 0.5 : 0.75}), translate(${
-              d.x < Math.PI / 2 ? "130, 100" : "0,0"
-            }), rotate(${d.x < Math.PI / 2 ? 180 : 0})`
-          : ""
-      );
+      });
 
     this._enteringNodes
       .append("g")
