@@ -96,6 +96,7 @@ export default class Visualization {
 
       defaultCanvasTranslateX: (scale) => {
         const initialX = getInitialXTranslate.call(this, this._viewConfig);
+        console.log("initialX :>> ", initialX);
         return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
           "undefined"
           ? initialX +
@@ -161,7 +162,7 @@ export default class Visualization {
         this.setActiveNode(node.data, event);
         const parentNode = { ...node.parent };
 
-        if (!(this.type == "radial")) {
+        if (!this._gLink.attr("transform")) {
           // Set for cross render transformation memory
           this._zoomConfig.previousRenderZoom = {
             event: event,
@@ -800,7 +801,6 @@ export default class Visualization {
         return !outOfBounds;
       })
     ); // Remove habits that weren't being tracked then);
-
     this._enteringNodes = nodes
       .enter()
       .append("g")
