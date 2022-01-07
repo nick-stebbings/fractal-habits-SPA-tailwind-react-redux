@@ -1095,8 +1095,10 @@ export default class Visualization {
 
     this._manager.on("doubletap", (ev) => {
       ev.srcEvent.preventDefault();
+
       const target = ev.firstTarget;
       if (!target || target?.tagName !== "circle") return;
+
       ev.srcEvent.stopPropagation();
 
       let node = target?.__data__;
@@ -1111,19 +1113,15 @@ export default class Visualization {
     });
     this._manager.on("singletap", (ev) => {
       ev.srcEvent.preventDefault();
-
+      console.log("singletap");
       let target = ev.target;
-
       const node = target?.__data__;
+      if (!target || !node) return;
 
       switch (ev?.target?.tagName) {
         // Delete button is currently the only path
         case "path":
-          this.eventHandlers.handleDeleteNode.call(
-            this,
-            ev,
-            target.__data__.data
-          );
+          this.eventHandlers.handleDeleteNode.call(this, ev, node.data);
           break;
         case "rect":
           if (target.parentNode.classList.contains("tooltip")) return; // Stop label from triggering
@@ -1383,7 +1381,6 @@ export default class Visualization {
       );
 
       this._hasRendered = true;
-      // console.log("this.rootData :>> ", this.rootData?.routeChanged);
     }
 
     if (!select("svg.legend-svg").empty() && select("svg .legend").empty()) {

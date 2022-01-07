@@ -11,7 +11,9 @@ import { useAppSelector, useAppDispatch } from 'app/hooks';
 import UISlice from 'features/ui/reducer';
 const { resetDeleteCompleted } = UISlice.actions;
 
+import { selectOtherVisObjects } from "features/hierarchy/selectors";
 import { selectDeleteCompleted } from 'features/ui/selectors';
+import { store } from 'app/store';
 
 const margin = {
   top: (document.body.getBoundingClientRect().height / (document.body.getBoundingClientRect().height > 1025 ? 6 : 4)),
@@ -70,6 +72,21 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
               currentVis.zoomer.transform,
               zoomIdentity
             )
+
+            // Unbind other vis hammerjs mobile event handlers
+            const otherVisObjs = selectOtherVisObjects(currentVis.type, store.getState());
+            otherVisObjs.forEach((visObj:any) => {
+              if (!visObj?._manager) return
+              visObj._manager.off('singletap')
+              visObj._manager.off('doubletap')
+
+              // This was lost somehow so replace
+              // debugger;
+              !!visObj._manager?.element && visObj._manager.destroy()
+            });
+            // Rebind current mob events if they were lost due to the above
+            currentVis?._manager.handlers.length === 0 && currentVis.bindMobileEventHandlers(currentVis._enteringNodes)
+
             currentVis.rootData.routeChanged = true
           }
           return (<Redirect to={currentPath.pathname} />)
