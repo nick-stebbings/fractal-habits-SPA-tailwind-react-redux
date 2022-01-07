@@ -9,7 +9,8 @@ import {
   tree,
   cluster,
   easeCubic,
-  easeCircleOut,
+  easePolyIn,
+  easeBackIn,
   easeLinear,
   hierarchy,
 } from "d3";
@@ -174,9 +175,9 @@ export default class Visualization {
         }
         select(".canvas")
           .transition()
-          .ease(easeCircleOut)
-          .delay(!!event ? 0 : 2500)
-          .duration(!!event ? 1 : 2500)
+          .ease(easePolyIn.exponent(8))
+          .delay(!!event ? 0 : 100)
+          .duration(!!event ? 1 : 2000)
           .attr(
             "transform",
             `translate(${this._viewConfig.defaultCanvasTranslateX(
