@@ -155,11 +155,13 @@ export default class Visualization {
           this.eventHandlers.handleNodeZoom.call(this, e, d, false);
       }.bind(this),
       handleNodeZoom: function (event, node, forParent = false) {
-        if (!event || !node || event.deltaY >= 0) return;
+        if (!node) return;
         this._zoomConfig.globalZoomScale = this._viewConfig.clickScale;
         this._zoomConfig.focusMode = true;
 
-        this.setActiveNode(node.data, event);
+        if (event) {
+          this.setActiveNode(node.data, event);
+        }
         const parentNode = { ...node.parent };
 
         if (!this._gLink.attr("transform")) {
@@ -173,7 +175,8 @@ export default class Visualization {
         select(".canvas")
           .transition()
           .ease(easeCircleOut)
-          .duration(this.isDemo ? 200 : 1)
+          .delay(!!event ? 0 : 2500)
+          .duration(!!event ? 1 : 2500)
           .attr(
             "transform",
             `translate(${this._viewConfig.defaultCanvasTranslateX(
@@ -1341,15 +1344,19 @@ export default class Visualization {
 
       _p("Appended and set groups... :>>", {});
 
+      this.appendCirclesAndLabels();
+      this.appendLabels();
+      this.appendButtons();
       if (!!this.activeNode) {
-        this?.isNewActiveNode &&
-          this.zoomBase().selectAll(".active-circle").remove();
-      } else if (!this.firstRender()) {
+        // this?.isNewActiveNode &&
+        //   this.zoomBase().selectAll(".active-circle").remove();
+      } else {
         // Set a default active node
         this.isNewActiveNode = true;
         let newActive = this.rootData.find((n) => {
           return !n.data.content.match(/OOB/);
         });
+        console.log("New active node", newActive);
         try {
           this.setCurrentHabit(newActive);
           this.setCurrentNode(newActive);
@@ -1360,10 +1367,9 @@ export default class Visualization {
         }
       }
       this.activateNodeAnimation();
-      this.appendCirclesAndLabels();
-      this.appendLabels();
-      this.appendButtons();
       // console.log("Appended SVG elements... :>>");
+      this.eventHandlers.handleNodeZoom.call(this, null, this.activeNode);
+      console.log("this.activeNode", this.activeNode);
 
       this._viewConfig.isSmallScreen() &&
         this.bindMobileEventHandlers(this._enteringNodes);
