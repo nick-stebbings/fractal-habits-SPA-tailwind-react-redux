@@ -97,7 +97,6 @@ export default class Visualization {
 
       defaultCanvasTranslateX: (scale) => {
         const initialX = getInitialXTranslate.call(this, this._viewConfig);
-        console.log("initialX :>> ", initialX);
         return typeof this._zoomConfig.previousRenderZoom?.node?.x !==
           "undefined"
           ? initialX +
@@ -1024,6 +1023,7 @@ export default class Visualization {
         .attr("y", (d) => (d.parent ? -8 : -5))
         .text((d) => "DIVIDE")
         .on("click", (e, n) => {
+          if (isTouchDevice()) return;
           this.eventHandlers.handleAppendNode.call(this, e, n);
         });
       this._gButton
@@ -1111,10 +1111,8 @@ export default class Visualization {
     });
     this._manager.on("singletap", (ev) => {
       ev.srcEvent.preventDefault();
-      ev.srcEvent.stopPropagation();
 
-      const target = ev.firstTarget;
-      if (target.tagName !== "circle") return;
+      let target = ev.target;
 
       const node = target?.__data__;
 
@@ -1124,14 +1122,17 @@ export default class Visualization {
           this.eventHandlers.handleDeleteNode.call(
             this,
             ev,
-            ev.target.__data__.data
+            target.__data__.data
           );
           break;
         case "rect":
-          if (ev.target.parentNode.classList.contains("tooltip")) return; // Stop label from triggering
+          if (target.parentNode.classList.contains("tooltip")) return; // Stop label from triggering
         // Append or prepend are currently the only text
         case "text":
-          ev.target.textContent == "DIVIDE"
+          const buttonTransitioning =
+            select(target.parentNode).attr("style") === "opacity: 0";
+          if (buttonTransitioning) return ev.srcEvent.stopPropagation();
+          target.textContent == "DIVIDE"
             ? this.eventHandlers.handleAppendNode.call(this)
             : this.eventHandlers.handlePrependNode.call(this);
           break;
@@ -1139,7 +1140,7 @@ export default class Visualization {
           let parentNodeGroup = _.find(this._enteringNodes._groups[0], (n) => {
             return n?.__data__?.data?.content == node?.data?.content;
           });
-          ev.target = parentNodeGroup;
+          target = parentNodeGroup;
           try {
             this.eventHandlers.handleMouseEnter.call(this, ev, node);
             this.eventHandlers.handleNodeFocus.call(this, ev.srcEvent, node);
@@ -1357,7 +1358,7 @@ export default class Visualization {
         let newActive = this.rootData.find((n) => {
           return !n.data.content.match(/OOB/);
         });
-        console.log("New active node", newActive);
+        // console.log("New active node", newActive);
         try {
           this.setCurrentHabit(newActive);
           this.setCurrentNode(newActive);
@@ -1370,8 +1371,8 @@ export default class Visualization {
       this.activateNodeAnimation();
       // console.log("Appended SVG elements... :>>");
       this.eventHandlers.handleNodeZoom.call(this, null, this.activeNode);
-      console.log("this.activeNode", this.activeNode);
-      console.log("this.activeNode.isNewActive", this.isNewActiveNode);
+      // console.log("this.activeNode", this.activeNode);
+      // console.log("this.activeNode.isNewActive", this.isNewActiveNode);
 
       this._viewConfig.isSmallScreen() &&
         this.bindMobileEventHandlers(this._enteringNodes);
@@ -1382,7 +1383,7 @@ export default class Visualization {
       );
 
       this._hasRendered = true;
-      console.log("this.rootData :>> ", this.rootData?.routeChanged);
+      // console.log("this.rootData :>> ", this.rootData?.routeChanged);
     }
 
     if (!select("svg.legend-svg").empty() && select("svg .legend").empty()) {
