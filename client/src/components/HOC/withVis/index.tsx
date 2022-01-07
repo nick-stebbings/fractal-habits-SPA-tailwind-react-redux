@@ -70,7 +70,7 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
               currentVis.zoomer.transform,
               zoomIdentity
             )
-            currentVis.setZoomBehaviour()
+            debugger;
             currentVis.rootData.routeChanged = true
           }
           return (<Redirect to={currentPath.pathname} />)

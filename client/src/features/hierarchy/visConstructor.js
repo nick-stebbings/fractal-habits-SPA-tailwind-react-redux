@@ -176,8 +176,8 @@ export default class Visualization {
         select(".canvas")
           .transition()
           .ease(easePolyIn.exponent(8))
-          .delay(!!event ? 0 : 100)
-          .duration(!!event ? 1 : 2000)
+          .delay(!!event || !this.isNewActiveNode ? 0 : 100)
+          .duration(!!event || !this.isNewActiveNode ? 1 : 2000)
           .attr(
             "transform",
             `translate(${this._viewConfig.defaultCanvasTranslateX(
@@ -1371,6 +1371,7 @@ export default class Visualization {
       // console.log("Appended SVG elements... :>>");
       this.eventHandlers.handleNodeZoom.call(this, null, this.activeNode);
       console.log("this.activeNode", this.activeNode);
+      console.log("this.activeNode.isNewActive", this.isNewActiveNode);
 
       this._viewConfig.isSmallScreen() &&
         this.bindMobileEventHandlers(this._enteringNodes);
