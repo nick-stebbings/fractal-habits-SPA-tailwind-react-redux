@@ -215,7 +215,7 @@ export const InstructBox = ({
                     sub-habits are incomplete.
                   </text>
                 </g>
-                <g className="cell" transform="translate(25, 69)">
+                {/* <g className="cell" transform="translate(25, 69)">
                   <circle
                     className="swatch"
                     r="20"
@@ -228,8 +228,8 @@ export const InstructBox = ({
                     This habit is in-bounds but we haven't started tracking it
                     yet.
                   </text>
-                </g>
-                <g className="cell" transform="translate(25, 92)">
+                </g> */}
+                <g className="cell" transform="translate(25, 69)">
                   <circle
                     className="swatch"
                     r="20"

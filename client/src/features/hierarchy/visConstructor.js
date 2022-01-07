@@ -1166,21 +1166,19 @@ export default class Visualization {
       "Complete",
       "Incomplete",
       "Sub-Incomplete",
-      "Not Yet Tracked",
+      // "Not Yet Tracked",
       "Out of Bounds",
     ];
     const legendScale = this._viewConfig.isSmallScreen()
       ? BASE_SCALE / 4
       : BASE_SCALE / 2;
-    const ordinal = scaleOrdinal()
-      .domain(labels)
-      .range([
-        positiveCol,
-        negativeCol,
-        positiveColLighter,
-        neutralCol,
-        noNodeCol,
-      ]);
+    const ordinal = scaleOrdinal().domain(labels).range([
+      positiveCol,
+      negativeCol,
+      positiveColLighter,
+      // neutralCol,
+      noNodeCol,
+    ]);
 
     const legendSvg = select("svg.legend-svg");
     const gLegend = legendSvg
