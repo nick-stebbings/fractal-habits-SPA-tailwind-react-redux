@@ -610,7 +610,7 @@ export default class Visualization {
   setNodeRadius() {
     this._viewConfig.nodeRadius =
       (this._viewConfig.isSmallScreen() ? XS_NODE_RADIUS : LG_NODE_RADIUS) *
-      (this.type == "radial" ? BASE_SCALE / 2 : BASE_SCALE);
+      (this.type == "radial" ? BASE_SCALE * 1.15 : BASE_SCALE);
   }
   setZoomBehaviour() {
     const zooms = function (e) {
@@ -752,17 +752,18 @@ export default class Visualization {
         break;
       case "radial":
         this.layout = cluster()
-          .size([360, this.canvasHeight / 2])
-          .separation((a, b) => (a.parent == b.parent ? 2.5 : 5) / a.depth);
+          .size([360, this.canvasHeight * 2])
+          .separation((a, b) => (a.parent == b.parent ? 0.5 : 0.1) / a.depth);
+        console.log("this.rootData.height :>> ", this.rootData.height);
         this.layout.nodeSize(
           this._viewConfig.isSmallScreen()
             ? [300, 300]
             : [
                 this.rootData.height > 4
-                  ? 1200 / this.rootData.height
+                  ? 1000 / this.rootData.height
                   : this.rootData.height * 100,
                 this.rootData.height > 4
-                  ? 1200 / this.rootData.height
+                  ? 100 / this.rootData.height
                   : this.rootData.height * 100,
               ]
         );
@@ -884,8 +885,7 @@ export default class Visualization {
         `translate(${this._viewConfig.nodeRadius / 10}, ${
           this._viewConfig.nodeRadius
         }), scale(${
-          (this.type === "radial" ? 0.5 : 1) *
-          (this._viewConfig.isSmallScreen() ? XS_LABEL_SCALE : LG_LABEL_SCALE)
+          this._viewConfig.isSmallScreen() ? XS_LABEL_SCALE : LG_LABEL_SCALE
         })`
       )
       .attr("opacity", (d) => this.activeOrNonActiveOpacity(d, "0"));
@@ -911,10 +911,10 @@ export default class Visualization {
           }), scale(${
             this._viewConfig.isSmallScreen()
               ? this.type == "radial"
-                ? XS_BUTTON_SCALE / 1.5
+                ? XS_BUTTON_SCALE * 1.15
                 : XS_BUTTON_SCALE
               : this.type == "radial"
-              ? LG_BUTTON_SCALE / 1.5
+              ? LG_BUTTON_SCALE / 1.15
               : LG_BUTTON_SCALE
           })` +
           (this.type == "radial"
@@ -1023,7 +1023,12 @@ export default class Visualization {
         .attr("y", (d) => (d.parent ? -8 : -5))
         .text((d) => "DIVIDE")
         .on("click", (e, n) => {
-          if (isTouchDevice()) return;
+          if (
+            isTouchDevice() ||
+            select(e?.target?.parentNode).attr("style").match("opacity: 0")
+          )
+            return e.stopPropagation();
+          debugger;
           this.eventHandlers.handleAppendNode.call(this, e, n);
         });
       this._gButton
@@ -1043,6 +1048,11 @@ export default class Visualization {
         .attr("y", -30)
         .text("EXPAND")
         .on("click", (e, n) => {
+          if (
+            isTouchDevice() ||
+            select(e?.target?.parentNode).attr("style").match("opacity: 0")
+          )
+            return e.stopPropagation();
           this.eventHandlers.handlePrependNode.call(this, e, n);
         });
     }
@@ -1095,6 +1105,7 @@ export default class Visualization {
 
     this._manager.on("doubletap", (ev) => {
       ev.srcEvent.preventDefault();
+      if (!isTouchDevice()) return;
 
       const target = ev.firstTarget;
       if (!target || target?.tagName !== "circle") return;
@@ -1113,7 +1124,8 @@ export default class Visualization {
     });
     this._manager.on("singletap", (ev) => {
       ev.srcEvent.preventDefault();
-      console.log("singletap");
+      if (!isTouchDevice()) return;
+
       let target = ev.target;
       const node = target?.__data__;
       if (!target || !node) return;
