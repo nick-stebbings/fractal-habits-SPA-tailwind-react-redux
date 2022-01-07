@@ -614,10 +614,11 @@ export default class Visualization {
       let scale;
       let x, y;
       if (
+        e?.sourceEvent &&
         this.type == "radial" && // If it's the first zoom, just zoom in a little programatically, not out to scale 1
         ((Math.abs(t.k < 1.1) &&
-          e.sourceEvent.deltaY < 0 &&
-          e.sourceEvent.deltaY > -60) ||
+          e.sourceEvent?.deltaY < 0 &&
+          e.sourceEvent?.deltaY > -60) ||
           (t.k == 1 && t.x < 150 && t.y < 150))
       ) {
         // Radial needs an initial zoom in
@@ -945,10 +946,7 @@ export default class Visualization {
     // Split the name label into two parts:
     this._gTooltip
       .append("text")
-      .attr(
-        "x",
-        (d) => `${this.type == "radial" && d.x < Math.PI / 2 ? -25 : 5}`
-      )
+      .attr("x", 5)
       .attr("y", 20)
       .text((d) => {
         const words = d.data.name.split(" ").slice(0, 6);
@@ -965,7 +963,7 @@ export default class Visualization {
       });
     this._gTooltip
       .append("text")
-      .attr("x", (d) => `${d.x < Math.PI ? -25 : 5}`)
+      .attr("x", 5)
       .attr("y", 50)
       .text((d) => {
         const allWords = d.data.name.split(" ");
@@ -1055,7 +1053,9 @@ export default class Visualization {
         if (e.target.tagName !== "circle") return;
 
         this.eventHandlers.handleNodeFocus.call(this, e, d);
-        if (!(this.type == "radial"))
+
+        if (!this._gLink.attr("transform"))
+          // If it is not a radial vis
           this.eventHandlers.handleNodeZoom.call(this, e, d, false);
       })
       .on("touchstart", this.eventHandlers.handleHover.bind(this), {
@@ -1139,7 +1139,7 @@ export default class Visualization {
           try {
             this.eventHandlers.handleMouseEnter.call(this, ev, node);
             this.eventHandlers.handleNodeFocus.call(this, ev.srcEvent, node);
-            if (!(this.type == "radial"))
+            if (!this._gLink.attr("transform"))
               this.eventHandlers.handleNodeZoom.call(
                 this,
                 ev.srcEvent,

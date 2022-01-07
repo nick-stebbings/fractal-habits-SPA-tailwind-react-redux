@@ -5,8 +5,9 @@ import { useLocation,  Redirect } from 'react-router-dom';
 import { useLastLocation } from 'react-router-last-location';
 import "./vis.scss";
 
+import {zoomIdentity} from 'd3';
+
 import { useAppSelector, useAppDispatch } from 'app/hooks';
-import {isTouchDevice} from 'app/helpers'
 import UISlice from 'features/ui/reducer';
 const { resetDeleteCompleted } = UISlice.actions;
 
@@ -65,6 +66,11 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
         
         if (routeChanged) {
           if (currentVis?.rootData) {
+            currentVis.zoomBase().call(
+              currentVis.zoomer.transform,
+              zoomIdentity
+            )
+            currentVis.setZoomBehaviour()
             currentVis.rootData.routeChanged = true
           }
           return (<Redirect to={currentPath.pathname} />)
