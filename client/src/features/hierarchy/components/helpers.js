@@ -141,8 +141,12 @@ export const newYTranslate = (newScale, type, viewConfig, zoomConfig) => {
 export const oppositeStatus = (current) =>
   [undefined, "false", "incomplete", ""].includes(current) ? "true" : "false";
 
+export const notOOB = (node) =>
+  parseTreeValues(node.data.content).status !== "OOB";
+
 export const sumChildrenValues = (node, hidden = false) => {
-  const children = node?._children || node?.children || node?.data?.children;
+  let children = node?._children || node?.children || node?.data?.children;
+  children = children.filter(notOOB);
   return children.reduce((sum, n) => sum + n.value, 0);
 };
 
@@ -151,9 +155,6 @@ export const nodeWithoutHabitDate = (data, store) =>
 
 const allOOB = (nodes) =>
   nodes.every((d) => parseTreeValues(d.data.content).status === "OOB");
-
-export const notOOB = (node) =>
-  parseTreeValues(node.data.content).status !== "OOB";
 
 export const isALeaf = (node) => {
   return (
@@ -242,22 +243,24 @@ export const cumulativeValue = (node) => {
   try {
     // if collapsed
     if (!!node?._children) {
+      const notOOBChildren = node._children.filter(notOOB);
       return +(
         // return 1 or 0
         (
-          sumChildrenValues(node, true) >= node._children.length &&
-          node._children.every((n) => cumulativeValue(n) === 1)
+          sumChildrenValues(node, true) >= notOOBChildren.length &&
+          notOOBChildren.every((n) => cumulativeValue(n) === 1)
         ) // All children have accumulated value 1
       );
     }
     // if expanded
     if (content === "true" || node.value > 0) {
       if (!!node?.children && node?.children?.length > 0) {
+        const notOOBChildren = node.children.filter(notOOB);
         return +(
           // Were all descendant nodes accumulated to have a 1 value each?
           (
-            sumChildrenValues(node) >= node.children.length &&
-            node.children.every((n) => cumulativeValue(n) === 1)
+            sumChildrenValues(node) >= notOOBChildren.length &&
+            notOOBChildren.every((n) => cumulativeValue(n) === 1)
           )
         );
       } else {

@@ -2873,8 +2873,12 @@ section > h2:first-of-type {
   font-family: Nunito, Silka, sans-serif;
   font-weight: 700;
 }
+.habit-desc-text {
+  font-size: 0.8rem;
+  line-height: 1rem;
+}
+
 .habit-description-label h2,
-.habit-desc-text,
 .nav-label-primary > span,
 .user-nav-label span label,
 .responsive-nav-group > h2,

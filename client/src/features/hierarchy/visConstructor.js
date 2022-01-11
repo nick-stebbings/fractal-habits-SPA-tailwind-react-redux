@@ -754,7 +754,7 @@ export default class Visualization {
         this.layout = cluster()
           .size([360, this.canvasHeight * 2])
           .separation((a, b) => (a.parent == b.parent ? 0.5 : 0.1) / a.depth);
-        console.log("this.rootData.height :>> ", this.rootData.height);
+
         this.layout.nodeSize(
           this._viewConfig.isSmallScreen()
             ? [300, 300]
