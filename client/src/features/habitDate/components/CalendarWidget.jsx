@@ -119,7 +119,7 @@ export const CalendarWidget = ({
             {stringifyDate(currentHabit.timeframe.fromDate)}
           </span>
           <i
-            className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-1 absolute left-0 active:text-balance-tershades-dark text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
+            className="cal-date-nav h-16 w-16 fa fa-chevron-circle-left text-3xl ml-1 absolute left-0 sm:-left-12 active:text-balance-tershades-dark text-balance-tershades-dark hover:text-balance-sshades-desat lg:hidden"
             ref={scrollRef}
             onClick={handlePrev}
           />
