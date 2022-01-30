@@ -203,19 +203,19 @@ export default class Visualization {
           if (currentHabit?.meta?.name !== node?.data?.name)
             this.setActiveNode(node.data, event);
 
-          if (this.type == "tree") {
-            const nodesToCollapse = nodesForCollapse
-              .call(this, node, {
-                cousinCollapse: true,
-                auntCollapse: true,
-              })
-              .map((n) => n?.data?.content);
-            this.rootData.each((node) => {
-              if (nodesToCollapse.includes(node.data.content)) collapse(node);
-            });
-            expand(node?.parent ? node.parent : node);
-            this.render();
-          }
+          // if (this.type == "tree") {
+          //   const nodesToCollapse = nodesForCollapse
+          //     .call(this, node, {
+          //       cousinCollapse: true,
+          //       auntCollapse: true,
+          //     })
+          //     .map((n) => n?.data?.content);
+          //   this.rootData.each((node) => {
+          //     if (nodesToCollapse.includes(node.data.content)) collapse(node);
+          //   });
+          //   expand(node?.parent ? node.parent : node);
+          //   this.render();
+          // }
         }
       },
       handleMouseEnter: function ({ target: d }) {
@@ -1137,7 +1137,7 @@ export default class Visualization {
       let target = ev.target;
       const node = target?.__data__;
       if (!target || !node) return;
-      console.log("firing mob SINGLETAP :>> ", this.type, ev.srcEvent);
+
       switch (ev?.target?.tagName) {
         // Delete button is currently the only path
         case "path":
@@ -1193,7 +1193,7 @@ export default class Visualization {
       "Out of Bounds",
     ];
     const legendScale = this._viewConfig.isSmallScreen()
-      ? BASE_SCALE / 4
+      ? BASE_SCALE / 3.5
       : BASE_SCALE / 2;
     const ordinal = scaleOrdinal().domain(labels).range([
       positiveCol,
@@ -1210,7 +1210,7 @@ export default class Visualization {
       .attr(
         "transform",
         `translate(5, ${
-          this._viewConfig.isSmallScreen() ? 35 : 25
+          this._viewConfig.isSmallScreen() ? 55 : 25
         }) scale(${legendScale})`
       );
 
