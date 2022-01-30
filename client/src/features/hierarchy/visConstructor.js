@@ -1128,9 +1128,10 @@ export default class Visualization {
       ev.srcEvent.preventDefault();
       if (
         !isTouchDevice() ||
-        ev.srcEvent.timeStamp === this.currentEventTimestamp
+        ev.srcEvent.timeStamp === this.currentEventTimestamp || // Guard clause for callback firing twice
+        select(`#${this._svgId}`).empty() // Guard clause for wrong vis element
       )
-        return; // Guard clause for callback firing twice
+        return;
       this.currentEventTimestamp = ev.srcEvent.timeStamp;
 
       let target = ev.target;
@@ -1301,7 +1302,7 @@ export default class Visualization {
   }, 800);
 
   render() {
-    _p("Rendering vis... :>>", this?._canvas);
+    _p("Rendering vis... :>>", this?._canvas?._groups);
     if (this.noCanvas()) {
       this._canvas = select(`#${this._svgId}`)
         .append("g")

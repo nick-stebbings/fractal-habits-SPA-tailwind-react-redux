@@ -57,9 +57,9 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
     const currentPath = useLocation()
     const lastPath = useLastLocation()
     const routeChanged = !!lastPath && (currentPath.pathname !== lastPath?.pathname);
-    
+
     return (
-      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={VIS_SVG_IDS[currentPath.pathname.split(/[\-\/]/).slice(-1)[0]]||'1'} changesMade={changesMade} deleteCompleted={deleteCompleted} routeChanged={routeChanged} render={(currentVis:any) => {
+      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={VIS_SVG_IDS[currentPath.pathname.split(/[\-\/]/).slice(-1)[0]]||'9'} changesMade={changesMade} deleteCompleted={deleteCompleted} routeChanged={routeChanged} render={(currentVis:any) => {
 
         useEffect(() => {
           if (!currentVis?._manager) return  // If mobile event handlers have already been bound
