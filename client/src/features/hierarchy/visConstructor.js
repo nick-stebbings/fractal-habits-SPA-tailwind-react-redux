@@ -1105,6 +1105,7 @@ export default class Visualization {
 
     this._manager.on("doubletap", (ev) => {
       ev.srcEvent.preventDefault();
+      ev.srcEvent.stopPropagation();
       if (!isTouchDevice()) return;
 
       const target = ev.firstTarget;
@@ -1122,14 +1123,20 @@ export default class Visualization {
         console.log("Problem with mobile doubletap: ", error);
       }
     });
+
     this._manager.on("singletap", (ev) => {
       ev.srcEvent.preventDefault();
-      if (!isTouchDevice()) return;
+      if (
+        !isTouchDevice() ||
+        ev.srcEvent.timeStamp === this.currentEventTimestamp
+      )
+        return; // Guard clause for callback firing twice
+      this.currentEventTimestamp = ev.srcEvent.timeStamp;
 
       let target = ev.target;
       const node = target?.__data__;
       if (!target || !node) return;
-
+      console.log("firing mob SINGLETAP :>> ", this.type, ev.srcEvent);
       switch (ev?.target?.tagName) {
         // Delete button is currently the only path
         case "path":
