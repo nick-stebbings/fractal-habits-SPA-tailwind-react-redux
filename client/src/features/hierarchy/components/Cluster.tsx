@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 
-
 import { useAppSelector, useAppDispatch } from "app/hooks";
 
 import { selectCurrentCluster } from "features/hierarchy/selectors";

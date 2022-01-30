@@ -18,7 +18,7 @@ export const Routes = () => {
           <Route path="/vis/cluster">
             <Cluster />
           </Route>
-          <Route path="/vis/radial-tree">
+          <Route path="/vis/tree-radial">
             <RadialTree />
           </Route>
           <Route path="/">

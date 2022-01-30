@@ -22,6 +22,12 @@ const margin = {
   left: 200,
 };
 
+const VIS_SVG_IDS = {
+  "tree" : 0,
+  "cluster" : 1,
+  "radial" : 2,
+}
+
 const d3SetupCanvas = function () {
   const { height,width } = document.body.getBoundingClientRect();
   const canvasHeight = height - margin.top - margin.bottom;
@@ -29,6 +35,14 @@ const d3SetupCanvas = function () {
 
   return { canvasHeight, canvasWidth };
 };
+
+const unBindTouchHandlers = (visObj:any) => {
+              if (!visObj?._manager) return
+              visObj._manager.off('singletap')
+              visObj._manager.off('doubletap')
+
+              !!visObj._manager?.element && visObj._manager.destroy()
+            }
 
 export function withVis<T> (C : ComponentType<T>) : React.FC {
   useFetch(true)
@@ -45,38 +59,24 @@ export function withVis<T> (C : ComponentType<T>) : React.FC {
     const routeChanged = !!lastPath && (currentPath.pathname !== lastPath?.pathname);
     
     return (
-      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={1} changesMade={changesMade} deleteCompleted={deleteCompleted} routeChanged={routeChanged} render={(currentVis:any) => {
+      <C canvasHeight={canvasHeight} canvasWidth={canvasWidth} margin={margin} divId={VIS_SVG_IDS[currentPath.pathname.split(/[\-\/]/).slice(-1)[0]]||'1'} changesMade={changesMade} deleteCompleted={deleteCompleted} routeChanged={routeChanged} render={(currentVis:any) => {
 
-        // Propagate changes to the App component so that it can post new habitDates only after a doubletap event is handled
         useEffect(() => {
           if (!currentVis?._manager) return  // If mobile event handlers have already been bound
+
+          // Propagate changes to the App component so that it can post new habitDates only after a doubletap event is handled
             const f = currentVis.eventHandlers.rgtClickOrDoubleTap.bind(null)
             currentVis.eventHandlers.rgtClickOrDoubleTap = function (e:any, d:any) {
               f.call(null, e, d) // Call the original function
-              
               changesMade(true)
             }.bind(currentVis)
-            
 
             // Unbind other vis hammerjs mobile event handlers
             const otherVisObjs = selectOtherVisObjects(currentVis.type, store.getState());
-            otherVisObjs.forEach((visObj:any) => {
-              if (!visObj?._manager) return
-              debugger;
-              visObj._manager.off('singletap')
-              visObj._manager.off('doubletap')
-
-              !!visObj._manager?.element && visObj._manager.destroy()
-            });
+            otherVisObjs.forEach(unBindTouchHandlers);
+          
             // Rebind current mob events if they were lost due to the above
             currentVis?._manager.handlers.length === 0 && currentVis.bindMobileEventHandlers(currentVis._enteringNodes)
-        }, [])
-  
-        useEffect(() => {
-          if (deleteCompleted) {
-            currentVis.render()
-            dispatch(resetDeleteCompleted())
-          }
         }, [])
   
         useEffect(() => {

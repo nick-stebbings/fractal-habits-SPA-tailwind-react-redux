@@ -27,7 +27,7 @@ let MENU_ROUTES = [
         component: Cluster,
         icon: "cluster",
       },
-      "/vis/radial-tree": {
+      "/vis/tree-radial": {
         status: "enabled",
         title: "Radial Tree",
         description:
