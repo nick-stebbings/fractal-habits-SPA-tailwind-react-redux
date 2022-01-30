@@ -760,11 +760,11 @@ export default class Visualization {
             ? [300, 300]
             : [
                 this.rootData.height > 4
-                  ? 1000 / this.rootData.height
-                  : this.rootData.height * 100,
+                  ? (this._viewConfig.canvasHeight / this.rootData.height) * 3
+                  : 400,
                 this.rootData.height > 4
-                  ? 100 / this.rootData.height
-                  : this.rootData.height * 100,
+                  ? (this._viewConfig.canvasHeight / this.rootData.height) * 3
+                  : 400,
               ]
         );
         break;
