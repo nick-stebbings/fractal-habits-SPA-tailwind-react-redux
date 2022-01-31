@@ -1028,7 +1028,6 @@ export default class Visualization {
             select(e?.target?.parentNode).attr("style").match("opacity: 0")
           )
             return e.stopPropagation();
-          debugger;
           this.eventHandlers.handleAppendNode.call(this, e, n);
         });
       this._gButton

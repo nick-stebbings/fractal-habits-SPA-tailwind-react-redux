@@ -53,15 +53,16 @@ export const hierarchySlice = createSlice({
         state.current = {
           id: 0,
           hier: {
-            name: "OOB",
+            name: undefined,
             content: "",
             data: {
-              name: nextDateId == 0 ? "RESET" : undefined,
+              name: undefined,
               content: "",
               children: "",
             },
           },
         };
+        state.myRecords = {};
       }
       return state;
     },

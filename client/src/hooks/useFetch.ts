@@ -2,9 +2,13 @@ import { selectCurrentHabit } from "./../features/habit/selectors";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
-import { selectCurrentHierarchyRecords } from "features/hierarchy/selectors";
+import {
+  selectCurrentHierarchyRecords,
+  selectCurrentHierarchy,
+} from "features/hierarchy/selectors";
 import { selectCurrentDomainIndex } from "features/domain/selectors";
 import { getUIStatus, selectDeleteCompleted } from "../features/ui/selectors";
+
 import { fetchDomainsREST } from "../features/domain/actions";
 import {
   fetchHabitTreeREST,
@@ -23,6 +27,7 @@ export default function useFetch(isVisComponent: boolean) {
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentDateId = useAppSelector(selectCurrentDateId);
   const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords);
+  const currentHierarchy = useAppSelector(selectCurrentHierarchy);
   const currentDomainIndex = useAppSelector(selectCurrentDomainIndex);
 
   const loadDomains = () => dispatch(fetchDomainsREST(currentDomainIndex));
@@ -57,12 +62,14 @@ export default function useFetch(isVisComponent: boolean) {
 
   useEffect(() => {
     if (
-      currentHierarchyRecords &&
-      Object.keys(currentHierarchyRecords).length !== 0
+      (currentHierarchyRecords &&
+        Object.keys(currentHierarchyRecords).length !== 0) ||
+      !!currentHierarchy.content
     )
       return;
+    console.log("loadedDate :>> ");
     loadData();
-  }, []);
+  }, [currentHierarchy?.content]);
 
   useEffect(() => {
     if (

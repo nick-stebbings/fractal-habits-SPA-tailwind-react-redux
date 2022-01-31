@@ -4,6 +4,9 @@ import { useAppSelector, useAppDispatch } from "app/hooks";
 import { domainActions } from "features/domain/reducer";
 const { updateCurrentIndex } = domainActions;
 
+import { visActions } from "features/hierarchy/reducer";
+const { updateCurrentHierarchy } = visActions;
+
 import {
   selectCurrentDomain,
   selectStoredDomains,
@@ -22,8 +25,8 @@ export const DomainSelector = () => {
       selectedindex={allDomains && allDomains.indexOf(currentDomain)}
       tabIndex={2}
       onChange={(e) => {
-        console.log("e.target :>> ", e.target.selectedIndex);
         dispatch(updateCurrentIndex(e.target.selectedIndex));
+        dispatch(updateCurrentHierarchy(0));
       }}
     >
       {allDomains &&
