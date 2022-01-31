@@ -4,9 +4,6 @@ import { createCrudActionCreators } from "app/storeHelpers";
 
 import { fetchHabitsREST } from "features/habit/actions";
 
-// import { domainSlice } from "./reducer";
-// const { createDomain, deleteDomain, updateDomain } = domainSlice.actions;
-
 const BASE_PATH = "/domains";
 
 const CREATE_DOMAIN = "create_domain";
@@ -25,10 +22,10 @@ export const actionStrings = [
 let clientRouteDict = clientRoutes(BASE_PATH);
 const fetchRoute = clientRouteDict.show_all.bind({});
 
-clientRouteDict.show_all = async (_: any, thunkAPI: any) =>
+clientRouteDict.show_all = async (domainIndex: number, thunkAPI: any) =>
   fetchRoute().then((response: any) => {
     const parsed = JSON.parse(response!.data);
-    const firstDomainId = parsed.domains[0].id;
+    const firstDomainId = parsed.domains[domainIndex].id;
     thunkAPI.dispatch(fetchHabitsREST({ domainId: firstDomainId })); // Populate Habits for the domain
     return thunkAPI.fulfillWithValue(response);
   });

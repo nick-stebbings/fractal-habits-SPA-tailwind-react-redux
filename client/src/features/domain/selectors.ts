@@ -7,3 +7,7 @@ export const selectCurrentDomain = (state: RootState) => {
 export const selectStoredDomains = (state: RootState) => {
   return state?.domain?.myRecords;
 };
+
+export const selectCurrentDomainIndex = (state: RootState) => {
+  return state?.domain?.currentIndex;
+};

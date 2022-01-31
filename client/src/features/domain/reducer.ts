@@ -12,6 +12,7 @@ import { crudReducer, isCrud } from "app/storeHelpers";
 import { actionCreators } from "./actions";
 
 export const initialState: Dictionary<Domain | Domain[]> = {
+  currentIndex: 1,
   current: {
     meta: {
       id: 0,
@@ -45,6 +46,14 @@ export const domainSlice = createSlice({
         current: { ...domainPatch, ...state.current },
       };
     },
+    updateCurrentIndex(state, action: PayloadAction<Number>) {
+      const newIndex = action.payload;
+
+      return {
+        ...state,
+        currentIndex: newIndex + 1,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -53,5 +62,7 @@ export const domainSlice = createSlice({
     );
   },
 });
+
+export const domainActions = domainSlice.actions;
 
 export default domainSlice.reducer;

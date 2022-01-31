@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 import { selectCurrentHierarchyRecords } from "features/hierarchy/selectors";
+import { selectCurrentDomainIndex } from "features/domain/selectors";
 import { getUIStatus, selectDeleteCompleted } from "../features/ui/selectors";
 import { fetchDomainsREST } from "../features/domain/actions";
 import {
@@ -22,15 +23,26 @@ export default function useFetch(isVisComponent: boolean) {
   const currentHabit = useAppSelector(selectCurrentHabit);
   const currentDateId = useAppSelector(selectCurrentDateId);
   const currentHierarchyRecords = useAppSelector(selectCurrentHierarchyRecords);
+  const currentDomainIndex = useAppSelector(selectCurrentDomainIndex);
 
-  const loadDomains = () => dispatch(fetchDomainsREST());
+  const loadDomains = () => dispatch(fetchDomainsREST(currentDomainIndex));
   const loadNewCurrentHabit = () =>
     dispatch(fetchHabitREST({ id: currentHabit?.meta?.id }));
   const loadNodeData = async () => dispatch(fetchNodesREST());
   const loadTreeData = async () =>
-    dispatch(fetchHabitTreeREST({ domainId: 1, dateId: currentDateId }));
+    dispatch(
+      fetchHabitTreeREST({
+        domainId: currentDomainIndex,
+        dateId: currentDateId,
+      })
+    );
   const loadWeeklyTreeData = async () =>
-    dispatch(fetchHabitTreesREST({ domainId: 1, dateId: currentDateId - 7 }));
+    dispatch(
+      fetchHabitTreesREST({
+        domainId: currentDomainIndex,
+        dateId: currentDateId - 7,
+      })
+    );
   const removeFutureRecords = async () =>
     dispatch(clearFutureCache({ currentDateId }));
 

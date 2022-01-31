@@ -1,5 +1,8 @@
 import React from "react";
-import { useAppSelector } from "app/hooks";
+import { useAppSelector, useAppDispatch } from "app/hooks";
+
+import { domainActions } from "features/domain/reducer";
+const { updateCurrentIndex } = domainActions;
 
 import {
   selectCurrentDomain,
@@ -9,6 +12,7 @@ import {
 export const DomainSelector = () => {
   const currentDomain = useAppSelector(selectCurrentDomain);
   const allDomains = useAppSelector(selectStoredDomains);
+  const dispatch = useAppDispatch();
 
   return (
     <select
@@ -17,6 +21,10 @@ export const DomainSelector = () => {
       }
       selectedindex={allDomains && allDomains.indexOf(currentDomain)}
       tabIndex={2}
+      onChange={(e) => {
+        console.log("e.target :>> ", e.target.selectedIndex);
+        dispatch(updateCurrentIndex(e.target.selectedIndex));
+      }}
     >
       {allDomains &&
         allDomains.map(({ meta: { name: optionName } }, idx) => (
