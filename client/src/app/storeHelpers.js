@@ -108,8 +108,10 @@ export function crudReducer(
       }
       return {
         ...state,
-        current: mapped[0] || state.current, //.slice(-1)
-        myRecords: mapped, //(state?.myRecords || []).concat(mapped)
+        current:
+          mapped[model == "domains" ? state.currentIndex - 1 : 0] ||
+          state.current,
+        myRecords: mapped,
       };
 
     // DESTROY
