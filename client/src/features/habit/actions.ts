@@ -36,7 +36,7 @@ clientRouteDict.show_all = async (_: any, thunkAPI: any) =>
       // If we need to reload
       const firstHabitId = parsed.habits[0].id;
       thunkAPI.dispatch(
-        fetchHabitDatesREST({ id: firstHabitId, periodLength: 7 })
+        fetchHabitDatesREST({ id: firstHabitId, periodLength: 6 })
       ); // Populate HabitDates for the last week
     }
     return thunkAPI.fulfillWithValue(response);

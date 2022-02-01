@@ -15,11 +15,20 @@ export const idleState: RequestState = {
   status: "IDLE",
 };
 
+const isFirstHabitDatesAction = (action: AnyAction) => {
+  return (
+    (action.type === "fetch_habit_dates/pending" ||
+      action.type === "fetch_habit_dates/fulfilled") &&
+    action.meta.arg.periodLength == 6
+  );
+};
+
 export const isDataAction = (action: AnyAction) => {
   return (
-    action.type.endsWith("habit_dates/fulfilled") ||
-    action.type.startsWith("create_habit_date") ||
-    action.type.startsWith("destroy_habit_date")
+    !isFirstHabitDatesAction(action) &&
+    (action.type.endsWith("habit_dates/fulfilled") ||
+      action.type.startsWith("create_habit_date") ||
+      action.type.startsWith("destroy_habit_date"))
   );
 };
 
@@ -38,10 +47,6 @@ export const isLocalAction = (action: AnyAction) => {
   );
 };
 
-const isFirstHabitDatesAction = (action: AnyAction) => {
-  return action.type === "fetch_habit_dates/pending" && action.meta.arg.id == 1;
-};
-
 export const isLoadingAction = (action: AnyAction) => {
   return (
     !isDataAction(action) &&
@@ -54,6 +59,7 @@ export const isLoadingAction = (action: AnyAction) => {
         "fetch_habits/fulfilled",
         "fetch_nodes/fulfilled",
         "create_habit/fulfilled",
+        "fetch_habit_tree/fulfilled",
       ].includes(action.type))
   ); // These actions are always followed by more fetches and so loading can be considered in progress;
 };

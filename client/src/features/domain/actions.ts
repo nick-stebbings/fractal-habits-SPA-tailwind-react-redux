@@ -25,8 +25,8 @@ const fetchRoute = clientRouteDict.show_all.bind({});
 clientRouteDict.show_all = async (domainIndex: number, thunkAPI: any) =>
   fetchRoute().then((response: any) => {
     const parsed = JSON.parse(response!.data);
-    const firstDomainId = parsed.domains[domainIndex].id;
-    thunkAPI.dispatch(fetchHabitsREST({ domainId: firstDomainId })); // Populate Habits for the domain
+    const firstDomainId = parsed.domains[domainIndex]?.id;
+    thunkAPI.dispatch(fetchHabitsREST({ domainId: firstDomainId || 0 })); // Populate Habits for the domain
     return thunkAPI.fulfillWithValue(response);
   });
 
