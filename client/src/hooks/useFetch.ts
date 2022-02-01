@@ -67,7 +67,6 @@ export default function useFetch(isVisComponent: boolean) {
       !!currentHierarchy.content
     )
       return;
-    console.log("loadedDate :>> ");
     loadData();
   }, [currentHierarchy?.content]);
 

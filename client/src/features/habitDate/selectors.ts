@@ -71,6 +71,7 @@ export const selectAccumulatedStatusForDate = (
       // First check persisted data
       const dateIsPersistedCompleted =
         persistedDates &&
+        !persistedDates.includes(undefined) &&
         persistedDates.some(
           ({ timeframe, habitId }: TimeFrame) =>
             timeframe.fromDate == fromDateUnixTs &&
