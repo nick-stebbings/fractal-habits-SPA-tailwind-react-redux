@@ -2,7 +2,7 @@ import React from "react";
 import { useAppSelector, useAppDispatch } from "app/hooks";
 
 import { domainActions } from "features/domain/reducer";
-const { updateCurrentIndex } = domainActions;
+const { updateCurrentIndex, updateCurrentDomainFromIndex } = domainActions;
 
 import { visActions } from "features/hierarchy/reducer";
 const { updateCurrentHierarchy } = visActions;
@@ -26,6 +26,7 @@ export const DomainSelector = () => {
       tabIndex={2}
       onChange={(e) => {
         dispatch(updateCurrentIndex(e.target.selectedIndex));
+        dispatch(updateCurrentDomainFromIndex(e.target.selectedIndex));
         dispatch(updateCurrentHierarchy(0));
       }}
     >

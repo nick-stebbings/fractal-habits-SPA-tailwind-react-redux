@@ -54,6 +54,17 @@ export const domainSlice = createSlice({
         currentIndex: newIndex + 1,
       };
     },
+    updateCurrentDomainFromIndex(state, action: PayloadAction<Number>) {
+      const newIndex = action.payload;
+      const newDomain = state.myRecords[newIndex];
+
+      return !!newDomain
+        ? {
+            ...state,
+            current: newDomain,
+          }
+        : state;
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
