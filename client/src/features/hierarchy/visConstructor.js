@@ -753,7 +753,7 @@ export default class Visualization {
       case "radial":
         this.layout = cluster()
           .size([360, this.canvasHeight * 2])
-          .separation((a, b) => (a.parent == b.parent ? 0.5 : 0.1) / a.depth);
+          .separation((a, b) => (a.parent == b.parent ? 0.5 : 0.01) / a.depth);
 
         this.layout.nodeSize(
           this._viewConfig.isSmallScreen()
@@ -1028,6 +1028,7 @@ export default class Visualization {
             select(e?.target?.parentNode).attr("style").match("opacity: 0")
           )
             return e.stopPropagation();
+          this.setCurrentHabit(n);
           this.eventHandlers.handleAppendNode.call(this, e, n);
         });
       this._gButton
@@ -1052,6 +1053,7 @@ export default class Visualization {
             select(e?.target?.parentNode).attr("style").match("opacity: 0")
           )
             return e.stopPropagation();
+          this.setCurrentHabit(n);
           this.eventHandlers.handlePrependNode.call(this, e, n);
         });
     }
