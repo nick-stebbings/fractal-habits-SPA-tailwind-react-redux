@@ -133,7 +133,7 @@ export const CalendarWidget = ({
         {/* <Link to={`habits/list?currentHabit=${"HabitStore.current()?.id"}`}> */}
         <span
           className={
-            "absolute text-gray-200 pointer-events-none top-1 right-1 sm:right-4"
+            "absolute text-gray-200 pointer-events-none hidden top-1 right-1 sm:right-4"
           }
         >
           <svg
@@ -155,7 +155,7 @@ export const CalendarWidget = ({
         {/* <Link to={`habits/new?currentHabit=${"currentid"}`}> */}
         <span
           className={
-            "absolute text-gray-200 pointer-events-none top-8 sm:top-10  right-1 sm:right-4"
+            "absolute text-gray-200 pointer-events-none hidden top-8 sm:top-10  right-1 sm:right-4"
           }
         >
           <svg
@@ -176,7 +176,7 @@ export const CalendarWidget = ({
         {/* </Link> */}
         <span
           className={
-            "lg:hidden absolute top-14 sm:top-20 right-1 sm:right-4 pt-1"
+            "lg:hidden absolute sm:top-2 right-1 sm:right-4 pt-1" //top-14
           }
         >
           <svg

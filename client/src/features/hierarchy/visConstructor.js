@@ -760,10 +760,10 @@ export default class Visualization {
             ? [300, 300]
             : [
                 this.rootData.height > 4
-                  ? (this._viewConfig.canvasHeight / this.rootData.height) * 3
+                  ? (this._viewConfig.canvasHeight / this.rootData.height) * 8
                   : 400,
                 this.rootData.height > 4
-                  ? (this._viewConfig.canvasHeight / this.rootData.height) * 3
+                  ? (this._viewConfig.canvasHeight / this.rootData.height) * 8
                   : 400,
               ]
         );
@@ -1149,6 +1149,8 @@ export default class Visualization {
           const buttonTransitioning =
             select(target.parentNode).attr("style") === "opacity: 0";
           if (buttonTransitioning) return ev.srcEvent.stopPropagation();
+          this.setCurrentHabit(node.data);
+
           target.textContent == "DIVIDE"
             ? this.eventHandlers.handleAppendNode.call(this)
             : this.eventHandlers.handlePrependNode.call(this);
